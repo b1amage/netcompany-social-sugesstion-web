@@ -2,17 +2,18 @@
 module.exports = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   screens: {
-    sm: "480px",
+    sm: "640px",
     md: "768px",
-    lg: "1284px",
-    xl: "1440px",
+    lg: "1024px",
+    xl: "1280px",
+    "2xl": "1536px",
   },
   theme: {
     extend: {
       colors: {
         primary: {
           800: "#080817",
-          400: "#0F2147",
+          400: "#0E1F42",
         },
         secondary: {
           400: "#E35F52",
@@ -21,11 +22,18 @@ module.exports = {
         teriary: {
           400: "#5CBCA9",
         },
+        neutral: {
+          200: "#F2F2F6",
+          400: "#E6E6EA",
+          600: "#7E7E82",
+        },
       },
       keyframes: {},
       animation: {},
     },
-    fontFamily: {},
+    fontFamily: {
+      poppins: ["Poppins", "sans-serif"],
+    },
   },
   plugins: [],
 };

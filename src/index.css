@@ -3,4 +3,31 @@
 @tailwind utilities;
 
 @layer components {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply relative m-0 scroll-smooth antialiased text-black transition-all duration-300 bg-white w-full !overflow-x-hidden;
+  }
+
+  ::selection {
+    @apply bg-primary-400 text-white;
+  }
+
+  body::-webkit-scrollbar {
+    @apply w-2 h-10 transition-all;
+  }
+
+  body::-webkit-scrollbar-track {
+    @apply shadow-sm bg-primary-400;
+  }
+
+  body::-webkit-scrollbar-thumb {
+    @apply bg-secondary-400 outline-none;
+  }
+
+  .scroll-ctn::-webkit-scrollbar {
+    @apply !hidden;
+  }
 }
