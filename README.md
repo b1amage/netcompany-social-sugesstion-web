@@ -1,5 +1,9 @@
 # [Netcompany x RMIT Capstone Project] Social Suggesstion System
 
+# DEMO
+
+https://net-social.netlify.app
+
 ### Course Information
 
 - University: Royal Melbourne Institution of Technology (RMIT)
