@@ -1,5 +1,5 @@
 const NotFoundScreen = () => {
-  return <div></div>;
+  return <div>404</div>;
 };
 
 export default NotFoundScreen;
