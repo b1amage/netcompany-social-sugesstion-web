@@ -27,12 +27,10 @@ const Button = ({
     }
   );
   return (
-    <div className="px-8">
-      <button {...rest} className={classes}>
-        {icon && <img src={icon} alt="icon-btn" />}
-        {children}
-      </button>
-    </div>
+    <button {...rest} className={classes}>
+      {icon && <img src={icon} alt="icon-btn" />}
+      {children}
+    </button>
   );
 };
 
