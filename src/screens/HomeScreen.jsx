@@ -1,11 +1,18 @@
 import User from "@/components/user/User";
+import PlaceCard from "@/components/card/PlaceCard";
+import placeList from "@/constants/mockPlaces";
 import React from "react";
+import generateId from "@/utilities/generateId";
 
 const HomeScreen = () => {
-  return <div>
-    <User isCol src='https://scontent.fhan3-4.fna.fbcdn.net/v/t39.30808-6/289119097_1456144428173839_7549261293075397454_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=1DCSQuigdFUAX-h49a7&_nc_ht=scontent.fhan3-4.fna&oh=00_AfDlI89mOQkngjJPl5QKmwwQ9h0A3HmVPPBL5iFvtDYsUQ&oe=644EEE76' name='Username' email='@usernameemail' />
-    
-  </div>;
+  return (
+    <div className="grid gap-5 lg:grid-cols-3 place-items-center">
+      {placeList.map((place) => (
+        <PlaceCard key={generateId()} place={place} />
+      ))}
+    </div>
+  );
+
 };
 
 export default HomeScreen;

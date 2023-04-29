@@ -14,6 +14,7 @@ module.exports = {
         primary: {
           800: "#080817",
           400: "#0E1F42",
+          200: "#B90D0D"
         },
         secondary: {
           400: "#E35F52",
@@ -24,6 +25,7 @@ module.exports = {
         },
         neutral: {
           200: "#F2F2F6",
+          300: "#f5f5f5",
           400: "#E6E6EA",
           600: "#7E7E82",
         },

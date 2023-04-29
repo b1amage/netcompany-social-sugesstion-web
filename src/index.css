@@ -34,4 +34,28 @@
   .flex-center {
     @apply flex justify-center items-center;
   }
+
+  .text-overflow-ellipsis {
+    @apply overflow-hidden text-ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* number of lines to show */
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+
+  .text-overflow-ellipsis-3-clamp {
+    @apply overflow-hidden text-ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* number of lines to show */
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+}
+
+.active-btn{
+  background: linear-gradient(to right, #fff, #0E1F42, #fff);
+}
+
+.warning-btn{
+  background: linear-gradient(to right, #fff, #E35F52, #fff);
 }
