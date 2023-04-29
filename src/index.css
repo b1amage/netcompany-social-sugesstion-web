@@ -51,3 +51,11 @@
     -webkit-box-orient: vertical;
   }
 }
+
+.active-btn{
+  background: linear-gradient(to right, #fff, #0E1F42, #fff);
+}
+
+.warning-btn{
+  background: linear-gradient(to right, #fff, #E35F52, #fff);
+}
