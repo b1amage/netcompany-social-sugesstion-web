@@ -38,7 +38,8 @@ const User = ({ isCol, user, src }) => {
               _ref={avatarRef}
               src={src}
               alt="avatar"
-              className="cursor-auto animate-zoom"
+              className="cursor-auto animate-zoom h-screen"
+              imageClassName='!object-contain'
             />
           </div>
         </Portal>
