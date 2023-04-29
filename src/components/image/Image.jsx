@@ -1,8 +1,19 @@
-const Image = ({ src, alt, className, imageClassName, animate, onClick }) => {
+const Image = ({
+  src,
+  alt,
+  className,
+  imageClassName,
+  animate,
+  onClick,
+  _ref,
+  ...restProps
+}) => {
   return (
     <div
+      ref={_ref}
       onClick={onClick}
       className={`cursor-pointer rounded-lg overflow-hidden ${className}`}
+      {...restProps}
     >
       <img
         src={src}

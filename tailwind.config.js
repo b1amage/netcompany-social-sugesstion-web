@@ -14,7 +14,7 @@ module.exports = {
         primary: {
           800: "#080817",
           400: "#0E1F42",
-          200: "#B90D0D"
+          200: "#B90D0D",
         },
         secondary: {
           400: "#E35F52",
@@ -30,8 +30,60 @@ module.exports = {
           600: "#7E7E82",
         },
       },
-      keyframes: {},
-      animation: {},
+      keyframes: {
+        moveInLeft: {
+          "0%": {
+            opacity: 0,
+            transform: "translateX(-10rem)",
+          },
+          "50%": {
+            transform: "translateX(1rem)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "translateX(0)",
+          },
+        },
+        moveInRight: {
+          "0%": {
+            opacity: 0,
+            transform: "translateX(10rem)",
+          },
+          "50%": {
+            transform: "translateX(-1rem)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "translateX(0)",
+          },
+        },
+        moveInBottom: {
+          "0%": {
+            opacity: 0,
+            transform: "translateY(3rem)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "translateY(0)",
+          },
+        },
+        zoom: {
+          "0%": {
+            opacity: 0.2,
+            transform: "scale(0.2)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "scale(1)",
+          },
+        },
+      },
+      animation: {
+        moveInLeft: "moveInLeft 1.2s ease-in-out",
+        moveInRight: "moveInRight 1.2s ease-in-out",
+        moveInBottom: "moveInBottom 1.2s ease-out",
+        zoom: "zoom 1s ease",
+      },
     },
     fontFamily: {
       poppins: ["Poppins", "sans-serif"],
