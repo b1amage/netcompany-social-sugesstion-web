@@ -19,9 +19,9 @@ const User = ({isCol, user, src}) => {
         </div>
 
         {isShowImage && <Portal location='html' >
-          <div className="bg-black absolute inset-0" onClick={handleCloseImage}>   
+          <div className="bg-black absolute inset-0 bg-opacity-80" onClick={handleCloseImage}>   
           </div>
-          <Image src={src} alt='avatar' className='max-w-full h-screen object-contain fixed top-0 transform translate-x-1/2 z-50'/>
+          <Image src={src} alt='avatar' imageClassName='!object-contain' className='w-full h-screen flex justify-center fixed top-0 z-50'/>
         </Portal>}
     </div>
   )
