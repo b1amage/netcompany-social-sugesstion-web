@@ -10,6 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomeScreen />} />
         <Route path="*" element={<NotFoundScreen />} />
+        <Route path="/home" element={<HomeScreen />} />
       </Routes>
     </Suspense>
   );

@@ -1,3 +1,4 @@
+import User from "@/components/user/User";
 import PlaceCard from "@/components/card/PlaceCard";
 import placeList from "@/constants/mockPlaces";
 import React from "react";
@@ -11,6 +12,7 @@ const HomeScreen = () => {
       ))}
     </div>
   );
+
 };
 
 export default HomeScreen;
