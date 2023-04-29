@@ -8,7 +8,7 @@ function App() {
   return (
     <Suspense fallback={<LoadingScreen />}>
       <Routes>
-        <Route path="/" element={<LoadingScreen />} />
+        <Route path="/" element={<HomeScreen />} />
         <Route path="*" element={<NotFoundScreen />} />
       </Routes>
     </Suspense>
