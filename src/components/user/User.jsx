@@ -39,7 +39,7 @@ const User = ({ isCol, user, src }) => {
               src={src}
               alt="avatar"
               className="cursor-auto animate-zoom h-screen flex items-center"
-              imageClassName='rounded-full w-1/2 h-1/2'
+              imageClassName='rounded-full w-[200px] h-[200px]'
             />
           </div>
         </Portal>
