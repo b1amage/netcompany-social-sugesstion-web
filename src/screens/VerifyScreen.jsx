@@ -11,6 +11,8 @@ import authApi from "@/api/authApi";
 import { DEFAULT } from "@/constants/defaultData";
 import { DISTANCE } from "@/constants/distance";
 import PreferencesSelect from "@/components/form/PreferencesSelect";
+import Heading from "@/components/typography/Heading";
+import SubHeading from "@/components/typography/SubHeading";
 
 const VerifyScreen = () => {
   const [username, setUsername] = useState("");
@@ -57,6 +59,11 @@ const VerifyScreen = () => {
 
   return (
     <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
+      <div className="flex flex-col">
+        <Heading>Profile Setup</Heading>
+        <SubHeading>Provide your preferences for best experience</SubHeading>
+      </div>
+
       <AvatarUpload />
       <Input
         onChange={(e) => setUsername(e.target.value)}
