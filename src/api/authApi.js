@@ -17,6 +17,8 @@ const authApi = {
         scopes: ["user.read"],
       });
 
+      localStorage.setItem("idToken", tokenResponse.idToken);
+
       const backendResponse = await axiosClient.post(
         "/auth/signin",
         {
@@ -44,6 +46,19 @@ const authApi = {
     try {
       await msalInstance.logoutPopup();
       console.log("Logout successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async verifyAccount(data) {
+    try {
+      const url = "/auth/verify";
+      const response = await axiosClient.post(url, data, {
+        withCredentials: true,
+      });
+
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
