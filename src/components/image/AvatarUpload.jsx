@@ -1,16 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
+import { DEFAULT } from "@/constants/defaultData";
 
 const AvatarUpload = () => {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
-  const [ava, setAva] = useState(
-    "https://res.cloudinary.com/dxcgirgcy/image/upload/v1683168039/avatar_yiyczj.png"
-  );
-
-  // useEffect(() => {
-  //   console.log(ava);
-  // }, [ava]);
+  const [ava, setAva] = useState(DEFAULT.avatar);
+  const [uploading, setUploading] = useState(false);
 
   return (
     <form>
@@ -21,7 +17,9 @@ const AvatarUpload = () => {
         <img
           src={ava}
           alt=""
-          className="object-cover w-full h-full overflow-hidden transition-all duration-300 rounded-full hover:brightness-75"
+          className={`object-cover w-full h-full overflow-hidden transition-all duration-300 rounded-full hover:brightness-75 ${
+            uploading && "animate-bounce"
+          }`}
         />
       </label>
 
@@ -32,7 +30,8 @@ const AvatarUpload = () => {
           setIsFilePicked(true);
           console.log(selectedFile);
 
-          const postImg = async () => {
+          (async function () {
+            setUploading(true);
             var bodyFormData = new FormData();
             bodyFormData.append("image", e.target.files[0]);
             axios({
@@ -42,18 +41,16 @@ const AvatarUpload = () => {
               headers: { "Content-Type": "multipart/form-data" },
             })
               .then(function (response) {
-                //handle success
                 console.log(response);
                 setAva(response.data.image);
                 localStorage.setItem("avatar", response.data.image);
+                setUploading(false);
               })
               .catch(function (response) {
-                //handle error
                 console.log(response);
+                setUploading(false);
               });
-          };
-
-          postImg();
+          })();
         }}
         type="file"
         name="avatar"

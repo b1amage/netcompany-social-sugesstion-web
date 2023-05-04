@@ -2,15 +2,15 @@ import Screen from "@/components/container/Screen";
 import Input from "@/components/form/Input";
 import { useEffect, useState } from "react";
 import Range from "@/components/form/Range";
-import Label from "@/components/form/Label";
-import Category from "@/components/category/Category";
-import categoryList from "@/constants/category";
 
 import AvatarUpload from "@/components/image/AvatarUpload";
 import { getCurrentLocation } from "@/helpers/helpers";
 import Button from "@/components/button/Button";
-import generateId from "@/utilities/generateId";
+import categoryList from "@/constants/category";
 import authApi from "@/api/authApi";
+import { DEFAULT } from "@/constants/defaultData";
+import { DISTANCE } from "@/constants/distance";
+import PreferencesSelect from "@/components/form/PreferencesSelect";
 
 const VerifyScreen = () => {
   const [username, setUsername] = useState("");
@@ -37,22 +37,17 @@ const VerifyScreen = () => {
         latitude: location.lat,
         longitude: location.lng,
       },
-      imageUrl:
-        localStorage.getItem("avatar") ||
-        "https://res.cloudinary.com/dxcgirgcy/image/upload/v1683168039/avatar_yiyczj.png",
+      imageUrl: localStorage.getItem("avatar") || DEFAULT.avatar,
     };
 
     await authApi.verifyAccount(userInfo);
   };
 
+  // Get Location
   useEffect(() => {
     (async function () {
       try {
         const location = await getCurrentLocation();
-        console.log(
-          `Your current location is: ${location.lat}, ${location.lng}`
-        );
-
         setLocation(location);
       } catch (error) {
         console.error(error.message);
@@ -61,7 +56,7 @@ const VerifyScreen = () => {
   }, []);
 
   return (
-    <Screen className="flex flex-col gap-5">
+    <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       <AvatarUpload />
       <Input
         onChange={(e) => setUsername(e.target.value)}
@@ -71,6 +66,7 @@ const VerifyScreen = () => {
         type="text"
         name="username"
         id="username"
+        className=""
       />
 
       <Input
@@ -83,30 +79,20 @@ const VerifyScreen = () => {
       />
 
       <Range
-        min={5}
-        max={50}
+        min={DISTANCE.min}
+        max={DISTANCE.max}
         onChange={handleDistanceChange}
         x={distance}
         label={`Distance: ${distance}km`}
       />
 
-      <div>
-        <Label required>Preferences</Label>
+      <PreferencesSelect
+        categoryList={categoryList}
+        onSelect={handleCategoryClick}
+        locationCategories={locationCategories}
+      />
 
-        <div className="flex flex-wrap gap-2">
-          {categoryList.map((item) => (
-            <Category
-              isActive={locationCategories.includes(item.title)}
-              onClick={handleCategoryClick}
-              key={generateId()}
-            >
-              {item.title}
-            </Category>
-          ))}
-        </div>
-      </div>
-
-      <Button primary active onClick={handleSaveChanges}>
+      <Button className="!mt-auto" primary active onClick={handleSaveChanges}>
         Save Changes
       </Button>
     </Screen>
