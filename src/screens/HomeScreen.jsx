@@ -8,7 +8,7 @@ const HomeScreen = () => {
   return (
     <div className="h-screen">
       <User
-        src="https://scontent.fsgn12-1.fna.fbcdn.net/v/t39.30808-6/289119097_1456144428173839_7549261293075397454_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=AvucbsT3a-YAX_Mhny_&_nc_ht=scontent.fsgn12-1.fna&oh=00_AfArEeRTE1-e_tbg1JAnNtnwJt_QKRkmnw-a0lyZoT44rw&oe=6450E8B6"
+        src="https://images.unsplash.com/photo-1661956602116-aa6865609028?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1364&q=80"
         user={{ name: "An Bui", email: "quangan186@gmail.com" }}
       />
     </div>

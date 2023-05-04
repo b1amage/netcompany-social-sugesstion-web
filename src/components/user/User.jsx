@@ -33,13 +33,13 @@ const User = ({ isCol, user, src }) => {
 
       {isShowImage && (
         <Portal location="body">
-          <div className="absolute z-[9999] inset-0 bg-black bg-opacity-80 flex-center cursor-pointer">
+          <div className="absolute z-[9999] inset-0 bg-black bg-opacity-80 flex-center cursor-pointer ">
             <Image
               _ref={avatarRef}
               src={src}
               alt="avatar"
-              className="cursor-auto animate-zoom h-screen flex items-center"
-              imageClassName='rounded-full 2xl:w-[40vw] 2xl:h-[40vw] w-[60vw] h-[60vw]'
+              className="flex items-center cursor-auto animate-zoom 2xl:!w-[40vw] 2xl:!h-[40vw] !w-[60vw] !h-[60vw]"
+              imageClassName="rounded-full "
             />
           </div>
         </Portal>
