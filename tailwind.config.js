@@ -82,6 +82,7 @@ module.exports = {
         moveInLeft: "moveInLeft 1.2s ease-in-out",
         moveInRight: "moveInRight 1.2s ease-in-out",
         moveInBottom: "moveInBottom 1.2s ease-out",
+        moveInBottomDelay: "moveInBottom 1.8s ease-out",
         zoom: "zoom 1s ease",
       },
     },
