@@ -6,18 +6,14 @@ const authApi = {
       const loginResponse = await msalInstance.loginPopup({
         scopes: ["user.read"],
       });
-
       const account = msalInstance.getAccountByUsername(
         loginResponse.account.username
       );
       msalInstance.setActiveAccount(account); // Set Active for Fetching data
-
       // call POST API send token backend
       const tokenResponse = await msalInstance.acquireTokenSilent({
         scopes: ["user.read"],
       });
-
-      console.log(tokenResponse);
 
       localStorage.setItem("idToken", tokenResponse.idToken);
       localStorage.setItem("registerEmail", tokenResponse.account.username);
@@ -32,7 +28,6 @@ const authApi = {
           withCredentials: true,
         }
       );
-
       console.log(
         "Login successfully. Data retrieved from backend: ",
         backendResponse
@@ -61,14 +56,10 @@ const authApi = {
       const response = await axiosClient.post(url, data, {
         withCredentials: true,
       });
-      setMessage("You are all set!");
-
       console.log(response);
+      setMessage("You are all set!");
     } catch (error) {
-      console.log(error);
-      // setMessage(error.response.data.message[0]);
       setError(true);
-
       setMessage(
         typeof error.response.data.message === "string"
           ? error.response.data.message

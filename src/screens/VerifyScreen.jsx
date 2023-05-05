@@ -1,13 +1,7 @@
-import Screen from "@/components/container/Screen";
-import Input from "@/components/form/Input";
 import { useEffect, useState } from "react";
-import Range from "@/components/form/Range";
-
-import AvatarUpload from "@/components/image/AvatarUpload";
 import { getCurrentLocation } from "@/helpers/helpers";
-import Button from "@/components/button/Button";
-import categoryList from "@/constants/category";
 import authApi from "@/api/authApi";
+import categoryList from "@/constants/category";
 import { DEFAULT } from "@/constants/defaultData";
 import { DISTANCE } from "@/constants/distance";
 import PreferencesSelect from "@/components/form/PreferencesSelect";
@@ -15,6 +9,11 @@ import Heading from "@/components/typography/Heading";
 import SubHeading from "@/components/typography/SubHeading";
 import Error from "@/components/form/Error";
 import Message from "@/components/form/Message";
+import Button from "@/components/button/Button";
+import Range from "@/components/form/Range";
+import AvatarUpload from "@/components/image/AvatarUpload";
+import Screen from "@/components/container/Screen";
+import Input from "@/components/form/Input";
 
 const VerifyScreen = () => {
   const [username, setUsername] = useState(
