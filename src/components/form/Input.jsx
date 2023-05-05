@@ -28,7 +28,7 @@ const Input = ({
         <input
           disabled={disabled}
           autoComplete="off"
-          className={`w-full px-4 py-3 text-sm transition-all duration-300 outline-none rounded-2xl bg-neutral-100 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${
+          className={`w-full focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-2xl bg-neutral-100 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${
             fluid ? "w-full" : "w-1/2"
           } ${
             disabled && "text-neutral-600"

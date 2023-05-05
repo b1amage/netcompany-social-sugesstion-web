@@ -13,12 +13,18 @@ import { DISTANCE } from "@/constants/distance";
 import PreferencesSelect from "@/components/form/PreferencesSelect";
 import Heading from "@/components/typography/Heading";
 import SubHeading from "@/components/typography/SubHeading";
+import Error from "@/components/form/Error";
+import Message from "@/components/form/Message";
 
 const VerifyScreen = () => {
-  const [username, setUsername] = useState("");
-  const [distance, setDistance] = useState(0);
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || ""
+  );
+  const [distance, setDistance] = useState(DISTANCE.min);
   const [locationCategories, setLocationCategories] = useState([]);
   const [location, setLocation] = useState();
+  const [message, setMessage] = useState();
+  const [error, setError] = useState(false);
 
   const handleDistanceChange = ({ x }) => setDistance(x);
   const handleCategoryClick = (category) => {
@@ -28,6 +34,9 @@ const VerifyScreen = () => {
 
     setLocationCategories(newCategory);
   };
+
+  const handleAPIMessage = (message) => setMessage(message);
+  const handleAPIError = (value) => setError(value);
 
   const handleSaveChanges = async () => {
     const userInfo = {
@@ -42,7 +51,7 @@ const VerifyScreen = () => {
       imageUrl: localStorage.getItem("avatar") || DEFAULT.avatar,
     };
 
-    await authApi.verifyAccount(userInfo);
+    await authApi.verifyAccount(userInfo, handleAPIMessage, handleAPIError);
   };
 
   // Get Location
@@ -56,6 +65,8 @@ const VerifyScreen = () => {
       }
     })();
   }, []);
+
+  const registerEmail = localStorage.getItem("registerEmail") || "";
 
   return (
     <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
@@ -82,7 +93,7 @@ const VerifyScreen = () => {
         name="email"
         id="email"
         disabled
-        value="s3877698@rmit.edu.vn"
+        value={registerEmail}
       />
 
       <Range
@@ -98,6 +109,16 @@ const VerifyScreen = () => {
         onSelect={handleCategoryClick}
         locationCategories={locationCategories}
       />
+
+      {error ? (
+        <Error fluid>{message}</Error>
+      ) : (
+        message && (
+          <Message className="my-5" fluid>
+            {message}
+          </Message>
+        )
+      )}
 
       <Button className="!mt-auto" primary active onClick={handleSaveChanges}>
         Save Changes
