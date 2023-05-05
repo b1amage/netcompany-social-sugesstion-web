@@ -10,33 +10,48 @@ import filter from "@/assets/filter.svg";
 import Image from "@/components/image/Image";
 import Counter from "@/components/counter/Counter";
 
-const NavHeader = ({ screenWidth, handleMenuClick, isAdded, isShowNotification, isShowFilter }) => {
+const NavHeader = ({
+  screenWidth,
+  handleMenuClick,
+  isAdded,
+  isShowNotification,
+  isShowFilter,
+}) => {
   return (
-    <div className="flex md:justify-around items-center md:bg-primary-400 px-4">
+    <div className="flex md:justify-around items-center md:bg-primary-400 p-4">
       {screenWidth < 768 ? (
         <>
           <Image
-            className="pr-44 py-4 hover:opacity-60 duration-200"
             imageClassName="w-[28px] h-[28px]"
-            src={screenWidth > 768 ? menu : darkMenu}
+            src={screenWidth < 768 && darkMenu}
             alt="menu"
             onClick={handleMenuClick}
           />
 
           <div className="flex gap-4 items-center w-full justify-end">
-            {isAdded && <Image src={add} alt="add" className="w-[28px] h-[28px]" />}
-            
-            {isShowNotification && <div className="relative">
-              <Image
-                src={notification}
-                alt="notification"
-                imageClassName="w-[28px] h-[28px]"
-                className='p-2'
-              />
-              <Counter count={10} />
-            </div>}
+            {isAdded && (
+              <Image src={add} alt="add" className="w-[28px] h-[28px]" />
+            )}
 
-            {isShowFilter && <Image src={filter} alt="filter" imageClassName="w-[28px] h-[28px]" />}
+            {isShowNotification && (
+              <div className="relative">
+                <Image
+                  src={notification}
+                  alt="notification"
+                  imageClassName="w-[28px] h-[28px]"
+                  className="p-2"
+                />
+                <Counter count={10} />
+              </div>
+            )}
+
+            {isShowFilter && (
+              <Image
+                src={filter}
+                alt="filter"
+                imageClassName="w-[28px] h-[28px]"
+              />
+            )}
           </div>
         </>
       ) : (
