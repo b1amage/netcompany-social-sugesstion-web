@@ -1,12 +1,9 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  // baseURL:
-  //   process.env.NODE_ENV === "dev"
-  //     ? "http://localhost:8080"
-  //     : "https://netcompany-social-suggestion-backend.vercel.app",
+  baseURL: process.env.NODE_ENV === "dev" ? "http://localhost:8080" : "/api",
 
-  baseURL: "/api",
+  // baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
