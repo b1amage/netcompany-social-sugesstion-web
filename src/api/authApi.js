@@ -1,4 +1,6 @@
 import axiosClient from "@/api/axiosClient";
+import { createBrowserHistory } from "history";
+const history = createBrowserHistory();
 
 const authApi = {
   async signInWithMicrosoft(msalInstance, navigate) {
@@ -28,11 +30,14 @@ const authApi = {
           withCredentials: true,
         }
       );
-      console.log(
-        "Login successfully. Data retrieved from backend: ",
-        backendResponse
-      );
+      // console.log(
+      //   "Login successfully. Data retrieved from backend: ",
+      //   backendResponse
+      // );
+
+      return backendResponse;
     } catch (error) {
+      console.log(error);
       const statusCode = error.response.status;
       const unverifiedStatusCode = 406;
       if (statusCode === unverifiedStatusCode) {
@@ -67,6 +72,8 @@ const authApi = {
       );
     }
   },
+
+  async uploadImage() {},
 };
 
 export default authApi;
