@@ -20,7 +20,7 @@ const authApi = {
       localStorage.setItem("username", tokenResponse.account.name);
 
       const backendResponse = await axiosClient.post(
-        "/auth/signin",
+        "api/auth/signin",
         {
           microsoftIdToken: tokenResponse.idToken,
         },
