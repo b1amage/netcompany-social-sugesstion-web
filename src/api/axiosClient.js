@@ -6,7 +6,7 @@ const axiosClient = axios.create({
   //     ? "http://localhost:8080"
   //     : "https://netcompany-social-suggestion-backend.vercel.app",
 
-  baseURL: "",
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
