@@ -1,11 +1,12 @@
 import React from "react";
 import Loading from "@/components/loading/Loading";
+import Screen from "@/components/container/Screen";
 
 const LoadingScreen = () => {
   return (
-    <section className="h-screen flex-center">
+    <Screen className="h-screen flex-center">
       <Loading />
-    </section>
+    </Screen>
   );
 };
 
