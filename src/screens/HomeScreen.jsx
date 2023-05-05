@@ -1,15 +1,11 @@
-// import User from "@/components/user/User";
-// import PlaceCard from "@/components/card/PlaceCard";
-// import placeList from "@/constants/mockPlaces";
 import React from "react";
-// import generateId from "@/utilities/generateId";
+import { useSelector, useDispatch } from "react-redux";
 
 const HomeScreen = () => {
-  return (
-    <div className="h-screen">
-      Home
-    </div>
-  );
+  const { user } = useSelector((state) => state.user);
+  console.log(user);
+  console.log(process.env.NODE_ENV === "dev");
+  return <div className="h-screen"></div>;
 };
 
 export default HomeScreen;

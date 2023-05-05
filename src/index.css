@@ -4,7 +4,7 @@
 
 @layer components {
   html {
-    @apply scroll-smooth;
+    @apply scroll-smooth !overflow-x-hidden;
   }
 
   body {
@@ -50,12 +50,31 @@
     line-clamp: 3;
     -webkit-box-orient: vertical;
   }
+
+  .distance-slider {
+    @apply !w-full;
+  }
 }
 
-.active-btn{
-  background: linear-gradient(to right, #fff, #0E1F42, #fff);
+.multi-range-slider .bar-left,
+.multi-range-slider .bar-right,
+.multi-range-slider .thumb::before,
+.multi-range-slider .thumb .caption * {
+  box-shadow: 0 0 0 #ffffff00 !important;
 }
 
-.warning-btn{
-  background: linear-gradient(to right, #fff, #E35F52, #fff);
+.multi-range-slider .thumb::before {
+  border: none !important;
+}
+
+.multi-range-slider .thumb .caption * {
+  background-color: #0e1f42 !important;
+}
+
+.active-btn {
+  background: linear-gradient(to right, #fff, #0e1f42, #fff);
+}
+
+.warning-btn {
+  background: linear-gradient(to right, #fff, #e35f52, #fff);
 }
