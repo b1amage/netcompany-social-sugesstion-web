@@ -1,11 +1,4 @@
 [[redirects]]
   from = "/*"
-  to = "https://netcompany-social-suggestion-backend.vercel.app/:splat"
-  status = 200
-  force = true
-  headers = {X-From = "Netlify"}
-
-[[redirects]]
-  from = "/*"
   to = "/"
   status = 200
