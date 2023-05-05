@@ -16,7 +16,7 @@ const AvatarUpload = () => {
       >
         <img
           src={ava}
-          alt=""
+          alt="user avatar"
           className={`object-cover w-full h-full overflow-hidden transition-all duration-300 rounded-full hover:brightness-75 ${
             uploading && "animate-bounce"
           }`}
