@@ -17,7 +17,11 @@ const authApi = {
         scopes: ["user.read"],
       });
 
+      console.log(tokenResponse);
+
       localStorage.setItem("idToken", tokenResponse.idToken);
+      localStorage.setItem("registerEmail", tokenResponse.account.username);
+      localStorage.setItem("username", tokenResponse.account.name);
 
       const backendResponse = await axiosClient.post(
         "/auth/signin",
@@ -51,16 +55,25 @@ const authApi = {
     }
   },
 
-  async verifyAccount(data) {
+  async verifyAccount(data, setMessage, setError) {
     try {
       const url = "/auth/verify";
       const response = await axiosClient.post(url, data, {
         withCredentials: true,
       });
+      setMessage("You are all set!");
 
       console.log(response);
     } catch (error) {
       console.log(error);
+      // setMessage(error.response.data.message[0]);
+      setError(true);
+
+      setMessage(
+        typeof error.response.data.message === "string"
+          ? error.response.data.message
+          : error.response.data.message[0]
+      );
     }
   },
 };
