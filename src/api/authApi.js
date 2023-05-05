@@ -1,6 +1,4 @@
 import axiosClient from "@/api/axiosClient";
-import { createBrowserHistory } from "history";
-const history = createBrowserHistory();
 
 const authApi = {
   async signInWithMicrosoft(msalInstance, navigate) {
