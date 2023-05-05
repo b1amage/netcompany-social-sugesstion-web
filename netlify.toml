@@ -1,5 +1,5 @@
 [[redirects]]
-  from = "/*"
+  from = "/api/*"
   to = "https://netcompany-social-suggestion-backend.vercel.app/:splat"
   status = 200
   force = true
