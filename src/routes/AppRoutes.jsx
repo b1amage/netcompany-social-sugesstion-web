@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
+
+const CreateLocationScreen = React.lazy(() => import("@/screens/CreateLocationScreen"));
 const VerifyScreen = React.lazy(() => import("@/screens/VerifyScreen"));
 const LoadingScreen = React.lazy(() => import("@/screens/LoadingScreen"));
 const HomeScreen = React.lazy(() => import("@/screens/HomeScreen"));
@@ -24,6 +26,7 @@ const AppRoutes = () => {
         <Route path="/plan-event" element={<PlanEventScreen />} />
         <Route path="/my-event" element={<MyEvent />} />
         <Route path="/my-route" element={<MyRouteScreen />} />
+        <Route path="/create-location" element={<CreateLocationScreen />} />
       </Routes>
     </Suspense>
   );
