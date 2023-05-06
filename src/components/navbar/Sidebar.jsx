@@ -7,6 +7,7 @@ const Sidebar = ({closeButtonIcon, handleNavButtonClick, onClick, navButtonIcons
   const renderedNavLinks = navlinks.map((link, index) => {
     return (
       <NavLink
+        to={link.path}
         onClick={() => handleNavButtonClick(link.path)}
         label={link.label}
         key={link.label}
