@@ -4,12 +4,8 @@ import { darkIcons, lightIcons } from "@/constants/navIcons";
 import NavHeader from "./NavHeader";
 import useViewport from "@/hooks/useScreenWidth";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  handleOpenSideBarClick,
-  handleCloseSideBarClick,
-  validatePathname,
-  directTo,
-} from "@/store";
+import { handleCloseSideBarClick, directTo, handleOpenSideBarClick, validatePathname} from '@/features/navbarSlice'
+
 import LoadingScreen from "@/screens/LoadingScreen";
 import Sidebar from "./Sidebar";
 
