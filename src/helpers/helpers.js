@@ -1,6 +1,7 @@
 export async function getCurrentLocation() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
+      alert("Fking stupd to block location on this app");
       reject(new Error("Geolocation is not supported by your browser"));
     } else {
       navigator.geolocation.getCurrentPosition(
@@ -11,6 +12,7 @@ export async function getCurrentLocation() {
           });
         },
         (error) => {
+          alert("Fking stupd to block location on this app");
           reject(
             new Error(`Unable to retrieve your location: ${error.message}`)
           );
