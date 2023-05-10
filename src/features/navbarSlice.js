@@ -25,7 +25,8 @@ const navbarSlice = createSlice({
           state.isShowNotification = false;
           state.isShowFilter = false;
           return;
-        case "/my-event":
+        case "/my-event": 
+        case "/":
           state.isAdded = true;
           state.isShowNotification = true;
           state.isShowFilter = true;
@@ -35,15 +36,10 @@ const navbarSlice = createSlice({
           state.isShowNotification = false;
           state.isShowFilter = false;
           return;
-        case "/plan-event":
+        default:
           state.isAdded = false;
           state.isShowNotification = false;
           state.isShowFilter = false;
-          return;
-        default:
-          state.isAdded = true;
-          state.isShowNotification = true;
-          state.isShowFilter = true;
           return;
       }
     },
