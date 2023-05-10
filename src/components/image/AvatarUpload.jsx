@@ -28,10 +28,10 @@ const AvatarUpload = () => {
 
       <input
         onChange={(e) => {
-          console.log(isFilePicked);
+          // console.log(isFilePicked);
           setSelectedFile(e.target.files[0]);
           setIsFilePicked(true);
-          console.log(selectedFile);
+          // console.log(selectedFile);
 
           (async function () {
             setUploading(true);
@@ -43,9 +43,6 @@ const AvatarUpload = () => {
                 process.env.NODE_ENV === "dev"
                   ? "http://localhost:8080"
                   : "https://netcompany-social-suggestion-backend.vercel.app/image/upload-image",
-              // process.env.NODE_ENV === "dev"
-              //   ? "http://localhost:8080/image/upload-image"
-              //   : "https://netcompany-social-suggestion-backend.vercel.app/image/upload-image",
               data: bodyFormData,
               headers: { "Content-Type": "multipart/form-data" },
             })
@@ -55,8 +52,8 @@ const AvatarUpload = () => {
                 localStorage.setItem("avatar", response.data.image);
                 setUploading(false);
               })
-              .catch(function (response) {
-                console.log(response);
+              .catch(function (err) {
+                console.log(err);
                 setErr("Error uploading file");
                 setUploading(false);
               });
@@ -66,6 +63,7 @@ const AvatarUpload = () => {
         name="avatar"
         id="avatar"
         className="hidden"
+        accept="image/png, image/jpeg, image/heic"
       />
     </form>
   );
