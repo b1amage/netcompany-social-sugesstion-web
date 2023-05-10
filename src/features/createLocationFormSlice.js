@@ -4,12 +4,13 @@ const createLocationFormSlice = createSlice({
     name:'createLocationForm',
     initialState:{
        images: [],
-       image: '',
-       category: null,
+       image: undefined,
+       category: undefined,
        title: '',
        address: '',
        description: '',
-       price: 0 
+       price: 0,
+       err: undefined,
     },
     reducers: {
         changeImage(state, action){

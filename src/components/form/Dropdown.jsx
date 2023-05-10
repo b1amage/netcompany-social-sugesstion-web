@@ -41,7 +41,7 @@ const Dropdown = ({ label, options, value, onChange }) => {
       </div>
       {isOpen && (
         <ul
-          className={`w-full my-2 px-2  text-sm transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:py-4 md:px-2 focus:border-primary-100 placeholder:text-secondary-100 font-bold`}
+          className={`w-full my-2 px-2  text-sm transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:px-2 focus:border-primary-100 placeholder:text-secondary-100 font-bold`}
         >
           {renderedOptions}
         </ul>
