@@ -54,7 +54,7 @@ const AvatarUpload = () => {
               })
               .catch(function (err) {
                 console.log(err);
-                setErr("Error uploading file");
+                setErr("File must be image and smaller than 1mb");
                 setUploading(false);
               });
           })();
@@ -63,7 +63,7 @@ const AvatarUpload = () => {
         name="avatar"
         id="avatar"
         className="hidden"
-        accept="image/png, image/jpeg, image/heic"
+        accept="image/*"
       />
     </form>
   );
