@@ -36,7 +36,10 @@ const AvatarUpload = () => {
             bodyFormData.append("image", e.target.files[0]);
             axios({
               method: "post",
-              url: "",
+              url:
+                process.env.NODE_ENV === "dev"
+                  ? "http://localhost:8080"
+                  : "https://netcompany-social-suggestion-backend.vercel.app/image/upload-image",
               // process.env.NODE_ENV === "dev"
               //   ? "http://localhost:8080/image/upload-image"
               //   : "https://netcompany-social-suggestion-backend.vercel.app/image/upload-image",
