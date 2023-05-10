@@ -15,6 +15,7 @@ import AvatarUpload from "@/components/image/AvatarUpload";
 import Screen from "@/components/container/Screen";
 import Input from "@/components/form/Input";
 import Wrapper from "@/components/wrapper/Wrapper";
+import { useNavigate } from "react-router-dom";
 
 const VerifyScreen = () => {
   const [username, setUsername] = useState(
@@ -25,6 +26,8 @@ const VerifyScreen = () => {
   const [location, setLocation] = useState();
   const [message, setMessage] = useState();
   const [error, setError] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleDistanceChange = ({ x }) => setDistance(x);
   const handleCategoryClick = (category) => {
@@ -51,7 +54,14 @@ const VerifyScreen = () => {
       imageUrl: localStorage.getItem("avatar") || DEFAULT.avatar,
     };
 
-    await authApi.verifyAccount(userInfo, handleAPIMessage, handleAPIError);
+    console.log(userInfo);
+
+    await authApi.verifyAccount(
+      userInfo,
+      handleAPIMessage,
+      handleAPIError,
+      navigate
+    );
   };
 
   // Get Location

@@ -53,7 +53,7 @@ const authApi = {
     }
   },
 
-  async verifyAccount(data, setMessage, setError) {
+  async verifyAccount(data, setMessage, setError, navigate) {
     try {
       const url = "/auth/verify";
       const response = await axiosClient.post(url, data, {
@@ -61,7 +61,9 @@ const authApi = {
       });
       console.log(response);
       setMessage("You are all set!");
+      navigate("/");
     } catch (error) {
+      console.log(error);
       setError(true);
       setMessage(
         typeof error.response.data.message === "string"
