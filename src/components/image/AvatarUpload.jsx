@@ -1,12 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 import { DEFAULT } from "@/constants/defaultData";
+import Error from "@/components/form/Error";
 
 const AvatarUpload = () => {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [ava, setAva] = useState(DEFAULT.avatar);
   const [uploading, setUploading] = useState(false);
+  const [err, setErr] = useState();
 
   return (
     <form>
@@ -22,6 +24,7 @@ const AvatarUpload = () => {
           }`}
         />
       </label>
+      {err && <Error fluid>{err}</Error>}
 
       <input
         onChange={(e) => {
@@ -54,6 +57,7 @@ const AvatarUpload = () => {
               })
               .catch(function (response) {
                 console.log(response);
+                setErr("Error uploading file");
                 setUploading(false);
               });
           })();
