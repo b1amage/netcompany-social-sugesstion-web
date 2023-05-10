@@ -55,7 +55,7 @@ const AvatarUpload = () => {
               })
               .catch(function (err) {
                 console.log(err);
-                setErr("File must be image and smaller than 1mb");
+                setErr("File must be image and smaller than 3mb");
                 setUploading(false);
               });
           })();
