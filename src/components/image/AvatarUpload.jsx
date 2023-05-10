@@ -34,6 +34,7 @@ const AvatarUpload = () => {
           // console.log(selectedFile);
 
           (async function () {
+            setErr();
             setUploading(true);
             var bodyFormData = new FormData();
             bodyFormData.append("image", e.target.files[0]);
