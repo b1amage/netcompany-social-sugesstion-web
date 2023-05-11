@@ -16,6 +16,8 @@ import Screen from "@/components/container/Screen";
 import Input from "@/components/form/Input";
 import Wrapper from "@/components/wrapper/Wrapper";
 import { useNavigate } from "react-router-dom";
+import Image from "@/components/image/Image";
+import hero from "@/assets/verify/hero.png";
 
 const VerifyScreen = () => {
   const [username, setUsername] = useState(
@@ -80,58 +82,72 @@ const VerifyScreen = () => {
 
   return (
     <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
-      <Wrapper col="true">
-        <Heading>Profile Setup</Heading>
-        <SubHeading>Provide your preferences for best experience</SubHeading>
+      <Wrapper className="flex-1 xl:grid xl:grid-cols-2 xl:gap-10">
+        <Wrapper className="flex-1 hidden xl:block">
+          <Image className="flex-1 h-full" src={hero} />
+        </Wrapper>
+        <Wrapper className="" col="true">
+          <Wrapper col="true">
+            <Heading>Profile Setup</Heading>
+            <SubHeading>
+              Provide your preferences for best experience
+            </SubHeading>
+          </Wrapper>
+
+          <AvatarUpload />
+          <Input
+            onChange={(e) => setUsername(e.target.value)}
+            value={username}
+            required
+            label="Username"
+            type="text"
+            name="username"
+            id="username"
+          />
+
+          <Input
+            label="Email"
+            type="text"
+            name="email"
+            id="email"
+            disabled
+            value={registerEmail}
+          />
+
+          <Range
+            min={DISTANCE.min}
+            max={DISTANCE.max}
+            onChange={handleDistanceChange}
+            x={distance}
+            label={`Distance: ${distance}km`}
+          />
+
+          <PreferencesSelect
+            categoryList={categoryList}
+            onSelect={handleCategoryClick}
+            locationCategories={locationCategories}
+          />
+
+          {error ? (
+            <Error fluid>{message}</Error>
+          ) : (
+            message && (
+              <Message className="my-5" fluid>
+                {message}
+              </Message>
+            )
+          )}
+
+          <Button
+            className="!mt-auto !mb-0"
+            primary
+            active
+            onClick={handleSaveChanges}
+          >
+            Save Changes
+          </Button>
+        </Wrapper>
       </Wrapper>
-
-      <AvatarUpload />
-      <Input
-        onChange={(e) => setUsername(e.target.value)}
-        value={username}
-        required
-        label="Username"
-        type="text"
-        name="username"
-        id="username"
-      />
-
-      <Input
-        label="Email"
-        type="text"
-        name="email"
-        id="email"
-        disabled
-        value={registerEmail}
-      />
-
-      <Range
-        min={DISTANCE.min}
-        max={DISTANCE.max}
-        onChange={handleDistanceChange}
-        x={distance}
-        label={`Distance: ${distance}km`}
-      />
-
-      <PreferencesSelect
-        categoryList={categoryList}
-        onSelect={handleCategoryClick}
-        locationCategories={locationCategories}
-      />
-
-      {error ? (
-        <Error fluid>{message}</Error>
-      ) : (
-        message && (
-          <Message className="my-5" fluid>
-            {message}
-          </Message>
-        )
-      )}
-
-      <Button className="!mt-auto" primary active onClick={handleSaveChanges}>
-        Save Changes
-      </Button>
     </Screen>
   );
 };
