@@ -5,6 +5,7 @@ const authApi = {
     try {
       const loginResponse = await msalInstance.loginPopup({
         scopes: ["user.read"],
+        prompt: "select_account",
       });
       const account = msalInstance.getAccountByUsername(
         loginResponse.account.username
@@ -28,10 +29,10 @@ const authApi = {
           withCredentials: true,
         }
       );
-      // console.log(
-      //   "Login successfully. Data retrieved from backend: ",
-      //   backendResponse
-      // );
+      console.log(
+        "Login successfully. Data retrieved from backend: ",
+        backendResponse
+      );
 
       return backendResponse;
     } catch (error) {
