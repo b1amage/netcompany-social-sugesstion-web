@@ -61,7 +61,7 @@ const CreateLocationScreen = () => {
   const dispatch = useDispatch();
   return (
     <Screen className="px-4">
-      <form className="lg:flex gap-4 lg:my-4">
+      <form className="lg:flex gap-8 lg:my-4">
         <div className="w-full flex flex-col gap-4">
           <UploadImage
             className="!bg-transparent border border-dashed rounded-lg lg:my-0 h-full"
@@ -70,7 +70,7 @@ const CreateLocationScreen = () => {
             uploading={uploading}
             onChange={handleOnChangeImage}
           />
-          <PreviewImage imageList={imageList} />
+          <PreviewImage imageList={imageList} index={0} />
         </div>
 
         <Wrapper col className="w-full">
