@@ -11,15 +11,17 @@ const authApi = {
         loginResponse.account.username
       );
       msalInstance.setActiveAccount(account); // Set Active for Fetching data
-      // call POST API send token backend
+
       const tokenResponse = await msalInstance.acquireTokenSilent({
         scopes: ["user.read"],
       });
 
+      // set on localstorage for verifying
       localStorage.setItem("idToken", tokenResponse.idToken);
       localStorage.setItem("registerEmail", tokenResponse.account.username);
       localStorage.setItem("username", tokenResponse.account.name);
 
+      // call POST API send token backend
       const backendResponse = await axiosClient.post(
         "/auth/signin",
         {
@@ -52,6 +54,11 @@ const authApi = {
       await axiosClient.delete(url, {
         withCredentials: true,
       });
+      localStorage.removeItem("idToken");
+      localStorage.removeItem("registerEmail");
+      localStorage.removeItem("username");
+      localStorage.removeItem("avatar");
+
       console.log("Logout successfully");
     } catch (error) {
       console.log(error);
