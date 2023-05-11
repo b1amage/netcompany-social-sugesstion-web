@@ -15,7 +15,7 @@ const Button = ({
 }) => {
   const classes = classNames(
     rest.className,
-    "font-bold text-white bg-neutral-400 rounded-lg border-x border-neutral-400 py-3 px-4 my-4 relative flex justify-center items-center box-border transition-all hover:scale-110 duration-200",
+    "font-bold text-white bg-neutral-400 rounded-lg border-x border-neutral-400 py-3 px-4 my-4 relative flex justify-center items-center box-border transition-all hover:opacity-80 duration-200",
     {
       "w-full": primary,
       "w-1/2": secondary,
