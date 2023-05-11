@@ -48,6 +48,10 @@ const authApi = {
   async signOutWithMicrosoft(msalInstance) {
     try {
       await msalInstance.logoutPopup();
+      const url = "/auth/logout";
+      await axiosClient.delete(url, {
+        withCredentials: true,
+      });
       console.log("Logout successfully");
     } catch (error) {
       console.log(error);
