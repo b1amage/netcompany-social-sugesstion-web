@@ -56,6 +56,14 @@
   }
 }
 
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
 .multi-range-slider .bar-left,
 .multi-range-slider .bar-right,
 .multi-range-slider .thumb::before,

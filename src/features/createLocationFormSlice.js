@@ -31,18 +31,23 @@ const createLocationFormSlice = createSlice({
         changePrice(state, action){
             state.price = action.payload
         },
+        
+        onSubmitForm(state, action){
+            const data = action.payload
+            console.log(data)
+        },
         addImage(state, action){
-            state.images.push(state.image)
+            if (state.images.includes(action.payload)){
+                state.err = 'Image has been added already!'
+                return
+            }
+            state.images.push(action.payload)
         },
         removeImage(state, action){
             return state.images.filter(image => image !== action.payload)
         },
-        validateLocation(state, action){
-            const data = action.payload
-            console.log(data)
-        }
     }
 })
 
-export const {changeAddress, changeCategory, changeDescription, changeImage, changePrice, changeTitle, addImage, removeImage, validateLocation,} = createLocationFormSlice.actions
+export const {changeAddress, changeCategory, changeDescription, changeImage, changePrice, changeTitle, addImage, removeImage, onSubmitForm,} = createLocationFormSlice.actions
 export const createLocationFormReducer = createLocationFormSlice.reducer

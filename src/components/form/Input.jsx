@@ -17,6 +17,7 @@ const Input = ({
   name,
   id,
   disabled,
+  min
 }) => {
   return (
     <div className={`flex flex-col ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
@@ -40,6 +41,7 @@ const Input = ({
           required={required}
           value={value}
           onChange={onChange}
+          min={min}
         />
 
         {icon && (

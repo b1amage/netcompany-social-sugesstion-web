@@ -3,20 +3,20 @@ import { DEFAULT } from '@/constants/defaultData';
 import React, { useState } from 'react'
 import Image from './Image';
 
-const UploadImage = ({className, labelClassName, onChange, locationImage, icon, uploading}) => {
+const UploadImage = ({className, labelClassName, onChange, icon, uploading}) => {
     return (
-      <div className={`w-full ${className} ${!locationImage && 'flex items-center justify-center'}`}>
+      <div className={`w-full ${className} flex items-center justify-center`}>
         <Label
           id="location"
-          className={`block ${labelClassName} cursor-pointer group !px-0`}
+          className={`block ${labelClassName} cursor-pointer group !px-0 h-`}
         >
           <Image
-            src={!locationImage ? icon : locationImage}
+            src={icon}
             alt="location"
             className={`overflow-hidden transition-all duration-300 rounded-full hover:brightness-75 ${
               uploading && "animate-bounce"
             }`}
-            imageClassName={`${!locationImage && '!w-fit !h-fit'}`} />
+            imageClassName={`!w-fit !h-fit`} />
         </Label>
   
         <input
