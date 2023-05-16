@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import close from "@/assets/close.svg";
 import { darkIcons, lightIcons } from "@/constants/navIcons";
 import NavHeader from "./NavHeader";
@@ -18,14 +18,14 @@ const Navbar = () => {
 
   const dispatch = useDispatch();
 
-  const state = useSelector((state) => {
+  const state = useSelector(({navbar}) => {
     return {
-      isAdded: state.navbar.isAdded,
-      isMenuClicked: state.navbar.isMenuClicked,
-      isShowNotification: state.navbar.isShowNotification,
-      isShowFilter: state.navbar.isShowFilter,
-      currentPath: state.navbar.currentPath,
-      isLoading: state.navbar.isLoading,
+      isAdded: navbar.isAdded,
+      isMenuClicked: navbar.isMenuClicked,
+      isShowNotification: navbar.isShowNotification,
+      isShowFilter: navbar.isShowFilter,
+      currentPath: navbar.currentPath,
+      isLoading: navbar.isLoading,
     };
   });
 
