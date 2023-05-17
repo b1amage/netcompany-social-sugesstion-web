@@ -7,21 +7,25 @@ import SubHeading from "@/components/typography/SubHeading";
 import Heading from "@/components/typography/Heading";
 import Button from "@/components/button/Button";
 import TabView from "@/components/tab/TabView";
+import { useSelector } from "react-redux";
 
 const ProfileScreen = () => {
+  const { user } = useSelector((state) => state.user);
+  const { username, email, imageUrl } = user;
+  // !TODO: handle un-login case
   return (
     <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       <Wrapper col="true">
         {/* Avatar */}
         <Wrapper col="true" className="w-full flex-center">
           <Image
-            src={DEFAULT.avatar}
+            src={imageUrl || DEFAULT.avatar}
             alt="user avatar"
-            className="w-[120px] h-[120px]"
+            className="w-[120px] h-[120px] overflow-hidden !rounded-full"
           />
           <Wrapper col="true" className="gap-0 flex-center">
-            <Heading>Bao Dep Trai</Heading>
-            <SubHeading>s3877698@rmit.edu.vn</SubHeading>
+            <Heading>{username}</Heading>
+            <SubHeading>{email}</SubHeading>
           </Wrapper>
         </Wrapper>
 
