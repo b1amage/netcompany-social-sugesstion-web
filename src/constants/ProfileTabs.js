@@ -1,11 +1,31 @@
-import { AiOutlineInfoCircle, AiOutlineHeart } from "react-icons/ai";
-import { BsBookmark } from "react-icons/bs";
+import {
+  AiOutlineInfoCircle,
+  AiOutlineHeart,
+  AiFillInfoCircle,
+  AiFillHeart,
+} from "react-icons/ai";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import placeList from "./mockPlaces";
 
 const profileTabs = [
-  { title: "own post", icon: AiOutlineInfoCircle, placeList: placeList },
-  { title: "liked post", icon: AiOutlineHeart, placeList: placeList },
-  { title: "saved post", icon: BsBookmark, placeList: placeList },
+  {
+    title: "own post",
+    icon: AiOutlineInfoCircle,
+    fillIcon: AiFillInfoCircle,
+    placeList: placeList,
+  },
+  {
+    title: "liked post",
+    icon: AiOutlineHeart,
+    fillIcon: AiFillHeart,
+    placeList: placeList,
+  },
+  {
+    title: "saved post",
+    icon: BsBookmark,
+    fillIcon: BsBookmarkFill,
+    placeList: placeList,
+  },
 ];
 
 export default profileTabs;

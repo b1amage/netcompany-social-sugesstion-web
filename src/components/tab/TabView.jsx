@@ -49,7 +49,11 @@ const TabView = () => {
             onClick={onTabClick}
             isActive={index === activeTabIndex}
           >
-            {<Item.icon id={index} className="w-full" />}
+            {index === activeTabIndex ? (
+              <Item.fillIcon id={index} className="w-full"></Item.fillIcon>
+            ) : (
+              <Item.icon id={index} className="w-full" />
+            )}
           </TabHeader>
         ))}
       </div>
