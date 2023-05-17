@@ -12,11 +12,10 @@ const MyEvent = React.lazy(() => import("@/screens/MyEvent"));
 const Navbar = React.lazy(() => import("@/components/navbar/Navbar"));
 const ProfileScreen = React.lazy(() => import("@/screens/ProfileScreen"));
 
-
 const AppRoutes = () => {
   return (
     <Suspense fallback={<LoadingScreen />}>
-      <Navbar />
+      {/* <Navbar /> */}
       <Routes>
         <Route path="/" element={<HomeScreen />} />
         <Route path="/login" element={<LoginScreen />} />

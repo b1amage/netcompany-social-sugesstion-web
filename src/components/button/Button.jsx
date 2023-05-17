@@ -19,8 +19,8 @@ const Button = ({
     {
       "w-full": primary,
       "w-1/2": secondary,
-      "warning-btn": danger,
-      "active-btn": active,
+      "bg-red-400": danger,
+      "bg-primary-400": active,
       "w-1/4 !py-1": small,
       "!text-primary-200": warning,
       "!rounded-full": rounded,
