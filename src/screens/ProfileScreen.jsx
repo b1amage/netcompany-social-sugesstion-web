@@ -2,21 +2,11 @@ import React from "react";
 import Screen from "@/components/container/Screen";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Image from "@/components/image/Image";
-
 import { DEFAULT } from "@/constants/defaultData";
 import SubHeading from "@/components/typography/SubHeading";
 import Heading from "@/components/typography/Heading";
 import Button from "@/components/button/Button";
-import Tab from "@/components/tab/Tab";
 import TabView from "@/components/tab/TabView";
-import PlaceCard from "@/components/card/PlaceCard";
-import placeList from "@/constants/mockPlaces";
-
-const renderCards = () => {
-  return placeList.map((place, index) => (
-    <PlaceCard key={index} place={place} />
-  ));
-};
 
 const ProfileScreen = () => {
   return (
