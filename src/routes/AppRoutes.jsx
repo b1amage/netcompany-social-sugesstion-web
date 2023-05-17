@@ -5,6 +5,7 @@ const LoadingScreen = React.lazy(() => import("@/screens/LoadingScreen"));
 const HomeScreen = React.lazy(() => import("@/screens/HomeScreen"));
 const LoginScreen = React.lazy(() => import("@/screens/LoginScreen"));
 const NotFoundScreen = React.lazy(() => import("@/screens/404Screen"));
+const ProfileScreen = React.lazy(() => import("@/screens/ProfileScreen"));
 
 const AppRoutes = () => {
   return (
@@ -13,6 +14,7 @@ const AppRoutes = () => {
         <Route path="/" element={<HomeScreen />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/verify" element={<VerifyScreen />} />
+        <Route path="/profile" element={<ProfileScreen />} />
         <Route path="*" element={<NotFoundScreen />} />
       </Routes>
     </Suspense>
