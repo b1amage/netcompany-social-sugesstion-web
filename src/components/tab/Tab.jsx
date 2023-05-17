@@ -1,5 +1,4 @@
 import Wrapper from "@/components/wrapper/Wrapper";
-import React from "react";
 
 const Tab = (props) => {
   const { children } = props;
