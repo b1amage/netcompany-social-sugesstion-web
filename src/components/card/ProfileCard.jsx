@@ -19,7 +19,7 @@ const ProfileCard = ({ place }) => {
 
       <Wrapper
         col="true"
-        className="absolute group-hover:opacity-25 animate-moveInBottom left-0 bottom-8 h-[60px] md:h-[74px] xl:h-[88px] bg-white w-[90%] md:w-4/5 xl:w-3/4 rounded-r-xl !gap-0 px-2 py-3"
+        className="absolute transition-all group-hover:opacity-25 animate-moveInBottom left-0 bottom-8 h-[60px] md:h-[74px] xl:h-[88px] bg-white w-[90%] md:w-4/5 xl:w-3/4 rounded-r-xl !gap-0 px-2 py-3"
       >
         <Heading className="text-sm text-overflow-ellipsis">{title}</Heading>
         <SubHeading className="text-xs text-overflow-ellipsis">
