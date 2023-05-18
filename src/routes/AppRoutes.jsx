@@ -10,25 +10,24 @@ const AccountScreen = React.lazy(() => import("@/screens/AccountScreen"));
 const PlanEventScreen = React.lazy(() => import("@/screens/PlanEventScreen"));
 const MyEvent = React.lazy(() => import("@/screens/MyEvent"));
 const Navbar = React.lazy(() => import("@/components/navbar/Navbar"));
+const ProfileScreen = React.lazy(() => import("@/screens/ProfileScreen"));
 
 const AppRoutes = () => {
   return (
-    <>
+    <Suspense fallback={<LoadingScreen />}>
       <Navbar />
-      <Suspense fallback={<LoadingScreen />}>
       <Routes>
         <Route path="/" element={<HomeScreen />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/verify" element={<VerifyScreen />} />
+        <Route path="/profile" element={<ProfileScreen />} />
         <Route path="*" element={<NotFoundScreen />} />
         <Route path="/account" element={<AccountScreen />} />
         <Route path="/plan-event" element={<PlanEventScreen />} />
         <Route path="/my-event" element={<MyEvent />} />
         <Route path="/my-route" element={<MyRouteScreen />} />
       </Routes>
-    </Suspense>
-    </>
-    
+    </Suspense>    
   );
 };
 
