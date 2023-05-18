@@ -13,8 +13,9 @@ const Navbar = React.lazy(() => import("@/components/navbar/Navbar"));
 
 const AppRoutes = () => {
   return (
-    <Suspense fallback={<LoadingScreen />}>
+    <>
       <Navbar />
+      <Suspense fallback={<LoadingScreen />}>
       <Routes>
         <Route path="/" element={<HomeScreen />} />
         <Route path="/login" element={<LoginScreen />} />
@@ -26,6 +27,8 @@ const AppRoutes = () => {
         <Route path="/my-route" element={<MyRouteScreen />} />
       </Routes>
     </Suspense>
+    </>
+    
   );
 };
 

@@ -29,29 +29,29 @@ const NavHeader = ({
           />
 
           <div className="flex gap-4 items-center w-full justify-end">
-            {isAdded && (
-              <Image src={add} alt="add" className="w-[28px] h-[28px]" />
-            )}
+            {/* {isAdded && ( */}
+            <Image src={add} alt="add" className="w-[28px] h-[28px]" />
+            {/* )} */}
 
-            {isShowNotification && (
-              <div className="relative">
-                <Image
-                  src={notification}
-                  alt="notification"
-                  imageClassName="w-[28px] h-[28px]"
-                  className="p-2"
-                />
-                <Counter count={10} />
-              </div>
-            )}
-
-            {isShowFilter && (
+            {/* {isShowNotification && ( */}
+            <div className="relative">
               <Image
-                src={filter}
-                alt="filter"
+                src={notification}
+                alt="notification"
                 imageClassName="w-[28px] h-[28px]"
+                className="p-2"
               />
-            )}
+              <Counter count={10} />
+            </div>
+            {/* )} */}
+
+            {/* {isShowFilter && ( */}
+            <Image
+              src={filter}
+              alt="filter"
+              imageClassName="w-[28px] h-[28px]"
+            />
+            {/* )} */}
           </div>
         </>
       ) : (
