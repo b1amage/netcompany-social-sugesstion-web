@@ -1,5 +1,5 @@
-import Button from "@/components/button/Button";
-import React, { useEffect } from "react";
+import localStorageKey from "@/constants/localStorageKeys";
+import { useEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ const HomeScreen = () => {
   // ONBOARDING CHECK
   useEffect(() => {
     const onBoardingAlreadyShown = JSON.parse(
-      localStorage.getItem("_onboarding")
+      localStorage.getItem(localStorageKey.alreadyShownOnboarding)
     );
 
     !onBoardingAlreadyShown && navigate("/onboarding");
@@ -18,21 +18,16 @@ const HomeScreen = () => {
 
   // LOGIN CHECK
   useEffect(() => {
-    const user = localStorage.getItem("user") || JSON.stringify({});
+    const user =
+      localStorage.getItem(localStorageKey.user) || JSON.stringify({});
     if (user === JSON.stringify({})) {
       navigate("/login");
     }
   }, []);
   const { user } = useSelector((state) => state.user);
   console.log(user);
-  console.log(process.env.NODE_ENV === "dev");
-  return (
-    <div className="h-screen">
-      <Button secondary active>
-        Hello
-      </Button>
-    </div>
-  );
+
+  return <div className="h-screen"></div>;
 };
 
 export default HomeScreen;

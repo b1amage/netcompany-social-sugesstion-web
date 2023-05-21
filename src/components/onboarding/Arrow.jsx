@@ -1,5 +1,6 @@
 import Button from "@/components/button/Button";
 import { useNavigate } from "react-router-dom";
+import localStorageKey from "@/constants/localStorageKeys";
 
 const Arrow = ({ disabled, left, onClick }) => {
   const navigate = useNavigate();
@@ -7,7 +8,7 @@ const Arrow = ({ disabled, left, onClick }) => {
   return !left && disabled ? (
     <Button
       onClick={() => {
-        localStorage.setItem("_onboarding", true);
+        localStorage.setItem(localStorageKey.alreadyShownOnboarding, true);
         navigate("/");
       }}
       active
