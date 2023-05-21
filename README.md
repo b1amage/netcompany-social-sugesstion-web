@@ -4,6 +4,14 @@
 
 https://net-social.netlify.app
 
+# Local Usage
+
+```
+  $ git clone https://github.com/b1amage/netcompany-social-sugesstion-web.git
+  $ npx yarn
+  $ NODE_ENV=dev npx yarn dev
+```
+
 ### Course Information
 
 - University: Royal Melbourne Institution of Technology (RMIT)
