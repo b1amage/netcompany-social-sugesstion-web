@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
+const OnboardingScreen = React.lazy(() => import("@/screens/OnboardingScreen"));
 const VerifyScreen = React.lazy(() => import("@/screens/VerifyScreen"));
 const LoadingScreen = React.lazy(() => import("@/screens/LoadingScreen"));
 const HomeScreen = React.lazy(() => import("@/screens/HomeScreen"));
@@ -17,6 +18,7 @@ const AppRoutes = () => {
     <Suspense fallback={<LoadingScreen />}>
       {/* <Navbar /> */}
       <Routes>
+        <Route path="/onboarding" element={<OnboardingScreen />} />
         <Route path="/" element={<HomeScreen />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/verify" element={<VerifyScreen />} />
@@ -26,6 +28,7 @@ const AppRoutes = () => {
         <Route path="/plan-event" element={<PlanEventScreen />} />
         <Route path="/my-event" element={<MyEvent />} />
         <Route path="/my-route" element={<MyRouteScreen />} />
+        <Route path="/onboarding" element={<OnboardingScreen />} />
       </Routes>
     </Suspense>
   );

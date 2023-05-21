@@ -6,6 +6,17 @@ import { useNavigate } from "react-router-dom";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
+
+  // ONBOARDING CHECK
+  useEffect(() => {
+    const onBoardingAlreadyShown = JSON.parse(
+      localStorage.getItem("_onboarding")
+    );
+
+    !onBoardingAlreadyShown && navigate("/onboarding");
+  }, []);
+
+  // LOGIN CHECK
   useEffect(() => {
     const user = localStorage.getItem("user") || JSON.stringify({});
     if (user === JSON.stringify({})) {
@@ -15,9 +26,13 @@ const HomeScreen = () => {
   const { user } = useSelector((state) => state.user);
   console.log(user);
   console.log(process.env.NODE_ENV === "dev");
-  return <div className="h-screen">
-    <Button secondary active>Hello</Button>
-  </div>;
+  return (
+    <div className="h-screen">
+      <Button secondary active>
+        Hello
+      </Button>
+    </div>
+  );
 };
 
 export default HomeScreen;
