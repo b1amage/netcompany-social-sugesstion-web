@@ -18,6 +18,7 @@ const AppRoutes = () => {
     <Suspense fallback={<LoadingScreen />}>
       {/* <Navbar /> */}
       <Routes>
+        <Route path="/onboarding" element={<OnboardingScreen />} />
         <Route path="/" element={<HomeScreen />} />
         <Route path="/login" element={<LoginScreen />} />
         <Route path="/verify" element={<VerifyScreen />} />

@@ -1,9 +1,15 @@
 import Button from "@/components/button/Button";
+import { useNavigate } from "react-router-dom";
 
 const Arrow = ({ disabled, left, onClick }) => {
+  const navigate = useNavigate();
   const disabeld = disabled ? " arrow--disabled hidden" : "";
   return !left && disabled ? (
     <Button
+      onClick={() => {
+        localStorage.setItem("_onboarding", true);
+        navigate("/");
+      }}
       active
       className={`!m-0 flex-center !absolute bottom-8 cursor-pointer right-12 !border-0 !py-2`}
     >
