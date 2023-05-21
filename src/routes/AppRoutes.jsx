@@ -27,7 +27,7 @@ const AppRoutes = () => {
         <Route path="/my-event" element={<MyEvent />} />
         <Route path="/my-route" element={<MyRouteScreen />} />
       </Routes>
-    </Suspense>    
+    </Suspense>
   );
 };
 
