@@ -1,4 +1,5 @@
 import localStorageKey from "@/constants/localStorageKeys";
+import ROUTE from "@/constants/routes";
 import { useEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -13,7 +14,7 @@ const HomeScreen = () => {
       localStorage.getItem(localStorageKey.alreadyShownOnboarding)
     );
 
-    !onBoardingAlreadyShown && navigate("/onboarding");
+    !onBoardingAlreadyShown && navigate(ROUTE.ONBOARDING);
   }, []);
 
   // LOGIN CHECK
@@ -21,7 +22,7 @@ const HomeScreen = () => {
     const user =
       localStorage.getItem(localStorageKey.user) || JSON.stringify({});
     if (user === JSON.stringify({})) {
-      navigate("/login");
+      navigate(ROUTE.LOGIN);
     }
   }, []);
   const { user } = useSelector((state) => state.user);

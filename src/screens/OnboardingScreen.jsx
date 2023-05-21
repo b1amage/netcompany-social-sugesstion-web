@@ -24,6 +24,7 @@ const OnboardingScreen = () => {
     <Screen className="!w-screen h-screen max-w-none">
       <>
         <div className="relative h-full navigation-wrapper">
+          {/* SLIDES */}
           <div ref={sliderRef} className="h-full keen-slider">
             {onboardingScreens.map((slide) => (
               <Slide slide={slide} key={slide.heading}></Slide>
