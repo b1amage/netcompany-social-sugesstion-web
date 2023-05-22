@@ -1,5 +1,6 @@
+
+import React, { Suspense, useState, useEffect } from "react";
 import ROUTE from "@/constants/routes";
-import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 const OnboardingScreen = React.lazy(() => import("@/screens/OnboardingScreen"));
 const VerifyScreen = React.lazy(() => import("@/screens/VerifyScreen"));
@@ -14,10 +15,22 @@ const MyEvent = React.lazy(() => import("@/screens/MyEvent"));
 const Navbar = React.lazy(() => import("@/components/navbar/Navbar"));
 const ProfileScreen = React.lazy(() => import("@/screens/ProfileScreen"));
 
+
 const AppRoutes = () => {
+  const [isLogin, setIsLogin] = useState(false)
+  const user = JSON.parse(localStorage.getItem("user")) || null
+  useEffect(() => {
+    if (user){
+      setIsLogin(true)
+      return
+    } else{
+      setIsLogin(false)
+    }
+  }, [user, isLogin])
   return (
-    <Suspense fallback={<LoadingScreen />}>
-      {/* <Navbar /> */}
+    <>
+      {isLogin && <Navbar />}
+      <Suspense fallback={<LoadingScreen />}>
       <Routes>
         <Route path={ROUTE.ONBOARDING} element={<OnboardingScreen />} />
         <Route path={ROUTE.HOME} element={<HomeScreen />} />
@@ -31,6 +44,8 @@ const AppRoutes = () => {
         <Route path={ROUTE.NOT_FOUND} element={<NotFoundScreen />} />
       </Routes>
     </Suspense>
+    </>
+    
   );
 };
 

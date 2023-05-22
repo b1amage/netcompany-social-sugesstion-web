@@ -2,7 +2,7 @@ import React from 'react'
 
 const MyRouteScreen = () => {
   return (
-    <div>MyRouteScreen</div>
+    <div className='h-screen'>MyRouteScreen</div>
   )
 }
 
