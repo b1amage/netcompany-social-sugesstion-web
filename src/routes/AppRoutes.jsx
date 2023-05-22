@@ -1,5 +1,8 @@
+
 import React, { Suspense, useState, useEffect } from "react";
+import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
+const OnboardingScreen = React.lazy(() => import("@/screens/OnboardingScreen"));
 const VerifyScreen = React.lazy(() => import("@/screens/VerifyScreen"));
 const LoadingScreen = React.lazy(() => import("@/screens/LoadingScreen"));
 const HomeScreen = React.lazy(() => import("@/screens/HomeScreen"));
@@ -12,17 +15,6 @@ const MyEvent = React.lazy(() => import("@/screens/MyEvent"));
 const Navbar = React.lazy(() => import("@/components/navbar/Navbar"));
 const ProfileScreen = React.lazy(() => import("@/screens/ProfileScreen"));
 
-// import VerifyScreen from "@/screens/VerifyScreen";
-// import LoadingScreen from "@/screens/LoadingScreen";
-// import HomeScreen from "@/screens/HomeScreen";
-// import LoginScreen from "@/screens/LoginScreen";
-// import NotFoundScreen from "@/screens/404Screen";
-// import MyRouteScreen from "@/screens/MyRouteScreen";
-// import AccountScreen from "@/screens/AccountScreen";
-// import PlanEventScreen from "@/screens/PlanEventScreen";
-// import MyEvent from "@/screens/MyEvent";
-// import Navbar from "@/components/navbar/Navbar";
-// import ProfileScreen from "@/screens/ProfileScreen";
 
 const AppRoutes = () => {
   const [isLogin, setIsLogin] = useState(false)
@@ -40,15 +32,16 @@ const AppRoutes = () => {
       {isLogin && <Navbar />}
       <Suspense fallback={<LoadingScreen />}>
       <Routes>
-        <Route path="/" element={<HomeScreen />} />
-        <Route path="/login" element={<LoginScreen />} />
-        <Route path="/verify" element={<VerifyScreen />} />
-        <Route path="/profile" element={<ProfileScreen />} />
-        <Route path="*" element={<NotFoundScreen />} />
+        <Route path={ROUTE.ONBOARDING} element={<OnboardingScreen />} />
+        <Route path={ROUTE.HOME} element={<HomeScreen />} />
+        <Route path={ROUTE.LOGIN} element={<LoginScreen />} />
+        <Route path={ROUTE.VERIFY} element={<VerifyScreen />} />
+        <Route path={ROUTE.PROFILE} element={<ProfileScreen />} />
         <Route path="/account" element={<AccountScreen />} />
         <Route path="/plan-event" element={<PlanEventScreen />} />
         <Route path="/my-event" element={<MyEvent />} />
         <Route path="/my-route" element={<MyRouteScreen />} />
+        <Route path={ROUTE.NOT_FOUND} element={<NotFoundScreen />} />
       </Routes>
     </Suspense>
     </>

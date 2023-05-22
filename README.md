@@ -4,6 +4,14 @@
 
 https://net-social.netlify.app
 
+# Local Usage
+
+```
+  $ git clone https://github.com/b1amage/netcompany-social-sugesstion-web.git
+  $ npx yarn
+  $ NODE_ENV=dev npx yarn dev
+```
+
 ### Course Information
 
 - University: Royal Melbourne Institution of Technology (RMIT)
@@ -15,8 +23,8 @@ https://net-social.netlify.app
 ### Stakeholders
 
 - Academic Supervisor: Dr. Tran Minh Tuan
-- Industrial Supervisor (PO): Mr. Quang Le
-- Industrial Supervisor (PM): Mr. Nguyen Tra
+- Industrial Supervisor (PO): Mr. Le Duy Quang
+- Industrial Supervisor (PM): Mr. Tra Ngoc Nguyen
 
 ### Contributors
 
