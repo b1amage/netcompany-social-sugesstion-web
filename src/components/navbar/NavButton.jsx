@@ -7,8 +7,9 @@ const NavButton = ({to, label, src, onClick, isActive}) => {
     <Link
       onClick={onClick}
       to={to}
-      className={`flex items-center py-4 pl-2 pr-20 mx-3 my-2 md:mx-0 md:px-4 hover:bg-gray-50/10 rounded-lg duration-200 cursor-pointer md:hover:bg-gray-200 md:bg-gray-50/10 bg-gray-200" 
+      className={`flex items-center py-4 pl-3 pr-20 mx-3 my-2 md:mx-0 md:px-4 hover:bg-gray-50/10 rounded-lg duration-200 cursor-pointer md:hover:bg-gray-200 md:bg-gray-50/10 bg-gray-200" 
       ${isActive && 'bg-gray-50/10'}`}
+      prefetch="true"
     >
       <Image
         src={src}
