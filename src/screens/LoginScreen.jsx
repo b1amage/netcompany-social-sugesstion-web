@@ -15,27 +15,36 @@ const LoginScreen = () => {
   const dispatch = useDispatch();
 
   return (
-    <Screen className="flex flex-col px-4 py-3 xl:py-20 bg-login">
-      <Wrapper col="true" className="mt-8 justify-self-start">
-        <Heading>Welcome to Netcompany Suggesstion App</Heading>
-        <SubHeading>Let's sign in</SubHeading>
-      </Wrapper>
-
+    <Screen className="flex flex-col px-4 py-3 xl:py-20 xl:grid xl:grid-cols-2 xl:gap-20">
       <Image
-        className="flex flex-1 w-[240px] h-[240px] lg:w-[400px] lg:h-[500px] mx-auto mt-20"
-        src={loginImage}
+        className="hidden xl:block"
+        src="https://images.unsplash.com/photo-1579487785973-74d2ca7abdd5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80"
       />
+      <Wrapper col="true" className="!flex-1 !justify-between">
+        <Wrapper col="true" className="self-start mt-8 justify-items-start">
+          <Heading>Welcome to Netcompany Suggesstion App</Heading>
+          <SubHeading>Let's sign in</SubHeading>
+        </Wrapper>
 
-      <Wrapper>
-        <Button
-          className="bg-white border shadow-lg !text-neutral-800 border-neutral-600 animate-moveInBottom"
-          icon={microsoftIcon}
-          onClick={() => dispatch(login(navigate))}
-        >
-          Sign in with Microsoft
-        </Button>
+        <Image
+          className="flex w-[300px] h-[300px] md:w-[380px] md:h-[380px] lg:w-[450px] lg:h-[450px] mx-auto drop-shadow-xl xl:mx-0"
+          src={loginImage}
+        />
 
-        <Button onClick={() => dispatch(logout())}>Logout</Button>
+        <Wrapper>
+          <Button
+            className="bg-white border shadow-lg !text-neutral-800 border-neutral-600 animate-moveInBottom xl:my-0"
+            icon={microsoftIcon}
+            onClick={() => dispatch(login(navigate))}
+          >
+            Sign in with Microsoft
+          </Button>
+
+          {/* // !TODO: Remove when done testing */}
+          <Button className="xl:my-0" onClick={() => dispatch(logout())}>
+            Logout
+          </Button>
+        </Wrapper>
       </Wrapper>
     </Screen>
   );
