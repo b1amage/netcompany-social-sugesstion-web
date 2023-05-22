@@ -23,8 +23,8 @@ https://net-social.netlify.app
 ### Stakeholders
 
 - Academic Supervisor: Dr. Tran Minh Tuan
-- Industrial Supervisor (PO): Mr. Quang Le
-- Industrial Supervisor (PM): Mr. Nguyen Tra
+- Industrial Supervisor (PO): Mr. Le Duy Quang
+- Industrial Supervisor (PM): Mr. Tra Ngoc Nguyen
 
 ### Contributors
 
