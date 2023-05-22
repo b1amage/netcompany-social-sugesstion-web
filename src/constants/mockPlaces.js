@@ -3,7 +3,7 @@ const placeList = [
     title: "The Running Bean",
     address: "33 Mac Thi Buoi, District 1, Ho Chi Minh city",
     images: [
-      "https://static.riviu.co/960/image/2021/12/21/ec2de36336eea49ea87eaf3f6e8a9e3d_output.jpeg",
+      "https://noithatkendesign.vn/storage/app/media/uploaded-files/thiet-ke-the-running-bean-3.jpg",
       "https://theme.hstatic.net/200000196083/1000658513/14/en_blog_banner_2.png?v=33",
     ],
     category: "Coffee",
@@ -43,7 +43,7 @@ const placeList = [
     title: "The Running Bean",
     address: "33 Mac Thi Buoi, District 1, Ho Chi Minh city",
     images: [
-      "https://static.riviu.co/960/image/2021/12/21/ec2de36336eea49ea87eaf3f6e8a9e3d_output.jpeg",
+      "https://noithatkendesign.vn/storage/app/media/uploaded-files/thiet-ke-the-running-bean-3.jpg",
       "https://theme.hstatic.net/200000196083/1000658513/14/en_blog_banner_2.png?v=33",
     ],
     category: "Coffee",
@@ -83,7 +83,7 @@ const placeList = [
     title: "The Running Bean",
     address: "33 Mac Thi Buoi, District 1, Ho Chi Minh city",
     images: [
-      "https://static.riviu.co/960/image/2021/12/21/ec2de36336eea49ea87eaf3f6e8a9e3d_output.jpeg",
+      "https://noithatkendesign.vn/storage/app/media/uploaded-files/thiet-ke-the-running-bean-3.jpg",
       "https://theme.hstatic.net/200000196083/1000658513/14/en_blog_banner_2.png?v=33",
     ],
     category: "Coffee",
