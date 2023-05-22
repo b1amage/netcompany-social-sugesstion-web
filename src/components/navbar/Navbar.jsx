@@ -8,6 +8,7 @@ import logo from "@/assets/netcompany_logo.svg";
 import { darkIcons, lightIcons } from "@/constants/navIcons";
 import darkMenu from "@/assets/dark-menu.svg";
 import close from "@/assets/close.svg";
+import { createPortal } from "react-dom";
 
 const BREAK_POINT_NAVBAR = 768;
 
@@ -15,7 +16,7 @@ const Navbar = () => {
   const [show, setShow] = useState(false);
   const viewport = useViewport();
 
-  return (
+  return createPortal(
     <nav className="bg-white sticky w-full z-50 top-0 left-0 border-b border-gray-200">
       <div className="">
         {/* Logo */}
@@ -86,7 +87,7 @@ const Navbar = () => {
           </div>
         )}
       </div>
-    </nav>
+    </nav>, document.querySelector('.navbar-container')
   );
 };
 
