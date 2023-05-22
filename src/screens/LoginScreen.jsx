@@ -21,7 +21,10 @@ const LoginScreen = () => {
         src="https://images.unsplash.com/photo-1579487785973-74d2ca7abdd5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80"
       />
       <Wrapper col="true" className="!flex-1 !justify-between">
-        <Wrapper col="true" className="self-start mt-8 justify-items-start">
+        <Wrapper
+          col="true"
+          className="self-start mt-8 xl:mt-0 justify-items-start"
+        >
           <Heading>Welcome to Netcompany Suggesstion App</Heading>
           <SubHeading>Let's sign in</SubHeading>
         </Wrapper>
