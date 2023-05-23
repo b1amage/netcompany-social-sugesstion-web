@@ -2,7 +2,7 @@ import React from 'react'
 
 const PlanEventScreen = () => {
   return (
-    <div>PlanEventScreen</div>
+    <div className='h-screen'>PlanEventScreen</div>
   )
 }
 

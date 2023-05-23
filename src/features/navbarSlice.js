@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { useNavigate } from "react-router-dom";
 
 const navbarSlice = createSlice({
   name: "navbar",
@@ -8,8 +7,7 @@ const navbarSlice = createSlice({
     isAdded: false,
     isShowNotification: false,
     isShowFilter: false,
-    isLoading: false,
-    currentPath: window.location.pathname
+    currentPath: ''
   },
   reducers: {
     handleOpenSideBarClick(state, action) {
@@ -25,7 +23,8 @@ const navbarSlice = createSlice({
           state.isShowNotification = false;
           state.isShowFilter = false;
           return;
-        case "/my-event":
+        case "/my-event": 
+        case "/":
           state.isAdded = true;
           state.isShowNotification = true;
           state.isShowFilter = true;
@@ -35,30 +34,25 @@ const navbarSlice = createSlice({
           state.isShowNotification = false;
           state.isShowFilter = false;
           return;
-        case "/plan-event":
+        default:
           state.isAdded = false;
           state.isShowNotification = false;
           state.isShowFilter = false;
           return;
-        default:
-          state.isAdded = true;
-          state.isShowNotification = true;
-          state.isShowFilter = true;
-          return;
       }
     },
-    directTo(state, action) {
-      console.log(action.payload);
-      state.isMenuClicked = false;
-      window.history.pushState({}, '', action.payload)
-      window.location.href = action.payload
-      state.isLoading = true
-      validatePathname(state.currentPath)
-      state.isLoading = false
-    },
+    // directTo(state, action) {
+    //   console.log(action.payload);
+    //   state.isMenuClicked = false;
+    //   // window.history.pushState({}, '', action.payload)
+    //   window.location.href = action.payload
+    //   state.isLoading = true
+    //   validatePathname(state.currentPath)
+    //   state.isLoading = false
+    // },
   },
 });
 
-export const { handleCloseSideBarClick, directTo, handleOpenSideBarClick, validatePathname } =
+export const { handleCloseSideBarClick, handleOpenSideBarClick, validatePathname } =
   navbarSlice.actions;
 export const navbarReducer = navbarSlice.reducer;

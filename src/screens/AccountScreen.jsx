@@ -2,7 +2,7 @@ import React from 'react'
 
 const AccountScreen = () => {
   return (
-    <div>AccountScreen</div>
+    <div className='h-screen'>AccountScreen</div>
   )
 }
 

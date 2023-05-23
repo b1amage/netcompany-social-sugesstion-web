@@ -5,7 +5,7 @@ import generateId from "@/utilities/generateId";
 const PreferencesSelect = ({ onSelect, categoryList, locationCategories }) => {
   return (
     <div>
-      <Label required>Preferences</Label>
+      <Label>Preferences</Label>
 
       <div className="flex flex-wrap gap-2 mt-2">
         {categoryList.map((item) => (
