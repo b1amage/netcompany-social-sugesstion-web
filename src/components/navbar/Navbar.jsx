@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import useViewport from "@/hooks/useScreenWidth";
 import NavButton from "./NavButton";
@@ -9,6 +9,7 @@ import { darkIcons, lightIcons } from "@/constants/navIcons";
 import darkMenu from "@/assets/dark-menu.svg";
 import close from "@/assets/close.svg";
 import { createPortal } from "react-dom";
+import useOnClickOutside from "@/hooks/useOnClickOutside";
 
 const BREAK_POINT_NAVBAR = 768;
 
@@ -16,8 +17,11 @@ const Navbar = () => {
   const [show, setShow] = useState(false);
   const viewport = useViewport();
 
+  const navbarRef = useRef()
+  useOnClickOutside(navbarRef, () => setShow(false))
+
   return createPortal(
-    <nav className="bg-white sticky w-full z-50 top-0 left-0 border-b border-gray-200">
+    <nav className="bg-white sticky w-full z-50 top-0 left-0 border-b border-gray-200" >
       <div className="">
         {/* Logo */}
         {viewport.width > BREAK_POINT_NAVBAR && (
@@ -64,8 +68,8 @@ const Navbar = () => {
           <div
             className=''
           >
-            {show && <div className="fixed md:hidden inset-0 bg-neutral-100 duration-300"></div>}
-            <ul className={`flex flex-col ${show ? 'translate-x-0' : '-translate-x-full'} duration-300 fixed top-0 h-full pb-6 text-white bg-primary-400 md:mt-0 md:text-sm md:font-medium md:bg-white`}>
+            {show && <div className="fixed md:hidden inset-0 bg-neutral-100 duration-300" ></div>}
+            <ul ref={navbarRef} className={`flex flex-col ${show ? 'translate-x-0' : '-translate-x-full'} duration-300 fixed top-0 h-full pb-6 text-white bg-primary-400 md:mt-0 md:text-sm md:font-medium md:bg-white`}>
               <Image
                 className="w-[28px] h-[28px] ml-5 my-6 md:hidden "
                 src={close}
@@ -80,7 +84,7 @@ const Navbar = () => {
                     label={link.label}
                     src={lightIcons[index]}
                     isActive={window.location.pathname === link.path}
-                    onClick={() => setShow(!show)}
+                    // onClick={() => setShow(!show)}
                   />
                 ))}
             </ul>
