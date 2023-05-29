@@ -17,18 +17,18 @@ const Navbar = () => {
   const [show, setShow] = useState(false);
   const viewport = useViewport();
 
-  const navbarRef = useRef()
-  useOnClickOutside(navbarRef, () => setShow(false))
+  const navbarRef = useRef();
+  useOnClickOutside(navbarRef, () => setShow(false));
 
   return createPortal(
-    <nav className="bg-white sticky w-full z-50 top-0 left-0 border-b border-gray-200" >
+    <nav className="sticky top-0 left-0 z-50 w-full bg-white border-b border-gray-200">
       <div className="">
         {/* Logo */}
         {viewport.width > BREAK_POINT_NAVBAR && (
           <Link to="/" className="">
             {/* <Logo className="!w-14 !h-14" /> */}
             <Image
-              className="w-full py-4 bg-primary-400 rounded-none flex justify-center"
+              className="flex justify-center w-full py-4 rounded-none bg-primary-400"
               imageClassName="!w-fit"
               src={logo}
               alt="logo"
@@ -52,7 +52,7 @@ const Navbar = () => {
         {/* Navigation */}
 
         {viewport.width > BREAK_POINT_NAVBAR ? (
-          <div className="flex p-4 mt-0 justify-center text-sm font-medium bg-transparent border-0 rounded-lg">
+          <div className="flex justify-center p-4 mt-0 text-sm font-medium bg-transparent border-0 rounded-lg">
             {navlinks.length > 0 &&
               navlinks.map((link, index) => (
                 <NavButton
@@ -65,11 +65,16 @@ const Navbar = () => {
               ))}
           </div>
         ) : (
-          <div
-            className=''
-          >
-            {show && <div className="fixed md:hidden inset-0 bg-neutral-100/20 duration-300" ></div>}
-            <ul ref={navbarRef} className={`flex flex-col ${show ? 'translate-x-0' : '-translate-x-full'} duration-300 fixed top-0 h-full pb-6 text-white bg-primary-400 md:mt-0 md:text-sm md:font-medium md:bg-white`}>
+          <div className="">
+            {show && (
+              <div className="fixed inset-0 duration-300 md:hidden bg-black/50 backdrop-blur-md"></div>
+            )}
+            <ul
+              ref={navbarRef}
+              className={`flex flex-col ${
+                show ? "translate-x-0" : "-translate-x-full"
+              } duration-300 fixed top-0 h-full pb-6 text-white bg-primary-400 md:mt-0 md:text-sm md:font-medium md:bg-white`}
+            >
               <Image
                 className="w-[28px] h-[28px] ml-5 my-6 md:hidden "
                 src={close}
@@ -91,7 +96,8 @@ const Navbar = () => {
           </div>
         )}
       </div>
-    </nav>, document.querySelector('.navbar-container')
+    </nav>,
+    document.querySelector(".navbar-container")
   );
 };
 
