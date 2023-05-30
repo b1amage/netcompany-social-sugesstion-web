@@ -38,6 +38,7 @@ const CreateLocationScreen = () => {
     screen.style.overflow = 'hidden'
     screen.style.height = '100vh'
   }  
+
   const handleCloseImage = () => {
     setIsShowImage(false);
     screen.style.overflow = 'auto'
@@ -77,6 +78,7 @@ const CreateLocationScreen = () => {
     console.log(data)
     dispatch(onSubmitForm(data))
   };
+
   const handleOnChangeImage = (e) => {
     (async function () {
       setUploading(true);
@@ -108,8 +110,8 @@ const CreateLocationScreen = () => {
   const dispatch = useDispatch();
   return (
     <Screen className={`px-4`}>
-    <form  onSubmit={handleSubmit} className={`lg:flex gap-8 lg:my-4 ${isShowImage && 'overflow-hidden h-screen'}`}>
-        <div className="w-full flex flex-col gap-4">
+    <form  onSubmit={handleSubmit} className={`lg:flex gap-8 lg:my-4 my-12 ${isShowImage && 'overflow-hidden h-screen'}`}>
+        <div className="w-full flex flex-col gap-4 h-[80vh] lg:h-auto">
           <UploadImage
             className="!bg-transparent border border-dashed rounded-lg lg:my-0 h-full"
             icon={camera}
@@ -126,7 +128,7 @@ const CreateLocationScreen = () => {
           />
         </div>
 
-        <Wrapper col className="w-full">
+        <Wrapper col className="w-full my-4">
           <Dropdown
             label="Category"
             options={categoryList}
