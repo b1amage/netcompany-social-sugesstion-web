@@ -21,7 +21,7 @@
     useOnClickOutside(navbarRef, () => setShow(false));
 
     return createPortal(
-      <nav className=" w-full bg-white border-b border-gray-200">
+      <nav className="w-full bg-white border-b border-gray-200">
         <div className="">
           {/* Logo */}
           {viewport.width > BREAK_POINT_NAVBAR && (
