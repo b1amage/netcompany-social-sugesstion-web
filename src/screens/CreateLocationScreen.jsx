@@ -22,7 +22,6 @@ import {
   addImage
 } from "@/features/createLocationFormSlice";
 import axios from "axios";
-import { imageList } from "@/constants/images";
 import { onSubmitForm} from "@/features/createLocationFormSlice";
 import Portal from "@/components/HOC/Portal";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
@@ -33,6 +32,7 @@ const CreateLocationScreen = () => {
   const [uploading, setUploading] = useState(false);
   const [isShowImage, setIsShowImage] = useState(false);
   const screen = document.getElementById('root')
+
   const handleShowImage = () => {
     setIsShowImage(true)
     screen.style.overflow = 'hidden'
@@ -186,7 +186,7 @@ const CreateLocationScreen = () => {
       </form>
       {isShowImage && (
         <Portal location="body">
-          <div className="absolute z-[9999] h-fit bg-black bg-opacity-80 flex-center cursor-pointer px-12 py-8 top-0">
+          <div className="absolute z-[9999] inset-0 bg-black bg-opacity-80 flex-center cursor-pointer px-20 py-12 top-0">
             <Image
               _ref={avatarRef}
               src={images[imgIndex]}

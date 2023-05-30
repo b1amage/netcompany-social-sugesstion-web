@@ -26,10 +26,10 @@ const Dropdown = ({ label, options, value, onChange }) => {
     );
   });
   return (
-    <div className={`flex flex-col ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
+    <div className={`flex flex-col relative ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
       <Label required>{label}</Label>
       <div
-        className="w-full p-4 text-sm transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:p-4 focus:border-primary-100 placeholder:text-secondary-100 font-bold relative"
+        className="w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:p-4 focus:border-primary-100 placeholder:text-secondary-100 font-bold"
         onClick={handleClick}
       >
         {value?.title || "SELECT THE CATEGORY"}
@@ -41,7 +41,7 @@ const Dropdown = ({ label, options, value, onChange }) => {
       </div>
       {isOpen && (
         <ul
-          className={`w-full my-2 px-2 text-sm transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:px-2 focus:border-primary-100 placeholder:text-secondary-100 font-bold`}
+          className={`border border-black w-full max-h-[400px] overflow-scroll absolute z-50 my-2 px-2 text-sm top-full transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:px-2 focus:border-primary-100 placeholder:text-secondary-100 font-bold`}
         >
           {renderedOptions}
         </ul>
