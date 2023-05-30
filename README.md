@@ -7,10 +7,12 @@ https://net-social.netlify.app
 # Local Usage
 
 ```
-  $ git clone https://github.com/b1amage/netcompany-social-sugesstion-web.git
-  $ npx yarn
-  $ NODE_ENV=dev npx yarn dev
+  git clone https://github.com/b1amage/netcompany-social-sugesstion-web.git
+  npx yarn
+  NODE_ENV=dev npx yarn dev
 ```
+
+NOTE: when using in local, use MUST clone the backend repository: https://github.com/TuanDao2002/netcompany-social-suggestion-backend
 
 ### Course Information
 

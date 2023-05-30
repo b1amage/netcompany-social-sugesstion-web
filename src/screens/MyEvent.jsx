@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const MyEvent = () => {
-  return (
-    <div className='h-screen'>MyEvent</div>
-  )
-}
+  return <div className="h-screen">MyEvent</div>;
+};
 
-export default MyEvent
+export default MyEvent;

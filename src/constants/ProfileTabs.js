@@ -1,17 +1,13 @@
-import {
-  AiOutlineInfoCircle,
-  AiOutlineHeart,
-  AiFillInfoCircle,
-  AiFillHeart,
-} from "react-icons/ai";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { FaRegStickyNote, FaStickyNote } from "react-icons/fa";
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import placeList from "./mockPlaces";
 
 const profileTabs = [
   {
     title: "own post",
-    icon: AiOutlineInfoCircle,
-    fillIcon: AiFillInfoCircle,
+    icon: FaRegStickyNote,
+    fillIcon: FaStickyNote,
     placeList: placeList,
   },
   {
