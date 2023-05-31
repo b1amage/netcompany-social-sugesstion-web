@@ -19,31 +19,32 @@ import {
   changeDescription,
   changePrice,
   changeTitle,
-  addImage
+  addImage,
 } from "@/features/createLocationFormSlice";
 import axios from "axios";
-import { onSubmitForm} from "@/features/createLocationFormSlice";
+import { onSubmitForm } from "@/features/createLocationFormSlice";
 import Portal from "@/components/HOC/Portal";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import Image from "@/components/image/Image";
+import Map from "@/components/map/Map";
 
 const CreateLocationScreen = () => {
   const [imgIndex, setImgIndex] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [isShowImage, setIsShowImage] = useState(false);
-  const screen = document.getElementById('root')
+  const screen = document.getElementById("root");
 
   const handleShowImage = () => {
-    setIsShowImage(true)
-    screen.style.overflow = 'hidden'
-    screen.style.height = '100vh'
-  }  
+    setIsShowImage(true);
+    screen.style.overflow = "hidden";
+    screen.style.height = "100vh";
+  };
 
   const handleCloseImage = () => {
     setIsShowImage(false);
-    screen.style.overflow = 'auto'
-    screen.style.height = 'auto'
-  }
+    screen.style.overflow = "auto";
+    screen.style.height = "auto";
+  };
 
   const avatarRef = useRef();
   useOnClickOutside(avatarRef, handleCloseImage);
@@ -75,8 +76,8 @@ const CreateLocationScreen = () => {
       description: description,
       price: price,
     };
-    console.log(data)
-    dispatch(onSubmitForm(data))
+    console.log(data);
+    dispatch(onSubmitForm(data));
   };
 
   const handleOnChangeImage = (e) => {
@@ -96,7 +97,7 @@ const CreateLocationScreen = () => {
         .then(function (response) {
           console.log(response);
           dispatch(changeImage(response.data.image));
-          dispatch(addImage(response.data.image))
+          dispatch(addImage(response.data.image));
           localStorage.setItem("locationImage", response.data.image);
           setUploading(false);
         })
@@ -110,17 +111,21 @@ const CreateLocationScreen = () => {
   const dispatch = useDispatch();
   return (
     <Screen className={`px-4`}>
-    <form  onSubmit={handleSubmit} className={`lg:flex gap-8 lg:my-4 my-12 ${isShowImage && 'overflow-hidden h-screen'}`}>
+      <form
+        onSubmit={handleSubmit}
+        className={`lg:flex gap-8 lg:my-4 my-12 ${
+          isShowImage && "overflow-hidden h-screen"
+        }`}
+      >
         <div className="w-full flex flex-col gap-4 h-[80vh] lg:h-auto">
           <UploadImage
             className="!bg-transparent border border-dashed rounded-lg lg:my-0 h-full"
             icon={camera}
-
             uploading={uploading}
             onChange={handleOnChangeImage}
           />
           <PreviewImage
-            className=''
+            className=""
             imageList={images}
             index={imgIndex}
             onClick={handleSlider}
@@ -128,7 +133,7 @@ const CreateLocationScreen = () => {
           />
         </div>
 
-        <Wrapper col className="w-full my-4">
+        <Wrapper col className="w-full my-4 lg:my-0">
           <Dropdown
             label="Category"
             options={categoryList}
@@ -136,7 +141,7 @@ const CreateLocationScreen = () => {
             onChange={(option) => dispatch(changeCategory(option))}
           />
 
-          <Wrapper className="my-4" col>
+          <Wrapper className="" col>
             <Input
               label="Title"
               required
@@ -157,9 +162,11 @@ const CreateLocationScreen = () => {
               value={address}
               onChange={(e) => dispatch(changeAddress(e.target.value))}
             />
+
+            <Map />
           </Wrapper>
 
-          <Wrapper className="my-4" col>
+          <Wrapper className="" col>
             <Label>Description</Label>
             <textarea
               className="w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none"
