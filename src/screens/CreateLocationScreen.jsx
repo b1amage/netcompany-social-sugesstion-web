@@ -18,6 +18,7 @@ import {
   changeAddress,
   changeDescription,
   changePrice,
+  changeCurrency,
   changeTitle,
   addImage,
 } from "@/features/createLocationFormSlice";
@@ -27,6 +28,7 @@ import Portal from "@/components/HOC/Portal";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import Image from "@/components/image/Image";
 import Map from "@/components/map/Map";
+import { currencyList } from "@/constants/currencyList";
 
 const CreateLocationScreen = () => {
   const [imgIndex, setImgIndex] = useState(0);
@@ -49,7 +51,7 @@ const CreateLocationScreen = () => {
   const avatarRef = useRef();
   useOnClickOutside(avatarRef, handleCloseImage);
 
-  const { images, image, category, title, address, description, price } =
+  const { images, image, category, title, address, description, price, currency } =
     useSelector(({ createLocationForm }) => {
       return {
         images: createLocationForm.images,
@@ -59,6 +61,7 @@ const CreateLocationScreen = () => {
         address: createLocationForm.address,
         description: createLocationForm.description,
         price: createLocationForm.price,
+        currency: createLocationForm.currency,
       };
     });
 
@@ -136,12 +139,13 @@ const CreateLocationScreen = () => {
         <Wrapper col className="w-full my-4 lg:my-0">
           <Dropdown
             label="Category"
+            defaultTitle="SELECT THE CATEGORY"
             options={categoryList}
             value={category}
             onChange={(option) => dispatch(changeCategory(option))}
           />
 
-          <Wrapper className="" col>
+          <Wrapper className="my-4" col>
             <Input
               label="Title"
               required
@@ -166,7 +170,7 @@ const CreateLocationScreen = () => {
             <Map />
           </Wrapper>
 
-          <Wrapper className="" col>
+          <Wrapper className="my-4" col>
             <Label>Description</Label>
             <textarea
               className="w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none"
@@ -176,15 +180,28 @@ const CreateLocationScreen = () => {
             />
           </Wrapper>
 
-          <Wrapper col className="">
+          <Wrapper className=' gap-8'>
+            <Input label="Open time" />
+            <Input label="Close time" />
+          </Wrapper>
+
+          <Wrapper className="!block !relative my-4">
             <Input
               label="Price"
-              className="rounded-lg"
+              className="rounded-lg h-[80px]"
               type="number"
               required
               value={price}
               onChange={(e) => dispatch(changePrice(e.target.value))}
               min={0}
+              
+            />
+            <Dropdown
+              className='!absolute top-1/2 z-50 -translate-y-3 lg:-translate-y-2 right-4 w-[100px] border border-black rounded-lg'
+              options={currencyList}
+              value={currency}
+              defaultTitle={currency}
+              onChange={(option) => dispatch(changeCurrency(option))}
             />
           </Wrapper>
 

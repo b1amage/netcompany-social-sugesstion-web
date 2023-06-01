@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import dropdown from "@/assets/dropdown.svg";
 import Label from "./Label";
 
-const Dropdown = ({ label, options, value, onChange }) => {
+const Dropdown = ({ label, options, value, onChange, defaultTitle, className }) => {
   const [isOpen, setIsOpen] = useState(null);
   const handleClick = () => {
     setIsOpen(!isOpen);
@@ -25,14 +25,15 @@ const Dropdown = ({ label, options, value, onChange }) => {
       </li>
     );
   });
+  
   return (
-    <div className={`flex flex-col relative ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
-      <Label required>{label}</Label>
+    <div className={`flex flex-col relative ${label && "gap-1 md:gap-2 lg:gap-3"} ${className}`}>
+      {label && <Label required>{label}</Label>}
       <div
         className="w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:p-4 focus:border-primary-100 placeholder:text-secondary-100 font-bold"
         onClick={handleClick}
       >
-        {value?.title || "SELECT THE CATEGORY"}
+        {value?.title || defaultTitle}
         <Image
           src={dropdown}
           alt="dropdown-btn"

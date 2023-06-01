@@ -10,6 +10,7 @@ const createLocationFormSlice = createSlice({
        address: '',
        description: '',
        price: 0,
+       currency: 'VND',
        err: undefined,
     },
     reducers: {
@@ -31,7 +32,9 @@ const createLocationFormSlice = createSlice({
         changePrice(state, action){
             state.price = action.payload
         },
-        
+        changeCurrency(state, action){
+            state.currency = action.payload
+        },
         onSubmitForm(state, action){
             const data = action.payload
             console.log(data)
@@ -49,5 +52,5 @@ const createLocationFormSlice = createSlice({
     }
 })
 
-export const {changeAddress, changeCategory, changeDescription, changeImage, changePrice, changeTitle, addImage, removeImage, onSubmitForm,} = createLocationFormSlice.actions
+export const {changeAddress, changeCategory, changeDescription, changeImage, changePrice, changeTitle, addImage, removeImage, onSubmitForm, changeCurrency} = createLocationFormSlice.actions
 export const createLocationFormReducer = createLocationFormSlice.reducer
