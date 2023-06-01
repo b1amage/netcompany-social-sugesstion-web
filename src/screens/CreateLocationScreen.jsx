@@ -21,6 +21,8 @@ import {
   changeCurrency,
   changeTitle,
   addImage,
+  changeCloseTime,
+  changeOpenTime,
 } from "@/features/createLocationFormSlice";
 import axios from "axios";
 import { onSubmitForm } from "@/features/createLocationFormSlice";
@@ -51,19 +53,31 @@ const CreateLocationScreen = () => {
   const avatarRef = useRef();
   useOnClickOutside(avatarRef, handleCloseImage);
 
-  const { images, image, category, title, address, description, price, currency } =
-    useSelector(({ createLocationForm }) => {
-      return {
-        images: createLocationForm.images,
-        image: createLocationForm.image,
-        category: createLocationForm.category,
-        title: createLocationForm.title,
-        address: createLocationForm.address,
-        description: createLocationForm.description,
-        price: createLocationForm.price,
-        currency: createLocationForm.currency,
-      };
-    });
+  const {
+    images,
+    image,
+    category,
+    title,
+    address,
+    description,
+    price,
+    currency,
+    openTime,
+    closeTime,
+  } = useSelector(({ createLocationForm }) => {
+    return {
+      images: createLocationForm.images,
+      image: createLocationForm.image,
+      category: createLocationForm.category,
+      title: createLocationForm.title,
+      address: createLocationForm.address,
+      description: createLocationForm.description,
+      openTime: createLocationForm.openTime,
+      closeTime: createLocationForm.closeTime,
+      price: createLocationForm.price,
+      currency: createLocationForm.currency,
+    };
+  });
 
   const handleSlider = (index) => {
     setImgIndex(imgIndex + index);
@@ -77,7 +91,10 @@ const CreateLocationScreen = () => {
       title: title,
       address: address,
       description: description,
+      open: openTime,
+      close: closeTime,
       price: price,
+      currency: currency.value,
     };
     console.log(data);
     dispatch(onSubmitForm(data));
@@ -150,7 +167,7 @@ const CreateLocationScreen = () => {
               label="Title"
               required
               placeholder="Enter the place's name"
-              className="rounded-lg"
+              className={`rounded-lg ${title && "bg-neutral-100"}`}
               value={title}
               onChange={(e) => dispatch(changeTitle(e.target.value))}
             />
@@ -162,7 +179,7 @@ const CreateLocationScreen = () => {
               required
               icon={location}
               placeholder="Enter the address"
-              className="rounded-lg !pr-12"
+              className={`rounded-lg !pr-12 ${address && "bg-neutral-100"}`}
               value={address}
               onChange={(e) => dispatch(changeAddress(e.target.value))}
             />
@@ -173,16 +190,29 @@ const CreateLocationScreen = () => {
           <Wrapper className="my-4" col>
             <Label>Description</Label>
             <textarea
-              className="w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none"
+              className={`w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg border border-black ${description && "bg-neutral-100"} md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none`}
               placeholder="Enter the description"
               value={description}
               onChange={(e) => dispatch(changeDescription(e.target.value))}
             />
           </Wrapper>
 
-          <Wrapper className=' gap-8'>
-            <Input label="Open time" />
-            <Input label="Close time" />
+          <Wrapper className=" gap-8">
+            <Input
+              label="Open time"
+              type="time"
+              className="!w-fit"
+              onChange={(e) => dispatch(changeOpenTime(e.target.value))}
+              // onChange={() => console.log(e.target.value)}
+              
+            />
+            <Input
+              label="Close time"
+              type="time"
+              className="!w-fit"
+              onChange={(e) => dispatch(changeCloseTime(e.target.value))}
+              // onChange={() => console.log(e.target.value)}
+            />
           </Wrapper>
 
           <Wrapper className="!block !relative my-4">
@@ -193,11 +223,11 @@ const CreateLocationScreen = () => {
               required
               value={price}
               onChange={(e) => dispatch(changePrice(e.target.value))}
-              min={0}
-              
+              min={0} 
+              placeholder="Enter the price"
             />
             <Dropdown
-              className='!absolute top-1/2 z-50 -translate-y-3 lg:-translate-y-2 right-4 w-[100px] border border-black rounded-lg'
+              className="!absolute top-1/2 z-50 -translate-y-3 lg:-translate-y-2 right-4 w-[100px] border border-black rounded-lg"
               options={currencyList}
               value={currency}
               defaultTitle={currency}

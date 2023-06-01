@@ -17,7 +17,7 @@ const Dropdown = ({ label, options, value, onChange, defaultTitle, className }) 
   const renderedOptions = options.map((option) => {
     return (
       <li
-        className="py-3 px-2 my-2 hover:bg-gray-200 rounded-lg"
+        className="py-3 px-4 my-2 hover:bg-gray-200 rounded-lg"
         key={option.title}
         onClick={() => handleOptionClick(option)}
       >
@@ -30,7 +30,7 @@ const Dropdown = ({ label, options, value, onChange, defaultTitle, className }) 
     <div className={`flex flex-col relative ${label && "gap-1 md:gap-2 lg:gap-3"} ${className}`}>
       {label && <Label required>{label}</Label>}
       <div
-        className="w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:p-4 focus:border-primary-100 placeholder:text-secondary-100 font-bold"
+        className={`w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg border border-black  ${value && "bg-neutral-100"} md:text-base md:p-4 focus:border-primary-100 placeholder:text-secondary-100 font-bold`}
         onClick={handleClick}
       >
         {value?.title || defaultTitle}
@@ -42,7 +42,7 @@ const Dropdown = ({ label, options, value, onChange, defaultTitle, className }) 
       </div>
       {isOpen && (
         <ul
-          className={`border border-black w-full max-h-[400px] overflow-scroll absolute z-50 my-2 px-2 text-sm top-full transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:px-2 focus:border-primary-100 placeholder:text-secondary-100 font-bold`}
+          className={`border border-black w-full max-h-[400px] block my-4 overflow-y-scroll py-2  absolute z-50 text-sm top-full transition-all duration-300 outline-none bg-neutral-100 md:text-base md:px-2 placeholder:text-secondary-100 font-bold`}
         >
           {renderedOptions}
         </ul>

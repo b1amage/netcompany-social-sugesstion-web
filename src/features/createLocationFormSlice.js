@@ -9,7 +9,9 @@ const createLocationFormSlice = createSlice({
        title: '',
        address: '',
        description: '',
-       price: 0,
+       openTime: '',
+       closeTime: '',
+       price: null,
        currency: 'VND',
        err: undefined,
     },
@@ -28,6 +30,12 @@ const createLocationFormSlice = createSlice({
         },
         changeDescription(state, action){
             state.description = action.payload
+        },
+        changeOpenTime(state, action){
+            state.openTime = action.payload
+        },
+        changeCloseTime(state, action){
+            state.closeTime = action.payload
         },
         changePrice(state, action){
             state.price = action.payload
@@ -52,5 +60,5 @@ const createLocationFormSlice = createSlice({
     }
 })
 
-export const {changeAddress, changeCategory, changeDescription, changeImage, changePrice, changeTitle, addImage, removeImage, onSubmitForm, changeCurrency} = createLocationFormSlice.actions
+export const {changeAddress, changeCategory, changeDescription, changeImage, changePrice, changeTitle, addImage, removeImage, onSubmitForm, changeCurrency, changeOpenTime, changeCloseTime} = createLocationFormSlice.actions
 export const createLocationFormReducer = createLocationFormSlice.reducer

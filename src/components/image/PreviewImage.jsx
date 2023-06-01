@@ -12,7 +12,7 @@ const PreviewImage = ({
   const [isHovered, setIsHovered] = useState(false);
   return (
     <div
-      className={`${className} w-full border border-dashed rounded-lg lg:my-0 relative h-full`}
+      className={`${className} w-full border border-dashed border-black rounded-lg lg:my-0 relative h-full`}
       onMouseLeave={() => setIsHovered(false)}
       onMouseEnter={() => setIsHovered(true)}
     >
@@ -24,6 +24,7 @@ const PreviewImage = ({
             className="absolute inset-0"
             imageClassName=""
             onClick={onClickImage}
+            loading='lazy'
           />
           <GoChevronLeft
             className={`top-1/2 -translate-y-1/2 absolute w-[40px] h-[60px] text-xl text-white bg-black/80 rounded-e-lg cursor-pointer active:opacity-80 ${
