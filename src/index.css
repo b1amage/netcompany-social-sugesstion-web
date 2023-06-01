@@ -54,6 +54,12 @@
   .distance-slider {
     @apply !w-full;
   }
+
+  .pac-container {
+    z-index: 9999 !important;
+    display: block !important;
+    background-color: #333;
+  }
 }
 
 .multi-range-slider .bar-left,

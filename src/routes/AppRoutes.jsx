@@ -2,7 +2,11 @@
 import React, { Suspense, useState, useEffect } from "react";
 import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
+
+import AutoCompleteScreen from "@/test/AutoComplete";
+
 const OnboardingScreen = React.lazy(() => import("@/screens/OnboardingScreen"));
+
 const VerifyScreen = React.lazy(() => import("@/screens/VerifyScreen"));
 const LoadingScreen = React.lazy(() => import("@/screens/LoadingScreen"));
 const HomeScreen = React.lazy(() => import("@/screens/HomeScreen"));
@@ -41,7 +45,11 @@ const AppRoutes = () => {
         <Route path="/plan-event" element={<PlanEventScreen />} />
         <Route path="/my-event" element={<MyEvent />} />
         <Route path="/my-route" element={<MyRouteScreen />} />
+
+        <Route path="/atc" element={<AutoCompleteScreen />} />
+
         <Route path={ROUTE.NOT_FOUND} element={<NotFoundScreen />} />
+
       </Routes>
     </Suspense>
     </>
