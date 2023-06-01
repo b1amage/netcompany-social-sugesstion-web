@@ -1,6 +1,8 @@
 import React, { Suspense, useState, useEffect } from "react";
 import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
+const CreateLocationScreen = React.lazy(() => import("@/screens/CreateLocationScreen"));
+const AutoCompleteScreen = React.lazy(() => import("@/test/AutoComplete"));
 const OnboardingScreen = React.lazy(() => import("@/screens/OnboardingScreen"));
 
 const VerifyScreen = React.lazy(() => import("@/screens/VerifyScreen"));

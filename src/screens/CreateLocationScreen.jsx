@@ -130,7 +130,7 @@ const CreateLocationScreen = () => {
   // const {width} = useViewport()
   const dispatch = useDispatch();
   return (
-    <Screen className={`px-4`}>
+    <Screen className={`px-4 py-8`}>
       <form
         onSubmit={handleSubmit}
         className={`lg:flex gap-8 lg:my-4 my-12 ${
@@ -144,11 +144,12 @@ const CreateLocationScreen = () => {
             uploading={uploading}
             onChange={handleOnChangeImage}
           />
+          
           <PreviewImage
             className=""
+            src={image}
             imageList={images}
             index={imgIndex}
-            onClick={handleSlider}
             onClickImage={handleShowImage}
           />
         </div>
@@ -156,6 +157,7 @@ const CreateLocationScreen = () => {
         <Wrapper col className="w-full my-4 lg:my-0">
           <Dropdown
             label="Category"
+            required
             defaultTitle="SELECT THE CATEGORY"
             options={categoryList}
             value={category}
@@ -188,51 +190,91 @@ const CreateLocationScreen = () => {
           </Wrapper>
 
           <Wrapper className="my-4" col>
-            <Label>Description</Label>
+            <Label required>Description</Label>
             <textarea
-              className={`w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg border border-black ${description && "bg-neutral-100"} md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none`}
+              className={`w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg border border-black ${
+                description && "bg-neutral-100"
+              } md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none`}
               placeholder="Enter the description"
               value={description}
               onChange={(e) => dispatch(changeDescription(e.target.value))}
             />
           </Wrapper>
 
-          <Wrapper className=" gap-8">
-            <Input
-              label="Open time"
-              type="time"
-              className="!w-fit"
-              onChange={(e) => dispatch(changeOpenTime(e.target.value))}
-              // onChange={() => console.log(e.target.value)}
+          <Wrapper col className=" gap-4">
+            <Label required>Calendar</Label>
+            <Wrapper className='justify-between'>
+              <Input label="Day" value="Weekday" className='h-[60px]' disabled />
+              <Wrapper className=''>
+                <Input
+                  label="Open time"
+                  type="time"
+                  className="!w-fit h-[60px]"
+                  onChange={(e) => dispatch(changeOpenTime(e.target.value))}
+                  // onChange={() => console.log(e.target.value)}
+                />
+                <Input
+                  label="Close time"
+                  type="time"
+                  className="!w-fit h-[60px]"
+                  onChange={(e) => dispatch(changeCloseTime(e.target.value))}
+                  // onChange={() => console.log(e.target.value)}
+                />
+              </Wrapper>
               
-            />
-            <Input
-              label="Close time"
-              type="time"
-              className="!w-fit"
-              onChange={(e) => dispatch(changeCloseTime(e.target.value))}
-              // onChange={() => console.log(e.target.value)}
-            />
+            </Wrapper>
+            <Wrapper className='justify-between'>
+              <Input label="Day" value="Weekend" className='h-[60px]' disabled />
+              <Wrapper className=''>
+                <Input
+                  label="Open time"
+                  type="time"
+                  className="!w-fit h-[60px]"
+                  onChange={(e) => dispatch(changeOpenTime(e.target.value))}
+                  // onChange={() => console.log(e.target.value)}
+                />
+                <Input
+                  label="Close time"
+                  type="time"
+                  className="!w-fit h-[60px]"
+                  onChange={(e) => dispatch(changeCloseTime(e.target.value))}
+                  // onChange={() => console.log(e.target.value)}
+                />
+              </Wrapper>
+              
+            </Wrapper>
           </Wrapper>
 
-          <Wrapper className="!block !relative my-4">
-            <Input
-              label="Price"
-              className="rounded-lg h-[80px]"
-              type="number"
-              required
-              value={price}
-              onChange={(e) => dispatch(changePrice(e.target.value))}
-              min={0} 
-              placeholder="Enter the price"
-            />
-            <Dropdown
-              className="!absolute top-1/2 z-50 -translate-y-3 lg:-translate-y-2 right-4 w-[100px] border border-black rounded-lg"
-              options={currencyList}
-              value={currency}
-              defaultTitle={currency}
-              onChange={(option) => dispatch(changeCurrency(option))}
-            />
+          <Wrapper col className="my-4">
+            <Label>Price per person <i>(optional)</i> </Label>
+            <Wrapper className="justify-between">
+              <Input
+                label="From: "
+                className="rounded-lg w-full"
+                type="number"
+                value={price}
+                onChange={(e) => dispatch(changePrice(e.target.value))}
+                min={0}
+                placeholder="Enter the price"
+              />
+              <Input
+                label="To: "
+                className="rounded-lg w-full"
+                type="number"
+                value={price}
+                onChange={(e) => dispatch(changePrice(e.target.value))}
+                min={0}
+                placeholder="Enter the price"
+              />
+              <Dropdown
+                label="Currency"
+                className="w-fit rounded-lg h-fit"
+                options={currencyList}
+                value={currency}
+                defaultTitle={currency}
+                onChange={(option) => dispatch(changeCurrency(option))}
+              />
+            </Wrapper>
           </Wrapper>
 
           <Button className="mt-8 mb-0" primary active>
