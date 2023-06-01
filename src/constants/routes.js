@@ -4,6 +4,7 @@ const ROUTE = {
   LOGIN: "/login",
   VERIFY: "/verify",
   PROFILE: "/profile",
+  EVENTS: "/events",
   NOT_FOUND: "*",
 };
 
