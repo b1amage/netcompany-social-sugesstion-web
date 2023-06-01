@@ -15,6 +15,7 @@ const AutoCompleteScreen = () => {
     const places = inputRef.current.getPlaces();
 
     if (places) {
+      console.log(places[0]);
       console.log(places[0].geometry.location.lat());
       console.log(places[0].geometry.location.lng());
     }

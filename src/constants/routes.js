@@ -6,6 +6,8 @@ const ROUTE = {
   PROFILE: "/profile",
   EVENTS: "/events",
   NOT_FOUND: "*",
+  DETAILS_LOCATION: "location/details",
+  DETAILS_EVENT: "event/details",
 };
 
 export default ROUTE;

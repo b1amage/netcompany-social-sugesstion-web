@@ -122,3 +122,7 @@
 .drag-and-drop-item.dragging-over {
   border: 2px solid #007bff;
 }
+
+.grad-white {
+  background: linear-gradient(to bottom, #ffffff00, #ffffff);
+}
