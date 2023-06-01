@@ -1,4 +1,5 @@
 import axiosClient from "@/api/axiosClient";
+import ROUTE from "@/constants/routes";
 
 const authApi = {
   async signInWithMicrosoft(msalInstance, navigate) {
@@ -42,7 +43,7 @@ const authApi = {
       const statusCode = error.response.status;
       const unverifiedStatusCode = 406;
       if (statusCode === unverifiedStatusCode) {
-        navigate("/verify");
+        navigate(ROUTE.VERIFY);
       }
     }
   },

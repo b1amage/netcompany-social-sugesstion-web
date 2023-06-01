@@ -1138,7 +1138,7 @@ kdbush@^3.0.0:
 
 keen-slider@^6.8.5:
   version "6.8.5"
-  resolved "https://registry.npmjs.org/keen-slider/-/keen-slider-6.8.5.tgz"
+  resolved "https://registry.yarnpkg.com/keen-slider/-/keen-slider-6.8.5.tgz#1d96ff3ab77f195fc6cacd2e5aecc35d8ceb9702"
   integrity sha512-9yoosfffgTCrkmbX8kCUMWsn9KDgPSkxBof5/0yXde001D1xao7i9ppfxQCCK0MLnoCa+Rdssby0jFbTTUM4rw==
 
 lilconfig@^2.0.5, lilconfig@^2.0.6:

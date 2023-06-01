@@ -24,6 +24,7 @@ module.exports = {
           400: "#5CBCA9",
         },
         neutral: {
+          100: "#D9D9D9",
           200: "#F2F2F6",
           300: "#f5f5f5",
           400: "#E6E6EA",
@@ -84,6 +85,10 @@ module.exports = {
         moveInBottom: "moveInBottom 1.2s ease-out",
         moveInBottomDelay: "moveInBottom 1.8s ease-out",
         zoom: "zoom 1s ease",
+      },
+      backgroundImage: {
+        login:
+          "https://images.unsplash.com/photo-1579487785973-74d2ca7abdd5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80",
       },
     },
     fontFamily: {

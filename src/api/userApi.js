@@ -1,23 +1,18 @@
-// import axiosClient from "@/api/axiosClient";
+import axiosClient from "@/api/axiosClient";
 
-// const authApi = {
-//   async getUserProfile() {
-//     try {
-//       await msalInstance.logoutPopup();
-//       const url = "/auth/logout";
-//       await axiosClient.delete(url, {
-//         withCredentials: true,
-//       });
-//       localStorage.removeItem("idToken");
-//       localStorage.removeItem("registerEmail");
-//       localStorage.removeItem("username");
-//       localStorage.removeItem("avatar");
+const userApi = {
+  async getUserProfile(id) {
+    try {
+      const url = `/user/profile/${id}`;
+      const response = await axiosClient.get(url, {
+        withCredentials: true,
+      });
 
-//       console.log("Logout successfully");
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   },
-// };
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+};
 
-// export default authApi;
+export default userApi;
