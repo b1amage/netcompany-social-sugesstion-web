@@ -62,6 +62,14 @@
   }
 }
 
+.pac-target-input {
+  @apply bg-[#f2f2f6] px-3 py-2 rounded-lg;
+}
+
+.pac-item {
+  @apply py-2 !cursor-pointer;
+}
+
 .multi-range-slider .bar-left,
 .multi-range-slider .bar-right,
 .multi-range-slider .thumb::before,

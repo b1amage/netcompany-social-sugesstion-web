@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import {
   StandaloneSearchBox,
   LoadScript,
@@ -9,7 +9,6 @@ import {
 const key = "AIzaSyALU1H8LRmBHasS1uXNHj-ND9AqctT6P-k";
 
 const AutoCompleteScreen = () => {
-  // const [atc, setAtc] = useState();
   const inputRef = useRef();
 
   const handlePlaceChange = () => {
