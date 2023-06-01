@@ -4,6 +4,13 @@ import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import eventList from "@/constants/mockEvents";
 import Image from "@/components/image/Image";
+import Wrapper from "@/components/wrapper/Wrapper";
+import Heading from "@/components/typography/Heading";
+import Text from "@/components/typography/Text";
+import Guess from "@/components/guess/Guess";
+
+import { BsBookmark, BsHeart } from "react-icons/bs";
+import CommentCard from "@/components/comment/CommentCard";
 
 const DetailsScreen = ({ event }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -29,8 +36,8 @@ const DetailsScreen = ({ event }) => {
 
   return (
     <Screen>
-      <>
-        <div className="navigation-wrapper relative h-[350px]">
+      <Wrapper>
+        <div className="navigation-wrapper w-full relative h-[350px] lg:h-[400px]">
           <div ref={sliderRef} className="h-full keen-slider">
             {images.map((item, index) => (
               <div
@@ -38,7 +45,7 @@ const DetailsScreen = ({ event }) => {
                 className="relative keen-slider__slide number-slide1"
               >
                 <Image src={item} className="!w-full !h-full !rounded-none" />
-                <div className="absolute inset-0 z-40 grad-white"></div>
+                <div className="absolute inset-0 z-40 top-1/2 grad-white"></div>
               </div>
             ))}
           </div>
@@ -87,7 +94,48 @@ const DetailsScreen = ({ event }) => {
             </div>
           )}
         </div>
-      </>
+      </Wrapper>
+
+      <Wrapper col="true" className="px-3 py-2">
+        <Heading>Pizza 4P</Heading>
+        <Text>
+          I booked Pizza Post for my husband's big birthday party and I was very
+          impressed with the way that all the booking arrangements were handled.
+          They were ready for anything, even a guest who doesn't eat tomato or
+          cheese. On the day, they arrived in good time and set up without any
+          fuss. The pizzas were delicious and the service was very efficient.
+          The guys were friendly and helpful and they helped to make the party a
+          great success. I would definitely recommend Pizza Post to anyone who
+          is having a party and wants a food option that is delicious and served
+          up without any fuss or mess, by really nice people.
+        </Text>
+
+        {event ? (
+          <Wrapper col="true" className="my-4">
+            <Heading>Guess List</Heading>
+            <Wrapper className="gap-0 overflow-x-scroll lg:gap-8 snap-mandatory snap-x scroll-smooth">
+              {Array(20)
+                .fill(0)
+                .map((item, index) => (
+                  <Guess key={index} />
+                ))}
+            </Wrapper>
+          </Wrapper>
+        ) : (
+          <Wrapper col="true" className="my-4">
+            {/* Like + Save */}
+            <Wrapper className="!gap-5 pb-5 border-b border-b-neutral-200 w-full">
+              <BsHeart className="text-lg" />
+              <BsBookmark className="text-lg" />
+            </Wrapper>
+
+            {/* Comment */}
+            <Wrapper col="true">
+              <CommentCard />
+            </Wrapper>
+          </Wrapper>
+        )}
+      </Wrapper>
     </Screen>
   );
 };
