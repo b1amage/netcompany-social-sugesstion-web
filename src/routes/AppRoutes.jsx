@@ -18,6 +18,7 @@ const MyEvent = React.lazy(() => import("@/screens/MyEvent"));
 const Navbar = React.lazy(() => import("@/components/navbar/Navbar"));
 const ProfileScreen = React.lazy(() => import("@/screens/ProfileScreen"));
 const TestScreen = React.lazy(() => import("@/screens/TestScreen"));
+const EventsScreen = React.lazy(() => import("@/screens/EventsScreen"));
 
 const AppRoutes = () => {
   const [isLogin, setIsLogin] = useState(false);
@@ -47,6 +48,7 @@ const AppRoutes = () => {
 
           <Route path="/atc" element={<AutoCompleteScreen />} />
           <Route path="/test" element={<TestScreen />} />
+          <Route path={ROUTE.EVENTS} element={<EventsScreen />} />
 
           <Route path={ROUTE.NOT_FOUND} element={<NotFoundScreen />} />
         </Routes>
