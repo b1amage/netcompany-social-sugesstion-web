@@ -5,6 +5,9 @@ import {
   Autocomplete,
 } from "@react-google-maps/api";
 
+// const key = "AIzaSyBXjAxoWM58p6UoDGA-VfpfCZ0gGidlrcw";
+const key = "AIzaSyALU1H8LRmBHasS1uXNHj-ND9AqctT6P-k";
+
 const AutoCompleteScreen = () => {
   // const [atc, setAtc] = useState();
   const inputRef = useRef();
@@ -19,10 +22,7 @@ const AutoCompleteScreen = () => {
   };
   return (
     <div className="h-screen">
-      <LoadScript
-        libraries={["places"]}
-        googleMapsApiKey="AIzaSyDuKv0pe4l0WxGZDTKS76afTD8t5abrr78"
-      >
+      <LoadScript libraries={["places"]} googleMapsApiKey={key}>
         <StandaloneSearchBox
           onLoad={(ref) => (inputRef.current = ref)}
           onPlacesChanged={handlePlaceChange}
