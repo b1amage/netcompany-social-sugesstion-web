@@ -54,6 +54,20 @@
   .distance-slider {
     @apply !w-full;
   }
+
+  .pac-container {
+    z-index: 9999 !important;
+    display: block !important;
+    background-color: #333;
+  }
+}
+
+.pac-target-input {
+  @apply bg-[#f2f2f6] px-3 py-2 rounded-lg;
+}
+
+.pac-item {
+  @apply py-2 !cursor-pointer;
 }
 
 @layer base {
