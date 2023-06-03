@@ -32,7 +32,7 @@ import Image from "@/components/image/Image";
 import Map from "@/components/map/Map";
 import { currencyList } from "@/constants/currencyList";
 import Heading from "@/components/typography/Heading";
-import { imageList } from "constants/images";
+// import { imageList } from "constants/images";
 
 const CreateLocationScreen = () => {
   const [imgIndex, setImgIndex] = useState(0);
@@ -80,10 +80,6 @@ const CreateLocationScreen = () => {
       currency: createLocationForm.currency,
     };
   });
-
-  const handleSlider = (index) => {
-    setImgIndex(imgIndex + index);
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -140,8 +136,10 @@ const CreateLocationScreen = () => {
         }`}
       >
         <div className="w-full xl:max-w-[40vw] flex flex-col gap-4 h-auto">
-          <Wrapper className='justify-between'>
-            <Heading className='w-full items-center flex'>Create Location form</Heading>
+          <Wrapper className="justify-between">
+            <Heading className="w-full items-center flex">
+              Create Location form
+            </Heading>
             <UploadImage
               className="lg:my-0 !justify-end"
               icon={camera}
@@ -149,35 +147,33 @@ const CreateLocationScreen = () => {
               onChange={handleOnChangeImage}
             />
           </Wrapper>
-          
+
           <div
-            className={`border border-dashed border-black rounded-lg lg:my-0 relative`}
+            className={`border border-dashed border-black rounded-lg relative`}
           >
-            <div className="h-[60vh]">
-              {image && (
-                <Image
-                  src={image}
-                  alt="img"
-                  className=""
-                  imageClassName=""
-                  onClick={handleShowImage}
-                />
-              )}
-            </div>   
+            {image && (
+              <Image
+                src={image}
+                alt="img"
+                className="h-[60vh]"
+                imageClassName=""
+                onClick={handleShowImage}
+              />
+            )}
           </div>
 
-          {imageList.length >0 && 
-          <PreviewImage
-            // selectedImg = {image}
-            className=""
-            src={image}
-            imageList={images}
-            index={imgIndex}
-            onClickImage={handleShowImage}
-          />}
+          {images.length > 0 && (
+            <PreviewImage
+              // selectedImg = {image}
+              className=""
+              src={image}
+              imageList={images}
+              index={imgIndex}
+              onClickImage={handleShowImage}
+            />
+          )}
 
           <Map />
-
         </div>
 
         <Wrapper col className="w-full my-4 xl:my-0 justify-between">
