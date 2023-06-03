@@ -13,6 +13,19 @@ const userApi = {
       console.log(error);
     }
   },
+
+  async getCreatedLocation() {
+    try {
+      const url = `/location/created/me`;
+      const response = await axiosClient.get(url, {
+        withCredentials: true,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 export default userApi;
