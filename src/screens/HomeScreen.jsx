@@ -1,6 +1,8 @@
 import localStorageKey from "@/constants/localStorageKeys";
 import ROUTE from "@/constants/routes";
-import { useEffect } from "react";
+import Button from "@/components/button/Button";
+import Modal from "@/components/modal/Modal";
+import { useEffect, useState } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +30,33 @@ const HomeScreen = () => {
   const { user } = useSelector((state) => state.user);
   console.log(user);
 
-  return <div className="h-screen"></div>;
+  const [isShowModal, setIsShowModal] = useState(false);
+  const body = document.getElementsByTagName("BODY")[0]
+  return (
+    <div className="h-screen">
+      <Button
+        className=""
+        active
+        primary
+        onClick={() => {
+          setIsShowModal(true);
+          body.style.overflow = "hidden";
+          body.style.height = "100vh";
+        }}
+      >
+        Open modal
+      </Button>
+      {isShowModal && (
+        <Modal
+          onClose={() => {
+            setIsShowModal(false);
+            body.style.overflow = "hidden";
+            body.style.height = "100vh";
+          }}
+        />
+      )}
+    </div>
+  );
 };
 
 export default HomeScreen;
