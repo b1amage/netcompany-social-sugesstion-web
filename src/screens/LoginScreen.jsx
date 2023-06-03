@@ -36,6 +36,7 @@ const LoginScreen = () => {
 
         <Wrapper>
           <Button
+            primary
             className="bg-white border shadow-lg !text-neutral-800 border-neutral-600 animate-moveInBottom xl:my-0"
             icon={microsoftIcon}
             onClick={() => dispatch(login(navigate))}
@@ -44,9 +45,9 @@ const LoginScreen = () => {
           </Button>
 
           {/* // !TODO: Remove when done testing */}
-          <Button className="xl:my-0" onClick={() => dispatch(logout())}>
+          {/* <Button className="xl:my-0" onClick={() => dispatch(logout())}>
             Logout
-          </Button>
+          </Button> */}
         </Wrapper>
       </Wrapper>
     </Screen>
