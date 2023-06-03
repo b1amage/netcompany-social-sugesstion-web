@@ -48,6 +48,7 @@ const HomeScreen = () => {
       </Button>
       {isShowModal && (
         <Modal
+          heading="Filter"
           onClose={() => {
             setIsShowModal(false);
             body.style.overflow = "hidden";
