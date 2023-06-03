@@ -31,6 +31,8 @@ import useOnClickOutside from "@/hooks/useOnClickOutside";
 import Image from "@/components/image/Image";
 import Map from "@/components/map/Map";
 import { currencyList } from "@/constants/currencyList";
+import Heading from "@/components/typography/Heading";
+import { imageList } from "constants/images";
 
 const CreateLocationScreen = () => {
   const [imgIndex, setImgIndex] = useState(0);
@@ -133,28 +135,52 @@ const CreateLocationScreen = () => {
     <Screen className={`px-4 py-8`}>
       <form
         onSubmit={handleSubmit}
-        className={`lg:flex gap-8 lg:my-4 my-12 ${
+        className={`xl:flex gap-8 lg:my-4 my-12 ${
           isShowImage && "overflow-hidden h-screen"
         }`}
       >
-        <div className="w-full flex flex-col gap-4 h-[80vh] lg:h-auto">
-          <UploadImage
-            className="!bg-transparent border border-dashed rounded-lg lg:my-0 h-full"
-            icon={camera}
-            uploading={uploading}
-            onChange={handleOnChangeImage}
-          />
+        <div className="w-full xl:max-w-[40vw] flex flex-col gap-4 h-auto">
+          <Wrapper className='justify-between'>
+            <Heading className='w-full items-center flex'>Create Location form</Heading>
+            <UploadImage
+              className="lg:my-0 !justify-end"
+              icon={camera}
+              uploading={uploading}
+              onChange={handleOnChangeImage}
+            />
+          </Wrapper>
           
+          <div
+            className={`border border-dashed border-black rounded-lg lg:my-0 relative`}
+          >
+            <div className="h-[60vh]">
+              {image && (
+                <Image
+                  src={image}
+                  alt="img"
+                  className=""
+                  imageClassName=""
+                  onClick={handleShowImage}
+                />
+              )}
+            </div>   
+          </div>
+
+          {imageList.length >0 && 
           <PreviewImage
+            // selectedImg = {image}
             className=""
             src={image}
             imageList={images}
             index={imgIndex}
             onClickImage={handleShowImage}
-          />
+          />}
+
+          <Map />
+
         </div>
 
-        <Wrapper col className="w-full my-4 lg:my-0">
+        <Wrapper col className="w-full my-4 xl:my-0 justify-between">
           <Dropdown
             label="Category"
             required
@@ -185,8 +211,6 @@ const CreateLocationScreen = () => {
               value={address}
               onChange={(e) => dispatch(changeAddress(e.target.value))}
             />
-
-            <Map />
           </Wrapper>
 
           <Wrapper className="my-4" col>
@@ -203,9 +227,14 @@ const CreateLocationScreen = () => {
 
           <Wrapper col className=" gap-4">
             <Label required>Calendar</Label>
-            <Wrapper className='justify-between'>
-              <Input label="Day" value="Weekday" className='h-[60px]' disabled />
-              <Wrapper className=''>
+            <Wrapper className="justify-between">
+              <Input
+                label="Day"
+                value="Weekday"
+                className="h-[60px]"
+                disabled
+              />
+              <Wrapper className="">
                 <Input
                   label="Open time"
                   type="time"
@@ -221,11 +250,16 @@ const CreateLocationScreen = () => {
                   // onChange={() => console.log(e.target.value)}
                 />
               </Wrapper>
-              
             </Wrapper>
-            <Wrapper className='justify-between'>
-              <Input label="Day" value="Weekend" className='h-[60px]' disabled />
-              <Wrapper className=''>
+
+            <Wrapper className="justify-between">
+              <Input
+                label="Day"
+                value="Weekend"
+                className="h-[60px]"
+                disabled
+              />
+              <Wrapper className="">
                 <Input
                   label="Open time"
                   type="time"
@@ -241,12 +275,13 @@ const CreateLocationScreen = () => {
                   // onChange={() => console.log(e.target.value)}
                 />
               </Wrapper>
-              
             </Wrapper>
           </Wrapper>
 
           <Wrapper col className="my-4">
-            <Label>Price per person <i>(optional)</i> </Label>
+            <Label>
+              Price per person <i>(optional)</i>{" "}
+            </Label>
             <Wrapper className="justify-between">
               <Input
                 label="From: "
@@ -287,7 +322,7 @@ const CreateLocationScreen = () => {
           <div className="absolute z-[9999] inset-0 bg-black bg-opacity-80 flex-center cursor-pointer px-20 py-12 top-0">
             <Image
               _ref={avatarRef}
-              src={images[imgIndex]}
+              src={image}
               alt="avatar"
               className="flex items-center cursor-auto animate-zoom"
               imageClassName=""
