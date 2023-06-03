@@ -14,7 +14,7 @@ import Button from "@/components/button/Button";
 import userApi from "@/api/userApi";
 
 const EmptyTab = ({ title, actionName }) => (
-  <Tab className="flex w-full flex-center">
+  <Tab className="flex w-full h-full flex-center xl:my-20">
     <Wrapper col="true">
       <Image src={emptyPost} />
 
