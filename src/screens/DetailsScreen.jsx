@@ -35,106 +35,115 @@ const DetailsScreen = ({ event }) => {
   ];
 
   return (
-    <Screen>
-      <Wrapper>
-        <div className="navigation-wrapper w-full relative h-[350px] lg:h-[400px]">
-          <div ref={sliderRef} className="h-full keen-slider">
-            {images.map((item, index) => (
-              <div
-                key={index}
-                className="relative keen-slider__slide number-slide1"
-              >
-                <Image src={item} className="!w-full !h-full !rounded-none" />
-                <div className="absolute inset-0 z-40 top-1/2 grad-white"></div>
-              </div>
-            ))}
-          </div>
-          {loaded && instanceRef.current && (
-            <>
-              <Arrow
-                left
-                onClick={(e) =>
-                  e.stopPropagation() || instanceRef.current?.prev()
-                }
-                disabled={currentSlide === 0}
-              />
-
-              <Arrow
-                onClick={(e) =>
-                  e.stopPropagation() || instanceRef.current?.next()
-                }
-                disabled={
-                  currentSlide ===
-                  instanceRef.current.track.details.slides.length - 1
-                }
-              />
-            </>
-          )}
-
-          {loaded && instanceRef.current && (
-            <div className="absolute bottom-4 !z-50 flex gap-2 left-1/2 -translate-x-1/2 dots">
-              {[
-                ...Array(
-                  instanceRef.current.track.details.slides.length
-                ).keys(),
-              ].map((idx) => {
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      instanceRef.current?.moveToIdx(idx);
-                    }}
-                    className={
-                      "rounded-full dot bg-white w-2 h-2" +
-                      (currentSlide === idx && " active !bg-secondary-400")
-                    }
-                  ></button>
-                );
-              })}
+    <Screen className="xl:!grid xl:grid-cols-2 xl:gap-10 pb-4 xl:pb-10 py-2">
+      <Image
+        className="hidden xl:flex"
+        src="https://images.unsplash.com/photo-1579487785973-74d2ca7abdd5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80"
+      />
+      <Wrapper col="true">
+        <Wrapper>
+          <div className="navigation-wrapper w-full relative h-[350px] md:h-[550px]">
+            <div ref={sliderRef} className="h-full keen-slider">
+              {images.map((item, index) => (
+                <div
+                  key={index}
+                  className="relative keen-slider__slide number-slide1"
+                >
+                  <Image src={item} className="!w-full !h-full !rounded-none" />
+                  <div className="absolute inset-0 z-40 top-1/2 grad-white"></div>
+                </div>
+              ))}
             </div>
+            {loaded && instanceRef.current && (
+              <>
+                <Arrow
+                  left
+                  onClick={(e) =>
+                    e.stopPropagation() || instanceRef.current?.prev()
+                  }
+                  disabled={currentSlide === 0}
+                />
+
+                <Arrow
+                  onClick={(e) =>
+                    e.stopPropagation() || instanceRef.current?.next()
+                  }
+                  disabled={
+                    currentSlide ===
+                    instanceRef.current.track.details.slides.length - 1
+                  }
+                />
+              </>
+            )}
+
+            {loaded && instanceRef.current && (
+              <div className="absolute bottom-4 !z-50 flex gap-2 left-1/2 -translate-x-1/2 dots">
+                {[
+                  ...Array(
+                    instanceRef.current.track.details.slides.length
+                  ).keys(),
+                ].map((idx) => {
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        instanceRef.current?.moveToIdx(idx);
+                      }}
+                      className={
+                        "rounded-full dot bg-white w-2 h-2" +
+                        (currentSlide === idx && " active !bg-secondary-400")
+                      }
+                    ></button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </Wrapper>
+
+        <Wrapper col="true" className="flex-1 px-3 py-2">
+          <Heading>Pizza 4P</Heading>
+          <Text>
+            I booked Pizza Post for my husband's big birthday party and I was
+            very impressed with the way that all the booking arrangements were
+            handled. They were ready for anything, even a guest who doesn't eat
+            tomato or cheese. On the day, they arrived in good time and set up
+            without any fuss. The pizzas were delicious and the service was very
+            efficient. The guys were friendly and helpful and they helped to
+            make the party a great success. I would definitely recommend Pizza
+            Post to anyone who is having a party and wants a food option that is
+            delicious and served up without any fuss or mess, by really nice
+            people.
+          </Text>
+
+          {event ? (
+            <Wrapper col="true" className="my-4 mt-auto">
+              <Heading>Guess List</Heading>
+              <Wrapper className="gap-0 overflow-x-scroll lg:gap-8 snap-mandatory snap-x scroll-smooth">
+                {Array(20)
+                  .fill(0)
+                  .map((item, index) => (
+                    <Guess key={index} />
+                  ))}
+              </Wrapper>
+            </Wrapper>
+          ) : (
+            <Wrapper col="true" className="flex-1 my-4">
+              {/* Like + Save */}
+              <Wrapper className="!gap-5 pb-5 border-b border-b-neutral-200 w-full">
+                <BsHeart className="text-lg" />
+                <BsBookmark className="text-lg" />
+              </Wrapper>
+
+              {/* Comment */}
+              <Wrapper col="true" className="h-[300px] overflow-y-auto">
+                <CommentCard />
+                <CommentCard />
+                <CommentCard />
+              </Wrapper>
+            </Wrapper>
           )}
-        </div>
-      </Wrapper>
-
-      <Wrapper col="true" className="px-3 py-2">
-        <Heading>Pizza 4P</Heading>
-        <Text>
-          I booked Pizza Post for my husband's big birthday party and I was very
-          impressed with the way that all the booking arrangements were handled.
-          They were ready for anything, even a guest who doesn't eat tomato or
-          cheese. On the day, they arrived in good time and set up without any
-          fuss. The pizzas were delicious and the service was very efficient.
-          The guys were friendly and helpful and they helped to make the party a
-          great success. I would definitely recommend Pizza Post to anyone who
-          is having a party and wants a food option that is delicious and served
-          up without any fuss or mess, by really nice people.
-        </Text>
-
-        {event ? (
-          <Wrapper col="true" className="my-4">
-            <Heading>Guess List</Heading>
-            <Wrapper className="gap-0 overflow-x-scroll lg:gap-8 snap-mandatory snap-x scroll-smooth">
-              {Array(20)
-                .fill(0)
-                .map((item, index) => (
-                  <Guess key={index} />
-                ))}
-            </Wrapper>
-          </Wrapper>
-        ) : (
-          <Wrapper col="true" className="my-4">
-            {/* Like + Save */}
-            <Wrapper className="!gap-5 pb-5 border-b border-b-neutral-200 w-full">
-              <BsHeart className="text-lg" />
-              <BsBookmark className="text-lg" />
-            </Wrapper>
-
-            {/* Comment */}
-            <Wrapper col="true">
-              <CommentCard />
-            </Wrapper>
-          </Wrapper>
-        )}
+        </Wrapper>
       </Wrapper>
     </Screen>
   );
