@@ -17,12 +17,15 @@ import {
   changeImage,
   changeAddress,
   changeDescription,
-  changePrice,
+  changeMinPrice,
+  changeMaxPrice,
   changeCurrency,
   changeTitle,
   addImage,
-  changeCloseTime,
-  changeOpenTime,
+  changeWeekdayCloseTime,
+  changeWeekdayOpenTime,
+  changeWeekendCloseTime,
+  changeWeekendOpenTime,
 } from "@/features/createLocationFormSlice";
 import axios from "axios";
 import { onSubmitForm } from "@/features/createLocationFormSlice";
@@ -32,6 +35,8 @@ import Image from "@/components/image/Image";
 import Map from "@/components/map/Map";
 import { currencyList } from "@/constants/currencyList";
 import Heading from "@/components/typography/Heading";
+import StaticMap from "@/test/StaticMap";
+import AutoCompleteScreen from "@/test/AutoComplete";
 // import { imageList } from "constants/images";
 
 const CreateLocationScreen = () => {
@@ -62,10 +67,13 @@ const CreateLocationScreen = () => {
     title,
     address,
     description,
-    price,
+    minPrice,
+    maxPrice,
     currency,
-    openTime,
-    closeTime,
+    weekdayOpenTime,
+    weekdayCloseTime,
+    weekendOpenTime,
+    weekendCloseTime,
   } = useSelector(({ createLocationForm }) => {
     return {
       images: createLocationForm.images,
@@ -74,9 +82,12 @@ const CreateLocationScreen = () => {
       title: createLocationForm.title,
       address: createLocationForm.address,
       description: createLocationForm.description,
-      openTime: createLocationForm.openTime,
-      closeTime: createLocationForm.closeTime,
-      price: createLocationForm.price,
+      weekdayOpenTime: createLocationForm.weekdayOpenTime,
+      weekdayCloseTime: createLocationForm.weekdayCloseTime,
+      weekendOpenTime: createLocationForm.weekendOpenTime,
+      weekendCloseTime: createLocationForm.weekendCloseTime,
+      minPrice: createLocationForm.minPrice,
+      maxPrice: createLocationForm.maxPrice,
       currency: createLocationForm.currency,
     };
   });
@@ -84,15 +95,25 @@ const CreateLocationScreen = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = {
-      images: images,
-      category: category,
-      title: title,
+      name: title,
       address: address,
       description: description,
-      open: openTime,
-      close: closeTime,
-      price: price,
-      currency: currency.value,
+      imageUrls: images,
+      locationCategory: category.title,
+      // address: address,
+      pricePerPerson: {
+        min: minPrice,
+        max: maxPrice,
+        currency: currency.value,
+      },
+      weekday: {
+        openTime: weekdayOpenTime,
+        closeTime: weekdayCloseTime,
+      },
+      weekend: {
+        openTime: weekendOpenTime,
+        closeTime: weekendCloseTime,
+      },
     };
     console.log(data);
     dispatch(onSubmitForm(data));
@@ -149,7 +170,7 @@ const CreateLocationScreen = () => {
           </Wrapper>
 
           <div
-            className={`border border-dashed border-black rounded-lg relative`}
+            className={`border border-dashed border-black rounded-lg relative h-[60vh]`}
           >
             {image && (
               <Image
@@ -164,7 +185,6 @@ const CreateLocationScreen = () => {
 
           {images.length > 0 && (
             <PreviewImage
-              // selectedImg = {image}
               className=""
               src={image}
               imageList={images}
@@ -172,8 +192,6 @@ const CreateLocationScreen = () => {
               onClickImage={handleShowImage}
             />
           )}
-
-          <Map />
         </div>
 
         <Wrapper col className="w-full my-4 xl:my-0 justify-between">
@@ -198,7 +216,7 @@ const CreateLocationScreen = () => {
           </Wrapper>
 
           <Wrapper className="" col>
-            <Input
+            {/* <Input
               label="Location"
               required
               icon={location}
@@ -206,7 +224,17 @@ const CreateLocationScreen = () => {
               className={`rounded-lg !pr-12 ${address && "bg-neutral-100"}`}
               value={address}
               onChange={(e) => dispatch(changeAddress(e.target.value))}
-            />
+            /> */}
+
+            <AutoCompleteScreen />
+            {/* <StaticMap
+                title="Rmit"
+                width={500}
+                height={300}
+                address="720 Nguyen Van Linh"
+                lat={10.7289515}
+                lng={106.6957667}
+              /> */}
           </Wrapper>
 
           <Wrapper className="my-4" col>
@@ -235,14 +263,20 @@ const CreateLocationScreen = () => {
                   label="Open time"
                   type="time"
                   className="!w-fit h-[60px]"
-                  onChange={(e) => dispatch(changeOpenTime(e.target.value))}
+                  onChange={(e) =>
+                    dispatch(changeWeekdayOpenTime(e.target.value))
+                  }
+                  value={weekdayOpenTime}
                   // onChange={() => console.log(e.target.value)}
                 />
                 <Input
                   label="Close time"
                   type="time"
                   className="!w-fit h-[60px]"
-                  onChange={(e) => dispatch(changeCloseTime(e.target.value))}
+                  onChange={(e) =>
+                    dispatch(changeWeekdayCloseTime(e.target.value))
+                  }
+                  value={weekdayCloseTime}
                   // onChange={() => console.log(e.target.value)}
                 />
               </Wrapper>
@@ -260,14 +294,20 @@ const CreateLocationScreen = () => {
                   label="Open time"
                   type="time"
                   className="!w-fit h-[60px]"
-                  onChange={(e) => dispatch(changeOpenTime(e.target.value))}
+                  onChange={(e) =>
+                    dispatch(changeWeekendOpenTime(e.target.value))
+                  }
+                  value={weekendOpenTime}
                   // onChange={() => console.log(e.target.value)}
                 />
                 <Input
                   label="Close time"
                   type="time"
                   className="!w-fit h-[60px]"
-                  onChange={(e) => dispatch(changeCloseTime(e.target.value))}
+                  onChange={(e) =>
+                    dispatch(changeWeekendCloseTime(e.target.value))
+                  }
+                  value={weekendCloseTime}
                   // onChange={() => console.log(e.target.value)}
                 />
               </Wrapper>
@@ -283,8 +323,8 @@ const CreateLocationScreen = () => {
                 label="From: "
                 className="rounded-lg w-full"
                 type="number"
-                value={price}
-                onChange={(e) => dispatch(changePrice(e.target.value))}
+                value={minPrice}
+                onChange={(e) => dispatch(changeMinPrice(e.target.value))}
                 min={0}
                 placeholder="Enter the price"
               />
@@ -292,8 +332,8 @@ const CreateLocationScreen = () => {
                 label="To: "
                 className="rounded-lg w-full"
                 type="number"
-                value={price}
-                onChange={(e) => dispatch(changePrice(e.target.value))}
+                value={maxPrice}
+                onChange={(e) => dispatch(changeMaxPrice(e.target.value))}
                 min={0}
                 placeholder="Enter the price"
               />

@@ -3,10 +3,6 @@ import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
 
 const CreateLocationScreen = React.lazy(() => import("@/screens/CreateLocationScreen"));
-=========
-import AutoCompleteScreen from "@/test/AutoComplete";
-
->>>>>>>>> Temporary merge branch 2
 const OnboardingScreen = React.lazy(() => import("@/screens/OnboardingScreen"));
 const AutoCompleteScreen = React.lazy(() => import("@/test/AutoComplete"));
 

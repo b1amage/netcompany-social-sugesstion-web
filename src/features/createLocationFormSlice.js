@@ -1,64 +1,89 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const createLocationFormSlice = createSlice({
-    name:'createLocationForm',
-    initialState:{
-       images: [],
-       image: undefined,
-       category: undefined,
-       title: '',
-       address: '',
-       description: '',
-       openTime: '',
-       closeTime: '',
-       price: null,
-       currency: 'VND',
-       err: undefined,
+  name: "createLocationForm",
+  initialState: {
+    images: [],
+    image: undefined,
+    category: undefined,
+    title: "",
+    address: "",
+    description: "",
+    weekdayOpenTime: "",
+    weekdayCloseTime: "",
+    weekendOpenTime: "",
+    weekendCloseTime: "",
+    minPrice: null,
+    maxPrice: null,
+    currency: "VND",
+    err: undefined,
+  },
+  reducers: {
+    changeImage(state, action) {
+      state.image = action.payload;
     },
-    reducers: {
-        changeImage(state, action){
-            state.image = action.payload
-        },
-        changeCategory(state, action){
-            state.category = action.payload
-        },
-        changeTitle(state, action){
-            state.title = action.payload
-        },
-        changeAddress(state, action){
-            state.address = action.payload
-        },
-        changeDescription(state, action){
-            state.description = action.payload
-        },
-        changeOpenTime(state, action){
-            state.openTime = action.payload
-        },
-        changeCloseTime(state, action){
-            state.closeTime = action.payload
-        },
-        changePrice(state, action){
-            state.price = action.payload
-        },
-        changeCurrency(state, action){
-            state.currency = action.payload
-        },
-        onSubmitForm(state, action){
-            const data = action.payload
-            console.log(data)
-        },
-        addImage(state, action){
-            if (state.images.includes(action.payload)){
-                state.err = 'Image has been added already!'
-                return
-            }
-            state.images.push(action.payload)
-        },
-        removeImage(state, action){
-            return state.images.filter(image => image !== action.payload)
-        },
-    }
-})
+    changeCategory(state, action) {
+      state.category = action.payload;
+    },
+    changeTitle(state, action) {
+      state.title = action.payload;
+    },
+    changeAddress(state, action) {
+      state.address = action.payload;
+    },
+    changeDescription(state, action) {
+      state.description = action.payload;
+    },
+    changeWeekdayOpenTime(state, action) {
+      state.weekdayOpenTime = action.payload;
+    },
+    changeWeekdayCloseTime(state, action) {
+      state.weekdayCloseTime = action.payload;
+    },
+    changeMinPrice(state, action) {
+      state.minPrice = action.payload;
+    },
+    changeMaxPrice(state, action) {
+      state.maxPrice = action.payload;
+    },
+    changeWeekendOpenTime(state, action) {
+      state.weekendOpenTime = action.payload;
+    },
+    changeWeekendCloseTime(state, action) {
+      state.weekendCloseTime = action.payload;
+    },
+    onSubmitForm(state, action) {
+      const data = action.payload;
+      console.log(data);
+    },
+    addImage(state, action) {
+      if (state.images.includes(action.payload)) {
+        state.err = "Image has been added already!";
+        return;
+      }
+      state.images.push(action.payload);
+    },
+    removeImage(state, action) {
+      return state.images.filter((image) => image !== action.payload);
+    },
+  },
+});
 
-export const {changeAddress, changeCategory, changeDescription, changeImage, changePrice, changeTitle, addImage, removeImage, onSubmitForm, changeCurrency, changeOpenTime, changeCloseTime} = createLocationFormSlice.actions
-export const createLocationFormReducer = createLocationFormSlice.reducer
+export const {
+  changeAddress,
+  changeCategory,
+  changeDescription,
+  changeImage,
+  changeTitle,
+  changeWeekdayOpenTime,
+  changeWeekdayCloseTime,
+  changeWeekendOpenTime,
+  changeWeekendCloseTime,
+  changeMinPrice,
+  changeMaxPrice,
+  changeCurrency,
+  addImage,
+  removeImage,
+  onSubmitForm,
+} = createLocationFormSlice.actions;
+export const createLocationFormReducer = createLocationFormSlice.reducer;
