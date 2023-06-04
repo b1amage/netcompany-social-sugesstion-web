@@ -37,7 +37,7 @@ const AutoCompleteScreen = () => {
         >
           <Autocomplete>
             <input
-              value={value}
+              // value={value}
               onChange={(e) => {
                 setValue(e.target.value);
                 if (e.target.value === "" || !inputRef.current.getPlaces()) {
