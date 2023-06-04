@@ -3,7 +3,7 @@ import axios from "axios";
 import { DEFAULT } from "@/constants/defaultData";
 import Error from "@/components/form/Error";
 
-const AvatarUpload = () => {
+const AvatarUpload = ({className, icon}) => {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [ava, setAva] = useState(DEFAULT.avatar);
@@ -14,10 +14,10 @@ const AvatarUpload = () => {
     <form>
       <label
         htmlFor="avatar"
-        className="block cursor-pointer group mx-auto relative my-8 w-[124px] h-[124px] md:w-[150px] md:h-[150px] lg:w-[200px] lg:h-[200px]"
+        className={`block ${className} cursor-pointer group mx-auto relative my-8 w-[124px] h-[124px] md:w-[150px] md:h-[150px] lg:w-[200px] lg:h-[200px]`}
       >
         <img
-          src={ava}
+          src={icon ? icon : ava}
           alt="user avatar"
           className={`object-cover w-full h-full overflow-hidden transition-all duration-300 rounded-full hover:brightness-75 ${
             uploading && "animate-bounce"
