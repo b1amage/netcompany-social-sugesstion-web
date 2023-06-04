@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import profileTabs from "@/constants/ProfileTabs";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Tab from "./Tab";
@@ -7,25 +7,60 @@ import placeList from "@/constants/mockPlaces";
 import shuffleArray from "@/utilities/shuffleArray";
 import ProfileCard from "@/components/card/ProfileCard";
 import generateId from "@/utilities/generateId";
+import emptyPost from "@/assets/profile/emptyPost.svg";
+import Image from "@/components/image/Image";
+import Heading from "@/components/typography/Heading";
+import Button from "@/components/button/Button";
+import userApi from "@/api/userApi";
+
+const EmptyTab = ({ title, actionName }) => (
+  <Tab className="flex w-full h-full flex-center xl:my-20">
+    <Wrapper col="true">
+      <Image src={emptyPost} />
+
+      <Wrapper col="true">
+        <Heading>{title}</Heading>
+        <Button active primary>
+          {actionName}
+        </Button>
+      </Wrapper>
+    </Wrapper>
+  </Tab>
+);
 
 const TabView = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [places, setPlaces] = useState(placeList);
+  const [createdPlaces, setCreatedPlaces] = useState([]);
 
-  const renderCards = () => {
-    return places.map((place, index) => (
-      <ProfileCard key={index} place={place} />
-    ));
+  useEffect(() => {
+    const getCreatedLocation = async () => {
+      const data = await userApi.getCreatedLocation();
+      setCreatedPlaces(data.results);
+    };
+    getCreatedLocation();
+  }, []);
+
+  const renderCards = (places) => {
+    return places.length === 0 ? (
+      <EmptyTab title="You have no post yet!" actionName="Create Post" />
+    ) : (
+      <Tab>
+        {places.map((place, index) => (
+          <ProfileCard key={index} place={place} />
+        ))}
+      </Tab>
+    );
   };
 
   const renderTabContent = (index) => {
     switch (index) {
       case 0:
-        return <Tab>{renderCards()}</Tab>;
+        return renderCards(createdPlaces);
       case 1:
-        return <Tab>{renderCards()}</Tab>;
+        return renderCards(places);
       case 2:
-        return <Tab>{renderCards()}</Tab>;
+        return renderCards(places);
       default:
         return <Tab>Tab 404</Tab>;
     }
