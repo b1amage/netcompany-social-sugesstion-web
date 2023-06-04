@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Popup from "@/components/popup/Popup";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const HomeScreen = () => {
   console.log(user);
 
   const [isShowModal, setIsShowModal] = useState(false);
-  const body = document.getElementsByTagName("BODY")[0]
+  const body = document.getElementsByTagName("BODY")[0];
   return (
     <div className="h-screen">
       <Button
@@ -47,13 +48,9 @@ const HomeScreen = () => {
         Open modal
       </Button>
       {isShowModal && (
-        <Modal
-          heading="Filter"
-          onClose={() => {
-            setIsShowModal(false);
-            body.style.overflow = "hidden";
-            body.style.height = "100vh";
-          }}
+        <Popup
+          title="Are you sure to logout Net Social Suggestion?"
+          onClose={() => setIsShowModal(false)}
         />
       )}
     </div>
