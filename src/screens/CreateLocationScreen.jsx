@@ -66,6 +66,8 @@ const CreateLocationScreen = () => {
     category,
     title,
     address,
+    lat,
+    lng,
     description,
     minPrice,
     maxPrice,
@@ -81,6 +83,8 @@ const CreateLocationScreen = () => {
       category: createLocationForm.category,
       title: createLocationForm.title,
       address: createLocationForm.address,
+      lat: createLocationForm.lat,
+      lng: createLocationForm.lng,
       description: createLocationForm.description,
       weekdayOpenTime: createLocationForm.weekdayOpenTime,
       weekdayCloseTime: createLocationForm.weekdayCloseTime,
@@ -101,6 +105,10 @@ const CreateLocationScreen = () => {
       imageUrls: images,
       locationCategory: category.title,
       // address: address,
+      location: {
+        type: "Point",
+        coordinates: [lat, lng],
+      },
       pricePerPerson: {
         min: minPrice,
         max: maxPrice,
@@ -228,12 +236,12 @@ const CreateLocationScreen = () => {
 
             <AutoCompleteScreen />
             {/* <StaticMap
-                title="Rmit"
+                title={title}
                 width={500}
                 height={300}
                 address="720 Nguyen Van Linh"
-                lat={10.7289515}
-                lng={106.6957667}
+                lat={lat}
+                lng={lng}
               /> */}
           </Wrapper>
 

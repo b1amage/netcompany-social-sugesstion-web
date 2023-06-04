@@ -8,6 +8,8 @@ const createLocationFormSlice = createSlice({
     category: undefined,
     title: "",
     address: "",
+    lat: null,
+    lng: null,
     description: "",
     weekdayOpenTime: "",
     weekdayCloseTime: "",
@@ -30,6 +32,12 @@ const createLocationFormSlice = createSlice({
     },
     changeAddress(state, action) {
       state.address = action.payload;
+    },
+    changeLat(state, action) {
+      state.lat = action.payload;
+    },
+    changeLng(state, action) {
+      state.lng = action.payload;
     },
     changeDescription(state, action) {
       state.description = action.payload;
@@ -71,6 +79,8 @@ const createLocationFormSlice = createSlice({
 
 export const {
   changeAddress,
+  changeLat,
+  changeLng,
   changeCategory,
   changeDescription,
   changeImage,

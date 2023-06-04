@@ -5,6 +5,8 @@ import {
   Autocomplete,
 } from "@react-google-maps/api";
 import Error from "@/components/form/Error";
+import { useDispatch } from "react-redux";
+import { changeLat, changeLng } from "@/features/createLocationFormSlice";
 
 const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
@@ -13,6 +15,7 @@ const AutoCompleteScreen = () => {
   const [value, setValue] = useState("");
   const [error, setError] = useState();
 
+  const dispatch = useDispatch()
   const handlePlaceChange = () => {
     console.log("place changed");
 
@@ -22,6 +25,8 @@ const AutoCompleteScreen = () => {
       console.log(places[0]);
       console.log(places[0].geometry.location.lat());
       console.log(places[0].geometry.location.lng());
+      dispatch(changeLat(places[0].geometry.location.lat()))
+      dispatch(changeLng(places[0].geometry.location.lng()))
       setError(false);
     } else {
       setError(true);
