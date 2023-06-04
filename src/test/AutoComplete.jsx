@@ -5,8 +5,7 @@ import {
   Autocomplete,
 } from "@react-google-maps/api";
 
-// const key = "AIzaSyBXjAxoWM58p6UoDGA-VfpfCZ0gGidlrcw";
-const key = "AIzaSyALU1H8LRmBHasS1uXNHj-ND9AqctT6P-k";
+const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
 const AutoCompleteScreen = () => {
   const inputRef = useRef();
@@ -16,6 +15,7 @@ const AutoCompleteScreen = () => {
     const places = inputRef.current.getPlaces();
 
     if (places) {
+      console.log(places[0]);
       console.log(places[0].geometry.location.lat());
       console.log(places[0].geometry.location.lng());
     }

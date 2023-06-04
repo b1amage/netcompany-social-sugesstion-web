@@ -1,13 +1,14 @@
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { FaRegStickyNote, FaStickyNote } from "react-icons/fa";
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { TfiLayoutListThumb, TfiLayoutListThumbAlt } from "react-icons/tfi";
 import placeList from "./mockPlaces";
 
 const profileTabs = [
   {
     title: "own post",
-    icon: FaRegStickyNote,
-    fillIcon: FaStickyNote,
+    icon: TfiLayoutListThumb,
+    fillIcon: TfiLayoutListThumbAlt,
     placeList: placeList,
   },
   {

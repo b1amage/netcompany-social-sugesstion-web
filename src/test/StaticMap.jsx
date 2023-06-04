@@ -16,8 +16,9 @@ const StaticMap = ({
   title,
   address,
 }) => {
+  const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyALU1H8LRmBHasS1uXNHj-ND9AqctT6P-k",
+    googleMapsApiKey: key,
   });
   const [selected, setSelected] = React.useState(false);
 
