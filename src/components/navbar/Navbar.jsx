@@ -10,7 +10,7 @@ import darkMenu from "@/assets/dark-menu.svg";
 import add from "@/assets/add.svg";
 import notification from "@/assets/bell.svg";
 import filter from "@/assets/filter.svg";
-
+import {GrLogout} from 'react-icons/gr'
 import close from "@/assets/close.svg";
 import { createPortal } from "react-dom";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
@@ -18,7 +18,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { validatePathname } from "@/features/navbarSlice";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Counter from "@/components/counter/Counter";
-
+import Heading from "@/components/typography/Heading";
+import logout from "@/assets/navigation/logout.svg"
 const BREAK_POINT_NAVBAR = 768;
 
 const Navbar = () => {
@@ -127,7 +128,7 @@ const Navbar = () => {
                   src={darkIcons[index]}
                   className=""
                 />
-              ))}
+              ))}          
           </div>
         ) : (
           <div className="">
@@ -158,6 +159,9 @@ const Navbar = () => {
                     onClick={() => setShow(!show)}
                   />
                 ))}
+                
+                <NavButton label="Logout" src={logout} className={`flex items-center py-4 pl-3 pr-20 mx-3 my-2 md:mx-0 md:px-4 hover:bg-gray-50/10 rounded-lg duration-200 cursor-pointer md:hover:bg-gray-200 md:bg-gray-50/10 ` } />
+                  
             </ul>
           </div>
         )}
