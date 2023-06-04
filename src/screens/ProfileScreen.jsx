@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Screen from "@/components/container/Screen";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Image from "@/components/image/Image";
@@ -14,6 +14,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ROUTE from "@/constants/routes";
 import { useDispatch } from "react-redux";
 import { logout } from "@/features/userSlice";
+import Popup from "@/components/popup/Popup";
 
 const UnLoginUI = () => (
   <Wrapper className="flex-1 px-5 flex-center !gap-10" col="true">
@@ -34,9 +35,34 @@ const UnLoginUI = () => (
 const ProfileScreen = () => {
   const { user } = useSelector((state) => state.user);
   const { username, email, imageUrl, _id } = user;
-
+  const [showPopup, setShowPopup] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const closePopup = () => setShowPopup(false);
+  const confirmLogout = () => {
+    dispatch(logout());
+    navigate(ROUTE.LOGIN);
+  };
+
+  const popupActions = [
+    {
+      title: "cancel",
+      danger: false,
+      action: closePopup,
+    },
+    { title: "logout", danger: true, action: confirmLogout },
+  ];
+
+  useEffect(() => {
+    // const html = document.querySelector("html");
+    if (showPopup) {
+      document.body.style.overflow = "hidden";
+      document.body.style.height = "100vh";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [showPopup]);
 
   useEffect(() => {
     const getUserProfile = async () => {
@@ -44,8 +70,16 @@ const ProfileScreen = () => {
     };
     _id && getUserProfile();
   }, []);
+
   return (
     <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
+      {showPopup && (
+        <Popup
+          onClose={closePopup}
+          title="Are you sure you want to logout Netcompany Suggestion System"
+          actions={popupActions}
+        />
+      )}
       {!_id ? (
         <UnLoginUI />
       ) : (
@@ -68,10 +102,9 @@ const ProfileScreen = () => {
             <Wrapper className="flex-center">
               <Button className="!text-primary-800">Edit info</Button>
               <Button
-                className="bg-red-400 "
+                className="bg-danger"
                 onClick={() => {
-                  dispatch(logout());
-                  navigate("/login");
+                  setShowPopup(true);
                 }}
               >
                 Logout

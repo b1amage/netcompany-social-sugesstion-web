@@ -29,6 +29,7 @@ const Popup = ({
 }) => {
   const popupRef = useRef();
   useOnClickOutside(popupRef, onClose);
+
   return (
     <Portal location="body">
       <Wrapper className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
@@ -42,7 +43,7 @@ const Popup = ({
             {actions.length > 0 &&
               actions.map((item) => (
                 <Button
-                  onClick={() => item.action()}
+                  onClick={item.action}
                   key={generateId()}
                   className={`w-1/2 my-0 capitalize ${
                     item.danger && "bg-danger"

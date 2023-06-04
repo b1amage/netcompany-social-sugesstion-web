@@ -82,7 +82,7 @@ const TabView = () => {
             key={generateId()}
             id={index}
             onClick={onTabClick}
-            isActive={index === activeTabIndex}
+            active={index === activeTabIndex ? "true" : undefined}
           >
             {index === activeTabIndex ? (
               <Item.fillIcon id={index} className="w-full"></Item.fillIcon>
