@@ -1,52 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "./Image";
-import { GoChevronRight, GoChevronLeft } from "react-icons/go";
+import { useKeenSlider } from "keen-slider/react";
+import "keen-slider/keen-slider.min.css";
+import { useDispatch } from "react-redux";
+import { changeImage } from "@/features/createLocationFormSlice";
+import close from '@/assets/close.svg'
+const PreviewImage = ({ imageList, onClickImage, src, className }) => {
+  const dispatch = useDispatch();
+  
+  const [sliderRef] = useKeenSlider({
+    slides: {
+      perView: 4,
+      spacing: 20,
+  },});
 
-const PreviewImage = ({
-  imageList,
-  index,
-  className,
-  onClick,
-  onClickImage,
-}) => {
-  const [isHovered, setIsHovered] = useState(false);
+  useEffect(() => {
+    if (sliderRef.current) {
+      sliderRef.current.reload();
+    }
+  }, [imageList, sliderRef.current]);
+
   return (
-    <div
-      className={`${className} w-full border border-dashed rounded-lg lg:my-0 relative h-full`}
-      onMouseLeave={() => setIsHovered(false)}
-      onMouseEnter={() => setIsHovered(true)}
-    >
-      {imageList.length > 0 && (
-        <>
+    <div ref={sliderRef} className={`keen-slider  bg-neutral-100 rounded-lg py-4 ${className}`} key={imageList.length}>
+      {imageList.map((image, index) => (
+        <div className="relative w-fit rounded-lg keen-slider__slide ">
           <Image
-            src={imageList[index]}
-            alt="img"
-            className="absolute inset-0"
-            imageClassName=""
-            onClick={onClickImage}
+            key={index}
+            className={`h-[20vh] ${src === image && 'border-2 border-black'} hover:opacity-60 duration-300`}
+            onClick={() => dispatch(changeImage(image))}
+            src={image}
+            alt="image"
           />
-          <GoChevronLeft
-            className={`top-1/2 -translate-y-1/2 absolute w-[40px] h-[60px] text-xl text-white bg-black/80 rounded-e-lg cursor-pointer active:opacity-80 ${
-              (index <= 0 || !isHovered) && "pointer-events-none invisible"
-            }`}
-            onClick={() => onClick(-1)}
+          <Image 
+            key={index}
+            className={`absolute  top-0 right-0 bg-black p-1`}
+            onClick={() => dispatch(changeImage(image))}
+            src={close}
+            alt="image"
           />
-          <GoChevronRight
-            className={`top-1/2 right-0 absolute -translate-y-1/2 w-[40px] h-[60px] text-xl text-white bg-black/80 rounded-s-lg cursor-pointer active:opacity-80 ${
-              (index >= imageList.length - 1 || !isHovered) && "pointer-events-none invisible"
-            }`}
-            onClick={() => onClick(1)}
-          />
-
-          <div
-            className={`absolute bottom-0 justify-center flex items-end bg-black/80 font-bold px-4 py-2 rounded-lg ${
-              isHovered ? "-translate-y-1/3" : "invisible -translate-y-0 "
-            } duration-300 -translate-x-1/2 left-1/2 text-white`}
-          >
-            {index + 1} - {imageList.length}
-          </div>
-        </>
-      )}
+        </div>
+        
+      ))}
     </div>
   );
 };

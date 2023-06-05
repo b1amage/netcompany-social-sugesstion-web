@@ -14,7 +14,7 @@ const StaticMap = ({
   width,
   height,
   title,
-  address,
+  address = "92 Nguyen Huu Canh",
 }) => {
   const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
   const { isLoaded } = useLoadScript({
