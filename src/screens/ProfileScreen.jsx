@@ -104,7 +104,12 @@ const ProfileScreen = () => {
 
             {/* Buttons */}
             <Wrapper className="flex-center">
-              <Button className="!text-primary-800">Edit info</Button>
+              <Button
+                onClick={() => navigate(ROUTE.EDIT_PROFILE)}
+                className="!text-primary-800"
+              >
+                Edit info
+              </Button>
               <Button
                 className="!bg-danger"
                 onClick={() => {
