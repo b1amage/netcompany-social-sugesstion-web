@@ -36,6 +36,7 @@ const ProfileScreen = () => {
   const { user } = useSelector((state) => state.user);
   const { username, email, imageUrl, _id } = user;
   const [showPopup, setShowPopup] = useState(false);
+  const [userInfo, setUserInfo] = useState(user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -66,9 +67,12 @@ const ProfileScreen = () => {
 
   useEffect(() => {
     const getUserProfile = async () => {
-      await userApi.getUserProfile(_id);
+      const response = await userApi.getUserProfile(_id);
+      return response;
     };
-    _id && getUserProfile();
+    if (_id) {
+      getUserProfile();
+    }
   }, []);
 
   return (
@@ -102,7 +106,7 @@ const ProfileScreen = () => {
             <Wrapper className="flex-center">
               <Button className="!text-primary-800">Edit info</Button>
               <Button
-                className="bg-danger"
+                className="!bg-danger"
                 onClick={() => {
                   setShowPopup(true);
                 }}
