@@ -104,7 +104,6 @@ const CreateLocationScreen = () => {
       description: description,
       imageUrls: images,
       locationCategory: category.title,
-      // address: address,
       location: {
         type: "Point",
         coordinates: [lat, lng],
@@ -115,12 +114,12 @@ const CreateLocationScreen = () => {
         currency: currency.value,
       },
       weekday: {
-        openTime: weekdayOpenTime,
-        closeTime: weekdayCloseTime,
+        openTime: weekdayOpenTime.replace(":", ''),
+        closeTime: weekdayCloseTime.replace(":", ''),
       },
       weekend: {
-        openTime: weekendOpenTime,
-        closeTime: weekendCloseTime,
+        openTime: weekendOpenTime.replace(":", ''),
+        closeTime: weekendCloseTime.replace(":", ''),
       },
     };
     console.log(data);
@@ -342,7 +341,7 @@ const CreateLocationScreen = () => {
                 type="number"
                 value={maxPrice}
                 onChange={(e) => dispatch(changeMaxPrice(e.target.value))}
-                min={0}
+                min={minPrice}
                 placeholder="Enter the price"
               />
               <Dropdown

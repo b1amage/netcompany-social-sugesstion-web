@@ -6,7 +6,16 @@ import {
 } from "@react-google-maps/api";
 import Error from "@/components/form/Error";
 import { useDispatch } from "react-redux";
-import { changeLat, changeLng } from "@/features/createLocationFormSlice";
+import {
+  changeLat,
+  changeLng,
+  changeAddress,
+  changeTitle,
+  changeWeekdayCloseTime,
+  changeWeekdayOpenTime,
+  changeWeekendCloseTime,
+  changeWeekendOpenTime,
+} from "@/features/createLocationFormSlice";
 
 const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
@@ -15,7 +24,14 @@ const AutoCompleteScreen = () => {
   const [value, setValue] = useState("");
   const [error, setError] = useState();
 
-  const dispatch = useDispatch()
+  const formatTime = (timeString) => {
+    const hours = timeString.slice(0, 2);
+    const minutes = timeString.slice(2, 4);
+
+    return `${hours}:${minutes}`;
+  };
+
+  const dispatch = useDispatch();
   const handlePlaceChange = () => {
     console.log("place changed");
 
@@ -25,8 +41,12 @@ const AutoCompleteScreen = () => {
       console.log(places[0]);
       console.log(places[0].geometry.location.lat());
       console.log(places[0].geometry.location.lng());
-      dispatch(changeLat(places[0].geometry.location.lat()))
-      dispatch(changeLng(places[0].geometry.location.lng()))
+      dispatch(changeTitle(places[0].name));
+      dispatch(changeAddress(places[0].formatted_address));
+      dispatch(changeLat(places[0].geometry.location.lat()));
+      dispatch(changeLng(places[0].geometry.location.lng()));
+      dispatch(changeWeekdayOpenTime(formatTime(places[0].opening_hours.periods[0].open.time)));
+      dispatch(changeWeekdayCloseTime(formatTime(places[0].opening_hours.periods[0].close.time)));
       setError(false);
     } else {
       setError(true);
