@@ -46,9 +46,9 @@ const TabView = () => {
       <EmptyTab title="You have no post yet!" actionName="Create Post" />
     ) : (
       <Tab>
-        {places.map((place, index) => (
+        {/* {places.map((place, index) => (
           <ProfileCard key={index} place={place} />
-        ))}
+        ))} */}
       </Tab>
     );
   };

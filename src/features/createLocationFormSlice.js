@@ -10,8 +10,8 @@ const createLocationFormSlice = createSlice({
     category: undefined,
     title: "",
     address: "",
-    lat: null,
-    lng: null,
+    lat: 10.7893008,
+    lng: 106.7184076,
     description: "",
     weekdayOpenTime: "",
     weekdayCloseTime: "",
@@ -59,20 +59,14 @@ const createLocationFormSlice = createSlice({
     changeMaxPrice(state, action) {
       state.maxPrice = action.payload;
     },
+    changeCurrency(state, action){
+      state.currency = action.payload
+    },
     changeWeekendOpenTime(state, action) {
       state.weekendOpenTime = action.payload;
     },
     changeWeekendCloseTime(state, action) {
       state.weekendCloseTime = action.payload;
-    },
-    onSubmitForm(state, action) {
-      const data = action.payload;
-      console.log(data);
-      const handleSubmit = async() => {
-        const response = await locationApi.createLocation(data)
-        console.log(response)
-      }
-      handleSubmit()
     },
     addImage(state, action) {
       if (state.images.includes(action.payload)) {
@@ -83,6 +77,20 @@ const createLocationFormSlice = createSlice({
     },
     removeImage(state, action) {
       return state.images.filter((image) => image !== action.payload);
+    },
+    
+    onSubmitForm(state, action) {
+      const data = action.payload;
+      console.log(data);
+      const handleSubmit = async() => {
+        const response = await locationApi.createLocation(data)
+        if (response.status !== 200){
+          console.log(response.response.data.message)
+          // state.err = response.response.data.message
+          // return
+        }
+      }
+      handleSubmit()
     },
   },
 });

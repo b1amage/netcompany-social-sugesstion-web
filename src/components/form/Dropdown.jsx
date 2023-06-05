@@ -2,8 +2,18 @@ import Image from "@/components/image/Image";
 import React, { useState } from "react";
 import dropdown from "@/assets/dropdown.svg";
 import Label from "./Label";
+import Error from "./Error";
 
-const Dropdown = ({ label, options, value, onChange, defaultTitle, className, required }) => {
+const Dropdown = ({
+  label,
+  options,
+  value,
+  onChange,
+  defaultTitle,
+  className,
+  required,
+  err
+}) => {
   const [isOpen, setIsOpen] = useState(null);
   const handleClick = () => {
     setIsOpen(!isOpen);
@@ -25,12 +35,18 @@ const Dropdown = ({ label, options, value, onChange, defaultTitle, className, re
       </li>
     );
   });
-  
+
   return (
-    <div className={`flex flex-col relative ${label && "gap-1 md:gap-2 lg:gap-3"} ${className}`}>
+    <div
+      className={`flex flex-col relative ${
+        label && "gap-1 md:gap-2 lg:gap-3"
+      } ${className}`}
+    >
       {label && <Label required={required}>{label}</Label>}
       <div
-        className={`w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg border border-black  ${value && "bg-neutral-100"} md:text-base md:p-4 placeholder:text-secondary-100 font-bold`}
+        className={`w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg border border-black  ${
+          value && "bg-neutral-100"
+        } md:text-base md:p-4 placeholder:text-secondary-100 font-bold`}
         onClick={handleClick}
       >
         {value?.title || defaultTitle}
@@ -47,6 +63,7 @@ const Dropdown = ({ label, options, value, onChange, defaultTitle, className, re
           {renderedOptions}
         </ul>
       )}
+      {err && <Error fluid>{err}</Error>}
     </div>
   );
 };

@@ -7,9 +7,10 @@ const locationApi = {
       const response = await axiosClient.post(url, data, {
         withCredentials: true,
       });
-      console.log(response);
+      // console.log(response);
+      return response
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data.message);
     }
   },
 };

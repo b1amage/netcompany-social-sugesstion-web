@@ -37,13 +37,16 @@ import { currencyList } from "@/constants/currencyList";
 import Heading from "@/components/typography/Heading";
 import StaticMap from "@/test/StaticMap";
 import AutoCompleteScreen from "@/test/AutoComplete";
+import VALIDATE from "@/helpers/validateForm";
+import Error from "@/components/form/Error";
+import { LoadScript } from "@react-google-maps/api";
 // import { imageList } from "constants/images";
 
 const CreateLocationScreen = () => {
-  const [imgIndex, setImgIndex] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [isShowImage, setIsShowImage] = useState(false);
   const screen = document.getElementById("root");
+  const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
   const handleShowImage = () => {
     setIsShowImage(true);
@@ -77,6 +80,7 @@ const CreateLocationScreen = () => {
     weekdayCloseTime,
     weekendOpenTime,
     weekendCloseTime,
+    err,
   } = useSelector(({ createLocationForm }) => {
     return {
       placeId: createLocationForm.placeId,
@@ -95,6 +99,7 @@ const CreateLocationScreen = () => {
       minPrice: createLocationForm.minPrice,
       maxPrice: createLocationForm.maxPrice,
       currency: createLocationForm.currency,
+      err: createLocationForm.err,
     };
   });
 
@@ -109,20 +114,20 @@ const CreateLocationScreen = () => {
       locationCategory: category.title,
       location: {
         type: "Point",
-        coordinates: [lat, lng],
+        coordinates: [lng, lat],
       },
       pricePerPerson: {
-        min: minPrice,
-        max: maxPrice,
-        currency: currency.value,
+        min: parseInt(minPrice),
+        max: parseInt(maxPrice),
+        currency: currency,
       },
       weekday: {
-        openTime: weekdayOpenTime.replace(":", ''),
-        closeTime: weekdayCloseTime.replace(":", ''),
+        openTime: weekdayOpenTime.replace(":", ""),
+        closeTime: weekdayCloseTime.replace(":", ""),
       },
       weekend: {
-        openTime: weekendOpenTime.replace(":", ''),
-        closeTime: weekendCloseTime.replace(":", ''),
+        openTime: weekendOpenTime.replace(":", ""),
+        closeTime: weekendCloseTime.replace(":", ""),
       },
     };
     // console.log(data);
@@ -147,7 +152,6 @@ const CreateLocationScreen = () => {
           console.log(response);
           dispatch(changeImage(response.data.image));
           dispatch(addImage(response.data.image));
-          localStorage.setItem("locationImage", response.data.image);
           setUploading(false);
         })
         .catch(function (response) {
@@ -192,13 +196,14 @@ const CreateLocationScreen = () => {
               />
             )}
           </div>
-
+          {VALIDATE.imageList(images) && (
+            <Error className="w-full">{VALIDATE.imageList(images)}</Error>
+          )}
           {images.length > 0 && (
             <PreviewImage
               className=""
               src={image}
               imageList={images}
-              index={imgIndex}
               onClickImage={handleShowImage}
             />
           )}
@@ -212,6 +217,7 @@ const CreateLocationScreen = () => {
             options={categoryList}
             value={category}
             onChange={(option) => dispatch(changeCategory(option))}
+            err={VALIDATE.category(category)}
           />
 
           <Wrapper className="my-4" col>
@@ -221,6 +227,7 @@ const CreateLocationScreen = () => {
               placeholder="Enter the place's name"
               className={`rounded-lg ${title && "bg-neutral-100"}`}
               value={title}
+              err={VALIDATE.title(title)}
               onChange={(e) => dispatch(changeTitle(e.target.value))}
             />
           </Wrapper>
@@ -235,16 +242,21 @@ const CreateLocationScreen = () => {
               value={address}
               onChange={(e) => dispatch(changeAddress(e.target.value))}
             /> */}
-
-            <AutoCompleteScreen />
-            {/* <StaticMap
+            <LoadScript libraries={["places"]} googleMapsApiKey={key}>
+              <AutoCompleteScreen
+                label="Location"
+                className={`${address ? "bg-neutral-100" : "bg-white"}`}
+                err={VALIDATE.location(address)}
+              />
+              <StaticMap
                 title={title}
-                width={500}
-                height={300}
-                address="720 Nguyen Van Linh"
+                width={"100%"}
+                height={"60vh"}
+                address={address}
                 lat={lat}
                 lng={lng}
-              /> */}
+              />
+            </LoadScript>
           </Wrapper>
 
           <Wrapper className="my-4" col>
@@ -257,6 +269,9 @@ const CreateLocationScreen = () => {
               value={description}
               onChange={(e) => dispatch(changeDescription(e.target.value))}
             />
+            {VALIDATE.description(description) && (
+              <Error fluid>{VALIDATE.description(description)}</Error>
+            )}
           </Wrapper>
 
           <Wrapper col className=" gap-4">
@@ -272,21 +287,29 @@ const CreateLocationScreen = () => {
                 <Input
                   label="Open time"
                   type="time"
-                  className="!w-fit h-[60px]"
+                  className={`!w-fit h-[60px] ${
+                    weekdayOpenTime ? "bg-neutral-100" : "bg-white"
+                  }`}
                   onChange={(e) =>
                     dispatch(changeWeekdayOpenTime(e.target.value))
                   }
                   value={weekdayOpenTime}
+                  err={VALIDATE.time(weekdayOpenTime)}
+
                   // onChange={() => console.log(e.target.value)}
                 />
                 <Input
                   label="Close time"
                   type="time"
-                  className="!w-fit h-[60px]"
+                  className={`!w-fit h-[60px] ${
+                    weekdayCloseTime ? "bg-neutral-100" : "bg-white"
+                  }`}
                   onChange={(e) =>
                     dispatch(changeWeekdayCloseTime(e.target.value))
                   }
                   value={weekdayCloseTime}
+                  err={VALIDATE.time(weekdayCloseTime)}
+
                   // onChange={() => console.log(e.target.value)}
                 />
               </Wrapper>
@@ -303,21 +326,29 @@ const CreateLocationScreen = () => {
                 <Input
                   label="Open time"
                   type="time"
-                  className="!w-fit h-[60px]"
+                  className={`!w-fit h-[60px] ${
+                    weekendOpenTime ? "bg-neutral-100" : "bg-white"
+                  }`}
                   onChange={(e) =>
                     dispatch(changeWeekendOpenTime(e.target.value))
                   }
                   value={weekendOpenTime}
+                  err={VALIDATE.time(weekendOpenTime)}
+
                   // onChange={() => console.log(e.target.value)}
                 />
                 <Input
                   label="Close time"
                   type="time"
-                  className="!w-fit h-[60px]"
+                  className={`!w-fit h-[60px] ${
+                    weekendCloseTime ? "bg-neutral-100" : "bg-white"
+                  }`}
                   onChange={(e) =>
                     dispatch(changeWeekendCloseTime(e.target.value))
                   }
                   value={weekendCloseTime}
+                  err={VALIDATE.time(weekendCloseTime)}
+
                   // onChange={() => console.log(e.target.value)}
                 />
               </Wrapper>
@@ -331,21 +362,23 @@ const CreateLocationScreen = () => {
             <Wrapper className="justify-between">
               <Input
                 label="From: "
-                className="rounded-lg w-full"
+                className={`rounded-lg w-full ${minPrice && "bg-neutral-100"}`}
                 type="number"
                 value={minPrice}
                 onChange={(e) => dispatch(changeMinPrice(e.target.value))}
                 min={0}
+                err={VALIDATE.price(minPrice)}
                 placeholder="Enter the price"
               />
               <Input
                 label="To: "
-                className="rounded-lg w-full"
+                className={`rounded-lg w-full ${maxPrice && "bg-neutral-100"}`}
                 type="number"
                 value={maxPrice}
                 onChange={(e) => dispatch(changeMaxPrice(e.target.value))}
                 min={minPrice}
                 placeholder="Enter the price"
+                err={VALIDATE.price(maxPrice)}
               />
               <Dropdown
                 label="Currency"
@@ -358,6 +391,7 @@ const CreateLocationScreen = () => {
             </Wrapper>
           </Wrapper>
 
+          {err && <Error className="bg-transparent w-full">{err}</Error>}
           <Button className="mt-8 mb-0" primary active>
             Submit
           </Button>
