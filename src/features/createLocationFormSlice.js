@@ -1,8 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
+import locationApi from "@/api/locationApi";
 
 const createLocationFormSlice = createSlice({
   name: "createLocationForm",
   initialState: {
+    placeId: '',
     images: [],
     image: undefined,
     category: undefined,
@@ -21,6 +23,9 @@ const createLocationFormSlice = createSlice({
     err: undefined,
   },
   reducers: {
+    changePlaceId(state, action){
+      state.placeId = action.payload
+    },
     changeImage(state, action) {
       state.image = action.payload;
     },
@@ -63,6 +68,11 @@ const createLocationFormSlice = createSlice({
     onSubmitForm(state, action) {
       const data = action.payload;
       console.log(data);
+      const handleSubmit = async() => {
+        const response = await locationApi.createLocation(data)
+        console.log(response)
+      }
+      handleSubmit()
     },
     addImage(state, action) {
       if (state.images.includes(action.payload)) {
@@ -78,6 +88,7 @@ const createLocationFormSlice = createSlice({
 });
 
 export const {
+  changePlaceId,
   changeAddress,
   changeLat,
   changeLng,

@@ -61,6 +61,7 @@ const CreateLocationScreen = () => {
   useOnClickOutside(avatarRef, handleCloseImage);
 
   const {
+    placeId,
     images,
     image,
     category,
@@ -78,6 +79,7 @@ const CreateLocationScreen = () => {
     weekendCloseTime,
   } = useSelector(({ createLocationForm }) => {
     return {
+      placeId: createLocationForm.placeId,
       images: createLocationForm.images,
       image: createLocationForm.image,
       category: createLocationForm.category,
@@ -99,6 +101,7 @@ const CreateLocationScreen = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = {
+      placeId: placeId,
       name: title,
       address: address,
       description: description,
@@ -122,7 +125,7 @@ const CreateLocationScreen = () => {
         closeTime: weekendCloseTime.replace(":", ''),
       },
     };
-    console.log(data);
+    // console.log(data);
     dispatch(onSubmitForm(data));
   };
 

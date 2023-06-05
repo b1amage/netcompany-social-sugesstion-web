@@ -7,6 +7,7 @@ import {
 import Error from "@/components/form/Error";
 import { useDispatch } from "react-redux";
 import {
+  changePlaceId,
   changeLat,
   changeLng,
   changeAddress,
@@ -41,12 +42,17 @@ const AutoCompleteScreen = () => {
       console.log(places[0]);
       console.log(places[0].geometry.location.lat());
       console.log(places[0].geometry.location.lng());
+      dispatch(changePlaceId(places[0].place_id))
       dispatch(changeTitle(places[0].name));
       dispatch(changeAddress(places[0].formatted_address));
       dispatch(changeLat(places[0].geometry.location.lat()));
       dispatch(changeLng(places[0].geometry.location.lng()));
       dispatch(changeWeekdayOpenTime(formatTime(places[0].opening_hours.periods[0].open.time)));
       dispatch(changeWeekdayCloseTime(formatTime(places[0].opening_hours.periods[0].close.time)));
+      if (places[0].opening_hours.periods.length > 5){
+        dispatch(changeWeekendOpenTime(formatTime(places[0].opening_hours.periods[5].open.time)));
+        dispatch(changeWeekendCloseTime(formatTime(places[0].opening_hours.periods[5].close.time)));
+      }
       setError(false);
     } else {
       setError(true);
