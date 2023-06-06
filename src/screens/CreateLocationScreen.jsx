@@ -152,7 +152,6 @@ const CreateLocationScreen = () => {
           console.log(response);
           dispatch(changeImage(response.data.image));
           dispatch(addImage(response.data.image));
-          // setUploadErr(VALIDATE.addImage(images, response.data.image))
           setUploading(false);
         })
         .catch(function (response) {
@@ -197,8 +196,8 @@ const CreateLocationScreen = () => {
               />
             )}
           </div>
-          {(VALIDATE.imageList(images,image)) && (
-            <Error className="w-full">{VALIDATE.imageList(images,image)}</Error>
+          {(VALIDATE.imageList(images)) && (
+            <Error className="w-full">{VALIDATE.imageList(images)}</Error>
           )}
           {images.length > 0 && (
             <PreviewImage

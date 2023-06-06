@@ -19,6 +19,7 @@ import {
 } from "@/features/createLocationFormSlice";
 import Label from "@/components/form/Label";
 import Image from "@/components/image/Image";
+import VALIDATE from "@/helpers/validateForm";
 
 // const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
@@ -102,7 +103,7 @@ const AutoCompleteScreen = ({ label, className, src }) => {
         </Autocomplete>
       </StandaloneSearchBox>
       {/* </LoadScript> */}
-      {error && <Error className="w-full">Please select a location!</Error>}
+      {(error && VALIDATE.location(value)) && <Error className="w-full">{VALIDATE.location(value)}</Error>}
     </div>
   );
 };

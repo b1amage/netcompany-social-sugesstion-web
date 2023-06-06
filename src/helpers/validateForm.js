@@ -11,9 +11,6 @@ const VALIDATE = {
         if (imgList.length <= 0){
             return ERROR.images
         }
-        if (imgList.includes(img)){
-            return ERROR.image
-        }
     },
     title(name){
         if (name.trim() === '') return ERROR.required
