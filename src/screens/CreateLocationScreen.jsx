@@ -275,18 +275,18 @@ const CreateLocationScreen = () => {
 
           <Wrapper col className=" gap-4">
             <Label required>Time</Label>
-            <Wrapper className="justify-between gap-8">
+            <Wrapper className="justify-between gap-2 flex-col sm:flex-row">
               <Input
                 label="Weekday"
                 value="Monday-Friday"
-                className="h-[60px]"
+                className="h-[60px] !w-fit"
                 disabled
               />
-              <Wrapper className="">
+              <Wrapper className="justify-between gap-4">
                 <Input
                   label="Open time"
                   type="time"
-                  className={`!w-fit h-[60px] ${
+                  className={`h-[60px] !w-fit ${
                     weekdayOpenTime ? "bg-neutral-100" : "bg-white"
                   }`}
                   onChange={(e) =>
@@ -300,7 +300,7 @@ const CreateLocationScreen = () => {
                 <Input
                   label="Close time"
                   type="time"
-                  className={`!w-fit h-[60px] ${
+                  className={`h-[60px]  !w-fit ${
                     weekdayCloseTime ? "bg-neutral-100" : "bg-white"
                   }`}
                   onChange={(e) =>
@@ -308,24 +308,24 @@ const CreateLocationScreen = () => {
                   }
                   value={weekdayCloseTime}
                   err={VALIDATE.time(weekdayCloseTime)}
-
+                  
                   // onChange={() => console.log(e.target.value)}
                 />
               </Wrapper>
             </Wrapper>
 
-            <Wrapper className="justify-between gap-8">
+            <Wrapper className="justify-between gap-4 flex-col sm:flex-row">
               <Input
                 label="Weekend"
                 value="Saturday-Sunday"
-                className="h-[60px]"
+                className="h-[60px] !w-fit"
                 disabled
               />
-              <Wrapper className="">
+              <Wrapper className="justify-between gap-4">
                 <Input
                   label="Open time"
                   type="time"
-                  className={`!w-fit h-[60px] ${
+                  className={`h-[60px]  !w-fit ${
                     weekendOpenTime ? "bg-neutral-100" : "bg-white"
                   }`}
                   onChange={(e) =>
@@ -339,7 +339,7 @@ const CreateLocationScreen = () => {
                 <Input
                   label="Close time"
                   type="time"
-                  className={`!w-fit h-[60px] ${
+                  className={`h-[60px]  !w-fit ${
                     weekendCloseTime ? "bg-neutral-100" : "bg-white"
                   }`}
                   onChange={(e) =>
