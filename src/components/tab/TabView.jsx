@@ -36,6 +36,7 @@ const TabView = () => {
   useEffect(() => {
     const getCreatedLocation = async () => {
       const data = await userApi.getCreatedLocation();
+      console.log(data);
       setCreatedPlaces(data.results);
     };
     getCreatedLocation();
@@ -46,9 +47,9 @@ const TabView = () => {
       <EmptyTab title="You have no post yet!" actionName="Create Post" />
     ) : (
       <Tab>
-        {/* {places.map((place, index) => (
+        {places.map((place, index) => (
           <ProfileCard key={index} place={place} />
-        ))} */}
+        ))}
       </Tab>
     );
   };
@@ -58,9 +59,9 @@ const TabView = () => {
       case 0:
         return renderCards(createdPlaces);
       case 1:
-        return renderCards(places);
+        return renderCards(createdPlaces);
       case 2:
-        return renderCards(places);
+        return renderCards(createdPlaces);
       default:
         return <Tab>Tab 404</Tab>;
     }

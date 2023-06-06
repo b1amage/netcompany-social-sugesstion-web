@@ -16,7 +16,7 @@ const ProfileCard = ({ place }) => {
       className={`${cardSizeStyles} relative flex-col gap-3 transition-all cursor-pointer bg-neutral-300 flex-center xl:flex-row rounded-xl group`}
     >
       <Image
-        src={place?.imageUrl || place?.images[0]}
+        src={place?.imageUrls[0] || place?.images[0]}
         alt={place?.title || place?.name}
         className="w-full h-full"
         animate
