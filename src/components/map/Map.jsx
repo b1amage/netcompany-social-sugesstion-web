@@ -6,7 +6,7 @@ const Map = () => {
 
   return (
     <LoadScript googleMapsApiKey={MAP_API_KEY}>
-      <GoogleMap mapContainerClassName="w-full h-[60vh] lg:h-[20vh] rounded-lg" zoom={10} center={{ lat: -34.397, lng: 150.644 }}></GoogleMap>
+      <GoogleMap mapContainerClassName="w-full h-[60vh] lg:h-[60vh] rounded-lg" zoom={10} center={{ lat: -34.397, lng: 150.644 }}></GoogleMap>
     </LoadScript>
   );
 };

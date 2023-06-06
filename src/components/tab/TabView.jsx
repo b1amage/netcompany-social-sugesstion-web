@@ -12,6 +12,7 @@ import Image from "@/components/image/Image";
 import Heading from "@/components/typography/Heading";
 import Button from "@/components/button/Button";
 import userApi from "@/api/userApi";
+import Loading from "@/components/loading/Loading";
 
 const EmptyTab = ({ title, actionName }) => (
   <Tab className="flex w-full h-full flex-center xl:my-20">
@@ -32,11 +33,14 @@ const TabView = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [places, setPlaces] = useState(placeList);
   const [createdPlaces, setCreatedPlaces] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getCreatedLocation = async () => {
       const data = await userApi.getCreatedLocation();
+      console.log(data);
       setCreatedPlaces(data.results);
+      setLoading(false);
     };
     getCreatedLocation();
   }, []);
@@ -46,9 +50,13 @@ const TabView = () => {
       <EmptyTab title="You have no post yet!" actionName="Create Post" />
     ) : (
       <Tab>
-        {places.map((place, index) => (
-          <ProfileCard key={index} place={place} />
-        ))}
+        {loading ? (
+          <Loading />
+        ) : (
+          places.map((place, index) => (
+            <ProfileCard key={index} place={place} />
+          ))
+        )}
       </Tab>
     );
   };
@@ -58,9 +66,9 @@ const TabView = () => {
       case 0:
         return renderCards(createdPlaces);
       case 1:
-        return renderCards(places);
+        return renderCards(createdPlaces);
       case 2:
-        return renderCards(places);
+        return renderCards(createdPlaces);
       default:
         return <Tab>Tab 404</Tab>;
     }

@@ -2,7 +2,9 @@ import React, { Suspense, useState, useEffect } from "react";
 import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
 
-const CreateLocationScreen = React.lazy(() => import("@/screens/CreateLocationScreen"));
+const CreateLocationScreen = React.lazy(() =>
+  import("@/screens/CreateLocationScreen")
+);
 const OnboardingScreen = React.lazy(() => import("@/screens/OnboardingScreen"));
 const AutoCompleteScreen = React.lazy(() => import("@/test/AutoComplete"));
 
@@ -20,6 +22,9 @@ const ProfileScreen = React.lazy(() => import("@/screens/ProfileScreen"));
 const TestScreen = React.lazy(() => import("@/screens/TestScreen"));
 const EventsScreen = React.lazy(() => import("@/screens/EventsScreen"));
 const DetailsScreen = React.lazy(() => import("@/screens/DetailsScreen"));
+const EditProfileScreen = React.lazy(() =>
+  import("@/screens/EditProfileScreen")
+);
 
 const AppRoutes = () => {
   const [isLogin, setIsLogin] = useState(false);
@@ -36,7 +41,6 @@ const AppRoutes = () => {
     <>
       {isLogin && <Navbar />}
       <Suspense fallback={<LoadingScreen />}>
-
         <Routes>
           <Route path={ROUTE.ONBOARDING} element={<OnboardingScreen />} />
           <Route path={ROUTE.HOME} element={<HomeScreen />} />
@@ -56,8 +60,9 @@ const AppRoutes = () => {
             element={<DetailsScreen event="true" />}
           />
           <Route path={ROUTE.DETAILS_LOCATION} element={<DetailsScreen />} />
-        <Route path="/create-location" element={<CreateLocationScreen />} />
+          <Route path="/create-location" element={<CreateLocationScreen />} />
           <Route path={ROUTE.NOT_FOUND} element={<NotFoundScreen />} />
+          <Route path={ROUTE.EDIT_PROFILE} element={<EditProfileScreen />} />
         </Routes>
       </Suspense>
     </>

@@ -17,9 +17,15 @@ import {
   changeImage,
   changeAddress,
   changeDescription,
-  changePrice,
+  changeMinPrice,
+  changeMaxPrice,
+  changeCurrency,
   changeTitle,
   addImage,
+  changeWeekdayCloseTime,
+  changeWeekdayOpenTime,
+  changeWeekendCloseTime,
+  changeWeekendOpenTime,
 } from "@/features/createLocationFormSlice";
 import axios from "axios";
 import { onSubmitForm } from "@/features/createLocationFormSlice";
@@ -27,12 +33,20 @@ import Portal from "@/components/HOC/Portal";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import Image from "@/components/image/Image";
 import Map from "@/components/map/Map";
+import { currencyList } from "@/constants/currencyList";
+import Heading from "@/components/typography/Heading";
+import StaticMap from "@/test/StaticMap";
+import AutoCompleteScreen from "@/test/AutoComplete";
+import VALIDATE from "@/helpers/validateForm";
+import Error from "@/components/form/Error";
+import { LoadScript } from "@react-google-maps/api";
+// import { imageList } from "constants/images";
 
 const CreateLocationScreen = () => {
-  const [imgIndex, setImgIndex] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [isShowImage, setIsShowImage] = useState(false);
   const screen = document.getElementById("root");
+  const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
   const handleShowImage = () => {
     setIsShowImage(true);
@@ -49,34 +63,74 @@ const CreateLocationScreen = () => {
   const avatarRef = useRef();
   useOnClickOutside(avatarRef, handleCloseImage);
 
-  const { images, image, category, title, address, description, price } =
-    useSelector(({ createLocationForm }) => {
-      return {
-        images: createLocationForm.images,
-        image: createLocationForm.image,
-        category: createLocationForm.category,
-        title: createLocationForm.title,
-        address: createLocationForm.address,
-        description: createLocationForm.description,
-        price: createLocationForm.price,
-      };
-    });
-
-  const handleSlider = (index) => {
-    setImgIndex(imgIndex + index);
-  };
+  const {
+    placeId,
+    images,
+    image,
+    category,
+    title,
+    address,
+    lat,
+    lng,
+    description,
+    minPrice,
+    maxPrice,
+    currency,
+    weekdayOpenTime,
+    weekdayCloseTime,
+    weekendOpenTime,
+    weekendCloseTime,
+    err,
+  } = useSelector(({ createLocationForm }) => {
+    return {
+      placeId: createLocationForm.placeId,
+      images: createLocationForm.images,
+      image: createLocationForm.image,
+      category: createLocationForm.category,
+      title: createLocationForm.title,
+      address: createLocationForm.address,
+      lat: createLocationForm.lat,
+      lng: createLocationForm.lng,
+      description: createLocationForm.description,
+      weekdayOpenTime: createLocationForm.weekdayOpenTime,
+      weekdayCloseTime: createLocationForm.weekdayCloseTime,
+      weekendOpenTime: createLocationForm.weekendOpenTime,
+      weekendCloseTime: createLocationForm.weekendCloseTime,
+      minPrice: createLocationForm.minPrice,
+      maxPrice: createLocationForm.maxPrice,
+      currency: createLocationForm.currency,
+      err: createLocationForm.err,
+    };
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = {
-      images: images,
-      category: category,
-      title: title,
+      placeId: placeId,
+      name: title,
       address: address,
       description: description,
-      price: price,
+      imageUrls: images,
+      locationCategory: category.title,
+      location: {
+        type: "Point",
+        coordinates: [lng, lat],
+      },
+      pricePerPerson: {
+        min: parseInt(minPrice),
+        max: parseInt(maxPrice),
+        currency: currency,
+      },
+      weekday: {
+        openTime: weekdayOpenTime.replace(":", ""),
+        closeTime: weekdayCloseTime.replace(":", ""),
+      },
+      weekend: {
+        openTime: weekendOpenTime.replace(":", ""),
+        closeTime: weekendCloseTime.replace(":", ""),
+      },
     };
-    console.log(data);
+    // console.log(data);
     dispatch(onSubmitForm(data));
   };
 
@@ -98,7 +152,6 @@ const CreateLocationScreen = () => {
           console.log(response);
           dispatch(changeImage(response.data.image));
           dispatch(addImage(response.data.image));
-          localStorage.setItem("locationImage", response.data.image);
           setUploading(false);
         })
         .catch(function (response) {
@@ -110,84 +163,235 @@ const CreateLocationScreen = () => {
   // const {width} = useViewport()
   const dispatch = useDispatch();
   return (
-    <Screen className={`px-4`}>
+    <Screen className={`px-4 py-8`}>
       <form
         onSubmit={handleSubmit}
-        className={`lg:flex gap-8 lg:my-4 my-12 ${
+        className={`xl:flex gap-8 lg:my-4 my-12 ${
           isShowImage && "overflow-hidden h-screen"
         }`}
       >
-        <div className="w-full flex flex-col gap-4 h-[80vh] lg:h-auto">
-          <UploadImage
-            className="!bg-transparent border border-dashed rounded-lg lg:my-0 h-full"
-            icon={camera}
-            uploading={uploading}
-            onChange={handleOnChangeImage}
-          />
-          <PreviewImage
-            className=""
-            imageList={images}
-            index={imgIndex}
-            onClick={handleSlider}
-            onClickImage={handleShowImage}
-          />
+        <div className="w-full xl:max-w-[40vw] flex flex-col gap-4 h-auto">
+          <Wrapper className="justify-between">
+            <Heading className="w-full items-center flex">
+              Create Location form
+            </Heading>
+            <UploadImage
+              className="lg:my-0 !justify-end"
+              icon={camera}
+              uploading={uploading}
+              onChange={handleOnChangeImage}
+            />
+          </Wrapper>
+
+          <div
+            className={`border border-dashed border-black rounded-lg relative h-[60vh]`}
+          >
+            {image && (
+              <Image
+                src={image}
+                alt="img"
+                className="h-[60vh]"
+                imageClassName=""
+                onClick={handleShowImage}
+              />
+            )}
+          </div>
+          {VALIDATE.imageList(images) && (
+            <Error className="w-full">{VALIDATE.imageList(images)}</Error>
+          )}
+          {images.length > 0 && (
+            <PreviewImage
+              className=""
+              src={image}
+              imageList={images}
+              onClickImage={handleShowImage}
+            />
+          )}
         </div>
 
-        <Wrapper col className="w-full my-4 lg:my-0">
+        <Wrapper col className="w-full my-4 xl:my-0 justify-between">
           <Dropdown
             label="Category"
+            required
+            defaultTitle="SELECT THE CATEGORY"
             options={categoryList}
             value={category}
             onChange={(option) => dispatch(changeCategory(option))}
+            err={VALIDATE.category(category)}
           />
 
-          <Wrapper className="" col>
+          <Wrapper className="my-4" col>
             <Input
               label="Title"
               required
               placeholder="Enter the place's name"
-              className="rounded-lg"
+              className={`rounded-lg ${title && "bg-neutral-100"}`}
               value={title}
+              err={VALIDATE.title(title)}
               onChange={(e) => dispatch(changeTitle(e.target.value))}
             />
           </Wrapper>
 
           <Wrapper className="" col>
-            <Input
+            {/* <Input
               label="Location"
               required
               icon={location}
               placeholder="Enter the address"
-              className="rounded-lg !pr-12"
+              className={`rounded-lg !pr-12 ${address && "bg-neutral-100"}`}
               value={address}
               onChange={(e) => dispatch(changeAddress(e.target.value))}
-            />
-
-            <Map />
+            /> */}
+            <LoadScript libraries={["places"]} googleMapsApiKey={key}>
+              <AutoCompleteScreen
+                label="Location"
+                className={`${address ? "bg-neutral-100" : "bg-white"}`}
+                err={VALIDATE.location(address)}
+              />
+              <StaticMap
+                title={title}
+                width={"100%"}
+                height={"60vh"}
+                address={address}
+                lat={lat}
+                lng={lng}
+              />
+            </LoadScript>
           </Wrapper>
 
-          <Wrapper className="" col>
-            <Label>Description</Label>
+          <Wrapper className="my-4" col>
+            <Label required>Description</Label>
             <textarea
-              className="w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg bg-neutral-100 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none"
+              className={`w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg border border-black ${
+                description && "bg-neutral-100"
+              } md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none`}
               placeholder="Enter the description"
               value={description}
               onChange={(e) => dispatch(changeDescription(e.target.value))}
             />
+            {VALIDATE.description(description) && (
+              <Error fluid>{VALIDATE.description(description)}</Error>
+            )}
           </Wrapper>
 
-          <Wrapper col className="">
-            <Input
-              label="Price"
-              className="rounded-lg"
-              type="number"
-              required
-              value={price}
-              onChange={(e) => dispatch(changePrice(e.target.value))}
-              min={0}
-            />
+          <Wrapper col className=" gap-4">
+            <Label required>Calendar</Label>
+            <Wrapper className="justify-between">
+              <Input
+                label="Day"
+                value="Weekday"
+                className="h-[60px]"
+                disabled
+              />
+              <Wrapper className="">
+                <Input
+                  label="Open time"
+                  type="time"
+                  className={`!w-fit h-[60px] ${
+                    weekdayOpenTime ? "bg-neutral-100" : "bg-white"
+                  }`}
+                  onChange={(e) =>
+                    dispatch(changeWeekdayOpenTime(e.target.value))
+                  }
+                  value={weekdayOpenTime}
+                  err={VALIDATE.time(weekdayOpenTime)}
+
+                  // onChange={() => console.log(e.target.value)}
+                />
+                <Input
+                  label="Close time"
+                  type="time"
+                  className={`!w-fit h-[60px] ${
+                    weekdayCloseTime ? "bg-neutral-100" : "bg-white"
+                  }`}
+                  onChange={(e) =>
+                    dispatch(changeWeekdayCloseTime(e.target.value))
+                  }
+                  value={weekdayCloseTime}
+                  err={VALIDATE.time(weekdayCloseTime)}
+
+                  // onChange={() => console.log(e.target.value)}
+                />
+              </Wrapper>
+            </Wrapper>
+
+            <Wrapper className="justify-between">
+              <Input
+                label="Day"
+                value="Weekend"
+                className="h-[60px]"
+                disabled
+              />
+              <Wrapper className="">
+                <Input
+                  label="Open time"
+                  type="time"
+                  className={`!w-fit h-[60px] ${
+                    weekendOpenTime ? "bg-neutral-100" : "bg-white"
+                  }`}
+                  onChange={(e) =>
+                    dispatch(changeWeekendOpenTime(e.target.value))
+                  }
+                  value={weekendOpenTime}
+                  err={VALIDATE.time(weekendOpenTime)}
+
+                  // onChange={() => console.log(e.target.value)}
+                />
+                <Input
+                  label="Close time"
+                  type="time"
+                  className={`!w-fit h-[60px] ${
+                    weekendCloseTime ? "bg-neutral-100" : "bg-white"
+                  }`}
+                  onChange={(e) =>
+                    dispatch(changeWeekendCloseTime(e.target.value))
+                  }
+                  value={weekendCloseTime}
+                  err={VALIDATE.time(weekendCloseTime)}
+
+                  // onChange={() => console.log(e.target.value)}
+                />
+              </Wrapper>
+            </Wrapper>
           </Wrapper>
 
+          <Wrapper col className="my-4">
+            <Label>
+              Price per person <i>(optional)</i>{" "}
+            </Label>
+            <Wrapper className="justify-between">
+              <Input
+                label="From: "
+                className={`rounded-lg w-full ${minPrice && "bg-neutral-100"}`}
+                type="number"
+                value={minPrice}
+                onChange={(e) => dispatch(changeMinPrice(e.target.value))}
+                min={0}
+                err={VALIDATE.price(minPrice)}
+                placeholder="Enter the price"
+              />
+              <Input
+                label="To: "
+                className={`rounded-lg w-full ${maxPrice && "bg-neutral-100"}`}
+                type="number"
+                value={maxPrice}
+                onChange={(e) => dispatch(changeMaxPrice(e.target.value))}
+                min={minPrice}
+                placeholder="Enter the price"
+                err={VALIDATE.price(maxPrice)}
+              />
+              <Dropdown
+                label="Currency"
+                className="w-fit rounded-lg h-fit"
+                options={currencyList}
+                value={currency}
+                defaultTitle={currency}
+                onChange={(option) => dispatch(changeCurrency(option))}
+              />
+            </Wrapper>
+          </Wrapper>
+
+          {err && <Error className="bg-transparent w-full">{err}</Error>}
           <Button className="mt-8 mb-0" primary active>
             Submit
           </Button>
@@ -198,7 +402,7 @@ const CreateLocationScreen = () => {
           <div className="absolute z-[9999] inset-0 bg-black bg-opacity-80 flex-center cursor-pointer px-20 py-12 top-0">
             <Image
               _ref={avatarRef}
-              src={images[imgIndex]}
+              src={image}
               alt="avatar"
               className="flex items-center cursor-auto animate-zoom"
               imageClassName=""
