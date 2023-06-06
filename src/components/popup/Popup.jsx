@@ -46,7 +46,7 @@ const Popup = ({
                   onClick={item.action}
                   key={generateId()}
                   className={`w-1/2 my-0 capitalize ${
-                    item.danger && "bg-danger"
+                    item.danger && "!bg-danger"
                   }`}
                   active={!item.danger}
                 >
