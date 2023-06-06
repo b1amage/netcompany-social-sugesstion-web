@@ -100,10 +100,8 @@ const EditProfileScreen = () => {
             </Wrapper>
             <Wrapper className="" col="true">
               <Wrapper col="true">
-                <Heading>Profile Settings</Heading>
-                <SubHeading>
-                  Provide your preferences for best experience
-                </SubHeading>
+                <Heading>Profile Edit</Heading>
+                <SubHeading>Edit your profile!</SubHeading>
               </Wrapper>
 
               <AvatarUpload img={imageUrl} />
