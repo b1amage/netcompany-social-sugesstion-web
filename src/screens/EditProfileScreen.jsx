@@ -109,7 +109,7 @@ const EditProfileScreen = () => {
                 onChange={(e) => setUsernameInput(e.target.value)}
                 value={usernameInput}
                 required
-                label="Username"
+                label="Display name"
                 type="text"
                 name="username"
                 id="username"
