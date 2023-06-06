@@ -10,7 +10,8 @@ const locationApi = {
       // console.log(response);
       return response
     } catch (error) {
-      console.log(error.response.data.message);
+      // console.log(error.response.data.message);
+      return error.response
     }
   },
 };

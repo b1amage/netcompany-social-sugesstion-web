@@ -18,10 +18,11 @@ import {
   changeWeekendOpenTime,
 } from "@/features/createLocationFormSlice";
 import Label from "@/components/form/Label";
+import Image from "@/components/image/Image";
 
 // const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
-const AutoCompleteScreen = ({ label, className }) => {
+const AutoCompleteScreen = ({ label, className, src }) => {
   const inputRef = useRef();
   const [value, setValue] = useState("");
   const [error, setError] = useState(true);
@@ -76,7 +77,7 @@ const AutoCompleteScreen = ({ label, className }) => {
     }
   };
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       {/* <LoadScript libraries={["places"]} googleMapsApiKey={key}> */}
       {label && <Label required>{label}</Label>}
       <StandaloneSearchBox

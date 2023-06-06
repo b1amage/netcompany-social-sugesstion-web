@@ -1,14 +1,18 @@
 const ERROR = {
     images: "Please add at least 1 picture!",
+    image: "The image has been added already!",
     required: "Please fill in this field!",
     time: "Open time must be earlier than close time!",
     price: "Minimum price must be smaller than maximum price!"
 }
 
 const VALIDATE = {
-    imageList(imgList){
+    imageList(imgList, img){
         if (imgList.length <= 0){
             return ERROR.images
+        }
+        if (imgList.includes(img)){
+            return ERROR.image
         }
     },
     title(name){

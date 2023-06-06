@@ -5,11 +5,11 @@ import Label from "@/components/form/Label";
 import React, { useRef, useState } from "react";
 import Input from "@/components/form/Input";
 import camera from "@/assets/camera.svg";
-import location from "@/assets/location.svg";
+
 import categoryList from "@/constants/category";
 import Dropdown from "@/components/form/Dropdown";
 import UploadImage from "@/components/image/UploadImage";
-import useViewport from "@/hooks/useScreenWidth";
+
 import PreviewImage from "@/components/image/PreviewImage";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -32,7 +32,6 @@ import { onSubmitForm } from "@/features/createLocationFormSlice";
 import Portal from "@/components/HOC/Portal";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import Image from "@/components/image/Image";
-import Map from "@/components/map/Map";
 import { currencyList } from "@/constants/currencyList";
 import Heading from "@/components/typography/Heading";
 import StaticMap from "@/test/StaticMap";
@@ -45,7 +44,9 @@ import { LoadScript } from "@react-google-maps/api";
 const CreateLocationScreen = () => {
   const [uploading, setUploading] = useState(false);
   const [isShowImage, setIsShowImage] = useState(false);
-  const screen = document.getElementById("root");
+  const [uploadErr, setUploadErr] = useState()
+  // console.log(JSON.parse(localStorage.getItem("createLocationResponse")).data);
+  const screen = document.getElementsByTagName("BODY")[0];
   const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
   const handleShowImage = () => {
@@ -80,7 +81,6 @@ const CreateLocationScreen = () => {
     weekdayCloseTime,
     weekendOpenTime,
     weekendCloseTime,
-    err,
   } = useSelector(({ createLocationForm }) => {
     return {
       placeId: createLocationForm.placeId,
@@ -99,7 +99,6 @@ const CreateLocationScreen = () => {
       minPrice: createLocationForm.minPrice,
       maxPrice: createLocationForm.maxPrice,
       currency: createLocationForm.currency,
-      err: createLocationForm.err,
     };
   });
 
@@ -119,7 +118,7 @@ const CreateLocationScreen = () => {
       pricePerPerson: {
         min: parseInt(minPrice),
         max: parseInt(maxPrice),
-        currency: currency,
+        currency: currency.title || currency,
       },
       weekday: {
         openTime: weekdayOpenTime.replace(":", ""),
@@ -132,6 +131,7 @@ const CreateLocationScreen = () => {
     };
     // console.log(data);
     dispatch(onSubmitForm(data));
+    // console.log(response)
   };
 
   const handleOnChangeImage = (e) => {
@@ -152,6 +152,7 @@ const CreateLocationScreen = () => {
           console.log(response);
           dispatch(changeImage(response.data.image));
           dispatch(addImage(response.data.image));
+          // setUploadErr(VALIDATE.addImage(images, response.data.image))
           setUploading(false);
         })
         .catch(function (response) {
@@ -196,15 +197,14 @@ const CreateLocationScreen = () => {
               />
             )}
           </div>
-          {VALIDATE.imageList(images) && (
-            <Error className="w-full">{VALIDATE.imageList(images)}</Error>
+          {(VALIDATE.imageList(images,image)) && (
+            <Error className="w-full">{VALIDATE.imageList(images,image)}</Error>
           )}
           {images.length > 0 && (
             <PreviewImage
               className=""
               src={image}
               imageList={images}
-              onClickImage={handleShowImage}
             />
           )}
         </div>
@@ -275,11 +275,11 @@ const CreateLocationScreen = () => {
           </Wrapper>
 
           <Wrapper col className=" gap-4">
-            <Label required>Calendar</Label>
-            <Wrapper className="justify-between">
+            <Label required>Time</Label>
+            <Wrapper className="justify-between gap-8">
               <Input
-                label="Day"
-                value="Weekday"
+                label="Weekday"
+                value="Monday-Friday"
                 className="h-[60px]"
                 disabled
               />
@@ -315,10 +315,10 @@ const CreateLocationScreen = () => {
               </Wrapper>
             </Wrapper>
 
-            <Wrapper className="justify-between">
+            <Wrapper className="justify-between gap-8">
               <Input
-                label="Day"
-                value="Weekend"
+                label="Weekend"
+                value="Saturday-Sunday"
                 className="h-[60px]"
                 disabled
               />
@@ -391,7 +391,16 @@ const CreateLocationScreen = () => {
             </Wrapper>
           </Wrapper>
 
-          {err && <Error className="bg-transparent w-full">{err}</Error>}
+          {JSON.parse(localStorage.getItem("createLocationResponse")).data
+            .message && 
+            <Error className=" w-full">
+              {
+                JSON.parse(localStorage.getItem("createLocationResponse")).data
+                  .message
+              }
+            </Error>
+          
+        }
           <Button className="mt-8 mb-0" primary active>
             Submit
           </Button>
