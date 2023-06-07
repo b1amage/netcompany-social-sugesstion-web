@@ -34,22 +34,33 @@ const TabView = () => {
   const [places, setPlaces] = useState(placeList);
   const [createdPlaces, setCreatedPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [createdNextCursor, setCreatedNextCursor] = useState(undefined);
 
   useEffect(() => {
     const getCreatedLocation = async () => {
       const data = await userApi.getCreatedLocation();
       console.log(data);
       setCreatedPlaces(data.results);
+      setCreatedNextCursor(data.next_cursor);
       setLoading(false);
     };
     getCreatedLocation();
   }, []);
 
+  const loadMoreLocation = async () => {
+    if (createdNextCursor === null) return;
+    const data = await userApi.getCreatedLocation(createdNextCursor);
+    console.log(data);
+    const newCreatedPlaces = [...createdPlaces, ...data.results];
+    setCreatedPlaces(newCreatedPlaces);
+    setCreatedNextCursor(data.next_cursor);
+  };
+
   const renderCards = (places) => {
     return places.length === 0 ? (
       <EmptyTab title="You have no post yet!" actionName="Create Post" />
     ) : (
-      <Tab>
+      <Tab handleScrollToBottom={() => loadMoreLocation()}>
         {loading ? (
           <Loading />
         ) : (
