@@ -7,7 +7,7 @@ const ERROR = {
 }
 
 const VALIDATE = {
-    imageList(imgList, img){
+    imageList(imgList){
         if (imgList.length <= 0){
             return ERROR.images
         }

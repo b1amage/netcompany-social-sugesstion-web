@@ -23,7 +23,7 @@ import VALIDATE from "@/helpers/validateForm";
 
 // const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
-const AutoCompleteScreen = ({ label, className, src }) => {
+const AutoCompleteScreen = ({ label, className, src, err }) => {
   const inputRef = useRef();
   const [value, setValue] = useState("");
   const [error, setError] = useState(true);
@@ -103,7 +103,7 @@ const AutoCompleteScreen = ({ label, className, src }) => {
         </Autocomplete>
       </StandaloneSearchBox>
       {/* </LoadScript> */}
-      {(error && VALIDATE.location(value)) && <Error className="w-full">{VALIDATE.location(value)}</Error>}
+      {(error && err) && <Error className="w-full">{err}</Error>}
     </div>
   );
 };

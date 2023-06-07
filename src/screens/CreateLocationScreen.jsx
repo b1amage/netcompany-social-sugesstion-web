@@ -2,7 +2,7 @@ import Button from "@/components/button/Button";
 import Screen from "@/components/container/Screen";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Label from "@/components/form/Label";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Input from "@/components/form/Input";
 import camera from "@/assets/camera.svg";
 
@@ -39,12 +39,12 @@ import AutoCompleteScreen from "@/test/AutoComplete";
 import VALIDATE from "@/helpers/validateForm";
 import Error from "@/components/form/Error";
 import { LoadScript } from "@react-google-maps/api";
+import locationApi from "@/api/locationApi";
 // import { imageList } from "constants/images";
 
 const CreateLocationScreen = () => {
   const [uploading, setUploading] = useState(false);
   const [isShowImage, setIsShowImage] = useState(false);
-  const [uploadErr, setUploadErr] = useState()
   // console.log(JSON.parse(localStorage.getItem("createLocationResponse")).data);
   const screen = document.getElementsByTagName("BODY")[0];
   const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
@@ -63,6 +63,19 @@ const CreateLocationScreen = () => {
 
   const avatarRef = useRef();
   useOnClickOutside(avatarRef, handleCloseImage);
+
+  const [imagesErr, setImagesErr] = useState();
+  const [categoryErr, setCategoryErr] = useState();
+  const [titleErr, setTitleErr] = useState();
+  const [addressErr, setAddressErr] = useState();
+  const [descriptionErr, setDescriptionErr] = useState();
+  const [weekdayOpenTimeErr, setWeekdayOpenTimeErr] = useState();
+  const [weekdayCloseTimeErr, setWeekdayCloseTimeErr] = useState();
+  const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();
+  const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
+  const [minPriceErr, setMinPriceErr] = useState();
+  const [maxPriceErr, setMaxPriceErr] = useState();
+  const [submitErr, setSubmitErr] = useState();
 
   const {
     placeId,
@@ -104,35 +117,66 @@ const CreateLocationScreen = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {
-      placeId: placeId,
-      name: title,
-      address: address,
-      description: description,
-      imageUrls: images,
-      locationCategory: category.title,
-      location: {
-        type: "Point",
-        coordinates: [lng, lat],
-      },
-      pricePerPerson: {
-        min: parseInt(minPrice),
-        max: parseInt(maxPrice),
-        currency: currency.title || currency,
-      },
-      weekday: {
-        openTime: weekdayOpenTime.replace(":", ""),
-        closeTime: weekdayCloseTime.replace(":", ""),
-      },
-      weekend: {
-        openTime: weekendOpenTime.replace(":", ""),
-        closeTime: weekendCloseTime.replace(":", ""),
-      },
-    };
-    // console.log(data);
-    dispatch(onSubmitForm(data));
-    // console.log(response)
-  };
+    // if (
+    //   VALIDATE.imageList(images) ||
+    //   VALIDATE.location(address) ||
+    //   VALIDATE.title(title) ||
+    //   VALIDATE.category(category) ||
+    //   VALIDATE.description(description) ||
+    //   VALIDATE.time(weekdayOpenTime) ||
+    //   VALIDATE.time(weekdayCloseTime) ||
+    //   VALIDATE.time(weekendOpenTime) ||
+    //   VALIDATE.time(weekendCloseTime) ||
+    //   VALIDATE.price(minPrice) ||
+    //   VALIDATE.price(maxPrice)
+    // ) {
+      setImagesErr(VALIDATE.imageList(images));
+      setTitleErr(VALIDATE.title(title));
+      setAddressErr(VALIDATE.location(address));
+      setCategoryErr(VALIDATE.category(category));
+      setDescriptionErr(VALIDATE.description(description));
+      setWeekdayOpenTimeErr(VALIDATE.time(weekdayOpenTime));
+      setWeekdayCloseTimeErr(VALIDATE.time(weekdayCloseTime));
+      setWeekendOpenTimeErr(VALIDATE.time(weekendOpenTime));
+      setWeekendCloseTimeErr(VALIDATE.time(weekendCloseTime));
+      setMinPriceErr(VALIDATE.price(minPrice));
+      setMaxPriceErr(VALIDATE.price(maxPrice));
+    // } else {
+      const data = {
+        placeId: placeId,
+        name: title,
+        address: address,
+        description: description,
+        imageUrls: images,
+        locationCategory: category.title,
+        location: {
+          type: "Point",
+          coordinates: [lng, lat],
+        },
+        pricePerPerson: {
+          min: parseInt(minPrice),
+          max: parseInt(maxPrice),
+          currency: currency.title || currency,
+        },
+        weekday: {
+          openTime: weekdayOpenTime.replace(":", ""),
+          closeTime: weekdayCloseTime.replace(":", ""),
+        },
+        weekend: {
+          openTime: weekendOpenTime.replace(":", ""),
+          closeTime: weekendCloseTime.replace(":", ""),
+        },
+      };
+      // console.log(data);
+      const handleSubmit = async() => {
+        const response = await locationApi.createLocation(data, setSubmitErr)
+        setSubmitErr(response)
+        // return response
+      }
+      handleSubmit()
+      // console.log(response)
+    }
+  // };
 
   const handleOnChangeImage = (e) => {
     (async function () {
@@ -160,92 +204,31 @@ const CreateLocationScreen = () => {
         });
     })();
   };
+
+
   // const {width} = useViewport()
+  // useEffect(() => {
+  //   if (JSON.parse(localStorage.getItem("createLocationResponse")).data.message){
+  //     setSubmitErr(JSON.parse(localStorage.getItem("createLocationResponse")).data.message)
+  //   }
+  // }, [submitErr])
   const dispatch = useDispatch();
   return (
     <Screen className={`px-4 py-8`}>
       <form
         onSubmit={handleSubmit}
-        className={`xl:flex gap-8 lg:my-4 my-12 ${
-          isShowImage && "overflow-hidden h-screen"
-        }`}
+        className={`${isShowImage && "overflow-hidden h-screen"}`}
       >
-        <div className="w-full xl:max-w-[40vw] flex flex-col gap-4 h-auto">
-          <Wrapper className="justify-between">
-            <Heading className="w-full items-center flex">
-              Create Location form
-            </Heading>
-            <UploadImage
-              className="lg:my-0 !justify-end"
-              icon={camera}
-              uploading={uploading}
-              onChange={handleOnChangeImage}
-            />
-          </Wrapper>
-
-          <div
-            className={`border border-dashed border-black rounded-lg relative h-[60vh]`}
-          >
-            {image && (
-              <Image
-                src={image}
-                alt="img"
-                className="h-[60vh]"
-                imageClassName=""
-                onClick={handleShowImage}
-              />
-            )}
-          </div>
-          {(VALIDATE.imageList(images)) && (
-            <Error className="w-full">{VALIDATE.imageList(images)}</Error>
-          )}
-          {images.length > 0 && (
-            <PreviewImage
-              className=""
-              src={image}
-              imageList={images}
-            />
-          )}
-        </div>
-
+        <Heading className="w-full sm:text-center !text-[42px] leading-10">
+          Register Location Form
+        </Heading>
         <Wrapper col className="w-full my-4 xl:my-0 justify-between">
-          <Dropdown
-            label="Category"
-            required
-            defaultTitle="SELECT THE CATEGORY"
-            options={categoryList}
-            value={category}
-            onChange={(option) => dispatch(changeCategory(option))}
-            err={VALIDATE.category(category)}
-          />
-
-          <Wrapper className="my-4" col>
-            <Input
-              label="Title"
-              required
-              placeholder="Enter the place's name"
-              className={`rounded-lg ${title && "bg-neutral-100"}`}
-              value={title}
-              err={VALIDATE.title(title)}
-              onChange={(e) => dispatch(changeTitle(e.target.value))}
-            />
-          </Wrapper>
-
           <Wrapper className="" col>
-            {/* <Input
-              label="Location"
-              required
-              icon={location}
-              placeholder="Enter the address"
-              className={`rounded-lg !pr-12 ${address && "bg-neutral-100"}`}
-              value={address}
-              onChange={(e) => dispatch(changeAddress(e.target.value))}
-            /> */}
             <LoadScript libraries={["places"]} googleMapsApiKey={key}>
               <AutoCompleteScreen
                 label="Location"
                 className={`${address ? "bg-neutral-100" : "bg-white"}`}
-                err={VALIDATE.location(address)}
+                err={addressErr}
               />
               <StaticMap
                 title={title}
@@ -259,7 +242,28 @@ const CreateLocationScreen = () => {
           </Wrapper>
 
           <Wrapper className="my-4" col>
-            <Label required>Description</Label>
+            <Input
+              label="Title"
+              placeholder="Enter the place's name"
+              className={`rounded-lg ${title && "bg-neutral-100"}`}
+              value={title}
+              err={titleErr}
+              onChange={(e) => dispatch(changeTitle(e.target.value))}
+            />
+          </Wrapper>
+
+          <Dropdown
+            label="Category"
+            
+            defaultTitle="SELECT THE CATEGORY"
+            options={categoryList}
+            value={category}
+            onChange={(option) => dispatch(changeCategory(option))}
+            err={categoryErr}
+          />
+
+          <Wrapper className="my-4" col>
+            <Label >Description</Label>
             <textarea
               className={`w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg border border-black ${
                 description && "bg-neutral-100"
@@ -268,120 +272,107 @@ const CreateLocationScreen = () => {
               value={description}
               onChange={(e) => dispatch(changeDescription(e.target.value))}
             />
-            {VALIDATE.description(description) && (
-              <Error fluid>{VALIDATE.description(description)}</Error>
-            )}
+            {descriptionErr && <Error fluid>{descriptionErr}</Error>}
           </Wrapper>
 
-          <Wrapper col className=" gap-4">
-            <Label required>Time</Label>
-            <Wrapper className="justify-between gap-2 flex-col sm:flex-row">
-              <Input
-                label="Weekday"
-                value="Monday-Friday"
-                className="h-[60px] !w-fit"
-                disabled
-              />
-              <Wrapper className="justify-between gap-4">
+          <Wrapper col className="gap-4">
+            <Label >Time</Label>
+            <Wrapper className="justify-between gap-2 sm:items-center sm:flex-row flex-col">
+              <Label>Weekday:</Label>
+              <Wrapper className="justify-between gap-4 ">
                 <Input
                   label="Open time"
                   type="time"
-                  className={`h-[60px] !w-fit ${
+                  className={`h-[60px] flex justify-between sm:!w-fit ${
                     weekdayOpenTime ? "bg-neutral-100" : "bg-white"
                   }`}
                   onChange={(e) =>
                     dispatch(changeWeekdayOpenTime(e.target.value))
                   }
                   value={weekdayOpenTime}
-                  err={VALIDATE.time(weekdayOpenTime)}
-
-                  // onChange={() => console.log(e.target.value)}
+                  err={weekdayOpenTimeErr}
                 />
                 <Input
                   label="Close time"
                   type="time"
-                  className={`h-[60px]  !w-fit ${
+                  className={`h-[60px] flex justify-between  sm:!w-fit ${
                     weekdayCloseTime ? "bg-neutral-100" : "bg-white"
                   }`}
                   onChange={(e) =>
                     dispatch(changeWeekdayCloseTime(e.target.value))
                   }
                   value={weekdayCloseTime}
-                  err={VALIDATE.time(weekdayCloseTime)}
-                  
-                  // onChange={() => console.log(e.target.value)}
+                  err={weekdayCloseTimeErr}
                 />
               </Wrapper>
             </Wrapper>
 
-            <Wrapper className="justify-between gap-4 flex-col sm:flex-row">
-              <Input
-                label="Weekend"
-                value="Saturday-Sunday"
-                className="h-[60px] !w-fit"
-                disabled
-              />
-              <Wrapper className="justify-between gap-4">
+            <Wrapper className="justify-between gap-2 sm:items-center sm:flex-row flex-col">
+              <Label>Weekend: </Label>
+
+              <Wrapper className="gap-4 justify-between">
                 <Input
                   label="Open time"
                   type="time"
-                  className={`h-[60px]  !w-fit ${
+                  className={`h-[60px]  sm:!w-fit flex justify-between ${
                     weekendOpenTime ? "bg-neutral-100" : "bg-white"
                   }`}
                   onChange={(e) =>
                     dispatch(changeWeekendOpenTime(e.target.value))
                   }
                   value={weekendOpenTime}
-                  err={VALIDATE.time(weekendOpenTime)}
-
-                  // onChange={() => console.log(e.target.value)}
+                  err={weekendOpenTimeErr}
                 />
                 <Input
                   label="Close time"
                   type="time"
-                  className={`h-[60px]  !w-fit ${
+                  className={`h-[60px] sm:!w-fit flex justify-end  ${
                     weekendCloseTime ? "bg-neutral-100" : "bg-white"
                   }`}
                   onChange={(e) =>
                     dispatch(changeWeekendCloseTime(e.target.value))
                   }
                   value={weekendCloseTime}
-                  err={VALIDATE.time(weekendCloseTime)}
-
-                  // onChange={() => console.log(e.target.value)}
+                  err={weekendCloseTimeErr}
                 />
               </Wrapper>
             </Wrapper>
           </Wrapper>
 
-          <Wrapper col className="my-4">
+          <Wrapper col className="my-4 ">
             <Label>
               Price per person <i>(optional)</i>{" "}
             </Label>
-            <Wrapper className="justify-between">
-              <Input
-                label="From: "
-                className={`rounded-lg w-full ${minPrice && "bg-neutral-100"}`}
-                type="number"
-                value={minPrice}
-                onChange={(e) => dispatch(changeMinPrice(e.target.value))}
-                min={0}
-                err={VALIDATE.price(minPrice)}
-                placeholder="Enter the price"
-              />
-              <Input
-                label="To: "
-                className={`rounded-lg w-full ${maxPrice && "bg-neutral-100"}`}
-                type="number"
-                value={maxPrice}
-                onChange={(e) => dispatch(changeMaxPrice(e.target.value))}
-                min={minPrice}
-                placeholder="Enter the price"
-                err={VALIDATE.price(maxPrice)}
-              />
+            <Wrapper className="sm:flex-row flex-col">
+              <Wrapper className="w-full justify-between sm:justify-start sm:gap-8">
+                <Input
+                  label="From: "
+                  className={`rounded-lg w-full !py-4 ${
+                    minPrice && "bg-neutral-100"
+                  }`}
+                  type="number"
+                  value={minPrice}
+                  onChange={(e) => dispatch(changeMinPrice(e.target.value))}
+                  min={0}
+                  err={minPriceErr}
+                  placeholder="Enter the price"
+                />
+                <Input
+                  label="To: "
+                  className={`rounded-lg w-full py-4 ${
+                    maxPrice && "bg-neutral-100"
+                  }`}
+                  type="number"
+                  value={maxPrice}
+                  onChange={(e) => dispatch(changeMaxPrice(e.target.value))}
+                  min={minPrice}
+                  placeholder="Enter the price"
+                  err={maxPriceErr}
+                />
+              </Wrapper>
               <Dropdown
                 label="Currency"
-                className="w-fit rounded-lg h-fit"
+                className="sm:w-fit rounded-lg h-fit"
                 options={currencyList}
                 value={currency}
                 defaultTitle={currency}
@@ -389,20 +380,56 @@ const CreateLocationScreen = () => {
               />
             </Wrapper>
           </Wrapper>
+          <div className="w-full flex flex-col gap-4 h-auto">
+            <Wrapper className="justify-between">
+              <Heading className="w-full flex px-4 items-center">
+                Add location image
+              </Heading>
+              <UploadImage
+                className="lg:my-0 !justify-end"
+                icon={camera}
+                uploading={uploading}
+                onChange={handleOnChangeImage}
+              />
+            </Wrapper>
 
-          {JSON.parse(localStorage.getItem("createLocationResponse")).data
-            .message && 
-            <Error className=" w-full">
+            <div
+              className={`border border-dashed border-black rounded-lg relative h-[60vh]`}
+            >
+              {image && (
+                <Image
+                  src={image}
+                  alt="img"
+                  className="h-[60vh]"
+                  imageClassName=""
+                  onClick={handleShowImage}
+                />
+              )}
+            </div>
+            {imagesErr && <Error className="w-full">{imagesErr}</Error>}
+            {/* {images.length > 0 && ( */}
+            <PreviewImage
+              className={`h-[25vh] items-center ${images.length <= 0 && "invisible"}`}
+              src={image}
+              imageList={images}
+            />
+            {/* )} */}
+            <Error
+              className={`${
+                submitErr
+                  ? "visible"
+                  : "invisible"
+              } w-full`}
+            >
               {
-                JSON.parse(localStorage.getItem("createLocationResponse")).data
-                  .message
+                submitErr
               }
             </Error>
-          
-        }
-          <Button className="mt-8 mb-0" primary active>
-            Submit
-          </Button>
+
+            <Button className="mt-8 mb-0" primary active>
+              Submit
+            </Button>
+          </div>
         </Wrapper>
       </form>
       {isShowImage && (

@@ -82,17 +82,6 @@ const createLocationFormSlice = createSlice({
       state.images = updated;
       if (state.image === action.payload) state.image = ''
     },
-    
-    onSubmitForm(state, action) {
-      const data = action.payload;
-      console.log(data);
-      const handleSubmit = async() => {
-        const response = await locationApi.createLocation(data)
-        console.log(response)
-        localStorage.setItem("createLocationResponse", JSON.stringify(response))
-      }
-      handleSubmit()
-    },
   },
 });
 
