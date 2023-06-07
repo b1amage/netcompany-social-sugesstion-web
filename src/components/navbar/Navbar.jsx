@@ -7,24 +7,17 @@ import Image from "@/components/image/Image";
 import logo from "@/assets/netcompany_logo.svg";
 import { darkIcons, lightIcons } from "@/constants/navIcons";
 import darkMenu from "@/assets/dark-menu.svg";
-import add from "@/assets/add.svg";
-import notification from "@/assets/bell.svg";
-
-import filter from "@/assets/filter.svg";
-import { GrLogout } from "react-icons/gr";
 import close from "@/assets/close.svg";
 import { createPortal } from "react-dom";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useDispatch, useSelector } from "react-redux";
 import { validatePathname } from "@/features/navbarSlice";
-import Wrapper from "@/components/wrapper/Wrapper";
-import Counter from "@/components/counter/Counter";
-import Heading from "@/components/typography/Heading";
 import logoutImg from "@/assets/navigation/logout.svg";
 import { useNavigate } from "react-router-dom";
 import Popup from "@/components/popup/Popup";
 import ROUTE from "@/constants/routes";
 import { logout } from "@/features/userSlice";
+import SubNavbar from "./SubNavbar";
 const BREAK_POINT_NAVBAR = 768;
 
 const Navbar = () => {
@@ -69,16 +62,6 @@ const Navbar = () => {
     }
   }, [showPopup]);
 
-  const { isAdded, isShowNotification, isShowFilter } = useSelector(
-    ({ navbar }) => {
-      return {
-        isAdded: navbar.isAdded,
-        isShowNotification: navbar.isShowNotification,
-        isShowFilter: navbar.isShowFilter,
-      };
-    }
-  );
-
   useEffect(() => {
     dispatch(validatePathname(window.location.pathname));
   }, [window.location.pathname]);
@@ -121,35 +104,7 @@ const Navbar = () => {
                 }}
               />
 
-              <Wrapper className="mr-4">
-                {isAdded && (
-                  <Image
-                    imageClassName=""
-                    src={add}
-                    alt="add"
-                    className="w-[28px] h-[28px] m-2"
-                  />
-                )}
-                {isShowNotification && (
-                  <div className="relative">
-                    <Image
-                      imageClassName=""
-                      src={notification}
-                      alt="notification"
-                      className="w-[28px] h-[28px] m-2"
-                    />
-                    <Counter count={10} />
-                  </div>
-                )}
-                {isShowFilter && (
-                  <Image
-                    imageClassName=""
-                    src={filter}
-                    alt="filter"
-                    className="w-[28px] h-[28px] m-2"
-                  />
-                )}
-              </Wrapper>
+              <SubNavbar />
             </>
           )}
         </div>

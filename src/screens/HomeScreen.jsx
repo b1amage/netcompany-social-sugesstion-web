@@ -2,7 +2,6 @@ import localStorageKey from "@/constants/localStorageKeys";
 import ROUTE from "@/constants/routes";
 import User from "@/components/user/User";
 import { useEffect, useState } from "react";
-
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "@/components/search/SearchBar";
@@ -11,9 +10,12 @@ import PreviewImage from "@/components/image/PreviewImage";
 import { imageList } from "@/constants/images";
 import PreferencesSelect from "@/components/form/PreferencesSelect";
 import categoryList from "@/constants/category";
+import SubNavbar from "@/components/navbar/SubNavbar";
+import useViewport from "@/hooks/useScreenWidth";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
+  const { width } = useViewport();
   const [locationCategories, setLocationCategories] = useState([]);
   const handleCategoryClick = (category) => {
     const newCategory = locationCategories.includes(category)
@@ -44,14 +46,48 @@ const HomeScreen = () => {
   console.log(user);
 
   return (
-    <Wrapper className="h-screen flex-col px-4">
-      <User user={user} src={user.imageUrl} />
-      <SearchBar />
-      <PreviewImage imageList={imageList} />
+    <Wrapper className="h-screen flex-col px-4 my-4 lg:my-8">
+      <Wrapper className="flex-col gap-4 lg:flex-row">
+        <User user={user} src={user.imageUrl} />
+        <SearchBar />
+        {width > 1024 && <SubNavbar />}
+      </Wrapper>
+
+      <PreviewImage
+        imageList={imageList}
+        className="!bg-transparent sm:text-left !p-0"
+        cardClassName=""
+        imageClassName='h-[40vh] lg:h-[60vh]'
+        // label="Features"
+        // name="Netcompany"
+        // address="Opal Tower, 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
+        perView={1}
+      />
+
       <PreferencesSelect
         categoryList={categoryList}
         onSelect={handleCategoryClick}
         locationCategories={locationCategories}
+      />
+
+      <PreviewImage
+        imageList={imageList}
+        className="!bg-transparent sm:text-left !p-0"
+        cardClassName="bg-neutral-100 p-4 text-center"
+        label="Features"
+        name="Netcompany"
+        address="Opal Tower, 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
+        perView={width > 768 ? 4 : 2}
+      />
+
+      <PreviewImage
+        imageList={imageList}
+        className="!bg-transparent sm:text-left !p-0"
+        cardClassName="bg-neutral-100 p-4 text-center"
+        label="Latest"
+        name="Netcompany"
+        address="Opal Tower, 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
+        perView={width > 768 ? 4 : 2}
       />
     </Wrapper>
   );

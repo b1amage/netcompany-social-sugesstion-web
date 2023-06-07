@@ -32,7 +32,6 @@ import { onSubmitForm } from "@/features/createLocationFormSlice";
 import Portal from "@/components/HOC/Portal";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import Image from "@/components/image/Image";
-import Map from "@/components/map/Map";
 import { currencyList } from "@/constants/currencyList";
 import Heading from "@/components/typography/Heading";
 import StaticMap from "@/test/StaticMap";
@@ -40,6 +39,8 @@ import AutoCompleteScreen from "@/test/AutoComplete";
 import VALIDATE from "@/helpers/validateForm";
 import Error from "@/components/form/Error";
 import { LoadScript } from "@react-google-maps/api";
+import close from '@/assets/close.svg'
+
 // import { imageList } from "constants/images";
 
 const CreateLocationScreen = () => {
@@ -205,6 +206,8 @@ const CreateLocationScreen = () => {
               src={image}
               imageList={images}
               onClickImage={handleShowImage}
+              close={close}
+              perView={4}
             />
           )}
         </div>
