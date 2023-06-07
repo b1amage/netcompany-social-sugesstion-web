@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "@/features/userSlice";
 import Popup from "@/components/popup/Popup";
 import LoadingScreen from "./LoadingScreen";
+import Loading from "@/components/loading/Loading";
 
 const UnLoginUI = () => (
   <Wrapper className="flex-1 px-5 flex-center !gap-10" col="true">
@@ -40,6 +41,7 @@ const ProfileScreen = () => {
   // const [userInfo, setUserInfo] = useState(user);
   const [fetchUser, setFetchUser] = useState({});
   const [loading, setLoading] = useState(true);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

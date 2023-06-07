@@ -35,6 +35,7 @@ const TabView = () => {
   const [createdPlaces, setCreatedPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [createdNextCursor, setCreatedNextCursor] = useState(undefined);
+  const [nextLoading, setNextLoading] = useState(false);
 
   useEffect(() => {
     const getCreatedLocation = async () => {
@@ -49,11 +50,13 @@ const TabView = () => {
 
   const loadMoreLocation = async () => {
     if (createdNextCursor === null) return;
+    setNextLoading(true);
     const data = await userApi.getCreatedLocation(createdNextCursor);
     console.log(data);
     const newCreatedPlaces = [...createdPlaces, ...data.results];
     setCreatedPlaces(newCreatedPlaces);
     setCreatedNextCursor(data.next_cursor);
+    setNextLoading(false);
   };
 
   const renderCards = (places) => {
@@ -93,7 +96,7 @@ const TabView = () => {
   };
 
   return (
-    <Wrapper col="true" className="w-full">
+    <Wrapper col="true" className="w-full realtive">
       {/* Tab Header */}
       <div className="flex items-center justify-between w-full">
         {profileTabs.map((Item, index) => (
@@ -113,6 +116,12 @@ const TabView = () => {
       </div>
       {/* Tab Content */}
       {renderTabContent(activeTabIndex)}
+
+      {nextLoading && (
+        <div className="w-full my-4 flex-center">
+          <Loading />
+        </div>
+      )}
     </Wrapper>
   );
 };

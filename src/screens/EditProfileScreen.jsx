@@ -67,6 +67,7 @@ const EditProfileScreen = () => {
 
     const data = await userApi.editProfile(userInfo);
     localStorage.setItem("user", JSON.stringify(data));
+    navigate("/");
   };
 
   // Get Location
