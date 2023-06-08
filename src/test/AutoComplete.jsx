@@ -98,7 +98,7 @@ const AutoCompleteScreen = ({ label, className, src, err }) => {
             type="text"
             placeholder="Enter location name or address"
             autoComplete="on"
-            className={`w-full border border-primary-400 focus:ring-1 my-3 focus:ring-primary-400 p-4 text-sm transition-all duration-300 outline-none rounded-lg  md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${className}`}
+            className={`w-full border border-primary-400 focus:ring-1 my-3 focus:ring-primary-400 p-4 text-sm transition-all duration-300 outline-none rounded-lg  md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${className} ${(error && err) && 'border-secondary-400 border-2 focus:ring-0'}`}
           />
         </Autocomplete>
       </StandaloneSearchBox>

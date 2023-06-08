@@ -1,19 +1,33 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "./Image";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { useDispatch } from "react-redux";
 import { changeImage, removeImage } from "@/features/createLocationFormSlice";
 import close from '@/assets/close.svg'
+import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 
 const PreviewImage = ({ imageList, src, className }) => {
   const dispatch = useDispatch();
-  
+  const [isShowButtonRight, setIsShowButtonRight] = useState(false)
+  const [isShowButtonLeft, setIsShowButtonLeft] = useState(false)
   const [sliderRef] = useKeenSlider({
     slides: {
       perView: 4,
       spacing: 20,
-  },});
+    },
+    slideChanged(s){
+      console.log(s)
+      if (s.track.details.position >= s.track.details.min && s.track.absToRel > 0){
+        setIsShowButtonRight(true)
+      } else if(s.track.details.position <= s.track.details.max){
+        setIsShowButtonLeft(true)
+      } else{
+        setIsShowButtonRight(true)
+        setIsShowButtonLeft(true)
+      }
+    }
+});
 
   useEffect(() => {
     if (sliderRef.current) {
@@ -40,6 +54,10 @@ const PreviewImage = ({ imageList, src, className }) => {
         </div>
         
       ))}
+      {/* <GoChevronLeft  />
+      <GoChevronRight  />
+      <div className={`${isShowButtonLeft ? 'visible': 'invisible'} bg-black text-white`}>Left</div>
+      <div className={`${isShowButtonRight ? 'visible': 'invisible'} bg-black text-white`}>Right</div> */}
     </div>
   );
 };

@@ -28,9 +28,9 @@ const VALIDATE = {
         if (time === '') return ERROR.required
         // if (parseInt(openTime.replace(':', '')) >= parseInt(closeTime.replace(':', ''))) return ERROR.time
     },
-    price(price){
-        if (price === null) return ERROR.required
-        // if (minPrice >= maxPrice) return ERROR.price
+    price(minPrice, maxPrice){
+        // if (price === null) return ERROR.required
+        if (parseInt(minPrice) >= parseInt(maxPrice)) return ERROR.price
     },
 }
 
