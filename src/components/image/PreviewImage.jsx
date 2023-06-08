@@ -40,7 +40,7 @@ const PreviewImage = ({ imageList, src, className }) => {
       {imageList.map((image, index) => (
         <div className="relative w-fit rounded-lg keen-slider__slide " key={index}>
           <Image
-            className={`h-[20vh] ${src === image && 'border-2 border-black'} hover:opacity-60 duration-300`}
+            className={`h-[20vh] ${src === image && 'border-2 border-secondary-400'} hover:opacity-60 duration-300`}
             onClick={() => dispatch(changeImage(image))}
             src={image}
             alt="image"
@@ -54,10 +54,10 @@ const PreviewImage = ({ imageList, src, className }) => {
         </div>
         
       ))}
-      {/* <GoChevronLeft  />
-      <GoChevronRight  />
-      <div className={`${isShowButtonLeft ? 'visible': 'invisible'} bg-black text-white`}>Left</div>
-      <div className={`${isShowButtonRight ? 'visible': 'invisible'} bg-black text-white`}>Right</div> */}
+      <GoChevronLeft className={`${isShowButtonLeft ? 'visible': 'invisible'} bg-black text-white`} />
+      <GoChevronRight className={`${isShowButtonRight ? 'visible': 'invisible'} bg-black text-white`} />
+      <div >Left</div>
+      <div >Right</div>
     </div>
   );
 };
