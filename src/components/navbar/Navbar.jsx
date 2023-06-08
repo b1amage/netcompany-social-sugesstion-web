@@ -9,8 +9,9 @@ import { darkIcons, lightIcons } from "@/constants/navIcons";
 import darkMenu from "@/assets/dark-menu.svg";
 import add from "@/assets/add.svg";
 import notification from "@/assets/bell.svg";
+
 import filter from "@/assets/filter.svg";
-import {GrLogout} from 'react-icons/gr'
+import { GrLogout } from "react-icons/gr";
 import close from "@/assets/close.svg";
 import { createPortal } from "react-dom";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
@@ -19,11 +20,16 @@ import { validatePathname } from "@/features/navbarSlice";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Counter from "@/components/counter/Counter";
 import Heading from "@/components/typography/Heading";
-import logout from "@/assets/navigation/logout.svg"
+import logoutImg from "@/assets/navigation/logout.svg";
+import { useNavigate } from "react-router-dom";
+import Popup from "@/components/popup/Popup";
+import ROUTE from "@/constants/routes";
+import { logout } from "@/features/userSlice";
 const BREAK_POINT_NAVBAR = 768;
 
 const Navbar = () => {
   const [show, setShow] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const viewport = useViewport();
 
@@ -35,17 +41,43 @@ const Navbar = () => {
 
   const dispatch = useDispatch();
 
-  const {
-    isAdded,
-    isShowNotification,
-    isShowFilter,
-  } = useSelector(({ navbar }) => {
-    return {
-      isAdded: navbar.isAdded,
-      isShowNotification: navbar.isShowNotification,
-      isShowFilter: navbar.isShowFilter,
-    };
-  });
+  const navigate = useNavigate();
+
+  const closePopup = () => setShowPopup(false);
+  const confirmLogout = () => {
+    closePopup();
+    dispatch(logout());
+    navigate(ROUTE.LOGIN);
+  };
+
+  const popupActions = [
+    {
+      title: "cancel",
+      danger: false,
+      action: closePopup,
+    },
+    { title: "logout", danger: true, action: confirmLogout },
+  ];
+
+  useEffect(() => {
+    // const html = document.querySelector("html");
+    if (showPopup) {
+      document.body.style.overflow = "hidden";
+      document.body.style.height = "100vh";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [showPopup]);
+
+  const { isAdded, isShowNotification, isShowFilter } = useSelector(
+    ({ navbar }) => {
+      return {
+        isAdded: navbar.isAdded,
+        isShowNotification: navbar.isShowNotification,
+        isShowFilter: navbar.isShowFilter,
+      };
+    }
+  );
 
   useEffect(() => {
     dispatch(validatePathname(window.location.pathname));
@@ -53,6 +85,13 @@ const Navbar = () => {
 
   return createPortal(
     <nav className="w-full bg-white border-b border-gray-200">
+      {showPopup && (
+        <Popup
+          onClose={closePopup}
+          title="Are you sure you want to logout Netcompany Suggestion System"
+          actions={popupActions}
+        />
+      )}
       <div className="">
         {/* Logo */}
         {viewport.width > BREAK_POINT_NAVBAR && (
@@ -82,7 +121,7 @@ const Navbar = () => {
                 }}
               />
 
-              <Wrapper className='mr-4'>
+              <Wrapper className="mr-4">
                 {isAdded && (
                   <Image
                     imageClassName=""
@@ -128,7 +167,7 @@ const Navbar = () => {
                   src={darkIcons[index]}
                   className=""
                 />
-              ))}          
+              ))}
           </div>
         ) : (
           <div className="">
@@ -159,9 +198,13 @@ const Navbar = () => {
                     onClick={() => setShow(!show)}
                   />
                 ))}
-                
-                <NavButton label="Logout" src={logout} className={`flex items-center py-4 pl-3 pr-20 mx-3 my-2 md:mx-0 md:px-4 hover:bg-gray-50/10 rounded-lg duration-200 cursor-pointer md:hover:bg-gray-200 md:bg-gray-50/10 ` } />
-                  
+
+              <NavButton
+                label="Logout"
+                onClick={() => setShowPopup(true)}
+                src={logoutImg}
+                className={`!mt-auto flex items-center py-4 pl-3 pr-20 mx-3 my-2 md:mx-0 md:px-4 hover:bg-gray-50/10 rounded-lg duration-200 cursor-pointer md:hover:bg-gray-200 md:bg-gray-50/10 `}
+              />
             </ul>
           </div>
         )}

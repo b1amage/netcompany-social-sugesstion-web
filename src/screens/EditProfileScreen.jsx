@@ -67,6 +67,7 @@ const EditProfileScreen = () => {
 
     const data = await userApi.editProfile(userInfo);
     localStorage.setItem("user", JSON.stringify(data));
+    navigate("/");
   };
 
   // Get Location
@@ -100,10 +101,8 @@ const EditProfileScreen = () => {
             </Wrapper>
             <Wrapper className="" col="true">
               <Wrapper col="true">
-                <Heading>Profile Settings</Heading>
-                <SubHeading>
-                  Provide your preferences for best experience
-                </SubHeading>
+                <Heading>Profile Edit</Heading>
+                <SubHeading>Edit your profile!</SubHeading>
               </Wrapper>
 
               <AvatarUpload img={imageUrl} />
@@ -111,7 +110,7 @@ const EditProfileScreen = () => {
                 onChange={(e) => setUsernameInput(e.target.value)}
                 value={usernameInput}
                 required
-                label="Username"
+                label="Display name"
                 type="text"
                 name="username"
                 id="username"

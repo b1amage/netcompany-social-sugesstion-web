@@ -12,6 +12,7 @@ import Image from "@/components/image/Image";
 import Heading from "@/components/typography/Heading";
 import Button from "@/components/button/Button";
 import userApi from "@/api/userApi";
+import Loading from "@/components/loading/Loading";
 
 const EmptyTab = ({ title, actionName }) => (
   <Tab className="flex w-full h-full flex-center xl:my-20">
@@ -32,24 +33,44 @@ const TabView = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [places, setPlaces] = useState(placeList);
   const [createdPlaces, setCreatedPlaces] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [createdNextCursor, setCreatedNextCursor] = useState(undefined);
+  const [nextLoading, setNextLoading] = useState(false);
 
   useEffect(() => {
     const getCreatedLocation = async () => {
       const data = await userApi.getCreatedLocation();
       console.log(data);
       setCreatedPlaces(data.results);
+      setCreatedNextCursor(data.next_cursor);
+      setLoading(false);
     };
     getCreatedLocation();
   }, []);
+
+  const loadMoreLocation = async () => {
+    if (createdNextCursor === null) return;
+    setNextLoading(true);
+    const data = await userApi.getCreatedLocation(createdNextCursor);
+    console.log(data);
+    const newCreatedPlaces = [...createdPlaces, ...data.results];
+    setCreatedPlaces(newCreatedPlaces);
+    setCreatedNextCursor(data.next_cursor);
+    setNextLoading(false);
+  };
 
   const renderCards = (places) => {
     return places.length === 0 ? (
       <EmptyTab title="You have no post yet!" actionName="Create Post" />
     ) : (
-      <Tab>
-        {places.map((place, index) => (
-          <ProfileCard key={index} place={place} />
-        ))}
+      <Tab handleScrollToBottom={() => loadMoreLocation()}>
+        {loading ? (
+          <Loading />
+        ) : (
+          places.map((place, index) => (
+            <ProfileCard key={index} place={place} />
+          ))
+        )}
       </Tab>
     );
   };
@@ -75,7 +96,7 @@ const TabView = () => {
   };
 
   return (
-    <Wrapper col="true" className="w-full">
+    <Wrapper col="true" className="w-full realtive">
       {/* Tab Header */}
       <div className="flex items-center justify-between w-full">
         {profileTabs.map((Item, index) => (
@@ -95,6 +116,12 @@ const TabView = () => {
       </div>
       {/* Tab Content */}
       {renderTabContent(activeTabIndex)}
+
+      {nextLoading && (
+        <div className="w-full my-4 flex-center">
+          <Loading />
+        </div>
+      )}
     </Wrapper>
   );
 };
