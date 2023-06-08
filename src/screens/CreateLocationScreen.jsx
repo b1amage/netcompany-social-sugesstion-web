@@ -15,7 +15,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   changeCategory,
   changeImage,
-  changeAddress,
   changeDescription,
   changeMinPrice,
   changeMaxPrice,
@@ -28,7 +27,7 @@ import {
   changeWeekendOpenTime,
 } from "@/features/createLocationFormSlice";
 import axios from "axios";
-import { onSubmitForm } from "@/features/createLocationFormSlice";
+
 import Portal from "@/components/HOC/Portal";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import Image from "@/components/image/Image";
@@ -41,7 +40,7 @@ import Error from "@/components/form/Error";
 import { LoadScript } from "@react-google-maps/api";
 import locationApi from "@/api/locationApi";
 import { useNavigate } from "react-router-dom";
-// import { imageList } from "constants/images";
+import { DEFAULT } from "@/constants/defaultData";
 
 const CreateLocationScreen = () => {
   const [uploading, setUploading] = useState(false);
@@ -119,39 +118,15 @@ const CreateLocationScreen = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (
-      VALIDATE.imageList(images) ||
-      VALIDATE.location(address) ||
-      VALIDATE.title(title) ||
-      VALIDATE.category(category) ||
-      VALIDATE.description(description) ||
-      VALIDATE.time(weekdayOpenTime) ||
-      VALIDATE.time(weekdayCloseTime) ||
-      VALIDATE.time(weekendOpenTime) ||
-      VALIDATE.time(weekendCloseTime)
-      // VALIDATE.price(minPrice) ||
-      // VALIDATE.price(maxPrice)
-    ) {
-      setImagesErr(VALIDATE.imageList(images));
-      setTitleErr(VALIDATE.title(title));
-      setAddressErr(VALIDATE.location(address));
+    if (VALIDATE.category(category)) {
       setCategoryErr(VALIDATE.category(category));
-      setDescriptionErr(VALIDATE.description(description));
-      setWeekdayOpenTimeErr(VALIDATE.time(weekdayOpenTime));
-      setWeekdayCloseTimeErr(VALIDATE.time(weekdayCloseTime));
-      setWeekendOpenTimeErr(VALIDATE.time(weekendOpenTime));
-      setWeekendCloseTimeErr(VALIDATE.time(weekendCloseTime));
-      // setMinPriceErr(VALIDATE.price(minPrice));
-      // setMaxPriceErr(VALIDATE.price(maxPrice));
-      // setPriceErr(VALIDATE.price(minPrice, maxPrice));
-      return;
     } else {
       const data = {
         placeId: placeId,
         name: title,
         address: address,
         description: description,
-        imageUrls: images,
+        imageUrls: images === [] ? [DEFAULT.location]: images,
         locationCategory: category.title,
         location: {
           type: "Point",
@@ -171,18 +146,12 @@ const CreateLocationScreen = () => {
           closeTime: weekendCloseTime.replace(":", ""),
         },
       };
-      // console.log(data);
-      const handleSubmit = async () => {
-        const response = await locationApi.createLocation(data, setSubmitErr);
-        setSubmitErr(response);
-        // return response
-        navigate("/");
-      };
-      handleSubmit();
-      // console.log(response)
+      console.log(data);
+      locationApi.createLocation(data, navigate, setSubmitErr);
+      // // console.log(response)
     }
+    // };
   };
-  // };
 
   const handleOnChangeImage = (e) => {
     (async function () {
@@ -248,37 +217,44 @@ const CreateLocationScreen = () => {
 
           <Wrapper className="my-4" col>
             <Input
+              required
               label="Title"
               placeholder="Enter the place's name"
-              className={`rounded-lg ${title && "bg-neutral-100"} ${
-                titleErr && " border-secondary-400 border-2 focus:ring-0"
+              className={`rounded-lg ${
+                VALIDATE.title(title)
+                  ? " focus:!ring-secondary-400 focus:border-secondary-400 "
+                  : "border-green-500 focus:!ring-green-500 border-2"
               }`}
               value={title}
               err={titleErr}
               onChange={(e) => {
                 dispatch(changeTitle(e.target.value));
-                // setTitleErr(VALIDATE.title(e.target.value));
+                setTitleErr(VALIDATE.title(e.target.value));
               }}
             />
           </Wrapper>
 
           <Dropdown
+            required
             label="Category"
             defaultTitle="SELECT THE CATEGORY"
             options={categoryList}
             value={category}
-            onChange={(option) => dispatch(changeCategory(option))}
+            onChange={(option) => {
+              dispatch(changeCategory(option));
+            }}
             err={categoryErr}
           />
 
           <Wrapper className="my-4" col>
-            <Label>Description</Label>
+            <Label>
+              Description <i>(optional)</i>
+            </Label>
             <textarea
               className={`w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg border border-black ${
-                description && "bg-neutral-100"
-              } md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none ${
-                descriptionErr && " border-secondary-400 border-2 focus:ring-0"
-              }`}
+                description &&
+                "bg-white border-green-500 border-2 focus:ring-green-500"
+              } md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none`}
               placeholder="Enter the description"
               value={description}
               onChange={(e) => {
@@ -286,45 +262,51 @@ const CreateLocationScreen = () => {
                 // setDescriptionErr(VALIDATE.description(e.target.value));
               }}
             />
-            {descriptionErr && <Error fluid>{descriptionErr}</Error>}
+            {/* {descriptionErr && <Error fluid>{descriptionErr}</Error>} */}
           </Wrapper>
 
           <Wrapper col className="gap-4">
-            <Label>Time</Label>
+            <Label required>Time</Label>
             <Wrapper className="justify-between gap-2 sm:items-center sm:flex-row flex-col">
               <Label>Weekday:</Label>
               <Wrapper className="justify-between gap-4 ">
                 <Input
+                  required
                   label="Open time"
                   type="time"
-                  className={`h-[60px] flex justify-between sm:!w-fit ${
-                    weekdayOpenTime ? "bg-neutral-100" : "bg-white"
+                  className={`h-[60px] flex justify-between w-full ${
+                    weekdayOpenTime
+                      ? "border-green-500 focus:!ring-green-500 border-2"
+                      : "bg-white"
                   } ${
-                    weekdayOpenTimeErr &&
-                    " border-secondary-400 border-2 focus:ring-0"
+                    VALIDATE.time(weekdayOpenTime) &&
+                    " focus:!ring-secondary-400 focus:border-secondary-400 "
                   }`}
                   onChange={(e) => {
                     dispatch(changeWeekdayOpenTime(e.target.value));
-                    // setWeekdayOpenTimeErr(VALIDATE.time(e.target.value));
+                    // setWeekdayOpenTimeErr(VALIDATE.time(weekdayOpenTime));
                   }}
                   value={weekdayOpenTime}
-                  err={weekdayOpenTimeErr}
+                  // err={weekdayOpenTimeErr}
                 />
                 <Input
+                  required
                   label="Close time"
                   type="time"
-                  className={`h-[60px] flex justify-between  sm:!w-fit ${
-                    weekdayCloseTime ? "bg-neutral-100" : "bg-white"
+                  className={`h-[60px] flex justify-between  w-full ${
+                    weekdayCloseTime
+                      ? "border-green-500 focus:!ring-green-500 border-2"
+                      : "bg-white"
                   } ${
-                    weekdayCloseTimeErr &&
-                    " border-secondary-400 border-2 focus:ring-0"
+                    VALIDATE.time(weekdayCloseTime) &&
+                    " focus:!ring-secondary-400 focus:border-secondary-400 "
                   }`}
                   onChange={(e) => {
                     dispatch(changeWeekdayCloseTime(e.target.value));
-                    // setWeekdayCloseTimeErr(VALIDATE.time(e.target.value));
+                    setWeekdayCloseTimeErr(VALIDATE.time(weekdayCloseTime));
                   }}
                   value={weekdayCloseTime}
-                  err={weekdayCloseTimeErr}
+                  // err={weekdayCloseTimeErr}
                 />
               </Wrapper>
             </Wrapper>
@@ -334,36 +316,42 @@ const CreateLocationScreen = () => {
 
               <Wrapper className="gap-4 justify-between">
                 <Input
+                  required
                   label="Open time"
                   type="time"
-                  className={`h-[60px]  sm:!w-fit flex justify-between ${
-                    weekendOpenTime ? "bg-neutral-100" : "bg-white"
+                  className={`h-[60px]  w-full flex justify-between ${
+                    weekendOpenTime
+                      ? "border-green-500 focus:!ring-green-500 border-2"
+                      : "bg-white"
                   } ${
-                    weekendOpenTimeErr &&
-                    " border-secondary-400 border-2 focus:ring-0"
+                    VALIDATE.time(weekendOpenTime) &&
+                    " focus:!ring-secondary-400 focus:border-secondary-400 "
                   }`}
                   onChange={(e) => {
                     dispatch(changeWeekendOpenTime(e.target.value));
                     // setWeekendOpenTimeErr(VALIDATE.time(e.target.value));
                   }}
                   value={weekendOpenTime}
-                  err={weekendOpenTimeErr}
+                  // err={weekendOpenTimeErr}
                 />
                 <Input
+                  required
                   label="Close time"
                   type="time"
-                  className={`h-[60px] sm:!w-fit flex justify-end  ${
-                    weekendCloseTime ? "bg-neutral-100" : "bg-white"
+                  className={`h-[60px] w-full flex justify-end  ${
+                    weekendCloseTime
+                      ? "border-green-500 focus:!ring-green-500 border-2"
+                      : "bg-white"
                   } ${
-                    weekendCloseTimeErr &&
-                    " !border-secondary-400 border-2 !focus:ring-0"
+                    VALIDATE.time(weekendCloseTime) &&
+                    " focus:!ring-secondary-400 focus:border-secondary-400 "
                   }`}
                   onChange={(e) => {
                     dispatch(changeWeekendCloseTime(e.target.value));
-                    setWeekendCloseTimeErr(VALIDATE.time(e.target.value));
+                    // setWeekendCloseTimeErr(VALIDATE.time(e.target.value));
                   }}
                   value={weekendCloseTime}
-                  err={weekendCloseTimeErr}
+                  // err={weekendCloseTimeErr}
                 />
               </Wrapper>
             </Wrapper>
@@ -378,9 +366,11 @@ const CreateLocationScreen = () => {
                 <Input
                   label="From: "
                   className={`rounded-lg w-full !py-4 ${
-                    minPrice && "bg-neutral-100"
+                    minPrice &&
+                    "bg-white border-green-500 border-2 focus:ring-green-500 "
                   } ${
-                    priceErr && " !border-secondary-400 border-2 !focus:ring-0"
+                    priceErr &&
+                    " focus:!ring-secondary-400 focus:border-secondary-400 "
                   }`}
                   type="number"
                   value={minPrice}
@@ -395,15 +385,17 @@ const CreateLocationScreen = () => {
                 <Input
                   label="To: "
                   className={`rounded-lg w-full py-4 ${
-                    maxPrice && "bg-neutral-100"
+                    maxPrice &&
+                    "bg-white border-green-500 border-2 focus:ring-green-500"
                   } ${
-                    priceErr && " !border-secondary-400 border-2 !focus:ring-0"
+                    priceErr &&
+                    " focus:!ring-secondary-400 focus:border-secondary-400 "
                   }`}
                   type="number"
                   value={maxPrice}
                   onChange={(e) => {
                     dispatch(changeMaxPrice(e.target.value));
-                    setPriceErr(VALIDATE.price(minPrice, maxPrice));
+                    // setPriceErr(VALIDATE.price(minPrice, maxPrice));
                   }}
                   min={minPrice}
                   placeholder="Enter the price"
@@ -412,7 +404,7 @@ const CreateLocationScreen = () => {
               </Wrapper>
               <Dropdown
                 label="Currency"
-                className="sm:w-fit rounded-lg h-fit"
+                className="rounded-lg h-fit"
                 options={currencyList}
                 value={currency}
                 defaultTitle={currency}
@@ -425,9 +417,9 @@ const CreateLocationScreen = () => {
           </Wrapper>
           <div className="w-full flex flex-col gap-4 h-auto">
             <Wrapper className="justify-between">
-              <Heading className="w-full flex px-4 items-center">
-                Add location image
-              </Heading>
+              <Label className="w-full flex px-4 items-center">
+                Location image <i>(optional)</i>
+              </Label>
               <UploadImage
                 className="lg:my-0 !justify-end"
                 icon={camera}
@@ -436,9 +428,7 @@ const CreateLocationScreen = () => {
               />
             </Wrapper>
 
-            <div
-              className={`border border-dashed border-black rounded-lg relative h-[60vh]`}
-            >
+            <div className={`border border-black rounded-lg relative h-[60vh]`}>
               {image && (
                 <Image
                   src={image}
@@ -449,7 +439,7 @@ const CreateLocationScreen = () => {
                 />
               )}
             </div>
-            {imagesErr && <Error className="w-full">{imagesErr}</Error>}
+
             {/* {images.length > 0 && ( */}
             <PreviewImage
               className={`h-[25vh] items-center ${
@@ -459,7 +449,7 @@ const CreateLocationScreen = () => {
               imageList={images}
             />
             {/* )} */}
-            <Error className={`${submitErr ? "visible" : "invisible"} w-full`}>
+            <Error fluid className={`${submitErr ? "visible" : "invisible"}`}>
               {submitErr}
             </Error>
 

@@ -16,7 +16,7 @@ const VALIDATE = {
         if (name.trim() === '') return ERROR.required
     },
     category(selectedCategory){
-        if (selectedCategory === undefined) return ERROR.required
+        if (selectedCategory.title === undefined) return ERROR.required
     },
     location(address){
         if (address.trim() === '') return ERROR.required

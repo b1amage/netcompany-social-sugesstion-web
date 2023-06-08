@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import locationApi from "@/api/locationApi";
 
 const createLocationFormSlice = createSlice({
   name: "createLocationForm",
@@ -7,7 +6,7 @@ const createLocationFormSlice = createSlice({
     placeId: '',
     images: [],
     image: undefined,
-    category: undefined,
+    category: "",
     title: "",
     address: "",
     lat: 10.7893008,
