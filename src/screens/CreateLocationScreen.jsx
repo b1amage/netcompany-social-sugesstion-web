@@ -41,6 +41,7 @@ import { LoadScript } from "@react-google-maps/api";
 import locationApi from "@/api/locationApi";
 import { useNavigate } from "react-router-dom";
 import { DEFAULT } from "@/constants/defaultData";
+import { imageList } from "@/constants/images";
 
 const CreateLocationScreen = () => {
   const [uploading, setUploading] = useState(false);
@@ -64,15 +65,11 @@ const CreateLocationScreen = () => {
   const avatarRef = useRef();
   useOnClickOutside(avatarRef, handleCloseImage);
 
-  const [imagesErr, setImagesErr] = useState();
+
   const [categoryErr, setCategoryErr] = useState();
   const [titleErr, setTitleErr] = useState();
   const [addressErr, setAddressErr] = useState();
-  const [descriptionErr, setDescriptionErr] = useState();
-  const [weekdayOpenTimeErr, setWeekdayOpenTimeErr] = useState();
-  const [weekdayCloseTimeErr, setWeekdayCloseTimeErr] = useState();
-  const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();
-  const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
+  
   // const [minPriceErr, setMinPriceErr] = useState();
   // const [maxPriceErr, setMaxPriceErr] = useState();
   const [priceErr, setPriceErr] = useState();
@@ -116,17 +113,50 @@ const CreateLocationScreen = () => {
     };
   });
 
+  const [imgList, setImgList] = useState([DEFAULT.location])
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (VALIDATE.category(category)) {
+    if (VALIDATE.category(category) || VALIDATE.price(minPrice, maxPrice)) {
       setCategoryErr(VALIDATE.category(category));
-    } else {
-      const data = {
+      setAddressErr(VALIDATE.location(address))
+      setPriceErr(VALIDATE.price(minPrice, maxPrice))
+      setSubmitErr('Please fill in all required fields!');
+      return
+    }
+    // console.log(images.length)
+  
+    // console.log(images)
+    // else {
+    let data;
+    if (!minPrice || !maxPrice){
+      data = {
         placeId: placeId,
         name: title,
         address: address,
         description: description,
-        imageUrls: images === [] ? [DEFAULT.location]: images,
+        imageUrls: imgList,
+        locationCategory: category.title,
+        location: {
+          type: "Point",
+          coordinates: [lng, lat],
+        },
+        weekday: {
+          openTime: weekdayOpenTime.replace(":", ""),
+          closeTime: weekdayCloseTime.replace(":", ""),
+        },
+        weekend: {
+          openTime: weekendOpenTime.replace(":", ""),
+          closeTime: weekendCloseTime.replace(":", ""),
+        },
+      };
+    } else{
+      data = {
+        placeId: placeId,
+        name: title,
+        address: address,
+        description: description,
+        imageUrls: imgList,
         locationCategory: category.title,
         location: {
           type: "Point",
@@ -146,13 +176,21 @@ const CreateLocationScreen = () => {
           closeTime: weekendCloseTime.replace(":", ""),
         },
       };
+    }
+      
       console.log(data);
+      // console.log(imgList)
       locationApi.createLocation(data, navigate, setSubmitErr);
       // // console.log(response)
-    }
+    // }
     // };
   };
 
+  useEffect(() => {
+    if (images.length > 0){
+      setImgList([...images])    
+    } 
+  }, [images])
   const handleOnChangeImage = (e) => {
     (async function () {
       setUploading(true);
@@ -180,12 +218,6 @@ const CreateLocationScreen = () => {
     })();
   };
 
-  // const {width} = useViewport()
-  // useEffect(() => {
-  //   if (JSON.parse(localStorage.getItem("createLocationResponse")).data.message){
-  //     setSubmitErr(JSON.parse(localStorage.getItem("createLocationResponse")).data.message)
-  //   }
-  // }, [submitErr])
   const dispatch = useDispatch();
   return (
     <Screen className={`px-4 py-8`}>
@@ -222,8 +254,8 @@ const CreateLocationScreen = () => {
               placeholder="Enter the place's name"
               className={`rounded-lg ${
                 VALIDATE.title(title)
-                  ? " focus:!ring-secondary-400 focus:border-secondary-400 "
-                  : "border-green-500 focus:!ring-green-500 border-2"
+                  ? " focus:!ring-secondary-400 focus:!border-secondary-400 "
+                  : "!border-green-500 focus:!ring-green-500 border-2"
               }`}
               value={title}
               err={titleErr}
@@ -253,7 +285,7 @@ const CreateLocationScreen = () => {
             <textarea
               className={`w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg border border-black ${
                 description &&
-                "bg-white border-green-500 border-2 focus:ring-green-500"
+                "bg-white !border-green-500 border-2 focus:!ring-green-500"
               } md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none`}
               placeholder="Enter the description"
               value={description}
@@ -276,11 +308,11 @@ const CreateLocationScreen = () => {
                   type="time"
                   className={`h-[60px] flex justify-between w-full ${
                     weekdayOpenTime
-                      ? "border-green-500 focus:!ring-green-500 border-2"
+                      ? "!border-green-500 focus:!ring-green-500 border-2"
                       : "bg-white"
                   } ${
                     VALIDATE.time(weekdayOpenTime) &&
-                    " focus:!ring-secondary-400 focus:border-secondary-400 "
+                    " focus:!ring-secondary-400 focus:!border-secondary-400 "
                   }`}
                   onChange={(e) => {
                     dispatch(changeWeekdayOpenTime(e.target.value));
@@ -295,15 +327,15 @@ const CreateLocationScreen = () => {
                   type="time"
                   className={`h-[60px] flex justify-between  w-full ${
                     weekdayCloseTime
-                      ? "border-green-500 focus:!ring-green-500 border-2"
+                      ? "!border-green-500 focus:!ring-green-500 border-2"
                       : "bg-white"
                   } ${
                     VALIDATE.time(weekdayCloseTime) &&
-                    " focus:!ring-secondary-400 focus:border-secondary-400 "
+                    " focus:!ring-secondary-400 focus:!border-secondary-400 "
                   }`}
                   onChange={(e) => {
                     dispatch(changeWeekdayCloseTime(e.target.value));
-                    setWeekdayCloseTimeErr(VALIDATE.time(weekdayCloseTime));
+                    // setWeekdayCloseTimeErr(VALIDATE.time(weekdayCloseTime));
                   }}
                   value={weekdayCloseTime}
                   // err={weekdayCloseTimeErr}
@@ -321,11 +353,11 @@ const CreateLocationScreen = () => {
                   type="time"
                   className={`h-[60px]  w-full flex justify-between ${
                     weekendOpenTime
-                      ? "border-green-500 focus:!ring-green-500 border-2"
+                      ? "!border-green-500 focus:!ring-green-500 border-2"
                       : "bg-white"
                   } ${
                     VALIDATE.time(weekendOpenTime) &&
-                    " focus:!ring-secondary-400 focus:border-secondary-400 "
+                    " focus:!ring-secondary-400 focus:!border-secondary-400 "
                   }`}
                   onChange={(e) => {
                     dispatch(changeWeekendOpenTime(e.target.value));
@@ -340,11 +372,11 @@ const CreateLocationScreen = () => {
                   type="time"
                   className={`h-[60px] w-full flex justify-end  ${
                     weekendCloseTime
-                      ? "border-green-500 focus:!ring-green-500 border-2"
+                      ? "!border-green-500 focus:!ring-green-500 border-2"
                       : "bg-white"
                   } ${
                     VALIDATE.time(weekendCloseTime) &&
-                    " focus:!ring-secondary-400 focus:border-secondary-400 "
+                    " focus:!ring-secondary-400 focus:!border-secondary-400 "
                   }`}
                   onChange={(e) => {
                     dispatch(changeWeekendCloseTime(e.target.value));
@@ -367,10 +399,10 @@ const CreateLocationScreen = () => {
                   label="From: "
                   className={`rounded-lg w-full !py-4 ${
                     minPrice &&
-                    "bg-white border-green-500 border-2 focus:ring-green-500 "
+                    "bg-white !border-green-500 border-2 focus:!ring-green-500 "
                   } ${
                     priceErr &&
-                    " focus:!ring-secondary-400 focus:border-secondary-400 "
+                    " focus:!ring-secondary-400 focus:!border-secondary-400 "
                   }`}
                   type="number"
                   value={minPrice}
@@ -386,10 +418,10 @@ const CreateLocationScreen = () => {
                   label="To: "
                   className={`rounded-lg w-full py-4 ${
                     maxPrice &&
-                    "bg-white border-green-500 border-2 focus:ring-green-500"
+                    "bg-white !border-green-500 border-2 focus:!ring-green-500"
                   } ${
                     priceErr &&
-                    " focus:!ring-secondary-400 focus:border-secondary-400 "
+                    " focus:!ring-secondary-400 focus:!border-secondary-400 "
                   }`}
                   type="number"
                   value={maxPrice}
@@ -397,7 +429,7 @@ const CreateLocationScreen = () => {
                     dispatch(changeMaxPrice(e.target.value));
                     // setPriceErr(VALIDATE.price(minPrice, maxPrice));
                   }}
-                  min={minPrice}
+                  min={0}
                   placeholder="Enter the price"
                   // err={maxPriceErr}
                 />
@@ -442,7 +474,7 @@ const CreateLocationScreen = () => {
 
             {/* {images.length > 0 && ( */}
             <PreviewImage
-              className={`h-[25vh] items-center ${
+              className={`py-2 items-center ${
                 images.length <= 0 && "invisible"
               }`}
               src={image}

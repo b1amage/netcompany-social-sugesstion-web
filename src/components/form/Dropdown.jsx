@@ -51,7 +51,7 @@ const Dropdown = ({
       <div
         className={`w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg border border-black  ${
           value && "bg-white"
-        } md:text-base md:p-4 placeholder:text-secondary-100 font-bold ${(value?.title || value) && "border-green-500 border-2"} ${(isOpen ? (value?.tilte ? "border-green-500 border-2" : "border-secondary-400 border-2") : "")} ${className}`}
+        } md:text-base md:p-4 placeholder:text-secondary-100 font-bold ${(value?.title || value) ? "!border-green-500 border-2" : "focus:!border-secondary-400"} ${(isOpen && ((value?.tilte || value) ? "border-green-500 focus:!border-green-500 " : "!border-secondary-400 border-2"))} ${err && "border-secondary-400 border-2"} ${className}`}
         onClick={handleClick}
       >
         {value?.title || defaultTitle}
@@ -69,7 +69,7 @@ const Dropdown = ({
           {renderedOptions}
         </ul>
       )}
-      {err && <Error fluid>{err}</Error>}
+      {/* {err && <Error fluid>{err}</Error>} */}
     </div>
   );
 };
