@@ -20,6 +20,7 @@ import { BsPencilFill } from "react-icons/bs";
 import Text from "@/components/typography/Text";
 import { MdLocationOn, MdOutlineFavorite } from "react-icons/md";
 import Category from "@/components/category/Category";
+import useViewport from "@/hooks/useScreenWidth";
 
 const UnLoginUI = () => (
   <Wrapper className="flex-1 px-5 flex-center !gap-10" col="true">
@@ -44,7 +45,7 @@ const ProfileScreen = () => {
   // const [userInfo, setUserInfo] = useState(user);
   const [fetchUser, setFetchUser] = useState(user);
   const [loading, setLoading] = useState(true);
-
+  const {width} = useViewport()
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -105,7 +106,7 @@ const ProfileScreen = () => {
             <>
               <Wrapper col="true">
                 {/* Avatar */}
-                <Wrapper col="true" className="w-full flex-center">
+                <Wrapper col="true" className="w-full flex-center relative">
                   <Image
                     src={fetchUser?.imageUrl || imageUrl || DEFAULT.avatar}
                     alt="user avatar"
@@ -114,6 +115,26 @@ const ProfileScreen = () => {
                   <Wrapper col="true" className="gap-0 flex-center">
                     <Heading>{fetchUser?.username}</Heading>
                     <SubHeading>{fetchUser?.email}</SubHeading>
+                  </Wrapper>
+
+                  <Wrapper className={`flex-center absolute top-0 right-0 ${width > 768 ? "block" : "hidden"}`}>
+                    <Button
+                      onClick={() => navigate(ROUTE.EDIT_PROFILE)}
+                      className="!text-primary-800 !my-0  !relative !gap-2"
+                    >
+                      <BsPencilFill />
+                      <span className="capitalize">
+                        Edit info
+                      </span>
+                    </Button>
+                    {/* <Button
+                    className="!bg-danger"
+                    onClick={() => {
+                      setShowPopup(true);
+                    }}
+                  >
+                    Logout
+                  </Button> */}
                   </Wrapper>
                 </Wrapper>
 
@@ -142,8 +163,6 @@ const ProfileScreen = () => {
                     )}
                   </Wrapper>
                 </Wrapper>
-
-                
               </Wrapper>
 
               <Wrapper>

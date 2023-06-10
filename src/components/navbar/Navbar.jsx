@@ -11,7 +11,7 @@ import add from "@/assets/add.svg";
 import notification from "@/assets/bell.svg";
 
 import filter from "@/assets/filter.svg";
-import { GrLogout } from "react-icons/gr";
+import darkLogoutImg from "@/assets/navigation/dark-logout.svg";
 import close from "@/assets/close.svg";
 import { createPortal } from "react-dom";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
@@ -98,15 +98,24 @@ const Navbar = () => {
       <div className="">
         {/* Logo */}
         {viewport.width > BREAK_POINT_NAVBAR && (
-          <Link to="/" className="">
-            {/* <Logo className="!w-14 !h-14" /> */}
-            <Image
-              className="flex justify-center w-full py-4 rounded-none bg-primary-400"
-              imageClassName="!w-fit"
-              src={logo}
-              alt="logo"
-            />
-          </Link>
+          <div className="w-full relative">
+            <Link to="/" className="">
+              {/* <Logo className="!w-14 !h-14" /> */}
+              <Image
+                className="flex justify-center w-full py-4 rounded-none bg-primary-400"
+                imageClassName="!w-fit"
+                src={logo}
+                alt="logo"
+              />
+            </Link>
+            <Button
+              onClick={() => setShowPopup(true)}
+              className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 border-danger !bg-danger !right-0`}
+              danger
+            >
+              Logout
+            </Button>
+          </div>
         )}
 
         {/* CTA Button */}

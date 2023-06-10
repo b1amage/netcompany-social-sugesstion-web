@@ -30,16 +30,19 @@ const navbarSlice = createSlice({
           state.isAdded = true;
           state.isShowNotification = true;
           state.isShowFilter = true;
+          state.isShowEdit = false;
           return;
         case "/my-route":
           state.isAdded = true;
           state.isShowNotification = false;
           state.isShowFilter = false;
+          state.isShowEdit = false;
           return;
         default:
           state.isAdded = false;
           state.isShowNotification = false;
           state.isShowFilter = false;
+          state.isShowEdit = false;
           return;
       }
     },
