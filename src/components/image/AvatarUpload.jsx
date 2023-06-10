@@ -14,7 +14,7 @@ const AvatarUpload = ({ className, icon, img }) => {
     <form>
       <label
         htmlFor="avatar"
-        className={`block ${className} cursor-pointer group mx-auto relative my-8 w-[124px] h-[124px] md:w-[150px] md:h-[150px] lg:w-[200px] lg:h-[200px]`}
+        className={`block ${className} cursor-pointer group mx-auto relative my-3 w-[124px] h-[124px] md:w-[150px] md:h-[150px] lg:w-[200px] lg:h-[200px]`}
       >
         <img
           src={ava}
