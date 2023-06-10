@@ -9,6 +9,7 @@ import { darkIcons, lightIcons } from "@/constants/navIcons";
 import darkMenu from "@/assets/dark-menu.svg";
 import add from "@/assets/add.svg";
 import notification from "@/assets/bell.svg";
+
 import filter from "@/assets/filter.svg";
 import { GrLogout } from "react-icons/gr";
 import close from "@/assets/close.svg";
@@ -22,11 +23,18 @@ import Heading from "@/components/typography/Heading";
 import logout from "@/assets/navigation/logout.svg";
 import ROUTE from "@/constants/routes";
 import localStorageKey from "@/constants/localStorageKeys";
+import logoutImg from "@/assets/navigation/logout.svg";
+import { useNavigate } from "react-router-dom";
+import Popup from "@/components/popup/Popup";
+import ROUTE from "@/constants/routes";
+import { logout } from "@/features/userSlice";
 const BREAK_POINT_NAVBAR = 768;
 
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [isShowNavbar, setIsShowNavbar] = useState(false)
+  const [showPopup, setShowPopup] = useState(false);
+
   const viewport = useViewport();
 
   const navbarRef = useRef();
@@ -36,7 +44,35 @@ const Navbar = () => {
   });
 
   const dispatch = useDispatch();
- 
+
+  const navigate = useNavigate();
+
+  const closePopup = () => setShowPopup(false);
+  const confirmLogout = () => {
+    closePopup();
+    dispatch(logout());
+    navigate(ROUTE.LOGIN);
+  };
+
+  const popupActions = [
+    {
+      title: "cancel",
+      danger: false,
+      action: closePopup,
+    },
+    { title: "logout", danger: true, action: confirmLogout },
+  ];
+
+  useEffect(() => {
+    // const html = document.querySelector("html");
+    if (showPopup) {
+      document.body.style.overflow = "hidden";
+      document.body.style.height = "100vh";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [showPopup]);
+
   const { isAdded, isShowNotification, isShowFilter } = useSelector(
     ({ navbar }) => {
       return {
@@ -49,29 +85,23 @@ const Navbar = () => {
 
   useEffect(() => {
     dispatch(validatePathname(window.location.pathname));
-    
-    // console.log(onBoardingAlreadyShown)
-    // onBoardingAlreadyShown && setIsShowNavbar(true);
   }, [window.location.pathname]);
 
   return createPortal(
-    <>
-      {/* {isShowNavbar && ( */}
-        <>
-          <nav className="w-full bg-white border-b border-gray-200">
-            <div className="">
-              {/* Logo */}
-              {viewport.width > BREAK_POINT_NAVBAR && (
-                <Link to="/" className="">
-                  {/* <Logo className="!w-14 !h-14" /> */}
-                  <Image
-                    className="flex justify-center w-full py-4 rounded-none bg-primary-400"
-                    imageClassName="!w-fit"
-                    src={logo}
-                    alt="logo"
-                  />
-                </Link>
-              )}
+    <nav className="w-full bg-white border-b border-gray-200">
+      <div className="">
+        {/* Logo */}
+        {viewport.width > BREAK_POINT_NAVBAR && (
+          <Link to="/" className="">
+            {/* <Logo className="!w-14 !h-14" /> */}
+            <Image
+              className="flex justify-center w-full py-4 rounded-none bg-primary-400"
+              imageClassName="!w-fit"
+              src={logo}
+              alt="logo"
+            />
+          </Link>
+        )}
 
               {/* CTA Button */}
               <div className="flex items-center justify-between">
@@ -88,38 +118,38 @@ const Navbar = () => {
                       }}
                     />
 
-                    <Wrapper className="mr-4">
-                      {isAdded && (
-                        <Image
-                          imageClassName=""
-                          src={add}
-                          alt="add"
-                          className="w-[28px] h-[28px] m-2"
-                        />
-                      )}
-                      {isShowNotification && (
-                        <div className="relative">
-                          <Image
-                            imageClassName=""
-                            src={notification}
-                            alt="notification"
-                            className="w-[28px] h-[28px] m-2"
-                          />
-                          <Counter count={10} />
-                        </div>
-                      )}
-                      {isShowFilter && (
-                        <Image
-                          imageClassName=""
-                          src={filter}
-                          alt="filter"
-                          className="w-[28px] h-[28px] m-2"
-                        />
-                      )}
-                    </Wrapper>
-                  </>
+              <Wrapper className="mr-4">
+                {isAdded && (
+                  <Image
+                    imageClassName=""
+                    src={add}
+                    alt="add"
+                    className="w-[28px] h-[28px] m-2"
+                  />
                 )}
-              </div>
+                {isShowNotification && (
+                  <div className="relative">
+                    <Image
+                      imageClassName=""
+                      src={notification}
+                      alt="notification"
+                      className="w-[28px] h-[28px] m-2"
+                    />
+                    <Counter count={10} />
+                  </div>
+                )}
+                {isShowFilter && (
+                  <Image
+                    imageClassName=""
+                    src={filter}
+                    alt="filter"
+                    className="w-[28px] h-[28px] m-2"
+                  />
+                )}
+              </Wrapper>
+            </>
+          )}
+        </div>
 
               {/* Navigation */}
 
@@ -175,11 +205,7 @@ const Navbar = () => {
                 </div>
               )}
             </div>
-          </nav>
-        </>
-      {/* )} */}
-    </>,
-    document.querySelector(".navbar-container")
+          </nav>, document.querySelector(".navbar-container")
   );
 };
 

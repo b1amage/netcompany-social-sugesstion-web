@@ -15,7 +15,7 @@ const LoginScreen = () => {
   const dispatch = useDispatch();
 
   return (
-    <Screen className="flex flex-col px-4 py-3 xl:py-20 xl:grid xl:grid-cols-2 xl:gap-20">
+    <Screen className="flex flex-col px-4 py-3 xl:py-20 xl:grid xl:grid-cols-2 xl:gap-20 !min-h-0 !h-[65vh]">
       <Image
         className="hidden xl:block"
         src="https://images.unsplash.com/photo-1579487785973-74d2ca7abdd5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80"
@@ -36,6 +36,7 @@ const LoginScreen = () => {
 
         <Wrapper>
           <Button
+            primary
             className="bg-white border shadow-lg !text-neutral-800 border-neutral-600 animate-moveInBottom xl:my-0"
             icon={microsoftIcon}
             onClick={() => dispatch(login(navigate))}

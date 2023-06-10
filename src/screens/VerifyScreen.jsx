@@ -99,7 +99,7 @@ const VerifyScreen = () => {
             onChange={(e) => setUsername(e.target.value)}
             value={username}
             required
-            label="Username"
+            label="Display name"
             type="text"
             name="username"
             id="username"

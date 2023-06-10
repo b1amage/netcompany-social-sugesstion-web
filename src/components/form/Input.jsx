@@ -17,6 +17,8 @@ const Input = ({
   name,
   id,
   disabled,
+  min,
+  errClassName
 }) => {
   return (
     <div className={`flex flex-col ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
@@ -28,10 +30,10 @@ const Input = ({
         <input
           disabled={disabled}
           autoComplete="off"
-          className={`w-full border border-primary-400 focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-2xl bg-neutral-100 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${
+          className={`w-full border border-primary-400 focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-2xl md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${
             fluid ? "w-full" : "w-1/2"
           } ${
-            disabled && "text-neutral-600 bg-neutral-400 border-none"
+            disabled && "text-black font-bold bg-neutral-400 border-none"
           } ${className} text-overflow-ellipsis`}
           type={type}
           placeholder={placeholder}
@@ -40,6 +42,7 @@ const Input = ({
           required={required}
           value={value}
           onChange={onChange}
+          min={min}
         />
 
         {icon && (
@@ -56,7 +59,7 @@ const Input = ({
           </button>
         )}
 
-        {err && <Error fluid>{err}</Error>}
+        {err && <Error fluid className={errClassName}>{err}</Error>}
       </div>
     </div>
   );

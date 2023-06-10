@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import EventCard from "@/components/card/EventCard";
 
 const useDragAndDrop = (initialItems, callback) => {
   const [items, setItems] = useState(initialItems);
@@ -6,7 +7,7 @@ const useDragAndDrop = (initialItems, callback) => {
   const [draggedOverIndex, setDraggedOverIndex] = useState(null);
 
   useEffect(() => {
-    console.log(`items: ${items}`);
+    items.forEach((item) => console.log(item));
     // api handle
     callback();
   }, [items]);
@@ -43,7 +44,8 @@ const useDragAndDrop = (initialItems, callback) => {
       } ${index === draggedIndex ? "dragging" : ""}`;
       const key = index + item.toString();
       return (
-        <li
+        <EventCard
+          event={item}
           key={key}
           draggable={true}
           onDragStart={(event) => handleDragStart(event, index)}
@@ -51,9 +53,7 @@ const useDragAndDrop = (initialItems, callback) => {
           onDragOver={(event) => handleDragOver(event, index)}
           onDrop={handleDrop}
           className={className}
-        >
-          {item}
-        </li>
+        />
       );
     });
   };

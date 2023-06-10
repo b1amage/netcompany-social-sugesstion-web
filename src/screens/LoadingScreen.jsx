@@ -1,4 +1,3 @@
-import React from "react";
 import Loading from "@/components/loading/Loading";
 import Screen from "@/components/container/Screen";
 
