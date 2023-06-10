@@ -30,7 +30,7 @@ const userApi = {
     }
   },
 
-  async editProfile(info) {
+  async editProfile(info, notify) {
     try {
       const url = `/user/profile/me`;
       const response = await axiosClient.patch(url, info, {
@@ -38,6 +38,8 @@ const userApi = {
       });
 
       console.log(response);
+      localStorage.setItem("user", JSON.stringify(response.data));
+      notify();
 
       return response.data;
     } catch (error) {

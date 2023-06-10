@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import categoryList from "@/constants/category";
 import { DEFAULT } from "@/constants/defaultData";
 import { DISTANCE } from "@/constants/distance";
@@ -18,15 +18,20 @@ import userApi from "@/api/userApi";
 import { useSelector } from "react-redux";
 import LoadingScreen from "@/screens/LoadingScreen";
 import ROUTE from "@/constants/routes";
+import toast, { Toaster } from "react-hot-toast";
 
 // 1. Fetch current data into UI
 // 2. Edit
-// 3. Call api for submit
+// 3. Call api for submit'
+
+const notify = () => toast.success("Successfully update");
 
 const EditProfileScreen = () => {
   const { user } = useSelector((state) => state.user);
   const { username, email, imageUrl, _id, locationCategories, searchDistance } =
     user;
+  const [fetchUser, setFetchUser] = useState(user);
+
   const [usernameInput, setUsernameInput] = useState(username);
   const [distance, setDistance] = useState(searchDistance || DISTANCE.min);
   const [locationCategoriesInput, setLocationCategoriesInput] =
@@ -48,9 +53,6 @@ const EditProfileScreen = () => {
     setLocationCategoriesInput(newCategory);
   };
 
-  const handleAPIMessage = (message) => setMessage(message);
-  const handleAPIError = (value) => setError(value);
-
   const handleSaveChanges = async () => {
     const userInfo = {
       idToken: localStorage.getItem("idToken"),
@@ -62,9 +64,9 @@ const EditProfileScreen = () => {
 
     console.log(userInfo);
 
-    const data = await userApi.editProfile(userInfo);
-    localStorage.setItem("user", JSON.stringify(data));
-    navigate("/");
+    const data = await userApi.editProfile(userInfo, notify);
+    // localStorage.setItem("user", JSON.stringify(data));
+    navigate(ROUTE.PROFILE);
   };
 
   // Get Location
@@ -84,11 +86,28 @@ const EditProfileScreen = () => {
   //   })();
   // }, []);
 
+  useEffect(() => {
+    const getUserProfile = async () => {
+      setLoading(true);
+      const response = await userApi.getUserProfile(_id);
+      console.log(response);
+      setFetchUser(response.data);
+      setUsernameInput(response.data.username);
+      setDistance(response.data.searchDistance);
+      setLocationCategoriesInput(response.data.locationCategories);
+      setLoading(false);
+      return response;
+    };
+    if (_id) {
+      getUserProfile();
+    }
+  }, []);
+
   const registerEmail = email || localStorage.getItem("registerEmail") || "";
 
   return (
     <>
-      {!loading ? (
+      {loading ? (
         <LoadingScreen />
       ) : (
         <Screen className="flex !min-h-[90vh] md:!min-h-[85vh] lg:!overflow-hidden flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 lg:!min-h-0">
@@ -102,7 +121,7 @@ const EditProfileScreen = () => {
                 <SubHeading>Edit your profile!</SubHeading>
               </Wrapper>
 
-              <AvatarUpload img={imageUrl} />
+              <AvatarUpload img={fetchUser.imageUrl} />
               <Input
                 onChange={(e) => setUsernameInput(e.target.value)}
                 value={usernameInput}
