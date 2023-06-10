@@ -13,15 +13,16 @@ import Heading from "@/components/typography/Heading";
 import Button from "@/components/button/Button";
 import userApi from "@/api/userApi";
 import Loading from "@/components/loading/Loading";
+import ROUTE from "@/constants/routes";
 
-const EmptyTab = ({ title, actionName }) => (
-  <Tab className="flex w-full h-full flex-center xl:my-20">
+const EmptyTab = ({ title, actionName, action }) => (
+  <Tab className="!flex w-full h-full flex-center xl:my-20">
     <Wrapper col="true">
       <Image src={emptyPost} />
 
       <Wrapper col="true">
         <Heading>{title}</Heading>
-        <Button active primary>
+        <Button onClick={action} active primary className="!capitalize">
           {actionName}
         </Button>
       </Wrapper>
@@ -61,9 +62,13 @@ const TabView = () => {
 
   const renderCards = (places) => {
     return places.length === 0 ? (
-      <EmptyTab title="You have no post yet!" actionName="Create Post" />
+      <EmptyTab
+        title="You have no post yet!"
+        actionName="Register new location"
+        action={() => navigate(ROUTE.CREATE_LOCATION)}
+      />
     ) : (
-      <Tab handleScrollToBottom={() => loadMoreLocation()}>
+      <Tab loadMore={() => loadMoreLocation()}>
         {loading ? (
           <Loading />
         ) : (
