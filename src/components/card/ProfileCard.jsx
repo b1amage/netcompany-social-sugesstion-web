@@ -3,6 +3,7 @@ import Wrapper from "@/components/wrapper/Wrapper";
 import Heading from "@/components/typography/Heading";
 import { useMemo } from "react";
 import SubHeading from "@/components/typography/SubHeading";
+import { DEFAULT } from "@/constants/defaultData";
 
 const ProfileCard = ({ place }) => {
   const { address, name, imageUrls } = place;
@@ -16,7 +17,7 @@ const ProfileCard = ({ place }) => {
       className={`${cardSizeStyles} relative flex-col gap-3 transition-all cursor-pointer bg-neutral-300 flex-center xl:flex-row rounded-xl group`}
     >
       <Image
-        src={imageUrls.length > 0 ? imageUrls[0] : "default"}
+        src={imageUrls.length > 0 ? imageUrls[0] : DEFAULT.location}
         alt={name}
         className="w-full h-full"
         animate
