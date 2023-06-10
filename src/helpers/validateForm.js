@@ -30,6 +30,7 @@ const VALIDATE = {
     },
     price(minPrice, maxPrice){
         // if (price === null) return ERROR.required
+        if((minPrice && !maxPrice) || (!minPrice && maxPrice)) return ERROR.required
         if (parseInt(minPrice) >= parseInt(maxPrice)) return ERROR.price
     },
 }
