@@ -34,6 +34,25 @@ const userApi = {
     }
   },
 
+  async getLikedLocation(nextCursor) {
+    try {
+      const url = nextCursor
+        ? `/location/liked/me?next_cursor=${nextCursor}`
+        : `/location/liked/me`;
+
+      console.log("calling get liked location with url: ", url);
+      const response = await axiosClient.get(url, {
+        withCredentials: true,
+      });
+
+      console.log("response of  ", url, response);
+
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   async editProfile(info, notify) {
     try {
       const url = `/user/profile/me`;
