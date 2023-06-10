@@ -18,7 +18,7 @@ const Input = ({
   id,
   disabled,
   min,
-  errClassName
+  errClassName,
 }) => {
   return (
     <div className={`flex flex-col ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
@@ -33,7 +33,7 @@ const Input = ({
           className={`w-full border border-primary-400 focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-2xl md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${
             fluid ? "w-full" : "w-1/2"
           } ${
-            disabled && "text-black font-bold bg-neutral-400 border-none"
+            disabled && "text-black font-bold bg-neutral-100 border-none"
           } ${className} text-overflow-ellipsis`}
           type={type}
           placeholder={placeholder}
@@ -59,7 +59,11 @@ const Input = ({
           </button>
         )}
 
-        {err && <Error fluid className={errClassName}>{err}</Error>}
+        {err && (
+          <Error fluid className={errClassName}>
+            {err}
+          </Error>
+        )}
       </div>
     </div>
   );
