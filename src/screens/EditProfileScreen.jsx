@@ -54,6 +54,7 @@ const EditProfileScreen = () => {
   };
 
   const handleSaveChanges = async () => {
+    setLoading(true);
     const userInfo = {
       idToken: localStorage.getItem("idToken"),
       username: usernameInput,
@@ -65,6 +66,8 @@ const EditProfileScreen = () => {
     console.log(userInfo);
 
     const data = await userApi.editProfile(userInfo, notify);
+    setLoading(false);
+
     // localStorage.setItem("user", JSON.stringify(data));
     navigate(ROUTE.PROFILE);
   };
@@ -171,6 +174,7 @@ const EditProfileScreen = () => {
                   primary
                   active
                   onClick={handleSaveChanges}
+                  isLoading={loading}
                 >
                   Save Changes
                 </Button>
