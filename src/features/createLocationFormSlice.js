@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import locationApi from "@/api/locationApi";
 
 const createLocationFormSlice = createSlice({
   name: "createLocationForm",
@@ -7,7 +6,7 @@ const createLocationFormSlice = createSlice({
     placeId: '',
     images: [],
     image: undefined,
-    category: undefined,
+    category: "",
     title: "",
     address: "",
     lat: 10.7893008,
@@ -20,7 +19,7 @@ const createLocationFormSlice = createSlice({
     minPrice: null,
     maxPrice: null,
     currency: "VND",
-    err: undefined,
+    err: '',
   },
   reducers: {
     changePlaceId(state, action){
@@ -69,28 +68,18 @@ const createLocationFormSlice = createSlice({
       state.weekendCloseTime = action.payload;
     },
     addImage(state, action) {
-      if (state.images.includes(action.payload)) {
-        state.err = "Image has been added already!";
-        return;
-      }
+      // if (state.images.includes(action.payload)) {
+      //   return;
+      // }
       state.images.push(action.payload);
     },
     removeImage(state, action) {
-      return state.images.filter((image) => image !== action.payload);
-    },
-    
-    onSubmitForm(state, action) {
-      const data = action.payload;
-      console.log(data);
-      const handleSubmit = async() => {
-        const response = await locationApi.createLocation(data)
-        if (response.status !== 200){
-          console.log(response.response.data.message)
-          // state.err = response.response.data.message
-          // return
-        }
-      }
-      handleSubmit()
+      // return state.images.filter((image) => image !== action.payload);
+      const updated = state.images.filter((image) => {
+        return image !== action.payload;
+      });
+      state.images = updated;
+      if (state.image === action.payload) state.image = ''
     },
   },
 });
@@ -113,6 +102,7 @@ export const {
   changeCurrency,
   addImage,
   removeImage,
+  changeError,
   onSubmitForm,
 } = createLocationFormSlice.actions;
 export const createLocationFormReducer = createLocationFormSlice.reducer;

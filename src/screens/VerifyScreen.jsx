@@ -16,8 +16,6 @@ import Screen from "@/components/container/Screen";
 import Input from "@/components/form/Input";
 import Wrapper from "@/components/wrapper/Wrapper";
 import { useNavigate } from "react-router-dom";
-import Image from "@/components/image/Image";
-import hero from "@/assets/verify/hero.png";
 
 const VerifyScreen = () => {
   const [username, setUsername] = useState(
@@ -81,11 +79,11 @@ const VerifyScreen = () => {
   const registerEmail = localStorage.getItem("registerEmail") || "";
 
   return (
-    <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
-      <Wrapper className="flex-1 xl:grid xl:grid-cols-2 xl:gap-10">
-        <Wrapper className="flex-1 hidden xl:block">
+    <Screen className="flex !min-h-[90vh] md:!min-h-[85vh] lg:!overflow-hidden flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 lg:!min-h-0">
+      <Wrapper className="flex-1 lg:!flex-initial xl:grid xl:gap-2 lg:mx-auto lg:w-[700px] lg:p-20 lg:shadow-xl lg:rounded-lg lg:bg-neutral-400 lg:!h-[800px] lg:overflow-scroll">
+        {/* <Wrapper className="flex-1 hidden xl:block">
           <Image className="flex-1 h-full" src={hero} />
-        </Wrapper>
+        </Wrapper> */}
         <Wrapper className="" col="true">
           <Wrapper col="true">
             <Heading>Profile Setup</Heading>

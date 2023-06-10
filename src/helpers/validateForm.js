@@ -1,5 +1,6 @@
 const ERROR = {
     images: "Please add at least 1 picture!",
+    image: "The image has been added already!",
     required: "Please fill in this field!",
     time: "Open time must be earlier than close time!",
     price: "Minimum price must be smaller than maximum price!"
@@ -15,7 +16,7 @@ const VALIDATE = {
         if (name.trim() === '') return ERROR.required
     },
     category(selectedCategory){
-        if (selectedCategory === undefined) return ERROR.required
+        if (selectedCategory.title === undefined) return ERROR.required
     },
     location(address){
         if (address.trim() === '') return ERROR.required
@@ -27,9 +28,10 @@ const VALIDATE = {
         if (time === '') return ERROR.required
         // if (parseInt(openTime.replace(':', '')) >= parseInt(closeTime.replace(':', ''))) return ERROR.time
     },
-    price(price){
-        if (price === null) return ERROR.required
-        // if (minPrice >= maxPrice) return ERROR.price
+    price(minPrice, maxPrice){
+        // if (price === null) return ERROR.required
+        if((minPrice && !maxPrice) || (!minPrice && maxPrice)) return ERROR.required
+        if (parseInt(minPrice) >= parseInt(maxPrice)) return ERROR.price
     },
 }
 

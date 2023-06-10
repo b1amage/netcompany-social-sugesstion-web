@@ -36,6 +36,7 @@ const authApi = {
         "Login successfully. Data retrieved from backend: ",
         backendResponse
       );
+      location.reload();
 
       return backendResponse;
     } catch (error) {
@@ -61,6 +62,7 @@ const authApi = {
       localStorage.removeItem("avatar");
 
       console.log("Logout successfully");
+      location.reload();
     } catch (error) {
       console.log(error);
     }

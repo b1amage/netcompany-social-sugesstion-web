@@ -15,6 +15,8 @@ import ROUTE from "@/constants/routes";
 import { useDispatch } from "react-redux";
 import { logout } from "@/features/userSlice";
 import Popup from "@/components/popup/Popup";
+import LoadingScreen from "./LoadingScreen";
+import { BsPencilFill } from "react-icons/bs";
 
 const UnLoginUI = () => (
   <Wrapper className="flex-1 px-5 flex-center !gap-10" col="true">
@@ -36,7 +38,10 @@ const ProfileScreen = () => {
   const { user } = useSelector((state) => state.user);
   const { username, email, imageUrl, _id } = user;
   const [showPopup, setShowPopup] = useState(false);
-  const [userInfo, setUserInfo] = useState(user);
+  // const [userInfo, setUserInfo] = useState(user);
+  const [fetchUser, setFetchUser] = useState(user);
+  const [loading, setLoading] = useState(true);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -68,6 +73,9 @@ const ProfileScreen = () => {
   useEffect(() => {
     const getUserProfile = async () => {
       const response = await userApi.getUserProfile(_id);
+      console.log(response);
+      setFetchUser(response.data);
+      setLoading(false);
       return response;
     };
     if (_id) {
@@ -88,43 +96,52 @@ const ProfileScreen = () => {
         <UnLoginUI />
       ) : (
         <>
-          <Wrapper col="true">
-            {/* Avatar */}
-            <Wrapper col="true" className="w-full flex-center">
-              <Image
-                src={imageUrl || DEFAULT.avatar}
-                alt="user avatar"
-                className="w-[120px] h-[120px] overflow-hidden !rounded-full"
-              />
-              <Wrapper col="true" className="gap-0 flex-center">
-                <Heading>{username}</Heading>
-                <SubHeading>{email}</SubHeading>
+          {loading ? (
+            <LoadingScreen />
+          ) : (
+            <>
+              <Wrapper col="true">
+                {/* Avatar */}
+                <Wrapper col="true" className="w-full flex-center">
+                  <Image
+                    src={fetchUser?.imageUrl || imageUrl || DEFAULT.avatar}
+                    alt="user avatar"
+                    className="w-[120px] h-[120px] overflow-hidden !rounded-full"
+                  />
+                  <Wrapper col="true" className="gap-0 flex-center">
+                    <Heading>{fetchUser?.username}</Heading>
+                    <SubHeading>{fetchUser?.email}</SubHeading>
+                  </Wrapper>
+                </Wrapper>
+
+                {/* Buttons */}
+                <Wrapper className="flex-center">
+                  <Button
+                    onClick={() => navigate(ROUTE.EDIT_PROFILE)}
+                    className="!text-primary-800 !relative !gap-2"
+                  >
+                    <BsPencilFill />
+                    <span className="hidden capitalize lg:block">
+                      Edit info
+                    </span>
+                  </Button>
+                  {/* <Button
+                    className="!bg-danger"
+                    onClick={() => {
+                      setShowPopup(true);
+                    }}
+                  >
+                    Logout
+                  </Button> */}
+                </Wrapper>
               </Wrapper>
-            </Wrapper>
 
-            {/* Buttons */}
-            <Wrapper className="flex-center">
-              <Button
-                onClick={() => navigate(ROUTE.EDIT_PROFILE)}
-                className="!text-primary-800"
-              >
-                Edit info
-              </Button>
-              <Button
-                className="!bg-danger"
-                onClick={() => {
-                  setShowPopup(true);
-                }}
-              >
-                Logout
-              </Button>
-            </Wrapper>
-          </Wrapper>
-
-          <Wrapper>
-            {/* Tabs */}
-            <TabView />
-          </Wrapper>
+              <Wrapper>
+                {/* Tabs */}
+                <TabView />
+              </Wrapper>
+            </>
+          )}
         </>
       )}
     </Screen>

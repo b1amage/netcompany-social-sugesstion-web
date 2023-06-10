@@ -46,7 +46,7 @@ const HomeScreen = () => {
   console.log(user);
 
   return (
-    <Wrapper className="h-screen flex-col px-4 my-4 lg:my-8">
+    <Wrapper className="h-screen flex-col my-4 lg:my-8 px-12">
       <Wrapper className="flex-col gap-4 lg:flex-row">
         <User user={user} src={user.imageUrl} />
         <SearchBar />

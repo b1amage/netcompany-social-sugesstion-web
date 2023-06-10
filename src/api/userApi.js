@@ -9,14 +9,17 @@ const userApi = {
       });
 
       console.log(response);
+      return response;
     } catch (error) {
       console.log(error);
     }
   },
 
-  async getCreatedLocation() {
+  async getCreatedLocation(nextCursor) {
     try {
-      const url = `/location/created/me`;
+      const url = nextCursor
+        ? `/location/created/me?next_cursor=${nextCursor}`
+        : `/location/created/me`;
       const response = await axiosClient.get(url, {
         withCredentials: true,
       });

@@ -15,12 +15,11 @@ const LoginScreen = () => {
   const dispatch = useDispatch();
 
   return (
-    <Screen className="flex flex-col px-4 py-3 xl:py-20 xl:grid xl:grid-cols-2 xl:gap-20 min-h-0 h-[60vh]">
-      <Image
-        className="hidden xl:block"
-        src="https://images.unsplash.com/photo-1579487785973-74d2ca7abdd5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80"
-      />
-      <Wrapper col="true" className="!flex-1 !justify-between">
+    <Screen className="flex flex-col flex-center px-4 py-3 xl:py-20 min-h-[90vh] md:min-h-[85vh] lg:!min-h-0 lg:!h-[70vh]">
+      <Wrapper
+        col="true"
+        className="!flex-1 !justify-between lg:bg-neutral-400 lg:p-20 lg:shadow-xl lg:rounded-lg lg:h-[700px] lg:mt-14"
+      >
         <Wrapper
           col="true"
           className="self-start mt-8 xl:mt-0 justify-items-start"
