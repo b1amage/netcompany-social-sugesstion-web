@@ -141,12 +141,14 @@ const CreateLocationScreen = () => {
       setWeekendCloseTimeErr(VALIDATE.time(weekendCloseTime));
       setSubmitErr((prev) => [...prev, "Please fill in all required fields!"]);
       setIsLoading(false);
+      return
     }
     if (minPrice || maxPrice) {
       if (VALIDATE.price(minPrice, maxPrice)) {
         setPriceErr(VALIDATE.price(minPrice, maxPrice));
         setSubmitErr((prev) => [...prev, VALIDATE.price(minPrice, maxPrice)]);
         setIsLoading(false);
+        return
       }
       data = {
         placeId: placeId,
@@ -338,7 +340,7 @@ const CreateLocationScreen = () => {
                       </Label>
                       <Input
                         type="time"
-                        className={`h-[60px] flex justify-between w-full bg-white ${
+                        className={`h-[60px] flex justify-between !w-full bg-white ${
                           weekdayOpenTime
                             ? "!border-green-500 focus:!ring-green-500 border-2"
                             : weekdayOpenTimeErr
@@ -358,7 +360,7 @@ const CreateLocationScreen = () => {
                       </Label>
                       <Input
                         type="time"
-                        className={`h-[60px] flex justify-between bg-white w-full ${
+                        className={`h-[60px] flex justify-between bg-white !w-full ${
                           weekdayCloseTime
                             ? "!border-green-500 focus:!ring-green-500 border-2"
                             : weekdayCloseTimeErr
@@ -386,7 +388,7 @@ const CreateLocationScreen = () => {
 
                       <Input
                         type="time"
-                        className={`h-[60px]  w-full flex justify-between bg-white ${
+                        className={`h-[60px]  !w-full flex justify-between bg-white ${
                           weekendOpenTime
                             ? "!border-green-500 focus:!ring-green-500 border-2"
                             : weekendOpenTimeErr
@@ -406,7 +408,7 @@ const CreateLocationScreen = () => {
                       </Label>
                       <Input
                         type="time"
-                        className={`h-[60px] w-full flex justify-end bg-white ${
+                        className={`h-[60px] !w-full flex justify-end bg-white ${
                           weekendCloseTime
                             ? "!border-green-500 focus:!ring-green-500 border-2"
                             : weekendCloseTimeErr
