@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { getCurrentLocation } from "@/helpers/helpers";
-import authApi from "@/api/authApi";
+import { useState } from "react";
 import categoryList from "@/constants/category";
 import { DEFAULT } from "@/constants/defaultData";
 import { DISTANCE } from "@/constants/distance";
@@ -15,10 +13,11 @@ import AvatarUpload from "@/components/image/AvatarUpload";
 import Screen from "@/components/container/Screen";
 import Input from "@/components/form/Input";
 import Wrapper from "@/components/wrapper/Wrapper";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import userApi from "@/api/userApi";
 import { useSelector } from "react-redux";
 import LoadingScreen from "@/screens/LoadingScreen";
+import ROUTE from "@/constants/routes";
 
 // 1. Fetch current data into UI
 // 2. Edit
@@ -147,14 +146,26 @@ const EditProfileScreen = () => {
                 )
               )}
 
-              <Button
-                className="!mt-auto lg:!mt-10 !mb-0"
-                primary
-                active
-                onClick={handleSaveChanges}
-              >
-                Save Changes
-              </Button>
+              <Wrapper className="items-center !w-full justify-center !flex-col md:!flex-row !mt-auto lg:!mt-10 !mb-0">
+                <Button
+                  className="!border-2 !border-primary-400 !m-0"
+                  primary
+                  active
+                  onClick={handleSaveChanges}
+                >
+                  Save Changes
+                </Button>
+
+                <Link className="w-full" to={ROUTE.PROFILE}>
+                  <Button
+                    className="bg-transparent !m-0 !border-2 !border-primary-400 !text-primary-400 !py-[10px]"
+                    active
+                    primary
+                  >
+                    Cancel
+                  </Button>
+                </Link>
+              </Wrapper>
             </Wrapper>
           </Wrapper>
         </Screen>
