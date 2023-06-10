@@ -20,11 +20,15 @@ const userApi = {
       const url = nextCursor
         ? `/location/created/me?next_cursor=${nextCursor}`
         : `/location/created/me`;
+
+      console.log("calling get created location with url: ", url);
       const response = await axiosClient.get(url, {
         withCredentials: true,
       });
 
-      return response.data;
+      console.log("response of  ", url, response);
+
+      return response;
     } catch (error) {
       console.log(error);
     }
