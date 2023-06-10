@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "@/features/userSlice";
 import Popup from "@/components/popup/Popup";
 import LoadingScreen from "./LoadingScreen";
-import Loading from "@/components/loading/Loading";
+import { BsPencilFill } from "react-icons/bs";
 
 const UnLoginUI = () => (
   <Wrapper className="flex-1 px-5 flex-center !gap-10" col="true">
@@ -118,18 +118,21 @@ const ProfileScreen = () => {
                 <Wrapper className="flex-center">
                   <Button
                     onClick={() => navigate(ROUTE.EDIT_PROFILE)}
-                    className="!text-primary-800"
+                    className="!text-primary-800 !relative !gap-2"
                   >
-                    Edit info
+                    <BsPencilFill />
+                    <span className="hidden capitalize lg:block">
+                      Edit info
+                    </span>
                   </Button>
-                  <Button
+                  {/* <Button
                     className="!bg-danger"
                     onClick={() => {
                       setShowPopup(true);
                     }}
                   >
                     Logout
-                  </Button>
+                  </Button> */}
                 </Wrapper>
               </Wrapper>
 

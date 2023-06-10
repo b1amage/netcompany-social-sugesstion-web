@@ -95,9 +95,7 @@ const TabView = () => {
 
   const onTabClick = (e) => {
     setActiveTabIndex(Number(e.target.id));
-    // Mock data
-    const mockPlaces = shuffleArray(placeList);
-    setPlaces(mockPlaces);
+    setPlaces(createdPlaces);
   };
 
   return (
