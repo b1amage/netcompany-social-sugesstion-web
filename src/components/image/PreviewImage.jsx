@@ -1,18 +1,55 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "./Image";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { useDispatch } from "react-redux";
-import { changeImage } from "@/features/createLocationFormSlice";
-import close from '@/assets/close.svg'
-const PreviewImage = ({ imageList, onClickImage, src, className }) => {
+import { changeImage, removeImage } from "@/features/createLocationFormSlice";
+import close from "@/assets/close.svg";
+import { GoChevronLeft, GoChevronRight } from "react-icons/go";
+import Wrapper from "@/components/wrapper/Wrapper";
+
+const PreviewImage = ({ imageList, src, className }) => {
   const dispatch = useDispatch();
-  
-  const [sliderRef] = useKeenSlider({
+  const [isShowButtonRight, setIsShowButtonRight] = useState(false);
+  const [isShowButtonLeft, setIsShowButtonLeft] = useState(false);
+
+  const handleSlideButtons = (abs, minIdx, maxIdx) => {
+    if (abs === minIdx && abs < maxIdx) {
+      setIsShowButtonRight(true);
+      setIsShowButtonLeft(false);
+    } else if (abs > minIdx && abs < maxIdx) {
+      setIsShowButtonRight(true);
+      setIsShowButtonLeft(true);
+    } else if (abs === minIdx && abs === maxIdx){
+      setIsShowButtonLeft(false);
+      setIsShowButtonRight(false);
+    } 
+    else{
+      setIsShowButtonLeft(true);
+      setIsShowButtonRight(false);
+    }
+  }
+
+  const [sliderRef, slider] = useKeenSlider({
     slides: {
       perView: 4,
       spacing: 20,
-  },});
+    },
+    slideChanged(s) {
+      console.log(s)
+      const { abs, minIdx, maxIdx } = s.track.details
+
+      handleSlideButtons(abs,minIdx, maxIdx)
+    },
+    created(s){
+      console.log(s)
+      const { abs, minIdx, maxIdx } = s.track.details
+
+      handleSlideButtons(abs,minIdx, maxIdx)
+    },
+    
+    
+  });
 
   useEffect(() => {
     if (sliderRef.current) {
@@ -21,27 +58,54 @@ const PreviewImage = ({ imageList, onClickImage, src, className }) => {
   }, [imageList, sliderRef.current]);
 
   return (
-    <div ref={sliderRef} className={`keen-slider  bg-neutral-100 rounded-lg py-4 ${className}`} key={imageList.length}>
-      {imageList.map((image, index) => (
-        <div className="relative w-fit rounded-lg keen-slider__slide ">
-          <Image
+    <Wrapper col className="relative">
+      <div
+        ref={sliderRef}
+        className={`keen-slider  bg-primary-400 rounded-lg py-4 ${className}`}
+        key={imageList.length}
+      >
+        {imageList.map((image, index) => (
+          <div
+            className="relative w-fit rounded-lg keen-slider__slide "
             key={index}
-            className={`h-[20vh] ${src === image && 'border-2 border-black'} hover:opacity-60 duration-300`}
-            onClick={() => dispatch(changeImage(image))}
-            src={image}
-            alt="image"
-          />
-          <Image 
-            key={index}
-            className={`absolute  top-0 right-0 bg-black p-1`}
-            onClick={() => dispatch(changeImage(image))}
-            src={close}
-            alt="image"
-          />
-        </div>
+          >
+            <Image
+              className={`h-[20vh] ${
+                src === image && "border-2 border-secondary-400"
+              } hover:opacity-60 duration-300`}
+              onClick={() => dispatch(changeImage(image))}
+              src={image}
+              alt="image"
+            />
+            <Image
+              className={`absolute  top-0 right-0 ${src === image ? "bg-secondary-400 p-1" : "hidden"}`}
+              onClick={() => dispatch(removeImage(image))}
+              src={close}
+              alt="close"
+            />
+          </div>
+        ))}
         
-      ))}
-    </div>
+      </div>
+
+        <GoChevronLeft
+          onClick={() => {
+            slider?.current.prev();
+          }}
+          className={`${
+            isShowButtonLeft ? "visible" : "invisible"
+          } bg-primary-400 hover:opacity-70 cursor-pointer text-white h-[40px] w-[28px] rounded-l-lg p-1 absolute top-1/2 left-0 -translate-y-1/2 -translate-x-full`}
+        />
+        <GoChevronRight
+        onClick={() => {
+          slider?.current.next();
+
+        }}
+          className={`${
+            isShowButtonRight ? "visible" : "invisible"
+          } bg-primary-400 hover:opacity-70 cursor-pointer text-white h-[40px] w-[28px] rounded-r-lg absolute top-1/2 right-0 -translate-y-1/2 translate-x-full`}
+        />
+    </Wrapper>
   );
 };
 

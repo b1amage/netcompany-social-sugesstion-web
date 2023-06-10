@@ -18,6 +18,7 @@ const Input = ({
   id,
   disabled,
   min,
+  errClassName
 }) => {
   return (
     <div className={`flex flex-col ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
@@ -58,7 +59,7 @@ const Input = ({
           </button>
         )}
 
-        {err && <Error fluid>{err}</Error>}
+        {err && <Error fluid className={errClassName}>{err}</Error>}
       </div>
     </div>
   );
