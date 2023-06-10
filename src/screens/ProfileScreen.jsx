@@ -17,6 +17,9 @@ import { logout } from "@/features/userSlice";
 import Popup from "@/components/popup/Popup";
 import LoadingScreen from "./LoadingScreen";
 import { BsPencilFill } from "react-icons/bs";
+import Text from "@/components/typography/Text";
+import { MdLocationOn, MdOutlineFavorite } from "react-icons/md";
+import Category from "@/components/category/Category";
 
 const UnLoginUI = () => (
   <Wrapper className="flex-1 px-5 flex-center !gap-10" col="true">
@@ -111,6 +114,28 @@ const ProfileScreen = () => {
                   <Wrapper col="true" className="gap-0 flex-center">
                     <Heading>{fetchUser?.username}</Heading>
                     <SubHeading>{fetchUser?.email}</SubHeading>
+                  </Wrapper>
+                </Wrapper>
+
+                {/* Relevant info */}
+                <Wrapper col="true" className="flex-center">
+                  <Wrapper className="flex-center">
+                    <MdLocationOn className="text-xl" />
+                    <Text>
+                      Search distance:{" "}
+                      <span className="font-bold">
+                        {fetchUser.searchDistance}
+                      </span>
+                    </Text>
+                  </Wrapper>
+
+                  <Wrapper className="flex-wrap flex-center">
+                    {fetchUser.locationCategories.length > 0 &&
+                      fetchUser.locationCategories.map((item, index) => (
+                        <Category onClick={() => {}} isActive key={index}>
+                          {item}
+                        </Category>
+                      ))}
                   </Wrapper>
                 </Wrapper>
 

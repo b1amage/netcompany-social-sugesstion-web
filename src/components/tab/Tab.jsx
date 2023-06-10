@@ -12,7 +12,10 @@ const Tab = ({ children, loadMore, className }) => {
 
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
-        await loadMore();
+        const nextCursor = localStorage.getItem("createdNextCursor");
+        if (nextCursor.length > 10) {
+          await loadMore(nextCursor);
+        }
       }
     };
 
