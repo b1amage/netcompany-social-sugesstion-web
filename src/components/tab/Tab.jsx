@@ -27,7 +27,7 @@ const Tab = ({ children, loadMore, className }) => {
         tabRef.current.removeEventListener("scroll", handleScroll);
       }
     };
-  }, []);
+  }, [loadMore]);
 
   return (
     <div
