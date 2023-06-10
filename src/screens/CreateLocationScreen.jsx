@@ -44,6 +44,7 @@ import { DEFAULT } from "@/constants/defaultData";
 import { imageList } from "@/constants/images";
 import Loading from "@/components/loading/Loading";
 import useViewport from "@/hooks/useScreenWidth";
+import Popup from "@/components/popup/Popup";
 
 const CreateLocationScreen = () => {
   const [uploading, setUploading] = useState(false);
@@ -51,6 +52,7 @@ const CreateLocationScreen = () => {
   const screen = document.getElementsByTagName("BODY")[0];
   const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
   const { width } = useViewport();
+  const navigate = useNavigate()
   const handleShowImage = () => {
     setIsShowImage(true);
     screen.style.overflow = "hidden";
@@ -66,7 +68,7 @@ const CreateLocationScreen = () => {
   const avatarRef = useRef();
   useOnClickOutside(avatarRef, handleCloseImage);
 
-  const navigate = useNavigate();
+
   const {
     placeId,
     images,
@@ -116,7 +118,7 @@ const CreateLocationScreen = () => {
   const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
   const [submitErr, setSubmitErr] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
-
+  const [isShowPopup, setIsShowPopup] = useState(false)
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitErr([])
@@ -197,10 +199,9 @@ const CreateLocationScreen = () => {
     }
 
     console.log(data);
-
-    // console.log(imgList)
-    // locationApi.createLocation(data, navigate, setSubmitErr);
-    // // console.log(response)
+    // // console.log(imgList)
+    locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup);
+    // // // console.log(response)
     setIsLoading(false)
 
   };
@@ -332,8 +333,8 @@ const CreateLocationScreen = () => {
                       className={`h-[60px] flex justify-between w-full bg-white ${
                         weekdayOpenTime
                           ? "!border-green-500 focus:!ring-green-500 border-2"
-                          : weekdayOpenTimeErr &&
-                            "focus:!ring-secondary-400 !border-secondary-400 border-2"
+                          : (weekdayOpenTimeErr ?
+                          "focus:!ring-secondary-400 !border-secondary-400 border-2" : "focus:!border-secondary-400 focus:!ring-secondary-400")
                       }`}
                       onChange={(e) => {
                         dispatch(changeWeekdayOpenTime(e.target.value));
@@ -346,8 +347,8 @@ const CreateLocationScreen = () => {
                       className={`h-[60px] flex justify-between bg-white w-full ${
                         weekdayCloseTime
                           ? "!border-green-500 focus:!ring-green-500 border-2"
-                          : weekdayCloseTimeErr &&
-                            " focus:!ring-secondary-400 !border-secondary-400 border-2"
+                          : (weekdayCloseTimeErr ?
+                          "focus:!ring-secondary-400 !border-secondary-400 border-2" : "focus:!border-secondary-400 focus:!ring-secondary-400")
                       }`}
                       onChange={(e) => {
                         dispatch(changeWeekdayCloseTime(e.target.value));
@@ -368,8 +369,8 @@ const CreateLocationScreen = () => {
                       className={`h-[60px]  w-full flex justify-between bg-white ${
                         weekendOpenTime
                           ? "!border-green-500 focus:!ring-green-500 border-2"
-                          : weekendOpenTimeErr &&
-                            "focus:!ring-secondary-400 !border-secondary-400 border-2"
+                          : (weekendOpenTimeErr ?
+                          "focus:!ring-secondary-400 !border-secondary-400 border-2" : "focus:!border-secondary-400 focus:!ring-secondary-400")
                       }`}
                       onChange={(e) => {
                         dispatch(changeWeekendOpenTime(e.target.value));
@@ -382,8 +383,8 @@ const CreateLocationScreen = () => {
                       className={`h-[60px] w-full flex justify-end bg-white ${
                         weekendCloseTime
                           ? "!border-green-500 focus:!ring-green-500 border-2"
-                          : weekendCloseTimeErr &&
-                            "focus:!ring-secondary-400 !border-secondary-400 border-2"
+                          : (weekendCloseTimeErr ?
+                            "focus:!ring-secondary-400 !border-secondary-400 border-2" : "focus:!border-secondary-400 focus:!ring-secondary-400")
                       }`}
                       onChange={(e) => {
                         dispatch(changeWeekendCloseTime(e.target.value));
@@ -522,6 +523,7 @@ const CreateLocationScreen = () => {
           </div>
         </Portal>
       )}
+      {isShowPopup && <Popup actions={[]} title="Created successful. Wait for a few seconds to be directed to the previous page" children={<Loading />} className="!fixed" formClassName="items-center" titleClassName="text-green-500" />}
     </Screen>
   );
 };
