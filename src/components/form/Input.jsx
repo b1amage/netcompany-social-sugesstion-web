@@ -18,7 +18,8 @@ const Input = ({
   id,
   disabled,
   min,
-  errClassName
+  errClassName,
+  onWheel
 }) => {
   return (
     <div className={`flex flex-col ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
@@ -43,6 +44,7 @@ const Input = ({
           value={value}
           onChange={onChange}
           min={min}
+          onWheel={onWheel}
         />
 
         {icon && (

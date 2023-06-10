@@ -1,7 +1,10 @@
 import classNames from "classnames";
+import Loading from "@/components/loading/Loading";
 import React from "react";
 
 const Button = ({
+  isLoading,
+  loadingClassName,
   icon,
   children,
   primary,
@@ -27,9 +30,15 @@ const Button = ({
     }
   );
   return (
-    <button {...rest} className={classes}>
-      {icon && <img src={icon} alt="icon-btn" />}
-      {children}
+    <button {...rest} disabled={isLoading} className={classes}>
+      {isLoading ? (
+        <Loading className={loadingClassName} />
+      ) : (
+        <>
+          {icon && <img src={icon} alt="icon-btn" />}
+          {children}
+        </>
+      )}
     </button>
   );
 };
