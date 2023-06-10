@@ -52,7 +52,7 @@ const CreateLocationScreen = () => {
   const screen = document.getElementsByTagName("BODY")[0];
   const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
   const { width } = useViewport();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const handleShowImage = () => {
     setIsShowImage(true);
     screen.style.overflow = "hidden";
@@ -67,7 +67,6 @@ const CreateLocationScreen = () => {
 
   const avatarRef = useRef();
   useOnClickOutside(avatarRef, handleCloseImage);
-
 
   const {
     placeId,
@@ -117,13 +116,13 @@ const CreateLocationScreen = () => {
   const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();
   const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
   const [submitErr, setSubmitErr] = useState([]);
-  const [isLoading, setIsLoading] = useState(false)
-  const [isShowPopup, setIsShowPopup] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [isShowPopup, setIsShowPopup] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitErr([])
+    setSubmitErr([]);
     let data;
-    setIsLoading(true)
+    setIsLoading(true);
     if (
       VALIDATE.location(address) ||
       VALIDATE.title(title) ||
@@ -141,13 +140,13 @@ const CreateLocationScreen = () => {
       setWeekendOpenTimeErr(VALIDATE.time(weekendOpenTime));
       setWeekendCloseTimeErr(VALIDATE.time(weekendCloseTime));
       setSubmitErr((prev) => [...prev, "Please fill in all required fields!"]);
-      setIsLoading(false)
+      setIsLoading(false);
     }
     if (minPrice || maxPrice) {
       if (VALIDATE.price(minPrice, maxPrice)) {
         setPriceErr(VALIDATE.price(minPrice, maxPrice));
         setSubmitErr((prev) => [...prev, VALIDATE.price(minPrice, maxPrice)]);
-        setIsLoading(false)
+        setIsLoading(false);
       }
       data = {
         placeId: placeId,
@@ -202,8 +201,7 @@ const CreateLocationScreen = () => {
     // // console.log(imgList)
     locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup);
     // // // console.log(response)
-    setIsLoading(false)
-
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -269,8 +267,11 @@ const CreateLocationScreen = () => {
           </Wrapper>
 
           <Wrapper className="my-4" col>
+            <Label>
+              Title <span className="text-secondary-400">*</span>
+            </Label>
             <Input
-              label="Title"
+              // label={`Title <span className="text-secondary-400">*</span>`}
               placeholder="Enter the place's name"
               className={`rounded-lg ${
                 !title
@@ -288,6 +289,7 @@ const CreateLocationScreen = () => {
           </Wrapper>
 
           <Dropdown
+            required
             label="Category"
             defaultTitle="SELECT THE CATEGORY"
             options={categoryList}
@@ -317,44 +319,58 @@ const CreateLocationScreen = () => {
 
           <Wrapper col className="gap-8 lg:flex-row">
             <Wrapper col className="gap-4">
-              <Label>Time</Label>
+              <Label>
+                Time <span className="text-secondary-400">*</span>
+              </Label>
+
               <Wrapper
                 col
-                className={`gap-8 ${
+                className={`gap-4 ${
                   width > 520 && "!flex-row !justify-between"
                 }`}
               >
                 <Wrapper className="gap-2 w-fit flex-col">
                   <Label>Weekday:</Label>
-                  <Wrapper className="gap-4 ">
-                    <Input
-                      label="Open time"
-                      type="time"
-                      className={`h-[60px] flex justify-between w-full bg-white ${
-                        weekdayOpenTime
-                          ? "!border-green-500 focus:!ring-green-500 border-2"
-                          : (weekdayOpenTimeErr ?
-                          "focus:!ring-secondary-400 !border-secondary-400 border-2" : "focus:!border-secondary-400 focus:!ring-secondary-400")
-                      }`}
-                      onChange={(e) => {
-                        dispatch(changeWeekdayOpenTime(e.target.value));
-                      }}
-                      value={weekdayOpenTime}
-                    />
-                    <Input
-                      label="Close time"
-                      type="time"
-                      className={`h-[60px] flex justify-between bg-white w-full ${
-                        weekdayCloseTime
-                          ? "!border-green-500 focus:!ring-green-500 border-2"
-                          : (weekdayCloseTimeErr ?
-                          "focus:!ring-secondary-400 !border-secondary-400 border-2" : "focus:!border-secondary-400 focus:!ring-secondary-400")
-                      }`}
-                      onChange={(e) => {
-                        dispatch(changeWeekdayCloseTime(e.target.value));
-                      }}
-                      value={weekdayCloseTime}
-                    />
+                  <Wrapper className="gap-4">
+                    <Wrapper col>
+                      <Label className="!text-[14px]">
+                        Open time <span className="text-secondary-400">*</span>
+                      </Label>
+                      <Input
+                        type="time"
+                        className={`h-[60px] flex justify-between w-full bg-white ${
+                          weekdayOpenTime
+                            ? "!border-green-500 focus:!ring-green-500 border-2"
+                            : weekdayOpenTimeErr
+                            ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
+                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                        }`}
+                        onChange={(e) => {
+                          dispatch(changeWeekdayOpenTime(e.target.value));
+                        }}
+                        value={weekdayOpenTime}
+                      />
+                    </Wrapper>
+
+                    <Wrapper col>
+                      <Label className="!text-[14px]">
+                        Close time <span className="text-secondary-400">*</span>
+                      </Label>
+                      <Input
+                        type="time"
+                        className={`h-[60px] flex justify-between bg-white w-full ${
+                          weekdayCloseTime
+                            ? "!border-green-500 focus:!ring-green-500 border-2"
+                            : weekdayCloseTimeErr
+                            ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
+                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                        }`}
+                        onChange={(e) => {
+                          dispatch(changeWeekdayCloseTime(e.target.value));
+                        }}
+                        value={weekdayCloseTime}
+                      />
+                    </Wrapper>
                   </Wrapper>
                 </Wrapper>
                 {width >= 520 && <div className=" w-[1px] bg-black"></div>}
@@ -363,60 +379,74 @@ const CreateLocationScreen = () => {
                   <Label>Weekend: </Label>
 
                   <Wrapper className="gap-4 ">
-                    <Input
-                      label="Open time"
-                      type="time"
-                      className={`h-[60px]  w-full flex justify-between bg-white ${
-                        weekendOpenTime
-                          ? "!border-green-500 focus:!ring-green-500 border-2"
-                          : (weekendOpenTimeErr ?
-                          "focus:!ring-secondary-400 !border-secondary-400 border-2" : "focus:!border-secondary-400 focus:!ring-secondary-400")
-                      }`}
-                      onChange={(e) => {
-                        dispatch(changeWeekendOpenTime(e.target.value));
-                      }}
-                      value={weekendOpenTime}
-                    />
-                    <Input
-                      label="Close time"
-                      type="time"
-                      className={`h-[60px] w-full flex justify-end bg-white ${
-                        weekendCloseTime
-                          ? "!border-green-500 focus:!ring-green-500 border-2"
-                          : (weekendCloseTimeErr ?
-                            "focus:!ring-secondary-400 !border-secondary-400 border-2" : "focus:!border-secondary-400 focus:!ring-secondary-400")
-                      }`}
-                      onChange={(e) => {
-                        dispatch(changeWeekendCloseTime(e.target.value));
-                        // setWeekendCloseTimeErr(VALIDATE.time(e.target.value));
-                      }}
-                      value={weekendCloseTime}
-                      // err={weekendCloseTimeErr}
-                    />
+                    <Wrapper col>
+                      <Label className="!text-[14px]">
+                        Open time <span className="text-secondary-400">*</span>
+                      </Label>
+
+                      <Input
+                        type="time"
+                        className={`h-[60px]  w-full flex justify-between bg-white ${
+                          weekendOpenTime
+                            ? "!border-green-500 focus:!ring-green-500 border-2"
+                            : weekendOpenTimeErr
+                            ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
+                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                        }`}
+                        onChange={(e) => {
+                          dispatch(changeWeekendOpenTime(e.target.value));
+                        }}
+                        value={weekendOpenTime}
+                      />
+                    </Wrapper>
+
+                    <Wrapper col>
+                      <Label className="!text-[14px]">
+                        Close time <span className="text-secondary-400">*</span>
+                      </Label>
+                      <Input
+                        type="time"
+                        className={`h-[60px] w-full flex justify-end bg-white ${
+                          weekendCloseTime
+                            ? "!border-green-500 focus:!ring-green-500 border-2"
+                            : weekendCloseTimeErr
+                            ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
+                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                        }`}
+                        onChange={(e) => {
+                          dispatch(changeWeekendCloseTime(e.target.value));
+                          // setWeekendCloseTimeErr(VALIDATE.time(e.target.value));
+                        }}
+                        value={weekendCloseTime}
+                        // err={weekendCloseTimeErr}
+                      />
+                    </Wrapper>
                   </Wrapper>
                 </Wrapper>
               </Wrapper>
             </Wrapper>
 
-            <div className=" w-[2px] bg-black lg:block hidden"></div>
+            <div className=" w-[1px] bg-black lg:block hidden"></div>
 
             <Wrapper col className="justify-between">
               <Label>
                 Price Range per person <i>(optional)</i>{" "}
               </Label>
               <Wrapper className="sm:flex-row flex-col gap-4">
-                <Wrapper className="w-full justify-between sm:justify-start sm:gap-4">
+                <Wrapper className="w-full justify-between sm:justify-start gap-4">
                   <Input
                     label="From: "
                     className={`rounded-lg w-full !py-4 bg-white ${
-                      minPrice && (priceErr ?
-                      " focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 border-2" : "!border-green-500 border-2 focus:!ring-green-500")
+                      minPrice &&
+                      (priceErr
+                        ? " focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 border-2"
+                        : "!border-green-500 border-2 focus:!ring-green-500")
                     }`}
                     type="number"
                     value={minPrice}
                     onChange={(e) => {
                       dispatch(changeMinPrice(e.target.value));
-                      setPriceErr(VALIDATE.price(e.target.value, maxPrice))
+                      setPriceErr(VALIDATE.price(e.target.value, maxPrice));
                     }}
                     min={0}
                     // err={minPriceErr}
@@ -426,9 +456,9 @@ const CreateLocationScreen = () => {
                   <Input
                     label="To: "
                     className={`rounded-lg w-full py-4 bg-white ${
-                      maxPrice
-                        && (priceErr ?
-                          " focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 border-2"
+                      maxPrice &&
+                      (priceErr
+                        ? " focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 border-2"
                         : " !border-green-500 border-2 focus:!ring-green-500")
                     }`}
                     type="number"
@@ -504,7 +534,13 @@ const CreateLocationScreen = () => {
               </Wrapper>
             </Error>
 
-            <Button className="!my-0 h-16 disabled:opacity-70"  loadingClassName='!h-8 !w-8 !border-r-white !border-l-white' primary active isLoading={isLoading}>
+            <Button
+              className="!my-0 h-16 disabled:opacity-70"
+              loadingClassName="!h-8 !w-8 !border-r-white !border-l-white"
+              primary
+              active
+              isLoading={isLoading}
+            >
               Submit
             </Button>
           </div>
@@ -523,7 +559,16 @@ const CreateLocationScreen = () => {
           </div>
         </Portal>
       )}
-      {isShowPopup && <Popup actions={[]} title="Created successful. Wait for a few seconds to be directed to the previous page" children={<Loading />} className="!fixed" formClassName="items-center" titleClassName="text-green-500" />}
+      {isShowPopup && (
+        <Popup
+          actions={[]}
+          title="Created successful. Wait for a few seconds to be directed to the previous page"
+          children={<Loading />}
+          className="!fixed"
+          formClassName="items-center"
+          titleClassName="text-green-500"
+        />
+      )}
     </Screen>
   );
 };
