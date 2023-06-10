@@ -2,6 +2,7 @@
 import React, { Suspense, useState, useEffect } from "react";
 import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
+import localStorageKey from "@/constants/localStorageKeys";
 const OnboardingScreen = React.lazy(() => import("@/screens/OnboardingScreen"));
 const VerifyScreen = React.lazy(() => import("@/screens/VerifyScreen"));
 const LoadingScreen = React.lazy(() => import("@/screens/LoadingScreen"));
@@ -17,19 +18,24 @@ const ProfileScreen = React.lazy(() => import("@/screens/ProfileScreen"));
 
 
 const AppRoutes = () => {
-  const [isLogin, setIsLogin] = useState(false)
+  const [isShowNavbar, setIsShowNavbar] = useState(false)
   const user = JSON.parse(localStorage.getItem("user")) || null
+  const onBoardingAlreadyShown = JSON.parse(
+    localStorage.getItem(localStorageKey.alreadyShownOnboarding)
+  );
   useEffect(() => {
+    console.log(onBoardingAlreadyShown)
     if (user){
-      setIsLogin(true)
-      return
+      if(onBoardingAlreadyShown){
+        setIsShowNavbar(true)
+      }
     } else{
-      setIsLogin(false)
+      setIsShowNavbar(false)
     }
-  }, [user, isLogin])
+  }, [user])
   return (
     <>
-      {isLogin && <Navbar />}
+      {isShowNavbar && <Navbar />}
       <Suspense fallback={<LoadingScreen />}>
       <Routes>
         <Route path={ROUTE.ONBOARDING} element={<OnboardingScreen />} />
