@@ -39,7 +39,7 @@ const ProfileScreen = () => {
   const { username, email, imageUrl, _id } = user;
   const [showPopup, setShowPopup] = useState(false);
   // const [userInfo, setUserInfo] = useState(user);
-  const [fetchUser, setFetchUser] = useState({});
+  const [fetchUser, setFetchUser] = useState(user);
   const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
@@ -74,7 +74,7 @@ const ProfileScreen = () => {
     const getUserProfile = async () => {
       const response = await userApi.getUserProfile(_id);
       console.log(response);
-      setFetchUser(response?.data);
+      setFetchUser(response.data);
       setLoading(false);
       return response;
     };

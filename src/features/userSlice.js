@@ -25,21 +25,21 @@ const userSlice = createSlice({
         const userLogin = response?.data?.user;
         if (userLogin) {
           localStorage.setItem("user", JSON.stringify(userLogin));
+          state.user = JSON.parse(localStorage.getItem("user"));
+          // location.reload();
         }
       };
       handleLogin();
-
-      state.user = JSON.parse(localStorage.getItem("user"));
     },
 
     logout: (state) => {
       const handleLogout = async () => {
         await authApi.signOutWithMicrosoft(msalInstance);
         localStorage.setItem("user", JSON.stringify({}));
+        state.user = JSON.parse(localStorage.getItem("user"));
+        // location.reload();
       };
       handleLogout();
-
-      state.user = JSON.parse(localStorage.getItem("user"));
     },
   },
 });
