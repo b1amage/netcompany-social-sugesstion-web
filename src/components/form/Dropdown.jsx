@@ -13,7 +13,7 @@ const Dropdown = ({
   defaultTitle,
   className,
   required,
-  err
+  err,
 }) => {
   const [isOpen, setIsOpen] = useState(null);
   const handleClick = () => {
@@ -25,8 +25,8 @@ const Dropdown = ({
     onChange(option);
   };
 
-  const dropdownRef = useRef()
-  useOnClickOutside(dropdownRef, () => setIsOpen(false))
+  const dropdownRef = useRef();
+  useOnClickOutside(dropdownRef, () => setIsOpen(false));
 
   const renderedOptions = options.map((option) => {
     return (
@@ -42,16 +42,23 @@ const Dropdown = ({
 
   return (
     <div
-      className={`flex flex-col relative ${
-        label && "gap-1 md:gap-2 lg:gap-3"
-      }`}
+      className={`flex flex-col relative ${label && "gap-1 md:gap-2 lg:gap-3"}`}
       ref={dropdownRef}
     >
       {label && <Label required={required}>{label}</Label>}
       <div
         className={`w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg border border-black  ${
           value && "bg-white"
-        } md:text-base md:p-4 placeholder:text-secondary-100 font-bold ${(value?.title || value) ? "!border-green-500 border-2" : "focus:!border-secondary-400"} ${(isOpen && ((value?.tilte || value) ? "border-green-500 focus:!border-green-500 " : "!border-secondary-400 border-2"))} ${err && "border-secondary-400 border-2"} ${className}`}
+        } md:text-base md:p-4 placeholder:text-secondary-100 font-bold ${
+          value?.title || value
+            ? "!border-green-500 border-2"
+            : "focus:!border-secondary-400"
+        } ${
+          isOpen &&
+          (value?.tilte || value
+            ? "border-green-500 focus:!border-green-500 "
+            : "!border-secondary-400 border-2")
+        } ${err && "border-secondary-400 border-2"} ${className}`}
         onClick={handleClick}
       >
         {value?.title || defaultTitle}
@@ -63,7 +70,6 @@ const Dropdown = ({
       </div>
       {isOpen && (
         <ul
-          
           className={`border border-primary-400  w-full max-h-[400px] block my-2 overflow-y-scroll bg-primary-400 text-white  absolute z-50 text-sm top-full transition-all duration-300 outline-none  md:text-base md:px-2 placeholder:text-secondary-100 font-bold`}
         >
           {renderedOptions}

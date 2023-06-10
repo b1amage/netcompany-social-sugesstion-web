@@ -1,8 +1,7 @@
 import Wrapper from "@/components/wrapper/Wrapper";
 import { useRef, useEffect } from "react";
 
-const Tab = (props) => {
-  const { children, handleScrollToBottom } = props;
+const Tab = ({ children, loadMore, className }) => {
   const tabRef = useRef();
 
   useEffect(() => {
@@ -13,7 +12,10 @@ const Tab = (props) => {
 
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
-        await handleScrollToBottom();
+        const nextCursor = localStorage.getItem("createdNextCursor");
+        if (nextCursor.length > 10) {
+          await loadMore(nextCursor);
+        }
       }
     };
 
@@ -25,13 +27,13 @@ const Tab = (props) => {
         tabRef.current.removeEventListener("scroll", handleScroll);
       }
     };
-  }, []);
+  }, [loadMore]);
 
   return (
     <div
       ref={tabRef}
-      className="grid grid-cols-2 gap-4 py-4 xl:grid-cols-3 place-items-center gap-y-5 md:gap-8 xl:gap-12 h-[400px] lg:h-[450px] overflow-y-scroll"
-      {...props}
+      className={`grid grid-cols-2 gap-4 py-4 xl:grid-cols-3 place-items-center gap-y-5 md:gap-8 xl:gap-12 h-[400px] lg:h-[450px] overflow-y-scroll ${className}`}
+      // {...props}
     >
       {children}
     </div>

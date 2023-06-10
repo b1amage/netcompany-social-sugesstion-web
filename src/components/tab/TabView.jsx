@@ -13,15 +13,16 @@ import Heading from "@/components/typography/Heading";
 import Button from "@/components/button/Button";
 import userApi from "@/api/userApi";
 import Loading from "@/components/loading/Loading";
+import ROUTE from "@/constants/routes";
 
-const EmptyTab = ({ title, actionName }) => (
-  <Tab className="flex w-full h-full flex-center xl:my-20">
+const EmptyTab = ({ title, actionName, action }) => (
+  <Tab className="!flex w-full h-full flex-center xl:my-20">
     <Wrapper col="true">
       <Image src={emptyPost} />
 
       <Wrapper col="true">
         <Heading>{title}</Heading>
-        <Button active primary>
+        <Button onClick={action} active primary className="!capitalize">
           {actionName}
         </Button>
       </Wrapper>
@@ -30,40 +31,65 @@ const EmptyTab = ({ title, actionName }) => (
 );
 
 const TabView = () => {
+  const [lastFetch, setLastFetch] = useState(Date.now());
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [places, setPlaces] = useState(placeList);
-  const [createdPlaces, setCreatedPlaces] = useState([]);
+  const [createdPlaces, setCreatedPlaces] = useState(
+    (localStorage.getItem("createdPlaces") &&
+      JSON.parse(localStorage.getItem("createdPlaces"))) ||
+      []
+  );
   const [loading, setLoading] = useState(true);
   const [createdNextCursor, setCreatedNextCursor] = useState(undefined);
   const [nextLoading, setNextLoading] = useState(false);
 
   useEffect(() => {
     const getCreatedLocation = async () => {
-      const data = await userApi.getCreatedLocation();
-      console.log(data);
-      setCreatedPlaces(data.results);
-      setCreatedNextCursor(data.next_cursor);
+      const response = await userApi.getCreatedLocation();
+      console.log(response);
+      setCreatedPlaces(response.data.results);
+      localStorage.setItem(
+        "createdPlaces",
+        JSON.stringify(response.data.results)
+      );
+      localStorage.setItem("createdNextCursor", response.data.next_cursor);
+      setCreatedNextCursor(response.data.next_cursor);
       setLoading(false);
     };
     getCreatedLocation();
   }, []);
 
-  const loadMoreLocation = async () => {
+  const loadMoreLocation = async (createdNextCursor) => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 1000) return;
     if (createdNextCursor === null) return;
     setNextLoading(true);
-    const data = await userApi.getCreatedLocation(createdNextCursor);
-    console.log(data);
-    const newCreatedPlaces = [...createdPlaces, ...data.results];
+    setLastFetch(now);
+    const response = await userApi.getCreatedLocation(createdNextCursor);
+    // console.log(response.data);
+
+    const newCreatedPlaces = [
+      ...JSON.parse(localStorage.getItem("createdPlaces")),
+      ...response.data.results,
+    ];
+    localStorage.setItem("createdPlaces", JSON.stringify(newCreatedPlaces));
     setCreatedPlaces(newCreatedPlaces);
-    setCreatedNextCursor(data.next_cursor);
+    localStorage.setItem("createdNextCursor", response.data.next_cursor);
+    setCreatedNextCursor(response.data.next_cursor);
     setNextLoading(false);
   };
 
   const renderCards = (places) => {
     return places.length === 0 ? (
-      <EmptyTab title="You have no post yet!" actionName="Create Post" />
+      <EmptyTab
+        title="You have no post yet!"
+        actionName="Register new location"
+        action={() => navigate(ROUTE.CREATE_LOCATION)}
+      />
     ) : (
-      <Tab handleScrollToBottom={() => loadMoreLocation()}>
+      <Tab loadMore={loadMoreLocation}>
         {loading ? (
           <Loading />
         ) : (
@@ -90,9 +116,7 @@ const TabView = () => {
 
   const onTabClick = (e) => {
     setActiveTabIndex(Number(e.target.id));
-    // Mock data
-    const mockPlaces = shuffleArray(placeList);
-    setPlaces(mockPlaces);
+    setPlaces(createdPlaces);
   };
 
   return (

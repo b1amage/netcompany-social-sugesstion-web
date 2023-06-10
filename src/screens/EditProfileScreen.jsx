@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { getCurrentLocation } from "@/helpers/helpers";
-import authApi from "@/api/authApi";
+import { useState, useEffect } from "react";
 import categoryList from "@/constants/category";
 import { DEFAULT } from "@/constants/defaultData";
 import { DISTANCE } from "@/constants/distance";
@@ -15,29 +13,33 @@ import AvatarUpload from "@/components/image/AvatarUpload";
 import Screen from "@/components/container/Screen";
 import Input from "@/components/form/Input";
 import Wrapper from "@/components/wrapper/Wrapper";
-import { useNavigate } from "react-router-dom";
-import Image from "@/components/image/Image";
-import hero from "@/assets/verify/hero.png";
+import { Link, useNavigate } from "react-router-dom";
 import userApi from "@/api/userApi";
 import { useSelector } from "react-redux";
 import LoadingScreen from "@/screens/LoadingScreen";
+import ROUTE from "@/constants/routes";
+import toast, { Toaster } from "react-hot-toast";
 
 // 1. Fetch current data into UI
 // 2. Edit
-// 3. Call api for submit
+// 3. Call api for submit'
+
+const notify = () => toast.success("Successfully update");
 
 const EditProfileScreen = () => {
   const { user } = useSelector((state) => state.user);
   const { username, email, imageUrl, _id, locationCategories, searchDistance } =
     user;
+  const [fetchUser, setFetchUser] = useState(user);
+
   const [usernameInput, setUsernameInput] = useState(username);
   const [distance, setDistance] = useState(searchDistance || DISTANCE.min);
   const [locationCategoriesInput, setLocationCategoriesInput] =
     useState(locationCategories);
-  // const [location, setLocation] = useState();
+
   const [message, setMessage] = useState();
   const [error, setError] = useState(false);
-  // const [user, setUser] = useState();
+
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -51,10 +53,8 @@ const EditProfileScreen = () => {
     setLocationCategoriesInput(newCategory);
   };
 
-  const handleAPIMessage = (message) => setMessage(message);
-  const handleAPIError = (value) => setError(value);
-
   const handleSaveChanges = async () => {
+    setLoading(true);
     const userInfo = {
       idToken: localStorage.getItem("idToken"),
       username: usernameInput,
@@ -63,11 +63,13 @@ const EditProfileScreen = () => {
       imageUrl: localStorage.getItem("avatar") || imageUrl || DEFAULT.avatar,
     };
 
-    console.log(userInfo);
+    console.log("to edit: ",userInfo);
 
-    const data = await userApi.editProfile(userInfo);
-    localStorage.setItem("user", JSON.stringify(data));
-    navigate("/");
+    const data = await userApi.editProfile(userInfo, notify);
+    setLoading(false);
+
+    // localStorage.setItem("user", JSON.stringify(data));
+    navigate(ROUTE.PROFILE);
   };
 
   // Get Location
@@ -87,25 +89,42 @@ const EditProfileScreen = () => {
   //   })();
   // }, []);
 
+  useEffect(() => {
+    const getUserProfile = async () => {
+      setLoading(true);
+      const response = await userApi.getUserProfile(_id);
+      console.log(response);
+      setFetchUser(response.data);
+      setUsernameInput(response.data.username);
+      setDistance(response.data.searchDistance);
+      setLocationCategoriesInput(response.data.locationCategories);
+      setLoading(false);
+      return response;
+    };
+    if (_id) {
+      getUserProfile();
+    }
+  }, []);
+
   const registerEmail = email || localStorage.getItem("registerEmail") || "";
 
   return (
     <>
-      {!loading ? (
+      {loading ? (
         <LoadingScreen />
       ) : (
-        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
-          <Wrapper className="flex-1 xl:grid xl:grid-cols-2 xl:gap-10">
-            <Wrapper className="flex-1 hidden xl:block">
+        <Screen className="flex !min-h-[90vh] md:!min-h-[85vh] lg:!overflow-hidden flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 lg:!min-h-0">
+          <Wrapper className="flex-1 lg:!flex-initial xl:grid xl:gap-2 lg:mx-auto lg:w-[700px] lg:p-20 lg:shadow-xl lg:rounded-lg lg:bg-neutral-400 lg:!h-[800px] lg:overflow-scroll">
+            {/* <Wrapper className="flex-1 hidden xl:block">
               <Image className="flex-1 h-full" src={hero} />
-            </Wrapper>
+            </Wrapper> */}
             <Wrapper className="" col="true">
               <Wrapper col="true">
                 <Heading>Profile Edit</Heading>
                 <SubHeading>Edit your profile!</SubHeading>
               </Wrapper>
 
-              <AvatarUpload img={imageUrl} />
+              <AvatarUpload img={fetchUser.imageUrl} />
               <Input
                 onChange={(e) => setUsernameInput(e.target.value)}
                 value={usernameInput}
@@ -149,14 +168,27 @@ const EditProfileScreen = () => {
                 )
               )}
 
-              <Button
-                className="!mt-auto !mb-0"
-                primary
-                active
-                onClick={handleSaveChanges}
-              >
-                Save Changes
-              </Button>
+              <Wrapper className="items-center !w-full justify-center !flex-col md:!flex-row !mt-auto lg:!mt-10 !mb-0">
+                <Button
+                  className="!border-2 !border-primary-400 !m-0"
+                  primary
+                  active
+                  onClick={handleSaveChanges}
+                  isLoading={loading}
+                >
+                  Save Changes
+                </Button>
+
+                <Link className="w-full" to={ROUTE.PROFILE}>
+                  <Button
+                    className="bg-transparent !m-0 !border-2 !border-primary-400 !text-primary-400 !py-[10px]"
+                    active
+                    primary
+                  >
+                    Cancel
+                  </Button>
+                </Link>
+              </Wrapper>
             </Wrapper>
           </Wrapper>
         </Screen>

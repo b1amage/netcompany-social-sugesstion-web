@@ -9,6 +9,7 @@ const userApi = {
       });
 
       console.log(response);
+      return response;
     } catch (error) {
       console.log(error);
     }
@@ -19,17 +20,21 @@ const userApi = {
       const url = nextCursor
         ? `/location/created/me?next_cursor=${nextCursor}`
         : `/location/created/me`;
+
+      console.log("calling get created location with url: ", url);
       const response = await axiosClient.get(url, {
         withCredentials: true,
       });
 
-      return response.data;
+      console.log("response of  ", url, response);
+
+      return response;
     } catch (error) {
       console.log(error);
     }
   },
 
-  async editProfile(info) {
+  async editProfile(info, notify) {
     try {
       const url = `/user/profile/me`;
       const response = await axiosClient.patch(url, info, {
@@ -37,6 +42,8 @@ const userApi = {
       });
 
       console.log(response);
+      localStorage.setItem("user", JSON.stringify(response.data));
+      notify();
 
       return response.data;
     } catch (error) {

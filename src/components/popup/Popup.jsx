@@ -26,19 +26,22 @@ const Popup = ({
     },
     { title: "cancel", danger: false, action: () => {} },
   ],
+  children,
+  titleClassName,
+  formClassName
 }) => {
   const popupRef = useRef();
   useOnClickOutside(popupRef, onClose);
 
   return (
     <Portal location="body">
-      <Wrapper className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
+      <Wrapper className={`${className} absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center`}>
         <Wrapper
           _ref={popupRef}
           col="true"
-          className="w-[300px] h-[200px] md:w-[400px] md:h-[220px] bg-white  drop-shadow-lg rounded-xl p-5 md:p-10 lg:w-[450px] lg:h-[250px]"
+          className={`w-[300px] h-[200px] md:w-[400px] md:h-[220px] bg-white  drop-shadow-lg rounded-xl p-5 md:p-10 lg:w-[450px] lg:h-[250px] ${formClassName}`}
         >
-          <Heading className="text-center">{title}</Heading>
+          <Heading className={`text-center ${titleClassName}`}>{title}</Heading>
           <Wrapper className="justify-between mt-auto !py-0">
             {actions.length > 0 &&
               actions.map((item) => (
@@ -53,6 +56,7 @@ const Popup = ({
                   {item.title}
                 </Button>
               ))}
+              {children}
           </Wrapper>
         </Wrapper>
       </Wrapper>

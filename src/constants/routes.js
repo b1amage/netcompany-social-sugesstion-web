@@ -10,6 +10,7 @@ const ROUTE = {
   DETAILS_EVENT: "/event/details",
   TEST: "/test",
   EDIT_PROFILE: "/profile/edit",
+  CREATE_LOCATION: "/create-location",
 };
 
 export default ROUTE;

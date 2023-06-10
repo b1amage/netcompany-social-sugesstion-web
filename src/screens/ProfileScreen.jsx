@@ -16,7 +16,10 @@ import { useDispatch } from "react-redux";
 import { logout } from "@/features/userSlice";
 import Popup from "@/components/popup/Popup";
 import LoadingScreen from "./LoadingScreen";
-import Loading from "@/components/loading/Loading";
+import { BsPencilFill } from "react-icons/bs";
+import Text from "@/components/typography/Text";
+import { MdLocationOn, MdOutlineFavorite } from "react-icons/md";
+import Category from "@/components/category/Category";
 
 const UnLoginUI = () => (
   <Wrapper className="flex-1 px-5 flex-center !gap-10" col="true">
@@ -39,7 +42,7 @@ const ProfileScreen = () => {
   const { username, email, imageUrl, _id } = user;
   const [showPopup, setShowPopup] = useState(false);
   // const [userInfo, setUserInfo] = useState(user);
-  const [fetchUser, setFetchUser] = useState({});
+  const [fetchUser, setFetchUser] = useState(user);
   const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
@@ -74,7 +77,7 @@ const ProfileScreen = () => {
     const getUserProfile = async () => {
       const response = await userApi.getUserProfile(_id);
       console.log(response);
-      setFetchUser(response?.data);
+      setFetchUser(response.data);
       setLoading(false);
       return response;
     };
@@ -114,23 +117,33 @@ const ProfileScreen = () => {
                   </Wrapper>
                 </Wrapper>
 
-                {/* Buttons */}
-                <Wrapper className="flex-center">
-                  <Button
-                    onClick={() => navigate(ROUTE.EDIT_PROFILE)}
-                    className="!text-primary-800"
-                  >
-                    Edit info
-                  </Button>
-                  <Button
-                    className="!bg-danger"
-                    onClick={() => {
-                      setShowPopup(true);
-                    }}
-                  >
-                    Logout
-                  </Button>
+                {/* Relevant info */}
+                <Wrapper col="true" className="flex-center">
+                  <Wrapper className="flex-center">
+                    <MdLocationOn className="text-xl" />
+                    <Text>
+                      Search distance:{" "}
+                      <span className="font-bold">
+                        {fetchUser.searchDistance}
+                      </span>
+                      <span className="font-bold">km</span>
+                    </Text>
+                  </Wrapper>
+
+                  <Wrapper className="flex-wrap flex-center">
+                    {fetchUser.locationCategories.length > 0 ? (
+                      fetchUser.locationCategories.map((item, index) => (
+                        <Category onClick={() => {}} isActive key={index}>
+                          {item}
+                        </Category>
+                      ))
+                    ) : (
+                      <Text>No preferences yet!</Text>
+                    )}
+                  </Wrapper>
                 </Wrapper>
+
+                
               </Wrapper>
 
               <Wrapper>
