@@ -126,16 +126,20 @@ const ProfileScreen = () => {
                       <span className="font-bold">
                         {fetchUser.searchDistance}
                       </span>
+                      <span className="font-bold">km</span>
                     </Text>
                   </Wrapper>
 
                   <Wrapper className="flex-wrap flex-center">
-                    {fetchUser.locationCategories.length > 0 &&
+                    {fetchUser.locationCategories.length > 0 ? (
                       fetchUser.locationCategories.map((item, index) => (
                         <Category onClick={() => {}} isActive key={index}>
                           {item}
                         </Category>
-                      ))}
+                      ))
+                    ) : (
+                      <Text>No preferences yet!</Text>
+                    )}
                   </Wrapper>
                 </Wrapper>
 
