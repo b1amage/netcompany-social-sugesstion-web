@@ -16,8 +16,6 @@ import Screen from "@/components/container/Screen";
 import Input from "@/components/form/Input";
 import Wrapper from "@/components/wrapper/Wrapper";
 import { useNavigate } from "react-router-dom";
-import Image from "@/components/image/Image";
-import hero from "@/assets/verify/hero.png";
 
 const VerifyScreen = () => {
   const [username, setUsername] = useState(

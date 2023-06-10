@@ -16,8 +16,6 @@ import Screen from "@/components/container/Screen";
 import Input from "@/components/form/Input";
 import Wrapper from "@/components/wrapper/Wrapper";
 import { useNavigate } from "react-router-dom";
-import Image from "@/components/image/Image";
-import hero from "@/assets/verify/hero.png";
 import userApi from "@/api/userApi";
 import { useSelector } from "react-redux";
 import LoadingScreen from "@/screens/LoadingScreen";
