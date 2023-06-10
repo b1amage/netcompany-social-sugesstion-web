@@ -31,6 +31,7 @@ const EmptyTab = ({ title, actionName, action }) => (
 );
 
 const TabView = () => {
+  const [lastFetch, setLastFetch] = useState(Date.now());
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [places, setPlaces] = useState(placeList);
   const [createdPlaces, setCreatedPlaces] = useState(
@@ -59,8 +60,13 @@ const TabView = () => {
   }, []);
 
   const loadMoreLocation = async (createdNextCursor) => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 1000) return;
     if (createdNextCursor === null) return;
     setNextLoading(true);
+    setLastFetch(now);
     const response = await userApi.getCreatedLocation(createdNextCursor);
     // console.log(response.data);
 
