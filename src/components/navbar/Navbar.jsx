@@ -110,7 +110,7 @@ const Navbar = () => {
             </Link>
             <Button
               onClick={() => setShowPopup(true)}
-              className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 border-danger !bg-danger !right-0`}
+              className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
               danger
             >
               Logout
@@ -140,6 +140,9 @@ const Navbar = () => {
                     src={add}
                     alt="add"
                     className="w-[28px] h-[28px] m-2"
+                    onClick={() => {
+                      if (window.location.pathname === "/") navigate("/create-location")
+                    }}
                   />
                 )}
                 {isShowNotification && (

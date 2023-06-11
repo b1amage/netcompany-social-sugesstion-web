@@ -28,24 +28,26 @@ const AppRoutes = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [isShowNavbar, setIsShowNavbar] = useState(false)
   const user = JSON.parse(localStorage.getItem("user")) || null;
+  const onBoardingAlreadyShown = JSON.parse(
+    localStorage.getItem(localStorageKey.alreadyShownOnboarding)
+  ) || null;
   useEffect(() => {
-    const onBoardingAlreadyShown = JSON.parse(
-      localStorage.getItem(localStorageKey.alreadyShownOnboarding)
-    );
-    console.log(onBoardingAlreadyShown)
     if (user) {
       if(onBoardingAlreadyShown){
+        setIsLogin(true)
         setIsShowNavbar(true);
-      };
-      setIsLogin(true)
+      }else{
+        setIsLogin(true)
+        setIsShowNavbar(false)
+      }
     } else {
       setIsLogin(false)
       setIsShowNavbar(false);
     }
-  }, [user, isLogin])
+  }, [user, onBoardingAlreadyShown])
   return (
     <>
-      {isShowNavbar && <Navbar />}
+      {(isLogin &&  isShowNavbar) && <Navbar />}
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path={ROUTE.ONBOARDING} element={<OnboardingScreen />} />
