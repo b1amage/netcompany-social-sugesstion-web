@@ -12,6 +12,7 @@ import PreferencesSelect from "@/components/form/PreferencesSelect";
 import categoryList from "@/constants/category";
 import SubNavbar from "@/components/navbar/SubNavbar";
 import useViewport from "@/hooks/useScreenWidth";
+import {useGeolocated} from "react-geolocated"
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -44,6 +45,20 @@ const HomeScreen = () => {
   }, []);
   const { user } = useSelector((state) => state.user);
   console.log(user);
+
+  const { coords, isGeolocationAvailable, isGeolocationEnabled } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: false
+    },
+    userDecisionTimeout: 5000,
+  })
+  
+  useEffect(() => {
+    if(isGeolocationAvailable && isGeolocationEnabled && coords){
+        console.log(coords.latitude)
+        console.log(coords.longitude)
+    }
+}, [isGeolocationAvailable, isGeolocationEnabled, coords])
 
   return (
     <Wrapper className="h-screen flex-col my-4 lg:my-8 px-12">

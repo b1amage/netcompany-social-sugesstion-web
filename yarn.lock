@@ -1548,6 +1548,11 @@ react-fast-compare@^2.0.1:
   resolved "https://registry.npmjs.org/react-fast-compare/-/react-fast-compare-2.0.4.tgz"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
 
+react-geolocated@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/react-geolocated/-/react-geolocated-4.1.0.tgz#0ba57e7d8c3c9ed0cda13307bd6aa8627a292a22"
+  integrity sha512-wN+SbNzFHEyk2FQFipqADkDRBJj6wAVg/zuJcCFvErMcJLzdq44KoYl5q2V8rxAkOv5VhAuVSL9zugJ58+calA==
+
 react-google-maps@^9.4.5:
   version "9.4.5"
   resolved "https://registry.yarnpkg.com/react-google-maps/-/react-google-maps-9.4.5.tgz#920c199bdc925e0ce93880edffb09428d263aafa"
