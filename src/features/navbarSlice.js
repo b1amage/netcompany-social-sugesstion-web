@@ -7,6 +7,7 @@ const navbarSlice = createSlice({
     isAdded: false,
     isShowNotification: false,
     isShowFilter: false,
+    isShowEdit: false,
     currentPath: ''
   },
   reducers: {
@@ -18,26 +19,30 @@ const navbarSlice = createSlice({
     },
     validatePathname(state, action) {
       switch (action.payload) {
-        case "/account":
+        case "/profile":
           state.isAdded = true;
           state.isShowNotification = false;
           state.isShowFilter = false;
+          state.isShowEdit = true;
           return;
         case "/my-event": 
         case "/":
           state.isAdded = true;
           state.isShowNotification = true;
           state.isShowFilter = true;
+          state.isShowEdit = false;
           return;
         case "/my-route":
           state.isAdded = true;
           state.isShowNotification = false;
           state.isShowFilter = false;
+          state.isShowEdit = false;
           return;
         default:
           state.isAdded = false;
           state.isShowNotification = false;
           state.isShowFilter = false;
+          state.isShowEdit = false;
           return;
       }
     },
