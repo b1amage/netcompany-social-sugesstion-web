@@ -31,32 +31,53 @@ const EmptyTab = ({ title, actionName, action }) => (
 );
 
 const TabView = () => {
+  const [lastFetch, setLastFetch] = useState(Date.now());
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [places, setPlaces] = useState(placeList);
-  const [createdPlaces, setCreatedPlaces] = useState([]);
+  const [createdPlaces, setCreatedPlaces] = useState(
+    (localStorage.getItem("createdPlaces") &&
+      JSON.parse(localStorage.getItem("createdPlaces"))) ||
+      []
+  );
   const [loading, setLoading] = useState(true);
   const [createdNextCursor, setCreatedNextCursor] = useState(undefined);
   const [nextLoading, setNextLoading] = useState(false);
 
   useEffect(() => {
     const getCreatedLocation = async () => {
-      const data = await userApi.getCreatedLocation();
-      console.log(data);
-      setCreatedPlaces(data.results);
-      setCreatedNextCursor(data.next_cursor);
+      const response = await userApi.getCreatedLocation();
+      console.log(response);
+      setCreatedPlaces(response.data.results);
+      localStorage.setItem(
+        "createdPlaces",
+        JSON.stringify(response.data.results)
+      );
+      localStorage.setItem("createdNextCursor", response.data.next_cursor);
+      setCreatedNextCursor(response.data.next_cursor);
       setLoading(false);
     };
     getCreatedLocation();
   }, []);
 
-  const loadMoreLocation = async () => {
+  const loadMoreLocation = async (createdNextCursor) => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 1000) return;
     if (createdNextCursor === null) return;
     setNextLoading(true);
-    const data = await userApi.getCreatedLocation(createdNextCursor);
-    console.log(data);
-    const newCreatedPlaces = [...createdPlaces, ...data.results];
+    setLastFetch(now);
+    const response = await userApi.getCreatedLocation(createdNextCursor);
+    // console.log(response.data);
+
+    const newCreatedPlaces = [
+      ...JSON.parse(localStorage.getItem("createdPlaces")),
+      ...response.data.results,
+    ];
+    localStorage.setItem("createdPlaces", JSON.stringify(newCreatedPlaces));
     setCreatedPlaces(newCreatedPlaces);
-    setCreatedNextCursor(data.next_cursor);
+    localStorage.setItem("createdNextCursor", response.data.next_cursor);
+    setCreatedNextCursor(response.data.next_cursor);
     setNextLoading(false);
   };
 
@@ -68,7 +89,7 @@ const TabView = () => {
         action={() => navigate(ROUTE.CREATE_LOCATION)}
       />
     ) : (
-      <Tab loadMore={() => loadMoreLocation()}>
+      <Tab loadMore={loadMoreLocation}>
         {loading ? (
           <Loading />
         ) : (
