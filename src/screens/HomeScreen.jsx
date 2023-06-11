@@ -50,7 +50,7 @@ const HomeScreen = () => {
       <Wrapper className="flex-col gap-4 lg:flex-row">
         <User user={user} src={user.imageUrl} />
         <SearchBar />
-        {width > 1024 && <SubNavbar />}
+        {width > 768 && <SubNavbar />}
       </Wrapper>
 
       <PreviewImage
