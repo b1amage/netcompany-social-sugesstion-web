@@ -63,7 +63,7 @@ const EditProfileScreen = () => {
       imageUrl: localStorage.getItem("avatar") || imageUrl || DEFAULT.avatar,
     };
 
-    console.log(userInfo);
+    console.log("to edit: ",userInfo);
 
     const data = await userApi.editProfile(userInfo, notify);
     setLoading(false);
