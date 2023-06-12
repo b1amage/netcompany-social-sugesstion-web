@@ -8,19 +8,22 @@ import Wrapper from "@/components/wrapper/Wrapper";
 import Heading from "@/components/typography/Heading";
 import Text from "@/components/typography/Text";
 import Guess from "@/components/guess/Guess";
-
-import { BsBookmark, BsHeart } from "react-icons/bs";
+import { BsBookmark, BsHeart, BsFillHeartFill } from "react-icons/bs";
 import CommentCard from "@/components/comment/CommentCard";
 import { useParams } from "react-router-dom";
 import locationApi from "@/api/locationApi";
 import LoadingScreen from "./LoadingScreen";
+import { useSelector } from "react-redux";
 
 const DetailsScreen = ({ event }) => {
   const { id } = useParams();
+  const { user } = useSelector((state) => state.user);
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [locationDetails, setLocationDetails] = useState();
   const [loading, setLoading] = useState(true);
+  const [liked, setLiked] = useState(false);
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
     slideChanged(slider) {
@@ -36,11 +39,28 @@ const DetailsScreen = ({ event }) => {
       setLoading(true);
       const response = await locationApi.getLocationDetails(id);
       setLocationDetails(response.data);
+      setLiked(response.data.likedByUser);
       setLoading(false);
     };
 
     getLocationDetails();
   }, []);
+
+  const handleLikeClick = () => {
+    const handleLikeOrUnlike = async () => {
+      if (!liked) {
+        console.log("call like");
+        await locationApi.like(id);
+        setLiked((prev) => !prev);
+      } else {
+        console.log("call unlike");
+        await locationApi.unlike(id);
+        setLiked((prev) => !prev);
+      }
+    };
+
+    handleLikeOrUnlike();
+  };
 
   return (
     <Screen className="xl:!grid xl:grid-cols-2 xl:gap-10 pb-4 xl:pb-10 py-2">
@@ -138,7 +158,15 @@ const DetailsScreen = ({ event }) => {
                 <Wrapper col="true" className="flex-1 my-4">
                   {/* Like + Save */}
                   <Wrapper className="!gap-5 pb-5 border-b border-b-neutral-200 w-full">
-                    <BsHeart className="text-lg" />
+                    {liked ? (
+                      <BsFillHeartFill
+                        className="text-lg text-secondary-400"
+                        onClick={handleLikeClick}
+                      />
+                    ) : (
+                      <BsHeart className="text-lg" onClick={handleLikeClick} />
+                    )}
+
                     <BsBookmark className="text-lg" />
                   </Wrapper>
 

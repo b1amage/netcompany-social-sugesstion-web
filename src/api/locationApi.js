@@ -36,6 +36,45 @@ const locationApi = {
       console.log(error);
     }
   },
+
+  async like(id) {
+    try {
+      const url = `/location/like/${id}`;
+      console.log(url);
+
+      const response = await axiosClient.post(
+        url,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log("response of liked", url, response);
+
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async unlike(id) {
+    try {
+      const url = `/location/like/${id}`;
+
+      console.log(url);
+
+      const response = await axiosClient.delete(url, {
+        withCredentials: true,
+      });
+
+      console.log("response of unliked", url, response);
+
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 export default locationApi;
