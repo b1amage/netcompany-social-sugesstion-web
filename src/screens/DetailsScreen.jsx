@@ -176,7 +176,10 @@ const DetailsScreen = ({ event }) => {
                   </Wrapper>
 
                   {/* Comment */}
-                  <Wrapper col="true" className="h-[300px] xl:overflow-y-auto">
+                  <Wrapper
+                    col="true"
+                    className="xl:h-[300px] xl:overflow-y-auto"
+                  >
                     <CommentCard />
                     <CommentCard />
                     <CommentCard />
