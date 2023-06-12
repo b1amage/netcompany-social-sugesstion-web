@@ -1,7 +1,7 @@
 import Wrapper from "@/components/wrapper/Wrapper";
 import { useRef, useEffect } from "react";
 
-const Tab = ({ children, loadMore, className }) => {
+const Tab = ({ children, loadMore, className, activeTabIndex }) => {
   const tabRef = useRef();
 
   useEffect(() => {
@@ -12,7 +12,9 @@ const Tab = ({ children, loadMore, className }) => {
 
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
-        const nextCursor = localStorage.getItem("createdNextCursor");
+        const nextCursor = localStorage.getItem(
+          activeTabIndex === 0 ? "createdNextCursor" : "likedNextCursor"
+        );
         if (nextCursor.length > 10) {
           await loadMore(nextCursor);
         }
