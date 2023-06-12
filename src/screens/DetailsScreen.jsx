@@ -14,6 +14,7 @@ import { useParams } from "react-router-dom";
 import locationApi from "@/api/locationApi";
 import LoadingScreen from "./LoadingScreen";
 import { useSelector } from "react-redux";
+import { DEFAULT } from "@/constants/defaultData";
 
 const DetailsScreen = ({ event }) => {
   const { id } = useParams();
@@ -74,70 +75,74 @@ const DetailsScreen = ({ event }) => {
             src="https://images.unsplash.com/photo-1579487785973-74d2ca7abdd5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80"
           />
           <Wrapper col="true">
-            <Wrapper>
-              <div className="navigation-wrapper w-full relative h-[350px] md:h-[550px]">
-                <div ref={sliderRef} className="h-full keen-slider">
-                  {locationDetails?.imageUrls?.length > 0 &&
-                    locationDetails?.imageUrls.map((item, index) => (
-                      <div
-                        key={index}
-                        className="relative keen-slider__slide number-slide1"
-                      >
-                        <Image
-                          src={item}
-                          className="!w-full !h-full !rounded-none"
-                        />
-                        <div className="absolute inset-0 z-40 top-1/2 grad-white"></div>
-                      </div>
-                    ))}
-                </div>
-                {loaded && instanceRef.current && (
-                  <>
-                    <Arrow
-                      left
-                      onClick={(e) =>
-                        e.stopPropagation() || instanceRef.current?.prev()
-                      }
-                      disabled={currentSlide === 0}
-                    />
-
-                    <Arrow
-                      onClick={(e) =>
-                        e.stopPropagation() || instanceRef.current?.next()
-                      }
-                      disabled={
-                        currentSlide ===
-                        instanceRef.current.track.details.slides.length - 1
-                      }
-                    />
-                  </>
-                )}
-
-                {loaded && instanceRef.current && (
-                  <div className="absolute bottom-4 !z-50 flex gap-2 left-1/2 -translate-x-1/2 dots">
-                    {[
-                      ...Array(
-                        instanceRef.current.track.details.slides.length
-                      ).keys(),
-                    ].map((idx) => {
-                      return (
-                        <button
-                          key={idx}
-                          onClick={() => {
-                            instanceRef.current?.moveToIdx(idx);
-                          }}
-                          className={
-                            "rounded-full dot bg-white w-2 h-2" +
-                            (currentSlide === idx &&
-                              " active !bg-secondary-400")
-                          }
-                        ></button>
-                      );
-                    })}
+            {locationDetails.imageUrls.length > 0 ? (
+              <Wrapper>
+                <div className="navigation-wrapper w-full relative h-[350px] md:h-[550px]">
+                  <div ref={sliderRef} className="h-full keen-slider">
+                    {locationDetails?.imageUrls?.length > 0 &&
+                      locationDetails?.imageUrls.map((item, index) => (
+                        <div
+                          key={index}
+                          className="relative keen-slider__slide number-slide1"
+                        >
+                          <Image
+                            src={item}
+                            className="!w-full !h-full !rounded-none"
+                          />
+                          <div className="absolute inset-0 z-40 top-1/2 grad-white"></div>
+                        </div>
+                      ))}
                   </div>
-                )}
-              </div>
-            </Wrapper>
+                  {loaded && instanceRef.current && (
+                    <>
+                      <Arrow
+                        left
+                        onClick={(e) =>
+                          e.stopPropagation() || instanceRef.current?.prev()
+                        }
+                        disabled={currentSlide === 0}
+                      />
+
+                      <Arrow
+                        onClick={(e) =>
+                          e.stopPropagation() || instanceRef.current?.next()
+                        }
+                        disabled={
+                          currentSlide ===
+                          instanceRef.current.track.details.slides.length - 1
+                        }
+                      />
+                    </>
+                  )}
+
+                  {loaded && instanceRef.current && (
+                    <div className="absolute bottom-4 !z-50 flex gap-2 left-1/2 -translate-x-1/2 dots">
+                      {[
+                        ...Array(
+                          instanceRef.current.track.details.slides.length
+                        ).keys(),
+                      ].map((idx) => {
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              instanceRef.current?.moveToIdx(idx);
+                            }}
+                            className={
+                              "rounded-full dot bg-white w-2 h-2" +
+                              (currentSlide === idx &&
+                                " active !bg-secondary-400")
+                            }
+                          ></button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </Wrapper>
+            ) : (
+              <Image className="rounded-none" src={DEFAULT.location} />
+            )}
 
             <Wrapper col="true" className="flex-1 px-3 py-2">
               <Heading>{locationDetails?.name}</Heading>
@@ -171,7 +176,7 @@ const DetailsScreen = ({ event }) => {
                   </Wrapper>
 
                   {/* Comment */}
-                  <Wrapper col="true" className="h-[300px] overflow-y-auto">
+                  <Wrapper col="true" className="h-[300px] xl:overflow-y-auto">
                     <CommentCard />
                     <CommentCard />
                     <CommentCard />
