@@ -67,7 +67,7 @@ const AppRoutes = () => {
             path={ROUTE.DETAILS_EVENT}
             element={<DetailsScreen event="true" />}
           />
-          <Route path={ROUTE.DETAILS_LOCATION} element={<DetailsScreen />} />
+          <Route path="/location/details/:id" element={<DetailsScreen />} />
           <Route
             path={ROUTE.CREATE_LOCATION}
             element={<CreateLocationScreen />}

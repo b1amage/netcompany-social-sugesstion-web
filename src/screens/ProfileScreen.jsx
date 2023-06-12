@@ -154,7 +154,13 @@ const ProfileScreen = () => {
                   <Wrapper className="flex-wrap flex-center">
                     {fetchUser.locationCategories.length > 0 ? (
                       fetchUser.locationCategories.map((item, index) => (
-                        <Category onClick={() => {}} isActive key={index}>
+                        <Category
+                          disableHover="true"
+                          className="cursor-none hover:bg-primary-400 hover:!opacity-0"
+                          onClick={() => {}}
+                          isActive
+                          key={index}
+                        >
                           {item}
                         </Category>
                       ))

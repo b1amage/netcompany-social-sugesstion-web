@@ -39,8 +39,16 @@ const TabView = () => {
       JSON.parse(localStorage.getItem("createdPlaces"))) ||
       []
   );
+
+  const [likedPlaces, setLikedPlaces] = useState(
+    (localStorage.getItem("likedPlaces") &&
+      JSON.parse(localStorage.getItem("likedPlaces"))) ||
+      []
+  );
+
   const [loading, setLoading] = useState(true);
   const [createdNextCursor, setCreatedNextCursor] = useState(undefined);
+  const [creaLikedCursor, setLikedNextCursor] = useState(undefined);
   const [nextLoading, setNextLoading] = useState(false);
 
   useEffect(() => {
@@ -81,6 +89,44 @@ const TabView = () => {
     setNextLoading(false);
   };
 
+  useEffect(() => {
+    const getLikedLocation = async () => {
+      const response = await userApi.getLikedLocation();
+      console.log(response);
+      setLikedPlaces(response.data.results);
+      localStorage.setItem(
+        "likedPlaces",
+        JSON.stringify(response.data.results)
+      );
+      localStorage.setItem("likedNextCursor", response.data.next_cursor);
+      setLikedNextCursor(response.data.next_cursor);
+      setLoading(false);
+    };
+    getLikedLocation();
+  }, []);
+
+  const loadMoreLikedLocation = async (likedNextCursor) => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 1000) return;
+    if (likedNextCursor === null) return;
+    setNextLoading(true);
+    setLastFetch(now);
+    const response = await userApi.getLikedLocation(likedNextCursor);
+    // console.log(response.data);
+
+    const newLikedPlaces = [
+      ...JSON.parse(localStorage.getItem("likedPlaces")),
+      ...response.data.results,
+    ];
+    localStorage.setItem("likedPlaces", JSON.stringify(newLikedPlaces));
+    setLikedPlaces(newLikedPlaces);
+    localStorage.setItem("likedNextCursor", response.data.next_cursor);
+    setLikedNextCursor(response.data.next_cursor);
+    setNextLoading(false);
+  };
+
   const renderCards = (places) => {
     return places.length === 0 ? (
       <EmptyTab
@@ -89,7 +135,12 @@ const TabView = () => {
         action={() => navigate(ROUTE.CREATE_LOCATION)}
       />
     ) : (
-      <Tab loadMore={loadMoreLocation}>
+      <Tab
+        activeTabIndex={activeTabIndex}
+        loadMore={
+          activeTabIndex === 0 ? loadMoreLocation : loadMoreLikedLocation
+        }
+      >
         {loading ? (
           <Loading />
         ) : (
@@ -106,7 +157,7 @@ const TabView = () => {
       case 0:
         return renderCards(createdPlaces);
       case 1:
-        return renderCards(createdPlaces);
+        return renderCards(likedPlaces);
       case 2:
         return renderCards(createdPlaces);
       default:
@@ -116,6 +167,7 @@ const TabView = () => {
 
   const onTabClick = (e) => {
     setActiveTabIndex(Number(e.target.id));
+
     setPlaces(createdPlaces);
   };
 
