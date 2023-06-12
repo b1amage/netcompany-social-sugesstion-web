@@ -18,7 +18,7 @@ const createLocationFormSlice = createSlice({
     weekendCloseTime: "",
     minPrice: null,
     maxPrice: null,
-    currency: "VND",
+    currency: "",
     err: '',
   },
   reducers: {
