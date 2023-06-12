@@ -56,7 +56,7 @@ const Dropdown = ({
           (value?.tilte || value
             ? "border-green-500 focus:!border-green-500 "
             : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
-        } ${err && "border-secondary-400"} ${className}`}
+        } ${err && "border-secondary-400 ring-1 ring-secondary-400"} ${className}`}
         onClick={handleClick}
       >
         {value?.title || defaultTitle}

@@ -262,7 +262,7 @@ const CreateLocationScreen = () => {
 
   const dispatch = useDispatch();
   return (
-    <Screen className={`px-4 py-8`}>
+    <Screen className={`py-8`}>
       <form
         onSubmit={handleSubmit}
         className={`${isShowImage && "overflow-hidden h-screen"}`}
@@ -297,11 +297,10 @@ const CreateLocationScreen = () => {
               // label={`Title <span className="text-secondary-400">*</span>`}
               placeholder="Enter the place's name"
               className={`rounded-lg ${
-                !title
-                  ? titleErr &&
-                    " focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
-                  : "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-              } `}
+                title
+                  ? "!border-green-500 focus:!ring-green-500 ring-green-500"
+                  : "focus:!ring-secondary-400 focus:!border-secondary-400"
+              } ${titleErr && "focus:!ring-secondary-400 !border-secondary-400 ring-1 !ring-secondary-400"}`}
               value={title}
               // err={titleErr}
               onChange={(e) => {
