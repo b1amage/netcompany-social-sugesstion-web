@@ -113,7 +113,7 @@ const TabView = () => {
     if (likedNextCursor === null) return;
     setNextLoading(true);
     setLastFetch(now);
-    const response = await userApi.getCreatedLocation(likedNextCursor);
+    const response = await userApi.getLikedLocation(likedNextCursor);
     // console.log(response.data);
 
     const newLikedPlaces = [
@@ -136,6 +136,7 @@ const TabView = () => {
       />
     ) : (
       <Tab
+        activeTabIndex={activeTabIndex}
         loadMore={
           activeTabIndex === 0 ? loadMoreLocation : loadMoreLikedLocation
         }
