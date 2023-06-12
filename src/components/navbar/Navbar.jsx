@@ -132,37 +132,6 @@ const Navbar = () => {
               />
 
               <SubNavbar />
-              <Wrapper className="mr-4 items-center">
-                {isAdded && (
-                  <Image
-                    imageClassName=""
-                    src={add}
-                    alt="add"
-                    className="w-[28px] h-[28px] m-2"
-                    onClick={() => {
-                      if (window.location.pathname === "/") navigate("/create-location")
-                    }}
-                  />
-                )}
-                {isShowNotification && (
-                  <div className="relative">
-                    <Image
-                      imageClassName=""
-                      src={notification}
-                      alt="notification"
-                      className="w-[28px] h-[28px] m-2"
-                    />
-                    <Counter count={10} />
-                  </div>
-                )}
-                {isShowFilter && (
-                  <Image
-                    imageClassName=""
-                    src={filter}
-                    alt="filter"
-                    className="w-[28px] h-[28px] m-2"
-                  />
-                )}
                 {isShowEdit && (
                   <Wrapper className="flex-center">
                     <Button
@@ -184,7 +153,6 @@ const Navbar = () => {
                   </Button> */}
                   </Wrapper>
                 )}
-              </Wrapper>
             </>
           )}
         </div>

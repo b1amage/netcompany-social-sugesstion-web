@@ -23,7 +23,7 @@ const SubNavbar = () => {
     dispatch(validatePathname(window.location.pathname));
   }, [window.location.pathname]);
   return (
-    <Wrapper className="mr-4">
+    <Wrapper className="">
       {isAdded && (
         <Image
           imageClassName=""
