@@ -117,13 +117,18 @@ const CreateLocationScreen = () => {
   const [weekdayCloseTimeErr, setWeekdayCloseTimeErr] = useState();
   const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();
   const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
+  const [uploadImageErr, setUploadImageErr] = useState();
   const [submitErr, setSubmitErr] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowPopup, setIsShowPopup] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitErr([]);
     let data;
+    if (uploadImageErr){
+      setUploadImageErr()
+    }
     setIsLoading(true);
     if (
       VALIDATE.location(address) ||
@@ -143,14 +148,14 @@ const CreateLocationScreen = () => {
       setWeekendCloseTimeErr(VALIDATE.time(weekendCloseTime));
       setSubmitErr((prev) => [...prev, "Please fill in all required fields!"]);
       setIsLoading(false);
-      return
+      return;
     }
     if (minPrice || maxPrice) {
       if (VALIDATE.price(minPrice, maxPrice)) {
         setPriceErr(VALIDATE.price(minPrice, maxPrice));
         setSubmitErr((prev) => [...prev, VALIDATE.price(minPrice, maxPrice)]);
         setIsLoading(false);
-        return
+        return;
       }
       data = {
         placeId: placeId,
@@ -224,7 +229,13 @@ const CreateLocationScreen = () => {
 
   const handleOnChangeImage = (e) => {
     (async function () {
+      setUploadImageErr();
       setUploading(true);
+      if (VALIDATE.selectedImage(e.target.files[0])) {
+        setUploadImageErr(VALIDATE.selectedImage(e.target.files[0]));
+        setUploading(false)
+        return;
+      }
       var bodyFormData = new FormData();
       bodyFormData.append("image", e.target.files[0]);
       axios({
@@ -366,7 +377,8 @@ const CreateLocationScreen = () => {
 
                     <Wrapper col>
                       <Label className="!text-[14px]">
-                        Close time: <span className="text-secondary-400">*</span>
+                        Close time:{" "}
+                        <span className="text-secondary-400">*</span>
                       </Label>
                       <Input
                         type="time"
@@ -414,7 +426,8 @@ const CreateLocationScreen = () => {
 
                     <Wrapper col>
                       <Label className="!text-[14px]">
-                        Close time: <span className="text-secondary-400">*</span>
+                        Close time:{" "}
+                        <span className="text-secondary-400">*</span>
                       </Label>
                       <Input
                         type="time"
@@ -527,13 +540,17 @@ const CreateLocationScreen = () => {
                 )
               )}
             </div>
-            <PreviewImage
-              src={image}
-              className={`py-2 h-[24vh] items-center ${
-                images.length <= 0 && "invisible"
-              }`}
-              imageList={images}
-            />
+            {uploadImageErr ? (
+              <Error fluid>{uploadImageErr}</Error>
+            ) : (
+              <PreviewImage
+                src={image}
+                className={`py-2 h-[24vh] items-center ${
+                  images.length <= 0 && "invisible"
+                }`}
+                imageList={images}
+              />
+            )}
 
             <Error
               fluid
