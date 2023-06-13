@@ -4,7 +4,8 @@ const ERROR = {
     imageSize: "Please select image which size is lower than 3MB!",
     required: "Please fill in this field!",
     time: "Open time must be earlier than close time!",
-    price: "Minimum price must be smaller than maximum price!"
+    price: "Minimum price must be smaller than maximum price!",
+    // address: "There is no address in Google Map. Please reload page and type again"
 }
 
 const VALIDATE = {
@@ -18,6 +19,7 @@ const VALIDATE = {
     },
     category(selectedCategory){
         if (selectedCategory.title === undefined) return ERROR.required
+        // if (!placeId) return 
     },
     location(address){
         if (address.trim() === '') return ERROR.required
@@ -32,6 +34,7 @@ const VALIDATE = {
     price(minPrice, maxPrice){
         // if (price === null) return ERROR.required
         if((minPrice && !maxPrice) || (!minPrice && maxPrice)) return ERROR.required
+        if (minPrice < 0 || maxPrice < 0) return "Price must not be lower than 0!"
         if (parseInt(minPrice) >= parseInt(maxPrice)) return ERROR.price
     },
     selectedImage(file) {
@@ -40,6 +43,7 @@ const VALIDATE = {
         const fileSizeKiloBytes = file.size / 1024
         console.log(file.type)
         console.log(fileSizeKiloBytes)
+        
         if (!validImageTypes.includes(file.type)){
             return ERROR.imageType
         }
