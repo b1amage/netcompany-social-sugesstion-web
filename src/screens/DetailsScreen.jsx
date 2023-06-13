@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { DEFAULT } from "@/constants/defaultData";
 import Category from "@/components/category/Category";
 import SubHeading from "@/components/typography/SubHeading";
+import User from "@/components/user/User";
 
 const DetailsScreen = ({ event }) => {
   const { id } = useParams();
@@ -75,7 +76,23 @@ const DetailsScreen = ({ event }) => {
             className="hidden xl:flex"
             src="https://images.unsplash.com/photo-1579487785973-74d2ca7abdd5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80"
           /> */}
-          <Wrapper col="true">
+          <Wrapper col="true" className="px-3">
+            {!event && (
+              <Wrapper
+                className="items-center my-3 !gap-5"
+                onClick={() => console.log("navigate")}
+              >
+                <Image
+                  className="w-[75px] h-[75px] !rounded-full"
+                  src={locationDetails?.user?.imageUrl}
+                />
+                <Wrapper col="true">
+                  <Heading>{locationDetails?.user?.username}</Heading>
+                  <Text>{locationDetails?.user?.email}</Text>
+                </Wrapper>
+              </Wrapper>
+            )}
+
             {locationDetails.imageUrls.length > 0 ? (
               <Wrapper>
                 <div className="navigation-wrapper w-full relative h-[350px] md:h-[550px]">
@@ -177,7 +194,7 @@ const DetailsScreen = ({ event }) => {
               ) : (
                 <Wrapper col="true" className="flex-1 my-4">
                   {/* Like + Save */}
-                  <Wrapper className="!gap-5 pb-5 border-b border-b-neutral-200 w-full">
+                  <Wrapper className="!gap-5 pb-5 border-b border-b-neutral-200 w-full items-center">
                     {liked ? (
                       <BsFillHeartFill
                         className="text-lg text-secondary-400"
@@ -187,7 +204,9 @@ const DetailsScreen = ({ event }) => {
                       <BsHeart className="text-lg" onClick={handleLikeClick} />
                     )}
 
-                    <BsBookmark className="text-lg" />
+                    <Text className="underline cursor-pointer">
+                      {locationDetails?.heartCount} liked this post
+                    </Text>
                   </Wrapper>
 
                   {/* Comment */}
