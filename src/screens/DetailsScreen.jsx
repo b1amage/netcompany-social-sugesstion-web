@@ -66,16 +66,16 @@ const DetailsScreen = ({ event }) => {
   };
 
   return (
-    <Screen className="xl:!grid xl:grid-cols-2 xl:gap-10 pb-4 xl:pb-10 py-2">
+    <Screen className="py-2 pb-4 xl:gap-10 xl:pb-10">
       {loading ? (
         <LoadingScreen />
       ) : (
         <>
           {" "}
-          <Image
+          {/* <Image
             className="hidden xl:flex"
             src="https://images.unsplash.com/photo-1579487785973-74d2ca7abdd5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80"
-          />
+          /> */}
           <Wrapper col="true">
             {locationDetails.imageUrls.length > 0 ? (
               <Wrapper>
