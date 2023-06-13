@@ -2,6 +2,8 @@ import React, { Suspense, useState, useEffect } from "react";
 import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
 import localStorageKey from "@/constants/localStorageKeys";
+
+const ErrorScreen = React.lazy(() => import("@/screens/ErrorScreen"));
 const CreateLocationScreen = React.lazy(() =>
   import("@/screens/CreateLocationScreen")
 );
@@ -74,6 +76,7 @@ const AppRoutes = () => {
           />
           <Route path={ROUTE.NOT_FOUND} element={<NotFoundScreen />} />
           <Route path={ROUTE.EDIT_PROFILE} element={<EditProfileScreen />} />
+          <Route path="/error/:message" element={<ErrorScreen />} />
         </Routes>
       </Suspense>
     </>
