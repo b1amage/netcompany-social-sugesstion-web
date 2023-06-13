@@ -118,6 +118,7 @@ const CreateLocationScreen = () => {
   const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();
   const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
   const [uploadImageErr, setUploadImageErr] = useState();
+  const [currencyErr, setCurrencyErr] = useState();
   const [submitErr, setSubmitErr] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowPopup, setIsShowPopup] = useState(false);
@@ -126,8 +127,8 @@ const CreateLocationScreen = () => {
     e.preventDefault();
     setSubmitErr([]);
     let data;
-    if (uploadImageErr){
-      setUploadImageErr()
+    if (uploadImageErr) {
+      setUploadImageErr();
     }
     setIsLoading(true);
     if (
@@ -150,10 +151,26 @@ const CreateLocationScreen = () => {
       setIsLoading(false);
       return;
     }
+    if (address) {
+      if (!placeId) {
+        setSubmitErr((prev) => [
+          ...prev,
+          "Address not found. Please reload page and type again or select other address!",
+        ]);
+        setIsLoading(false);
+        return;
+      }
+    }
     if (minPrice || maxPrice) {
       if (VALIDATE.price(minPrice, maxPrice)) {
         setPriceErr(VALIDATE.price(minPrice, maxPrice));
         setSubmitErr((prev) => [...prev, VALIDATE.price(minPrice, maxPrice)]);
+        setIsLoading(false);
+        return;
+      }
+      if (!currency){
+        setCurrencyErr("Please select the currency!")
+        setSubmitErr((prev) => [...prev, "Please select the currency!"]);
         setIsLoading(false);
         return;
       }
@@ -230,12 +247,26 @@ const CreateLocationScreen = () => {
   const handleOnChangeImage = (e) => {
     (async function () {
       setUploadImageErr();
+      dispatch(changeImage());
       setUploading(true);
-      if (VALIDATE.selectedImage(e.target.files[0])) {
-        setUploadImageErr(VALIDATE.selectedImage(e.target.files[0]));
-        setUploading(false)
+      // console.log(e.target.files[0])
+      // console.log(e.target.value)
+      if (e.target.files[0] === undefined) {
+        if (images.length > 0) {
+          dispatch(changeImage(images[images.length - 1]));
+        }
+        setUploading(false);
         return;
       }
+      if (VALIDATE.selectedImage(e.target.files[0])) {
+        if (images.length > 0) {
+          dispatch(changeImage(images[images.length - 1]));
+        }
+        setUploadImageErr(VALIDATE.selectedImage(e.target.files[0]));
+        setUploading(false);
+        return;
+      }
+ 
       var bodyFormData = new FormData();
       bodyFormData.append("image", e.target.files[0]);
       axios({
@@ -298,9 +329,11 @@ const CreateLocationScreen = () => {
               placeholder="Enter the place's name"
               className={`rounded-lg ${
                 title
-                  ? "!border-green-500 focus:!ring-green-500 ring-green-500"
-                  : "focus:!ring-secondary-400 focus:!border-secondary-400"
-              } ${titleErr && "focus:!ring-secondary-400 !border-secondary-400 ring-1 !ring-secondary-400"}`}
+                  ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                  : titleErr
+                  ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
+                  : "focus:!border-secondary-400 focus:!ring-secondary-400"
+              }`}
               value={title}
               // err={titleErr}
               onChange={(e) => {
@@ -504,6 +537,7 @@ const CreateLocationScreen = () => {
                   value={currency}
                   // defaultTitle=""
                   onChange={(option) => dispatch(changeCurrency(option))}
+                  err={currencyErr}
                 />
               </Wrapper>
             </Wrapper>
@@ -539,17 +573,15 @@ const CreateLocationScreen = () => {
                 )
               )}
             </div>
-            {uploadImageErr ? (
-              <Error fluid>{uploadImageErr}</Error>
-            ) : (
-              <PreviewImage
-                src={image}
-                className={`py-2 h-[24vh] items-center ${
-                  images.length <= 0 && "invisible"
-                }`}
-                imageList={images}
-              />
-            )}
+
+            {images.length > 0  && <PreviewImage
+              src={image}
+              className={`py-2 h-[24vh] items-center ${
+                images.length <= 0 && "invisible"
+              }`}
+              imageList={images}
+            />}
+            {uploadImageErr && <Error fluid>{uploadImageErr}</Error>}
 
             <Error
               fluid

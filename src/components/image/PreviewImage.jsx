@@ -43,9 +43,10 @@ const PreviewImage = ({ imageList, src, className }) => {
     },
     created(s){
       console.log(s)
-      const { abs, minIdx, maxIdx } = s.track.details
-
-      handleSlideButtons(abs,minIdx, maxIdx)
+      if (s){
+        const { abs, minIdx, maxIdx } = s.track.details
+        handleSlideButtons(abs,minIdx, maxIdx)
+      }
     },
     
     
@@ -89,16 +90,16 @@ const PreviewImage = ({ imageList, src, className }) => {
       </div>
 
         <GoChevronLeft
-          onClick={() => {
-            slider?.current.prev();
+          onClick={(e) => {
+            e.stopPropagation() || slider.current?.prev();
           }}
           className={`${
             isShowButtonLeft ? "visible" : "invisible"
           } bg-primary-400 hover:opacity-70 cursor-pointer text-white h-[40px] w-[28px] rounded-l-lg p-1 absolute top-1/2 left-0 -translate-y-1/2 -translate-x-full`}
         />
         <GoChevronRight
-        onClick={() => {
-          slider?.current.next();
+        onClick={(e) => {
+          e.stopPropagation() || slider.current?.next();
 
         }}
           className={`${
