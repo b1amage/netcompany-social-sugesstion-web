@@ -579,7 +579,8 @@ const CreateLocationScreen = () => {
               className={`py-2 h-[24vh] items-center ${
                 images.length <= 0 && "invisible"
               }`}
-              imageList={images}
+              items={images}
+              perView={width > 768 ? 4 : 2}
             />}
             {uploadImageErr && <Error fluid>{uploadImageErr}</Error>}
 
