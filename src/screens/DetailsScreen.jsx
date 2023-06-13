@@ -230,7 +230,12 @@ const DetailsScreen = ({ event }) => {
 
             <Wrapper col="true" className="flex-1 px-3 py-2">
               <Wrapper className="items-center justify-between">
-                <Category isActive disableHover="true" className="self-start">
+                <Category
+                  onClick={() => {}}
+                  isActive
+                  disableHover="true"
+                  className="self-start"
+                >
                   {locationDetails?.locationCategory}
                 </Category>
 
