@@ -2,7 +2,7 @@ import Portal from "@/components/HOC/Portal";
 import Heading from "@/components/typography/Heading";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Button from "@/components/button/Button";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import generateId from "@/utilities/generateId";
 
@@ -28,14 +28,18 @@ const Popup = ({
   ],
   children,
   titleClassName,
-  formClassName
+  formClassName,
 }) => {
   const popupRef = useRef();
   useOnClickOutside(popupRef, onClose);
 
+  useEffect(() => {}, []);
+
   return (
     <Portal location="body">
-      <Wrapper className={`${className} absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center`}>
+      <Wrapper
+        className={`${className} fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center`}
+      >
         <Wrapper
           _ref={popupRef}
           col="true"
@@ -56,7 +60,7 @@ const Popup = ({
                   {item.title}
                 </Button>
               ))}
-              {children}
+            {children}
           </Wrapper>
         </Wrapper>
       </Wrapper>
