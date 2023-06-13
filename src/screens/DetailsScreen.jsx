@@ -135,6 +135,12 @@ const DetailsScreen = ({ event }) => {
   const onClose = () => setShowLikedUsers(false);
   useOnClickOutside(popupRef, onClose);
   const navigate = useNavigate();
+  function convertTime(str) {
+    if (str.length !== 4) {
+      throw new Error("Invalid time format. Expected 'HHMM'.");
+    }
+    return `${str.slice(0, 2)}:${str.slice(2)}`;
+  }
 
   return (
     <Screen className="py-2 pb-4 xl:gap-10 xl:pb-10">
@@ -254,6 +260,19 @@ const DetailsScreen = ({ event }) => {
 
               <Heading>{locationDetails?.name}</Heading>
               <Text>{locationDetails?.description}</Text>
+
+              <Wrapper className="my-3" col="true">
+                <Text>
+                  <span className="font-bold">Weekdays: </span>
+                  {convertTime(locationDetails.weekday.openTime)} -{" "}
+                  {convertTime(locationDetails.weekday.closeTime)}
+                </Text>
+                <Text>
+                  <span className="font-bold">Weekend: </span>
+                  {convertTime(locationDetails.weekend.openTime)} -{" "}
+                  {convertTime(locationDetails.weekend.closeTime)}
+                </Text>
+              </Wrapper>
 
               {event ? (
                 <Wrapper col="true" className="my-4 mt-auto">
