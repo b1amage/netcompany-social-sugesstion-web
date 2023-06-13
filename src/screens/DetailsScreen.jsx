@@ -1,5 +1,5 @@
 import Screen from "@/components/container/Screen";
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import eventList from "@/constants/mockEvents";
@@ -17,7 +17,9 @@ import { useSelector } from "react-redux";
 import { DEFAULT } from "@/constants/defaultData";
 import Category from "@/components/category/Category";
 import SubHeading from "@/components/typography/SubHeading";
-import User from "@/components/user/User";
+import Portal from "@/components/HOC/Portal";
+import useOnClickOutside from "@/hooks/useOnClickOutside";
+import Loading from "@/components/loading/Loading";
 
 const DetailsScreen = ({ event }) => {
   const { id } = useParams();
@@ -28,6 +30,9 @@ const DetailsScreen = ({ event }) => {
   const [locationDetails, setLocationDetails] = useState();
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
+  const [likedUsers, setLikedUsers] = useState([]);
+  const [likedUsersLoading, setLikedUsersLoading] = useState(false);
+  const [showLikedUsers, setShowLikedUsers] = useState(false);
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
     slideChanged(slider) {
@@ -37,6 +42,8 @@ const DetailsScreen = ({ event }) => {
       setLoaded(true);
     },
   });
+
+  const likedListRef = useRef();
 
   useEffect(() => {
     const getLocationDetails = async () => {
@@ -49,6 +56,26 @@ const DetailsScreen = ({ event }) => {
 
     getLocationDetails();
   }, []);
+
+  useEffect(() => {
+    if (!showLikedUsers) return;
+    const getLikedUsers = async () => {
+      setLikedUsersLoading(true);
+      const response = await locationApi.getUserLikedPost(
+        locationDetails._id,
+        undefined
+      );
+      console.log(response);
+      setLikedUsers(response.data.results);
+      setLikedUsersLoading(false);
+    };
+
+    getLikedUsers();
+  }, [showLikedUsers]);
+
+  useEffect(() => {
+    console.log(likedListRef.current);
+  }, [likedListRef, showLikedUsers]);
 
   const handleLikeClick = () => {
     const handleLikeOrUnlike = async () => {
@@ -65,6 +92,10 @@ const DetailsScreen = ({ event }) => {
 
     handleLikeOrUnlike();
   };
+
+  const popupRef = useRef();
+  const onClose = () => setShowLikedUsers(false);
+  useOnClickOutside(popupRef, onClose);
 
   return (
     <Screen className="py-2 pb-4 xl:gap-10 xl:pb-10">
@@ -204,10 +235,68 @@ const DetailsScreen = ({ event }) => {
                       <BsHeart className="text-lg" onClick={handleLikeClick} />
                     )}
 
-                    <Text className="underline cursor-pointer">
+                    <Text
+                      className="underline cursor-pointer"
+                      onClick={() => setShowLikedUsers(true)}
+                    >
                       {locationDetails?.heartCount} liked this post
                     </Text>
                   </Wrapper>
+
+                  {showLikedUsers && (
+                    <Portal>
+                      <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
+                        <Wrapper
+                          _ref={popupRef}
+                          className="h-[450px] w-[400px] max-w-[95vw] drop-shadow-xl bg-white rounded-xl p-5 items-center"
+                          col="true"
+                        >
+                          <Wrapper className="py-4 !border-b-2 border-b-neutral-600 w-full">
+                            <Heading className="!text-center w-full">
+                              Likes
+                            </Heading>
+                          </Wrapper>
+
+                          <div
+                            ref={likedListRef}
+                            className="flex flex-1 w-full overflow-scroll flex-center"
+                          >
+                            {likedUsersLoading ? (
+                              <Loading />
+                            ) : likedUsers.length === 0 ? (
+                              <Text>No user like this post</Text>
+                            ) : (
+                              <Wrapper
+                                className="self-start w-full my-2 justify-self-start"
+                                col="true"
+                              >
+                                {likedUsers.map((user) => (
+                                  <Wrapper
+                                    key={user.email}
+                                    className="items-center my-3 !gap-2"
+                                    onClick={() => console.log("navigate")}
+                                  >
+                                    <Image
+                                      className="w-[50px] h-[50px] !rounded-full"
+                                      src={user.imageUrl}
+                                    />
+                                    <Wrapper col="true">
+                                      <Heading className="!text-sm">
+                                        {user.username}
+                                      </Heading>
+                                      <Text className="!text-xs">
+                                        {user.email}
+                                      </Text>
+                                    </Wrapper>
+                                  </Wrapper>
+                                ))}
+                              </Wrapper>
+                            )}
+                          </div>
+                        </Wrapper>
+                      </div>
+                    </Portal>
+                  )}
 
                   {/* Comment */}
                   <Wrapper

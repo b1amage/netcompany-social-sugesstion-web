@@ -45,7 +45,7 @@ const ProfileScreen = () => {
   // const [userInfo, setUserInfo] = useState(user);
   const [fetchUser, setFetchUser] = useState(user);
   const [loading, setLoading] = useState(true);
-  const {width} = useViewport()
+  const { width } = useViewport();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -106,7 +106,7 @@ const ProfileScreen = () => {
             <>
               <Wrapper col="true">
                 {/* Avatar */}
-                <Wrapper col="true" className="w-full flex-center relative">
+                <Wrapper col="true" className="relative w-full flex-center">
                   <Image
                     src={fetchUser?.imageUrl || imageUrl || DEFAULT.avatar}
                     alt="user avatar"
@@ -117,15 +117,17 @@ const ProfileScreen = () => {
                     <SubHeading>{fetchUser?.email}</SubHeading>
                   </Wrapper>
 
-                  <Wrapper className={`flex-center absolute top-0 right-0 ${width > 768 ? "block" : "hidden"}`}>
+                  <Wrapper
+                    className={`flex-center absolute top-0 right-0 ${
+                      width > 768 ? "block" : "hidden"
+                    }`}
+                  >
                     <Button
                       onClick={() => navigate(ROUTE.EDIT_PROFILE)}
                       className="!text-primary-800 !my-0  !relative !gap-2"
                     >
                       <BsPencilFill />
-                      <span className="capitalize">
-                        Edit info
-                      </span>
+                      <span className="capitalize">Edit info</span>
                     </Button>
                     {/* <Button
                     className="!bg-danger"
@@ -156,7 +158,7 @@ const ProfileScreen = () => {
                       fetchUser.locationCategories.map((item, index) => (
                         <Category
                           disableHover="true"
-                          className="cursor-none hover:bg-primary-400 hover:!opacity-0"
+                          className="cursor-default hover:bg-primary-400"
                           onClick={() => {}}
                           isActive
                           key={index}
