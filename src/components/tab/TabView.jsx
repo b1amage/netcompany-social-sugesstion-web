@@ -175,7 +175,7 @@ const TabView = () => {
   return (
     <Wrapper col="true" className="w-full realtive">
       {/* Tab Header */}
-      <div className="flex items-center justify-start w-full gap-5">
+      <div className="flex items-center justify-center w-full gap-5">
         {profileTabs.map((Item, index) => (
           <TabHeader
             key={generateId()}
