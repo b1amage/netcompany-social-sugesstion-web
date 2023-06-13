@@ -34,6 +34,7 @@ const VALIDATE = {
     price(minPrice, maxPrice){
         // if (price === null) return ERROR.required
         if((minPrice && !maxPrice) || (!minPrice && maxPrice)) return ERROR.required
+        if (minPrice < 0 || maxPrice < 0) return "Price must not be lower than 0!"
         if (parseInt(minPrice) >= parseInt(maxPrice)) return ERROR.price
     },
     selectedImage(file) {

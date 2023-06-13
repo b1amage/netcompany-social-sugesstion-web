@@ -505,7 +505,7 @@ const CreateLocationScreen = () => {
                       dispatch(changeMinPrice(e.target.value));
                       setPriceErr(VALIDATE.price(e.target.value, maxPrice));
                     }}
-                    min={0}
+                    // min={0}
                     // err={minPriceErr}
                     onWheel={(e) => e.target.blur()}
                     placeholder="Enter the price"
@@ -524,7 +524,7 @@ const CreateLocationScreen = () => {
                       dispatch(changeMaxPrice(e.target.value));
                       setPriceErr(VALIDATE.price(minPrice, e.target.value));
                     }}
-                    min={0}
+                    // min={0}
                     placeholder="Enter the price"
                     onWheel={(e) => e.target.blur()}
                     // err={maxPriceErr}
