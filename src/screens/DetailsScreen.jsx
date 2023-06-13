@@ -38,6 +38,7 @@ const DetailsScreen = ({ event }) => {
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [nextLoading, setNextLoading] = useState(false);
   const [likedCount, setLikedCount] = useState(0);
+  const navigate = useNavigate();
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
     slideChanged(slider) {
@@ -53,7 +54,7 @@ const DetailsScreen = ({ event }) => {
   useEffect(() => {
     const getLocationDetails = async () => {
       setLoading(true);
-      const response = await locationApi.getLocationDetails(id);
+      const response = await locationApi.getLocationDetails(id, navigate);
       setLocationDetails(response.data);
       setLiked(response.data.likedByUser);
       setLikedCount(response.data.heartCount);
@@ -134,7 +135,7 @@ const DetailsScreen = ({ event }) => {
   const popupRef = useRef();
   const onClose = () => setShowLikedUsers(false);
   useOnClickOutside(popupRef, onClose);
-  const navigate = useNavigate();
+
   function convertTime(str) {
     if (str.length !== 4) {
       throw new Error("Invalid time format. Expected 'HHMM'.");

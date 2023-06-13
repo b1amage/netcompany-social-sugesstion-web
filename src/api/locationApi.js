@@ -21,7 +21,7 @@ const locationApi = {
     }
   },
 
-  async getLocationDetails(id) {
+  async getLocationDetails(id, navigate) {
     try {
       const url = `/location/detail/${id}`;
 
@@ -34,6 +34,10 @@ const locationApi = {
       return response;
     } catch (error) {
       console.log(error);
+      const statusCode = error.response.status;
+      if (statusCode === 404) {
+        navigate(`/error/${error.response.data.message}`);
+      }
     }
   },
 
