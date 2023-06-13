@@ -63,7 +63,7 @@ const EditProfileScreen = () => {
       imageUrl: localStorage.getItem("avatar") || imageUrl || DEFAULT.avatar,
     };
 
-    console.log("to edit: ",userInfo);
+    console.log("to edit: ", userInfo);
 
     const data = await userApi.editProfile(userInfo, notify);
     setLoading(false);
@@ -114,7 +114,7 @@ const EditProfileScreen = () => {
         <LoadingScreen />
       ) : (
         <Screen className="flex !min-h-[90vh] md:!min-h-[85vh] lg:!overflow-hidden flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 lg:!min-h-0">
-          <Wrapper className="flex-1 lg:!flex-initial xl:grid xl:gap-2 lg:mx-auto lg:w-[700px] lg:p-20 lg:shadow-xl lg:rounded-lg lg:bg-neutral-400 lg:!h-[800px] lg:overflow-scroll">
+          <Wrapper className="flex-1 lg:!flex-initial xl:grid xl:gap-2 lg:mx-auto lg:w-[700px] lg:p-20 lg:shadow-xl lg:rounded-lg lg:bg-neutral-400 lg:min-h-[800px]">
             {/* <Wrapper className="flex-1 hidden xl:block">
               <Image className="flex-1 h-full" src={hero} />
             </Wrapper> */}
