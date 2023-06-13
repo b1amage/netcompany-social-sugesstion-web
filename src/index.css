@@ -70,6 +70,10 @@
   }
 }
 
+.pac-container {
+  z-index: 9999 !important;
+}
+
 .pac-target-input {
   @apply bg-[#f2f2f6] px-3 py-2 rounded-lg;
 }
@@ -80,7 +84,7 @@
 
 @layer base {
   input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button{
+  input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }

@@ -4,9 +4,12 @@ import Heading from "@/components/typography/Heading";
 import { useMemo } from "react";
 import SubHeading from "@/components/typography/SubHeading";
 import { DEFAULT } from "@/constants/defaultData";
+import { useNavigate } from "react-router-dom";
+import ROUTE from "@/constants/routes";
 
 const ProfileCard = ({ place }) => {
-  const { address, name, imageUrls } = place;
+  const { _id, address, name, imageUrls } = place;
+  const navigate = useNavigate();
   const cardSizeStyles = useMemo(
     () =>
       "w-[160px] h-[230px] md:w-full md:h-[180px] xl:max-w-[400px] xl:h-[200px]",
@@ -14,6 +17,7 @@ const ProfileCard = ({ place }) => {
   );
   return (
     <div
+      onClick={() => navigate(`/location/details/${_id}`)}
       className={`${cardSizeStyles} relative flex-col gap-3 transition-all cursor-pointer bg-neutral-300 flex-center xl:flex-row rounded-xl group`}
     >
       <Image

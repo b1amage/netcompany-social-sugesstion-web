@@ -26,7 +26,6 @@ const userSlice = createSlice({
         if (userLogin) {
           localStorage.setItem("user", JSON.stringify(userLogin));
           state.user = JSON.parse(localStorage.getItem("user"));
-          // location.reload();
         }
       };
       handleLogin();

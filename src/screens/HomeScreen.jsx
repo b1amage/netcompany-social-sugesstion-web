@@ -79,6 +79,11 @@ const HomeScreen = () => {
 
   // LOGIN CHECK
   useEffect(() => {
+    if (localStorage.getItem("loginReload") === "true") {
+      localStorage.setItem("loginReload", "false");
+      location.reload();
+    }
+
     const user =
       localStorage.getItem(localStorageKey.user) || JSON.stringify({});
     if (user === JSON.stringify({})) {

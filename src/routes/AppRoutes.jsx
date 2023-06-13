@@ -26,28 +26,28 @@ const EditProfileScreen = React.lazy(() =>
 
 const AppRoutes = () => {
   const [isLogin, setIsLogin] = useState(false);
-  const [isShowNavbar, setIsShowNavbar] = useState(false)
+  const [isShowNavbar, setIsShowNavbar] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")) || null;
-  const onBoardingAlreadyShown = JSON.parse(
-    localStorage.getItem(localStorageKey.alreadyShownOnboarding)
-  ) || null;
+  const onBoardingAlreadyShown =
+    JSON.parse(localStorage.getItem(localStorageKey.alreadyShownOnboarding)) ||
+    null;
   useEffect(() => {
     if (user) {
-      if(onBoardingAlreadyShown){
-        setIsLogin(true)
+      if (onBoardingAlreadyShown) {
+        setIsLogin(true);
         setIsShowNavbar(true);
-      }else{
-        setIsLogin(true)
-        setIsShowNavbar(false)
+      } else {
+        setIsLogin(true);
+        setIsShowNavbar(false);
       }
     } else {
-      setIsLogin(false)
+      setIsLogin(false);
       setIsShowNavbar(false);
     }
-  }, [user, onBoardingAlreadyShown])
+  }, [user, onBoardingAlreadyShown]);
   return (
     <>
-      {(isLogin &&  isShowNavbar) && <Navbar />}
+      {isLogin && isShowNavbar && <Navbar />}
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path={ROUTE.ONBOARDING} element={<OnboardingScreen />} />
@@ -67,7 +67,7 @@ const AppRoutes = () => {
             path={ROUTE.DETAILS_EVENT}
             element={<DetailsScreen event="true" />}
           />
-          <Route path={ROUTE.DETAILS_LOCATION} element={<DetailsScreen />} />
+          <Route path="/location/details/:id" element={<DetailsScreen />} />
           <Route
             path={ROUTE.CREATE_LOCATION}
             element={<CreateLocationScreen />}

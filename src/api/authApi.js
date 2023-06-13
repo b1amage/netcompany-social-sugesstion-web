@@ -21,6 +21,7 @@ const authApi = {
       localStorage.setItem("idToken", tokenResponse.idToken);
       localStorage.setItem("registerEmail", tokenResponse.account.username);
       localStorage.setItem("username", tokenResponse.account.name);
+      localStorage.setItem("loginReload", "true");
 
       // call POST API send token backend
       const backendResponse = await axiosClient.post(
@@ -32,11 +33,14 @@ const authApi = {
           withCredentials: true,
         }
       );
+
       console.log(
         "Login successfully. Data retrieved from backend: ",
         backendResponse
       );
-      location.reload();
+
+      // location.reload();
+      navigate("/");
 
       return backendResponse;
     } catch (error) {

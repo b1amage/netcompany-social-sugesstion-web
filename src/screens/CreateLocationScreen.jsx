@@ -45,6 +45,8 @@ import { imageList } from "@/constants/images";
 import Loading from "@/components/loading/Loading";
 import useViewport from "@/hooks/useScreenWidth";
 import Popup from "@/components/popup/Popup";
+import localStorageKey from "@/constants/localStorageKeys";
+import ROUTE from "@/constants/routes";
 
 const CreateLocationScreen = () => {
   const [uploading, setUploading] = useState(false);
@@ -115,13 +117,18 @@ const CreateLocationScreen = () => {
   const [weekdayCloseTimeErr, setWeekdayCloseTimeErr] = useState();
   const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();
   const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
+  const [uploadImageErr, setUploadImageErr] = useState();
   const [submitErr, setSubmitErr] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowPopup, setIsShowPopup] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitErr([]);
     let data;
+    if (uploadImageErr) {
+      setUploadImageErr();
+    }
     setIsLoading(true);
     if (
       VALIDATE.location(address) ||
@@ -141,14 +148,14 @@ const CreateLocationScreen = () => {
       setWeekendCloseTimeErr(VALIDATE.time(weekendCloseTime));
       setSubmitErr((prev) => [...prev, "Please fill in all required fields!"]);
       setIsLoading(false);
-      return
+      return;
     }
     if (minPrice || maxPrice) {
       if (VALIDATE.price(minPrice, maxPrice)) {
         setPriceErr(VALIDATE.price(minPrice, maxPrice));
         setSubmitErr((prev) => [...prev, VALIDATE.price(minPrice, maxPrice)]);
         setIsLoading(false);
-        return
+        return;
       }
       data = {
         placeId: placeId,
@@ -207,6 +214,14 @@ const CreateLocationScreen = () => {
   };
 
   useEffect(() => {
+    const user =
+      localStorage.getItem(localStorageKey.user) || JSON.stringify({});
+    if (user === JSON.stringify({})) {
+      navigate(ROUTE.LOGIN);
+    }
+  }, []);
+
+  useEffect(() => {
     if (images.length > 0) {
       setImgList([...images]);
     }
@@ -214,7 +229,13 @@ const CreateLocationScreen = () => {
 
   const handleOnChangeImage = (e) => {
     (async function () {
+      setUploadImageErr();
       setUploading(true);
+      if (VALIDATE.selectedImage(e.target.files[0])) {
+        setUploadImageErr(VALIDATE.selectedImage(e.target.files[0]));
+        setUploading(false);
+        return;
+      }
       var bodyFormData = new FormData();
       bodyFormData.append("image", e.target.files[0]);
       axios({
@@ -249,12 +270,12 @@ const CreateLocationScreen = () => {
         <Heading className="w-full sm:text-center !text-[42px] leading-10">
           Register New Location
         </Heading>
-        <Wrapper col className="w-full my-4 xl:my-0 justify-between gap-8">
-          <Wrapper className="" col>
+        <Wrapper col className="justify-between w-full gap-8 my-4 xl:my-0">
+          <Wrapper className="" col="true">
             <LoadScript libraries={["places"]} googleMapsApiKey={key}>
               <AutoCompleteScreen
                 label="Location"
-                className={`${address ? "bg-neutral-100" : "bg-white"}`}
+                className={`bg-white`}
                 err={addressErr}
               />
               <StaticMap
@@ -268,7 +289,7 @@ const CreateLocationScreen = () => {
             </LoadScript>
           </Wrapper>
 
-          <Wrapper className="my-4" col>
+          <Wrapper className="my-4" col="true">
             <Label>
               Title <span className="text-secondary-400">*</span>
             </Label>
@@ -278,8 +299,8 @@ const CreateLocationScreen = () => {
               className={`rounded-lg ${
                 !title
                   ? titleErr &&
-                    " focus:!ring-secondary-400 !border-secondary-400 border-2"
-                  : "!border-green-500 focus:!ring-green-500 border-2"
+                    " focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
+                  : "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
               } `}
               value={title}
               // err={titleErr}
@@ -302,14 +323,14 @@ const CreateLocationScreen = () => {
             err={categoryErr}
           />
 
-          <Wrapper className="my-4" col>
+          <Wrapper className="my-4" col="true">
             <Label>
               Description <i>(optional)</i>
             </Label>
             <textarea
-              className={`w-full h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg border border-black ${
+              className={`w-full bg-white h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg border border-black ${
                 description &&
-                "bg-white !border-green-500 border-2 focus:!ring-green-500"
+                " !border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
               } md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none`}
               placeholder="Enter the description"
               value={description}
@@ -319,30 +340,30 @@ const CreateLocationScreen = () => {
             />
           </Wrapper>
 
-          <Wrapper col className="gap-8 lg:flex-row">
-            <Wrapper col className="gap-4">
+          <Wrapper col="true" className="gap-8 lg:flex-row">
+            <Wrapper col="true" className="gap-4">
               <Label>
                 Time <span className="text-secondary-400">*</span>
               </Label>
 
               <Wrapper
-                col
+                col="true"
                 className={`gap-4 ${
                   width > 520 && "!flex-row !justify-between"
                 }`}
               >
-                <Wrapper className="gap-2 w-fit flex-col">
+                <Wrapper className="flex-col gap-2 w-fit">
                   <Label>Weekday:</Label>
                   <Wrapper className="gap-4">
-                    <Wrapper col>
+                    <Wrapper col="true">
                       <Label className="!text-[14px]">
-                        Open time <span className="text-secondary-400">*</span>
+                        Open time: <span className="text-secondary-400">*</span>
                       </Label>
                       <Input
                         type="time"
                         className={`h-[60px] appearance-none flex justify-between !w-full bg-white ${
                           weekdayOpenTime
-                            ? "!border-green-500 focus:!ring-green-500 border-2"
+                            ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
                             : weekdayOpenTimeErr
                             ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
                             : "focus:!border-secondary-400 focus:!ring-secondary-400"
@@ -354,17 +375,18 @@ const CreateLocationScreen = () => {
                       />
                     </Wrapper>
 
-                    <Wrapper col>
+                    <Wrapper col="true">
                       <Label className="!text-[14px]">
-                        Close time <span className="text-secondary-400">*</span>
+                        Close time:{" "}
+                        <span className="text-secondary-400">*</span>
                       </Label>
                       <Input
                         type="time"
                         className={`h-[60px] appearance-none flex justify-between bg-white !w-full ${
                           weekdayCloseTime
-                            ? "!border-green-500 focus:!ring-green-500 border-2"
+                            ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
                             : weekdayCloseTimeErr
-                            ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
+                            ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
                             : "focus:!border-secondary-400 focus:!ring-secondary-400"
                         }`}
                         onChange={(e) => {
@@ -377,22 +399,22 @@ const CreateLocationScreen = () => {
                 </Wrapper>
                 {width >= 520 && <div className=" w-[1px] bg-black"></div>}
 
-                <Wrapper className="gap-2 flex-col">
+                <Wrapper className="flex-col gap-2">
                   <Label>Weekend: </Label>
 
                   <Wrapper className="gap-4 ">
-                    <Wrapper col>
+                    <Wrapper col="true">
                       <Label className="!text-[14px]">
-                        Open time <span className="text-secondary-400">*</span>
+                        Open time: <span className="text-secondary-400">*</span>
                       </Label>
 
                       <Input
                         type="time"
                         className={`h-[60px] appearance-none !w-full flex justify-between bg-white ${
                           weekendOpenTime
-                            ? "!border-green-500 focus:!ring-green-500 border-2"
+                            ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
                             : weekendOpenTimeErr
-                            ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
+                            ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
                             : "focus:!border-secondary-400 focus:!ring-secondary-400"
                         }`}
                         onChange={(e) => {
@@ -402,17 +424,18 @@ const CreateLocationScreen = () => {
                       />
                     </Wrapper>
 
-                    <Wrapper col>
+                    <Wrapper col="true">
                       <Label className="!text-[14px]">
-                        Close time <span className="text-secondary-400">*</span>
+                        Close time:{" "}
+                        <span className="text-secondary-400">*</span>
                       </Label>
                       <Input
                         type="time"
                         className={`h-[60px] appearance-none !w-full flex justify-end bg-white ${
                           weekendCloseTime
-                            ? "!border-green-500 focus:!ring-green-500 border-2"
+                            ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
                             : weekendCloseTimeErr
-                            ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
+                            ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
                             : "focus:!border-secondary-400 focus:!ring-secondary-400"
                         }`}
                         onChange={(e) => {
@@ -430,19 +453,19 @@ const CreateLocationScreen = () => {
 
             <div className=" w-[1px] bg-black lg:block hidden"></div>
 
-            <Wrapper col className="justify-between">
+            <Wrapper col="true" className="justify-between">
               <Label>
                 Price Range per person <i>(optional)</i>{" "}
               </Label>
-              <Wrapper className="sm:flex-row flex-col gap-4">
-                <Wrapper className="w-full justify-between sm:justify-start gap-4">
+              <Wrapper className="flex-col gap-4 sm:flex-row">
+                <Wrapper className="justify-between w-full gap-4 sm:justify-start">
                   <Input
                     label="From: "
                     className={`rounded-lg w-full !py-4 bg-white ${
                       minPrice &&
                       (priceErr
-                        ? " focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 border-2"
-                        : "!border-green-500 border-2 focus:!ring-green-500")
+                        ? " focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
+                        : "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500")
                     }`}
                     type="number"
                     value={minPrice}
@@ -460,8 +483,8 @@ const CreateLocationScreen = () => {
                     className={`rounded-lg w-full py-4 bg-white ${
                       maxPrice &&
                       (priceErr
-                        ? " focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 border-2"
-                        : " !border-green-500 border-2 focus:!ring-green-500")
+                        ? " focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
+                        : "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500")
                     }`}
                     type="number"
                     value={maxPrice}
@@ -476,20 +499,20 @@ const CreateLocationScreen = () => {
                   />
                 </Wrapper>
                 <Dropdown
-                  label="Currency"
-                  className="rounded-lg h-fit"
+                  label="Currency:"
+                  className="h-full rounded-lg"
                   options={currencyList}
                   value={currency}
-                  defaultTitle={currency}
+                  // defaultTitle=""
                   onChange={(option) => dispatch(changeCurrency(option))}
                 />
               </Wrapper>
             </Wrapper>
           </Wrapper>
 
-          <div className="w-full flex flex-col gap-4 h-auto">
+          <div className="flex flex-col w-full h-auto gap-4">
             <Wrapper className="justify-between">
-              <Label className="w-full flex px-4 items-center">
+              <Label className="flex items-center w-full px-4">
                 Location image <i>(optional)</i>
               </Label>
               <UploadImage
@@ -517,19 +540,23 @@ const CreateLocationScreen = () => {
                 )
               )}
             </div>
-            <PreviewImage
-              src={image}
-              className={`py-2 h-[24vh] items-center ${
-                images.length <= 0 && "invisible"
-              }`}
-              imageList={images}
-            />
+            {uploadImageErr ? (
+              <Error fluid>{uploadImageErr}</Error>
+            ) : (
+              <PreviewImage
+                src={image}
+                className={`py-2 h-[24vh] items-center ${
+                  images.length <= 0 && "invisible"
+                }`}
+                imageList={images}
+              />
+            )}
 
             <Error
               fluid
               className={`${submitErr.length > 0 ? "visible" : "invisible"}`}
             >
-              <Wrapper col>
+              <Wrapper col="true">
                 {submitErr.map((msg) => {
                   return <p key={msg}>{msg}</p>;
                 })}
@@ -568,7 +595,7 @@ const CreateLocationScreen = () => {
           children={<Loading />}
           className="!fixed"
           formClassName="items-center"
-          titleClassName="text-green-500"
+          titleClassName="!text-green-500"
         />
       )}
     </Screen>

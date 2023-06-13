@@ -47,18 +47,16 @@ const Dropdown = ({
     >
       {label && <Label required={required}>{label}</Label>}
       <div
-        className={`w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg border border-black  ${
-          value && "bg-white"
-        } md:text-base md:p-4 placeholder:text-secondary-100 font-bold ${
+        className={`w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg border border-black  bg-white md:text-base md:p-4 placeholder:text-secondary-100 font-bold ${
           value?.title || value
-            ? "!border-green-500 border-2"
+            ? "!border-green-500 focus:!border-green-500 ring-1 !ring-green-500"
             : "focus:!border-secondary-400"
         } ${
           isOpen &&
           (value?.tilte || value
             ? "border-green-500 focus:!border-green-500 "
-            : "!border-secondary-400 border-2")
-        } ${err && "border-secondary-400 border-2"} ${className}`}
+            : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
+        } ${err && "border-secondary-400"} ${className}`}
         onClick={handleClick}
       >
         {value?.title || defaultTitle}
