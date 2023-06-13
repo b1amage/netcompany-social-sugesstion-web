@@ -2,6 +2,8 @@ import React, { Suspense, useState, useEffect } from "react";
 import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
 import localStorageKey from "@/constants/localStorageKeys";
+
+const ErrorScreen = React.lazy(() => import("@/screens/ErrorScreen"));
 const CreateLocationScreen = React.lazy(() =>
   import("@/screens/CreateLocationScreen")
 );
@@ -17,6 +19,9 @@ const PlanEventScreen = React.lazy(() => import("@/screens/PlanEventScreen"));
 const MyEvent = React.lazy(() => import("@/screens/MyEvent"));
 const Navbar = React.lazy(() => import("@/components/navbar/Navbar"));
 const ProfileScreen = React.lazy(() => import("@/screens/ProfileScreen"));
+const UserProfileScreen = React.lazy(() =>
+  import("@/screens/UserProfileScreen")
+);
 const TestScreen = React.lazy(() => import("@/screens/TestScreen"));
 const EventsScreen = React.lazy(() => import("@/screens/EventsScreen"));
 const DetailsScreen = React.lazy(() => import("@/screens/DetailsScreen"));
@@ -26,28 +31,28 @@ const EditProfileScreen = React.lazy(() =>
 
 const AppRoutes = () => {
   const [isLogin, setIsLogin] = useState(false);
-  const [isShowNavbar, setIsShowNavbar] = useState(false)
+  const [isShowNavbar, setIsShowNavbar] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")) || null;
-  const onBoardingAlreadyShown = JSON.parse(
-    localStorage.getItem(localStorageKey.alreadyShownOnboarding)
-  ) || null;
+  const onBoardingAlreadyShown =
+    JSON.parse(localStorage.getItem(localStorageKey.alreadyShownOnboarding)) ||
+    null;
   useEffect(() => {
     if (user) {
-      if(onBoardingAlreadyShown){
-        setIsLogin(true)
+      if (onBoardingAlreadyShown) {
+        setIsLogin(true);
         setIsShowNavbar(true);
-      }else{
-        setIsLogin(true)
-        setIsShowNavbar(false)
+      } else {
+        setIsLogin(true);
+        setIsShowNavbar(false);
       }
     } else {
-      setIsLogin(false)
+      setIsLogin(false);
       setIsShowNavbar(false);
     }
-  }, [user, onBoardingAlreadyShown])
+  }, [user, onBoardingAlreadyShown]);
   return (
     <>
-      {(isLogin &&  isShowNavbar) && <Navbar />}
+      {isLogin && isShowNavbar && <Navbar />}
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path={ROUTE.ONBOARDING} element={<OnboardingScreen />} />
@@ -74,6 +79,8 @@ const AppRoutes = () => {
           />
           <Route path={ROUTE.NOT_FOUND} element={<NotFoundScreen />} />
           <Route path={ROUTE.EDIT_PROFILE} element={<EditProfileScreen />} />
+          <Route path="/error/:message" element={<ErrorScreen />} />
+          <Route path="/user/:_id" element={<UserProfileScreen />} />
         </Routes>
       </Suspense>
     </>

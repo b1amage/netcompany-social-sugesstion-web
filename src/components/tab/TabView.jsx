@@ -14,6 +14,8 @@ import Button from "@/components/button/Button";
 import userApi from "@/api/userApi";
 import Loading from "@/components/loading/Loading";
 import ROUTE from "@/constants/routes";
+import { useNavigate } from "react-router-dom";
+import Text from "@/components/typography/Text";
 
 const EmptyTab = ({ title, actionName, action }) => (
   <Tab className="!flex w-full h-full flex-center xl:my-20">
@@ -21,7 +23,7 @@ const EmptyTab = ({ title, actionName, action }) => (
       <Image src={emptyPost} />
 
       <Wrapper col="true">
-        <Heading>{title}</Heading>
+        <Heading className="!text-center">{title}</Heading>
         <Button onClick={action} active primary className="!capitalize">
           {actionName}
         </Button>
@@ -50,6 +52,7 @@ const TabView = () => {
   const [createdNextCursor, setCreatedNextCursor] = useState(undefined);
   const [creaLikedCursor, setLikedNextCursor] = useState(undefined);
   const [nextLoading, setNextLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getCreatedLocation = async () => {
@@ -158,8 +161,6 @@ const TabView = () => {
         return renderCards(createdPlaces);
       case 1:
         return renderCards(likedPlaces);
-      case 2:
-        return renderCards(createdPlaces);
       default:
         return <Tab>Tab 404</Tab>;
     }
@@ -174,7 +175,7 @@ const TabView = () => {
   return (
     <Wrapper col="true" className="w-full realtive">
       {/* Tab Header */}
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-center w-full gap-5">
         {profileTabs.map((Item, index) => (
           <TabHeader
             key={generateId()}
@@ -183,9 +184,25 @@ const TabView = () => {
             active={index === activeTabIndex ? "true" : undefined}
           >
             {index === activeTabIndex ? (
-              <Item.fillIcon id={index} className="w-full"></Item.fillIcon>
+              <Wrapper id={index} className="items-center gap-2">
+                <Item.fillIcon id={index} className="w-full"></Item.fillIcon>
+                <Text
+                  id={index}
+                  className="hidden lg:block !text-base capitalize"
+                >
+                  {Item.title}
+                </Text>
+              </Wrapper>
             ) : (
-              <Item.icon id={index} className="w-full" />
+              <Wrapper id={index} className="items-center gap-2">
+                <Item.icon id={index} className="w-full" />
+                <Text
+                  id={index}
+                  className="hidden lg:block !text-base capitalize"
+                >
+                  {Item.title}
+                </Text>
+              </Wrapper>
             )}
           </TabHeader>
         ))}

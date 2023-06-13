@@ -2,7 +2,7 @@ import Button from "@/components/button/Button";
 import Screen from "@/components/container/Screen";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Label from "@/components/form/Label";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import Input from "@/components/form/Input";
 import camera from "@/assets/camera.svg";
 
@@ -292,6 +292,7 @@ const CreateLocationScreen = () => {
   };
 
   const dispatch = useDispatch();
+  const libraries = useMemo(() => ["places"], []);
   return (
     <Screen className={`py-8`}>
       <form
@@ -301,9 +302,9 @@ const CreateLocationScreen = () => {
         <Heading className="w-full sm:text-center !text-[42px] leading-10">
           Register New Location
         </Heading>
-        <Wrapper col className="w-full my-4 xl:my-0 justify-between gap-8">
-          <Wrapper className="" col>
-            <LoadScript libraries={["places"]} googleMapsApiKey={key}>
+        <Wrapper col className="justify-between w-full gap-8 my-4 xl:my-0">
+          <Wrapper className="" col="true">
+            <LoadScript libraries={libraries} googleMapsApiKey={key}>
               <AutoCompleteScreen
                 label="Location"
                 className={`bg-white`}
@@ -320,7 +321,7 @@ const CreateLocationScreen = () => {
             </LoadScript>
           </Wrapper>
 
-          <Wrapper className="my-4" col>
+          <Wrapper className="my-4" col="true">
             <Label>
               Title <span className="text-secondary-400">*</span>
             </Label>
@@ -355,7 +356,7 @@ const CreateLocationScreen = () => {
             err={categoryErr}
           />
 
-          <Wrapper className="my-4" col>
+          <Wrapper className="my-4" col="true">
             <Label>
               Description <i>(optional)</i>
             </Label>
@@ -372,22 +373,22 @@ const CreateLocationScreen = () => {
             />
           </Wrapper>
 
-          <Wrapper col className="gap-8 lg:flex-row">
-            <Wrapper col className="gap-4">
+          <Wrapper col="true" className="gap-8 lg:flex-row">
+            <Wrapper col="true" className="gap-4">
               <Label>
                 Time <span className="text-secondary-400">*</span>
               </Label>
 
               <Wrapper
-                col
+                col="true"
                 className={`gap-4 ${
                   width > 520 && "!flex-row !justify-between"
                 }`}
               >
-                <Wrapper className="gap-2 w-fit flex-col">
+                <Wrapper className="flex-col gap-2 w-fit">
                   <Label>Weekday:</Label>
                   <Wrapper className="gap-4">
-                    <Wrapper col>
+                    <Wrapper col="true">
                       <Label className="!text-[14px]">
                         Open time: <span className="text-secondary-400">*</span>
                       </Label>
@@ -407,7 +408,7 @@ const CreateLocationScreen = () => {
                       />
                     </Wrapper>
 
-                    <Wrapper col>
+                    <Wrapper col="true">
                       <Label className="!text-[14px]">
                         Close time:{" "}
                         <span className="text-secondary-400">*</span>
@@ -431,11 +432,11 @@ const CreateLocationScreen = () => {
                 </Wrapper>
                 {width >= 520 && <div className=" w-[1px] bg-black"></div>}
 
-                <Wrapper className="gap-2 flex-col">
+                <Wrapper className="flex-col gap-2">
                   <Label>Weekend: </Label>
 
                   <Wrapper className="gap-4 ">
-                    <Wrapper col>
+                    <Wrapper col="true">
                       <Label className="!text-[14px]">
                         Open time: <span className="text-secondary-400">*</span>
                       </Label>
@@ -456,7 +457,7 @@ const CreateLocationScreen = () => {
                       />
                     </Wrapper>
 
-                    <Wrapper col>
+                    <Wrapper col="true">
                       <Label className="!text-[14px]">
                         Close time:{" "}
                         <span className="text-secondary-400">*</span>
@@ -485,12 +486,12 @@ const CreateLocationScreen = () => {
 
             <div className=" w-[1px] bg-black lg:block hidden"></div>
 
-            <Wrapper col className="justify-between">
+            <Wrapper col="true" className="justify-between">
               <Label>
                 Price Range per person <i>(optional)</i>{" "}
               </Label>
-              <Wrapper className="sm:flex-row flex-col gap-4">
-                <Wrapper className="w-full justify-between sm:justify-start gap-4">
+              <Wrapper className="flex-col gap-4 sm:flex-row">
+                <Wrapper className="justify-between w-full gap-4 sm:justify-start">
                   <Input
                     label="From: "
                     className={`rounded-lg w-full !py-4 bg-white ${
@@ -532,7 +533,7 @@ const CreateLocationScreen = () => {
                 </Wrapper>
                 <Dropdown
                   label="Currency:"
-                  className="rounded-lg h-full"
+                  className="h-full rounded-lg"
                   options={currencyList}
                   value={currency}
                   // defaultTitle=""
@@ -543,9 +544,9 @@ const CreateLocationScreen = () => {
             </Wrapper>
           </Wrapper>
 
-          <div className="w-full flex flex-col gap-4 h-auto">
+          <div className="flex flex-col w-full h-auto gap-4">
             <Wrapper className="justify-between">
-              <Label className="w-full flex px-4 items-center">
+              <Label className="flex items-center w-full px-4">
                 Location image <i>(optional)</i>
               </Label>
               <UploadImage
@@ -588,7 +589,7 @@ const CreateLocationScreen = () => {
               fluid
               className={`${submitErr.length > 0 ? "visible" : "invisible"}`}
             >
-              <Wrapper col>
+              <Wrapper col="true">
                 {submitErr.map((msg) => {
                   return <p key={msg}>{msg}</p>;
                 })}

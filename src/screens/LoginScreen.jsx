@@ -44,9 +44,9 @@ const LoginScreen = () => {
           </Button>
 
           {/* // !TODO: Remove when done testing */}
-          <Button className="xl:my-0" onClick={() => dispatch(logout())}>
+          {/* <Button className="xl:my-0" onClick={() => dispatch(logout())}>
             Logout
-          </Button>
+          </Button> */}
         </Wrapper>
       </Wrapper>
     </Screen>

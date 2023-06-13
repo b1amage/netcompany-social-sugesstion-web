@@ -75,6 +75,25 @@ const locationApi = {
       console.log(error);
     }
   },
+
+  async getUserLikedPost(id, nextCursor) {
+    try {
+      const url = nextCursor
+        ? `/user/like/${id}?next_cursor=${nextCursor}`
+        : `/user/like/${id}`;
+
+      console.log("calling get liked user with url: ", url);
+      const response = await axiosClient.get(url, {
+        withCredentials: true,
+      });
+
+      console.log("response of  ", url, response);
+
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 export default locationApi;
