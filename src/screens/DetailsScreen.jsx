@@ -20,6 +20,7 @@ import SubHeading from "@/components/typography/SubHeading";
 import Portal from "@/components/HOC/Portal";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import Loading from "@/components/loading/Loading";
+import { useNavigate } from "react-router-dom";
 
 const DetailsScreen = ({ event }) => {
   const { id } = useParams();
@@ -129,6 +130,7 @@ const DetailsScreen = ({ event }) => {
   const popupRef = useRef();
   const onClose = () => setShowLikedUsers(false);
   useOnClickOutside(popupRef, onClose);
+  const navigate = useNavigate();
 
   return (
     <Screen className="py-2 pb-4 xl:gap-10 xl:pb-10">
@@ -144,7 +146,7 @@ const DetailsScreen = ({ event }) => {
             {!event && (
               <Wrapper
                 className="items-center my-3 !gap-5"
-                onClick={() => console.log("navigate")}
+                onClick={() => navigate(`/user/${locationDetails.user._id}`)}
               >
                 <Image
                   className="w-[75px] h-[75px] !rounded-full"
@@ -344,7 +346,9 @@ const DetailsScreen = ({ event }) => {
                                   <Wrapper
                                     key={user.email}
                                     className="items-center my-3 !gap-2"
-                                    onClick={() => console.log("navigate")}
+                                    onClick={() =>
+                                      navigate(`/user/${user._id}`)
+                                    }
                                   >
                                     <Image
                                       className="w-[50px] h-[50px] !rounded-full"

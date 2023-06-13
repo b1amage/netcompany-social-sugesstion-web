@@ -19,6 +19,9 @@ const PlanEventScreen = React.lazy(() => import("@/screens/PlanEventScreen"));
 const MyEvent = React.lazy(() => import("@/screens/MyEvent"));
 const Navbar = React.lazy(() => import("@/components/navbar/Navbar"));
 const ProfileScreen = React.lazy(() => import("@/screens/ProfileScreen"));
+const UserProfileScreen = React.lazy(() =>
+  import("@/screens/UserProfileScreen")
+);
 const TestScreen = React.lazy(() => import("@/screens/TestScreen"));
 const EventsScreen = React.lazy(() => import("@/screens/EventsScreen"));
 const DetailsScreen = React.lazy(() => import("@/screens/DetailsScreen"));
@@ -77,6 +80,7 @@ const AppRoutes = () => {
           <Route path={ROUTE.NOT_FOUND} element={<NotFoundScreen />} />
           <Route path={ROUTE.EDIT_PROFILE} element={<EditProfileScreen />} />
           <Route path="/error/:message" element={<ErrorScreen />} />
+          <Route path="/user/:_id" element={<UserProfileScreen />} />
         </Routes>
       </Suspense>
     </>
