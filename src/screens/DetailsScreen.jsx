@@ -33,6 +33,9 @@ const DetailsScreen = ({ event }) => {
   const [likedUsers, setLikedUsers] = useState([]);
   const [likedUsersLoading, setLikedUsersLoading] = useState(false);
   const [showLikedUsers, setShowLikedUsers] = useState(false);
+  const [likedUserNextCursor, setLikedUserNextCursor] = useState(undefined);
+  const [lastFetch, setLastFetch] = useState(Date.now());
+  const [nextLoading, setNextLoading] = useState(false);
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
     slideChanged(slider) {
@@ -43,7 +46,7 @@ const DetailsScreen = ({ event }) => {
     },
   });
 
-  const likedListRef = useRef();
+  let likedListRef = useRef();
 
   useEffect(() => {
     const getLocationDetails = async () => {
@@ -67,15 +70,14 @@ const DetailsScreen = ({ event }) => {
       );
       console.log(response);
       setLikedUsers(response.data.results);
+      setLikedUserNextCursor(response.data.next_cursor);
       setLikedUsersLoading(false);
     };
 
     getLikedUsers();
   }, [showLikedUsers]);
 
-  useEffect(() => {
-    console.log(likedListRef.current);
-  }, [likedListRef, showLikedUsers]);
+  useEffect(() => {}, [showLikedUsers]);
 
   const handleLikeClick = () => {
     const handleLikeOrUnlike = async () => {
@@ -92,6 +94,37 @@ const DetailsScreen = ({ event }) => {
 
     handleLikeOrUnlike();
   };
+
+  // useEffect(() => {
+  //   console.log("in handleScroll: ", likedListRef.current);
+
+  //   const handleScroll = async () => {
+  //     console.log("in handleScroll: ", likedListRef.current);
+  //     if (!likedListRef.current) return;
+  //     const { scrollTop, scrollHeight, clientHeight } = likedListRef.current;
+  //     const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight;
+
+  //     if (isScrolledToBottom) {
+  //       console.log("Scrolled to bottom!");
+  //       // const nextCursor = localStorage.getItem(
+  //       //   activeTabIndex === 0 ? "createdNextCursor" : "likedNextCursor"
+  //       // );
+  //       // if (nextCursor.length > 10) {
+  //       //   await loadMore(nextCursor);
+  //       // }
+  //     }
+  //   };
+  //   if (likedListRef.current) {
+  //     likedListRef.current.addEventListener("scroll", handleScroll);
+  //   }
+
+  //   return () => {
+  //     if (likedListRef.current) {
+  //       // Remember to remove event listener when the component is unmounted
+  //       likedListRef.current.removeEventListener("scroll", handleScroll);
+  //     }
+  //   };
+  // }, [showLikedUsers]);
 
   const popupRef = useRef();
   const onClose = () => setShowLikedUsers(false);
@@ -259,6 +292,43 @@ const DetailsScreen = ({ event }) => {
 
                           <div
                             ref={likedListRef}
+                            onScroll={() => {
+                              const loadMore = async () => {
+                                const now = Date.now();
+                                // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+                                if (now - lastFetch < 1000) return;
+                                if (likedUserNextCursor === null) return;
+                                setNextLoading(true);
+                                const response =
+                                  await locationApi.getUserLikedPost(
+                                    locationDetails._id,
+                                    likedUserNextCursor
+                                  );
+
+                                console.log(response);
+                                const newLikedList = [
+                                  ...likedUsers,
+                                  ...response.data.results,
+                                ];
+                                setLikedUsers(newLikedList);
+                                setLikedUserNextCursor(
+                                  response.data.next_cursor
+                                );
+
+                                setNextLoading(false);
+                              };
+
+                              if (
+                                likedListRef.current.scrollTop +
+                                  likedListRef.current.clientHeight >=
+                                likedListRef.current.scrollHeight
+                              ) {
+                                console.log("Scrolled to bottom!");
+                                if (likedUserNextCursor === null) return;
+                                // Implement your logic here
+                                loadMore();
+                              }
+                            }}
                             className="flex flex-1 w-full overflow-scroll flex-center"
                           >
                             {likedUsersLoading ? (
@@ -290,6 +360,12 @@ const DetailsScreen = ({ event }) => {
                                     </Wrapper>
                                   </Wrapper>
                                 ))}
+
+                                {nextLoading && (
+                                  <Wrapper className="my-3 flex-center">
+                                    <Loading />
+                                  </Wrapper>
+                                )}
                               </Wrapper>
                             )}
                           </div>
