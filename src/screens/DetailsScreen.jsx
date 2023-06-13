@@ -37,6 +37,7 @@ const DetailsScreen = ({ event }) => {
   const [likedUserNextCursor, setLikedUserNextCursor] = useState(undefined);
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [nextLoading, setNextLoading] = useState(false);
+  const [likedCount, setLikedCount] = useState(0);
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
     slideChanged(slider) {
@@ -55,6 +56,7 @@ const DetailsScreen = ({ event }) => {
       const response = await locationApi.getLocationDetails(id);
       setLocationDetails(response.data);
       setLiked(response.data.likedByUser);
+      setLikedCount(response.data.heartCount);
       setLoading(false);
     };
 
@@ -86,10 +88,12 @@ const DetailsScreen = ({ event }) => {
         console.log("call like");
         await locationApi.like(id);
         setLiked((prev) => !prev);
+        setLikedCount((prev) => prev + 1);
       } else {
         console.log("call unlike");
         await locationApi.unlike(id);
         setLiked((prev) => !prev);
+        setLikedCount((prev) => prev - 1);
       }
     };
 
@@ -268,18 +272,21 @@ const DetailsScreen = ({ event }) => {
                   <Wrapper className="!gap-5 pb-5 border-b border-b-neutral-200 w-full items-center">
                     {liked ? (
                       <BsFillHeartFill
-                        className="text-lg text-secondary-400"
+                        className="text-lg cursor-pointer text-secondary-400"
                         onClick={handleLikeClick}
                       />
                     ) : (
-                      <BsHeart className="text-lg" onClick={handleLikeClick} />
+                      <BsHeart
+                        className="text-lg cursor-pointer"
+                        onClick={handleLikeClick}
+                      />
                     )}
 
                     <Text
                       className="underline cursor-pointer"
                       onClick={() => setShowLikedUsers(true)}
                     >
-                      {locationDetails?.heartCount} liked this post
+                      {likedCount} liked this post
                     </Text>
                   </Wrapper>
 
