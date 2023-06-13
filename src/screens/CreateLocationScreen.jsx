@@ -10,7 +10,7 @@ import categoryList from "@/constants/category";
 import Dropdown from "@/components/form/Dropdown";
 import UploadImage from "@/components/image/UploadImage";
 
-import PreviewImage from "@/components/image/PreviewImage";
+import Slider from "@/components/slider/Slider";
 import { useDispatch, useSelector } from "react-redux";
 import {
   changeCategory,
@@ -574,7 +574,7 @@ const CreateLocationScreen = () => {
               )}
             </div>
 
-            {images.length > 0  && <PreviewImage
+            {images.length > 0  && <Slider
               src={image}
               className={`py-2 h-[24vh] items-center ${
                 images.length <= 0 && "invisible"

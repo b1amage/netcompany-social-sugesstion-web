@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import Image from "./Image";
+import Image from "../image/Image";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { useDispatch } from "react-redux";
@@ -8,7 +8,7 @@ import close from "@/assets/close.svg";
 import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import Wrapper from "@/components/wrapper/Wrapper";
 
-const PreviewImage = ({ imageList, src, className }) => {
+const Slider = ({ imageList, src, className }) => {
   const dispatch = useDispatch();
   const [isShowButtonRight, setIsShowButtonRight] = useState(false);
   const [isShowButtonLeft, setIsShowButtonLeft] = useState(false);
@@ -110,4 +110,4 @@ const PreviewImage = ({ imageList, src, className }) => {
   );
 };
 
-export default PreviewImage;
+export default Slider;
