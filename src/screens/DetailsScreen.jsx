@@ -15,6 +15,8 @@ import locationApi from "@/api/locationApi";
 import LoadingScreen from "./LoadingScreen";
 import { useSelector } from "react-redux";
 import { DEFAULT } from "@/constants/defaultData";
+import Category from "@/components/category/Category";
+import SubHeading from "@/components/typography/SubHeading";
 
 const DetailsScreen = ({ event }) => {
   const { id } = useParams();
@@ -145,6 +147,20 @@ const DetailsScreen = ({ event }) => {
             )}
 
             <Wrapper col="true" className="flex-1 px-3 py-2">
+              <Wrapper className="items-center justify-between">
+                <Category isActive disableHover="true" className="self-start">
+                  {locationDetails?.locationCategory}
+                </Category>
+
+                {locationDetails?.pricePerPerson && (
+                  <SubHeading>
+                    {locationDetails?.pricePerPerson?.min} -{" "}
+                    {locationDetails?.pricePerPerson?.max} (
+                    {locationDetails?.pricePerPerson?.currency})
+                  </SubHeading>
+                )}
+              </Wrapper>
+
               <Heading>{locationDetails?.name}</Heading>
               <Text>{locationDetails?.description}</Text>
 
