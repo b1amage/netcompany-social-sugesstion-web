@@ -47,10 +47,10 @@ const VerifyScreen = () => {
       username,
       searchDistance: distance,
       locationCategories,
-      coordinates: {
-        latitude: location.lat,
-        longitude: location.lng,
-      },
+      // coordinates: {
+      //   latitude: location.lat,
+      //   longitude: location.lng,
+      // },
       imageUrl: localStorage.getItem("avatar") || DEFAULT.avatar,
     };
 
@@ -65,16 +65,16 @@ const VerifyScreen = () => {
   };
 
   // Get Location
-  useEffect(() => {
-    (async function () {
-      try {
-        const location = await getCurrentLocation();
-        setLocation(location);
-      } catch (error) {
-        console.error(error.message);
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async function () {
+  //     try {
+  //       const location = await getCurrentLocation();
+  //       setLocation(location);
+  //     } catch (error) {
+  //       console.error(error.message);
+  //     }
+  //   })();
+  // }, []);
 
   const registerEmail = localStorage.getItem("registerEmail") || "";
 
