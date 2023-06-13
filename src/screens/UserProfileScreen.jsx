@@ -21,6 +21,7 @@ import Text from "@/components/typography/Text";
 import { MdLocationOn, MdOutlineFavorite } from "react-icons/md";
 import Category from "@/components/category/Category";
 import useViewport from "@/hooks/useScreenWidth";
+import { useParams } from "react-router-dom";
 
 const UnLoginUI = () => (
   <Wrapper className="flex-1 px-5 flex-center !gap-10" col="true">
@@ -38,12 +39,12 @@ const UnLoginUI = () => (
   </Wrapper>
 );
 
-const ProfileScreen = () => {
-  const { user } = useSelector((state) => state.user);
-  const { username, email, imageUrl, _id } = user;
+const UserProfileScreen = () => {
+  const { _id } = useParams();
+  // const { username, email, imageUrl, _id } = user;
   const [showPopup, setShowPopup] = useState(false);
   // const [userInfo, setUserInfo] = useState(user);
-  const [fetchUser, setFetchUser] = useState(user);
+  const [fetchUser, setFetchUser] = useState();
   const [loading, setLoading] = useState(true);
   const { width } = useViewport();
   const dispatch = useDispatch();
@@ -88,7 +89,7 @@ const ProfileScreen = () => {
   }, []);
 
   return (
-    <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
+    <Screen className="flex flex-col h-[80vh] min-h-0 gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       {showPopup && (
         <Popup
           onClose={closePopup}
@@ -104,7 +105,7 @@ const ProfileScreen = () => {
             <LoadingScreen />
           ) : (
             <>
-              <Wrapper col="true">
+              <Wrapper col="true" className="flex-1 flex-center">
                 {/* Avatar */}
                 <Wrapper col="true" className="relative w-full flex-center">
                   <Image
@@ -122,13 +123,13 @@ const ProfileScreen = () => {
                       width > 768 ? "block" : "hidden"
                     }`}
                   >
-                    <Button
+                    {/* <Button
                       onClick={() => navigate(ROUTE.EDIT_PROFILE)}
                       className="!text-primary-800 !my-0  !relative !gap-2"
                     >
                       <BsPencilFill />
                       <span className="capitalize">Edit info</span>
-                    </Button>
+                    </Button> */}
                     {/* <Button
                     className="!bg-danger"
                     onClick={() => {
@@ -141,41 +142,6 @@ const ProfileScreen = () => {
                 </Wrapper>
 
                 {/* Relevant info */}
-                <Wrapper col="true" className="flex-center">
-                  <Wrapper className="flex-center">
-                    <MdLocationOn className="text-xl" />
-                    <Text>
-                      Search distance:{" "}
-                      <span className="font-bold">
-                        {fetchUser.searchDistance}
-                      </span>
-                      <span className="font-bold">km</span>
-                    </Text>
-                  </Wrapper>
-
-                  <Wrapper className="flex-wrap flex-center">
-                    {fetchUser.locationCategories.length > 0 ? (
-                      fetchUser.locationCategories.map((item, index) => (
-                        <Category
-                          disableHover="true"
-                          className="cursor-default hover:bg-primary-400"
-                          onClick={() => {}}
-                          isActive
-                          key={index}
-                        >
-                          {item}
-                        </Category>
-                      ))
-                    ) : (
-                      <Text>No preferences yet!</Text>
-                    )}
-                  </Wrapper>
-                </Wrapper>
-              </Wrapper>
-
-              <Wrapper>
-                {/* Tabs */}
-                <TabView />
               </Wrapper>
             </>
           )}
@@ -185,4 +151,4 @@ const ProfileScreen = () => {
   );
 };
 
-export default ProfileScreen;
+export default UserProfileScreen;

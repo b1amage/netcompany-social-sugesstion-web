@@ -31,6 +31,10 @@ const userApi = {
       return response;
     } catch (error) {
       console.log(error);
+      const statusCode = error.response.status;
+      if (statusCode === 404) {
+        console.log("navigate");
+      }
     }
   },
 
@@ -50,6 +54,9 @@ const userApi = {
       return response;
     } catch (error) {
       console.log(error);
+      if (statusCode === 404) {
+        console.log("navigate");
+      }
     }
   },
 

@@ -2,7 +2,7 @@ import Button from "@/components/button/Button";
 import Screen from "@/components/container/Screen";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Label from "@/components/form/Label";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import Input from "@/components/form/Input";
 import camera from "@/assets/camera.svg";
 
@@ -261,6 +261,7 @@ const CreateLocationScreen = () => {
   };
 
   const dispatch = useDispatch();
+  const libraries = useMemo(() => ["places"], []);
   return (
     <Screen className={`px-4 py-8`}>
       <form
@@ -272,7 +273,7 @@ const CreateLocationScreen = () => {
         </Heading>
         <Wrapper col className="justify-between w-full gap-8 my-4 xl:my-0">
           <Wrapper className="" col="true">
-            <LoadScript libraries={["places"]} googleMapsApiKey={key}>
+            <LoadScript libraries={libraries} googleMapsApiKey={key}>
               <AutoCompleteScreen
                 label="Location"
                 className={`bg-white`}
