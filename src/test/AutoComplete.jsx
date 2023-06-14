@@ -92,6 +92,7 @@ const AutoCompleteScreen = ({ label, className, src, err }) => {
             // value={value}
             onChange={(e) => {
               setValue(e.target.value);
+              dispatch(changeAddress(e.target.value))
               if (e.target.value === "" || !inputRef.current.getPlaces()) {
                 setError(true);
               }

@@ -37,7 +37,7 @@ const locationApi = {
   },
   async getLatestLocation(data, next_cursor){
     try{
-      const url = `/location/filter/latest?${next_cursor ? `next_cursor=${next_cursor}` : ""}${data.locationCategory ? `&locationCategory=${data.locationCategory}` : ""}${data.searchInput ? `&searchInput=${data.searchInput}` : ""}${data.lat ? `&latitude=${data.lat}` : ""}${data.lng ? `&longitude=${data.lng}` : ""}${data.searchDistance ? `&searchDistance=${data.searchDistance}` : ""}`
+      const url = `/location/filter/latest?${next_cursor ? `next_cursor=${next_cursor}` : ""}${data.locationCategory ? `&locationCategory=${data.locationCategory}` : ""}${data.searchInput ? `&searchInput=${data.searchInput}` : ""}${data.lat ? `&latitude=${data.lat}` : ""}${data.lng ? `&longitude=${data.lng}` : ""}${data.searchDistance ? `&searchDistance=${data.searchDistance}` : ""}${data.weekday.openTime ? `&weekday[openTime]=${data.weekday.openTime}` : ""}${data.weekday.closeTime ? `&weekday[closeTime]=${data.weekday.closeTime}` : ""}${data.weekend.openTime ? `&weekend[openTime]=${data.weekend.openTime}` : ""}${data.weekend.closeTime ? `&weekend[closeTime]=${data.weekend.closeTime}` : ""}`
       console.log(url)
       const response = await axiosClient.get(url, {
         withCredentials: true
@@ -61,6 +61,10 @@ const locationApi = {
       return response;
     } catch (error) {
       console.log(error);
+      const statusCode = error.response.status;
+      if (statusCode === 404) {
+        navigate(`/error/${error.response.data.message}`);
+      }
     }
   },
 
