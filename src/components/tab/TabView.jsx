@@ -20,7 +20,7 @@ import Text from "@/components/typography/Text";
 const EmptyTab = ({ title, actionName, action }) => (
   <Tab className="!flex w-full h-full flex-center xl:my-20">
     <Wrapper col="true">
-      <Image src={emptyPost} />
+      <Image className="!w-[200px] !h-[200px] mx-auto" src={emptyPost} />
 
       <Wrapper col="true">
         <Heading className="!text-center">{title}</Heading>
@@ -130,12 +130,20 @@ const TabView = () => {
     setNextLoading(false);
   };
 
-  const renderCards = (places) => {
+  const renderCards = (places, type) => {
     return places.length === 0 ? (
       <EmptyTab
-        title="You have no post yet!"
-        actionName="Register new location"
-        action={() => navigate(ROUTE.CREATE_LOCATION)}
+        title={
+          type === "created"
+            ? "You have no post yet!"
+            : "You have not liked any location yet!"
+        }
+        actionName={
+          type === "created" ? "Register new location" : "Explore more location"
+        }
+        action={() =>
+          navigate(type === "created" ? ROUTE.CREATE_LOCATION : "/")
+        }
       />
     ) : (
       <Tab
@@ -158,9 +166,9 @@ const TabView = () => {
   const renderTabContent = (index) => {
     switch (index) {
       case 0:
-        return renderCards(createdPlaces);
+        return renderCards(createdPlaces, "created");
       case 1:
-        return renderCards(likedPlaces);
+        return renderCards(likedPlaces, "liked");
       default:
         return <Tab>Tab 404</Tab>;
     }
