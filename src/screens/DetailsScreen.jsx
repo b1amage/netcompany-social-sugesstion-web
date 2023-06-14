@@ -243,29 +243,31 @@ const DetailsScreen = ({ event }) => {
                     </>
                   )}
 
-                  {loaded && instanceRef.current && (
-                    <div className="absolute bottom-4 !z-50 flex gap-2 left-1/2 -translate-x-1/2 dots">
-                      {[
-                        ...Array(
-                          instanceRef.current.track.details.slides.length
-                        ).keys(),
-                      ].map((idx) => {
-                        return (
-                          <button
-                            key={idx}
-                            onClick={() => {
-                              instanceRef.current?.moveToIdx(idx);
-                            }}
-                            className={
-                              "rounded-full dot bg-white w-2 h-2" +
-                              (currentSlide === idx &&
-                                " active !bg-secondary-400")
-                            }
-                          ></button>
-                        );
-                      })}
-                    </div>
-                  )}
+                  {loaded &&
+                    locationDetails.imageUrls.length > 1 &&
+                    instanceRef.current && (
+                      <div className="absolute bottom-4 !z-50 flex gap-2 left-1/2 -translate-x-1/2 dots">
+                        {[
+                          ...Array(
+                            instanceRef.current.track.details.slides.length
+                          ).keys(),
+                        ].map((idx) => {
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                instanceRef.current?.moveToIdx(idx);
+                              }}
+                              className={
+                                "rounded-full dot bg-white w-2 h-2" +
+                                (currentSlide === idx &&
+                                  " active !bg-secondary-400")
+                              }
+                            ></button>
+                          );
+                        })}
+                      </div>
+                    )}
                 </div>
               </Wrapper>
             ) : (
