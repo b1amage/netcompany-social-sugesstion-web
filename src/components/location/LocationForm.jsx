@@ -32,6 +32,7 @@ import { useDispatch } from "react-redux";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Label from "@/components/form/Label";
 import Button from "@/components/button/Button";
+import Loading from "@/components/loading/Loading";
 
 const LocationForm = ({
   image,
@@ -72,12 +73,12 @@ const LocationForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`${isShowImage && "overflow-hidden h-screen"}`}
+      className={`${isShowImage && "overflow-hidden h-screen"} px-8`}
     >
       <Heading className="w-full sm:text-center !text-[42px] leading-10">
         Register New Location
       </Heading>
-      <Wrapper col className="justify-between w-full gap-8 my-4 xl:my-0">
+      <Wrapper col="true" className="justify-between w-full gap-8 my-4 xl:my-0">
         <Wrapper className="" col="true">
             <AutoCompleteScreen
               label="Location"
@@ -313,7 +314,7 @@ const LocationForm = ({
           </Wrapper>
         </Wrapper>
 
-        <div className="flex flex-col w-full h-auto gap-4">
+        <div className="flex flex-col w-full h-auto gap-1.5">
           <Wrapper className="justify-between">
             <Label className="flex items-center w-full px-4">
               Location image <i>(optional)</i>
@@ -325,6 +326,7 @@ const LocationForm = ({
               onChange={handleOnChangeImage}
             />
           </Wrapper>
+          <Error className={`${!uploadImageErr && 'invisible'} !my-0`} fluid>{uploadImageErr}</Error>
 
           <div
             className={`border border-black rounded-lg relative h-[60vh] flex justify-center items-center`}
@@ -354,7 +356,6 @@ const LocationForm = ({
               perView={width > 768 ? 4 : 2}
             />
           )}
-          {uploadImageErr && <Error fluid>{uploadImageErr}</Error>}
 
           <Error
             fluid
