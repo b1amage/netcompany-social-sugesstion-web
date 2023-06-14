@@ -7,7 +7,7 @@ import Wrapper from "@/components/wrapper/Wrapper";
 import Heading from "@/components/typography/Heading";
 import Text from "@/components/typography/Text";
 import Guess from "@/components/guess/Guess";
-import { BsHeart, BsFillHeartFill } from "react-icons/bs";
+import { BsHeart, BsFillHeartFill, BsFillPencilFill } from "react-icons/bs";
 import CommentCard from "@/components/comment/CommentCard";
 import { useParams } from "react-router-dom";
 import locationApi from "@/api/locationApi";
@@ -167,6 +167,12 @@ const DetailsScreen = ({ event }) => {
 
                 {locationDetails.userId === user._id && (
                   <Wrapper>
+                    <Button
+                      onClick={() => {}}
+                      className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl"
+                    >
+                      <BsFillPencilFill />
+                    </Button>
                     <Button
                       onClick={() => setShowDeletePopup(true)}
                       className="!bg-danger !bg-opacity-40 !text-danger !text-xl"
