@@ -2,13 +2,12 @@ import Screen from "@/components/container/Screen";
 import React, { useRef, useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import eventList from "@/constants/mockEvents";
 import Image from "@/components/image/Image";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Heading from "@/components/typography/Heading";
 import Text from "@/components/typography/Text";
 import Guess from "@/components/guess/Guess";
-import { BsBookmark, BsHeart, BsFillHeartFill } from "react-icons/bs";
+import { BsHeart, BsFillHeartFill } from "react-icons/bs";
 import CommentCard from "@/components/comment/CommentCard";
 import { useParams } from "react-router-dom";
 import locationApi from "@/api/locationApi";
@@ -21,8 +20,14 @@ import Portal from "@/components/HOC/Portal";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import Loading from "@/components/loading/Loading";
 import { useNavigate } from "react-router-dom";
+import Button from "@/components/button/Button";
+import { MdDelete } from "react-icons/md";
+import Popup from "@/components/popup/Popup";
+import Deleting from "@/components/loading/Deleting";
+import toast, { Toaster } from "react-hot-toast";
 
 const DetailsScreen = ({ event }) => {
+  const notifyDelete = () => toast.success("Successfully delete!");
   const { id } = useParams();
   const { user } = useSelector((state) => state.user);
 
@@ -38,6 +43,8 @@ const DetailsScreen = ({ event }) => {
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [nextLoading, setNextLoading] = useState(false);
   const [likedCount, setLikedCount] = useState(0);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
@@ -101,36 +108,21 @@ const DetailsScreen = ({ event }) => {
     handleLikeOrUnlike();
   };
 
-  // useEffect(() => {
-  //   console.log("in handleScroll: ", likedListRef.current);
+  const deleteLocation = () => {
+    const handleDelete = async () => {
+      setShowDeletePopup(false);
+      setDeleting(true);
+      const response = await locationApi.deleteLocation(
+        locationDetails._id,
+        notifyDelete
+      );
+      console.log(response);
+      setDeleting(false);
+      navigate("/profile");
+    };
 
-  //   const handleScroll = async () => {
-  //     console.log("in handleScroll: ", likedListRef.current);
-  //     if (!likedListRef.current) return;
-  //     const { scrollTop, scrollHeight, clientHeight } = likedListRef.current;
-  //     const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight;
-
-  //     if (isScrolledToBottom) {
-  //       console.log("Scrolled to bottom!");
-  //       // const nextCursor = localStorage.getItem(
-  //       //   activeTabIndex === 0 ? "createdNextCursor" : "likedNextCursor"
-  //       // );
-  //       // if (nextCursor.length > 10) {
-  //       //   await loadMore(nextCursor);
-  //       // }
-  //     }
-  //   };
-  //   if (likedListRef.current) {
-  //     likedListRef.current.addEventListener("scroll", handleScroll);
-  //   }
-
-  //   return () => {
-  //     if (likedListRef.current) {
-  //       // Remember to remove event listener when the component is unmounted
-  //       likedListRef.current.removeEventListener("scroll", handleScroll);
-  //     }
-  //   };
-  // }, [showLikedUsers]);
+    handleDelete();
+  };
 
   const popupRef = useRef();
   const onClose = () => setShowLikedUsers(false);
@@ -149,24 +141,59 @@ const DetailsScreen = ({ event }) => {
         <LoadingScreen />
       ) : (
         <>
-          {/* <Image
-            className="hidden xl:flex"
-            src="https://images.unsplash.com/photo-1579487785973-74d2ca7abdd5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80"
-          /> */}
           <Wrapper col="true" className="px-3">
-            {!event && (
-              <Wrapper
-                className="items-center my-3 !gap-5"
-                onClick={() => navigate(`/user/${locationDetails.user._id}`)}
-              >
-                <Image
-                  className="w-[75px] h-[75px] !rounded-full"
-                  src={locationDetails?.user?.imageUrl}
-                />
-                <Wrapper col="true">
-                  <Heading>{locationDetails?.user?.username}</Heading>
-                  <Text>{locationDetails?.user?.email}</Text>
+            {deleting && (
+              <Portal>
+                <Wrapper className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
+                  <Deleting />
                 </Wrapper>
+              </Portal>
+            )}
+            {!event && (
+              <Wrapper className="items-center justify-between">
+                <Wrapper
+                  className="items-center my-3 !gap-5"
+                  onClick={() => navigate(`/user/${locationDetails.user._id}`)}
+                >
+                  <Image
+                    className="w-[75px] h-[75px] !rounded-full"
+                    src={locationDetails?.user?.imageUrl}
+                  />
+                  <Wrapper col="true">
+                    <Heading>{locationDetails?.user?.username}</Heading>
+                    <Text>{locationDetails?.user?.email}</Text>
+                  </Wrapper>
+                </Wrapper>
+
+                {locationDetails.userId === user._id && (
+                  <Wrapper>
+                    <Button
+                      onClick={() => setShowDeletePopup(true)}
+                      className="!bg-danger !bg-opacity-40 !text-danger !text-xl"
+                    >
+                      <MdDelete />
+                    </Button>
+
+                    {showDeletePopup && (
+                      <Popup
+                        title="Are you sure to delete this location?"
+                        onClose={() => setShowDeletePopup(false)}
+                        actions={[
+                          {
+                            title: "cancel",
+                            danger: false,
+                            action: () => setShowDeletePopup(false),
+                          },
+                          {
+                            title: "delete",
+                            danger: true,
+                            action: deleteLocation,
+                          },
+                        ]}
+                      />
+                    )}
+                  </Wrapper>
+                )}
               </Wrapper>
             )}
 
