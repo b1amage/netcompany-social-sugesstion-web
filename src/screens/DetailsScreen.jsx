@@ -142,7 +142,7 @@ const DetailsScreen = ({ event }) => {
       ) : (
         <>
           <Wrapper col="true" className="px-3">
-            {!deleting && (
+            {deleting && (
               <Portal>
                 <Wrapper className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
                   <Deleting />
@@ -259,9 +259,10 @@ const DetailsScreen = ({ event }) => {
                                 instanceRef.current?.moveToIdx(idx);
                               }}
                               className={
-                                "rounded-full dot bg-white border border-primary-400 w-2 h-2" +
-                                (currentSlide === idx &&
-                                  "active !bg-primary-400")
+                                "!rounded-full dot border border-primary-400 !w-3 !h-3 block" +
+                                (currentSlide === idx
+                                  ? "active !bg-primary-400"
+                                  : "!bg-black !bg-opacity-50")
                               }
                             ></button>
                           );
@@ -469,21 +470,28 @@ const DetailsScreen = ({ event }) => {
 function Arrow(props) {
   const disabeld = props.disabled ? " arrow--disabled hidden" : "";
   return (
-    <svg
+    <div
       onClick={props.onClick}
-      className={`arrow fill-white w-4 h-4 z-50 absolute top-1/2 -translate-y-1/2 ${
-        props.left ? "arrow--left left-4" : "arrow--right right-4"
+      className={`absolute w-10 h-10 z-50 -translate-y-1/2 flex-center top-1/2 bg-opacity-20 bg-black ${
+        props.left
+          ? "arrow--left left-4 cursor-pointer"
+          : "arrow--right right-4 cursor-pointer"
       } ${disabeld}`}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
     >
-      {props.left && (
-        <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" />
-      )}
-      {!props.left && (
-        <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" />
-      )}
-    </svg>
+      <svg
+        onClick={props.onClick}
+        className={`arrow w-4 h-4 fill-white`}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        {props.left && (
+          <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" />
+        )}
+        {!props.left && (
+          <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" />
+        )}
+      </svg>
+    </div>
   );
 }
 
