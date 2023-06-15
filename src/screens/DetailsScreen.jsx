@@ -259,9 +259,9 @@ const DetailsScreen = ({ event }) => {
                                 instanceRef.current?.moveToIdx(idx);
                               }}
                               className={
-                                "rounded-full dot bg-white w-2 h-2" +
+                                "rounded-full dot bg-white border border-primary-400 w-2 h-2" +
                                 (currentSlide === idx &&
-                                  " active !bg-primary-400")
+                                  "active !bg-primary-400")
                               }
                             ></button>
                           );
