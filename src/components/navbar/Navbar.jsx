@@ -131,7 +131,7 @@ const Navbar = () => {
                 }}
               />
 
-              <SubNavbar />
+              <SubNavbar isAdded={isAdded} isShowNotification={isShowNotification} isShowFilter={isShowFilter} />
                 {isShowEdit && (
                   <Wrapper className="flex-center">
                     <Button

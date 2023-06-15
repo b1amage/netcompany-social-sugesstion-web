@@ -7,17 +7,17 @@ import Image from "@/components/image/Image";
 import { useDispatch, useSelector } from "react-redux";
 import Wrapper from "@/components/wrapper/Wrapper";
 import { validatePathname } from "@/features/navbarSlice";
-const SubNavbar = () => {
+const SubNavbar = ({isAdded, isShowNotification, isShowFilter, onClickAddButton, onClickNotificationButton, onClickFilterButton}) => {
   const dispatch = useDispatch();
-  const { isAdded, isShowNotification, isShowFilter } = useSelector(
-    ({ navbar }) => {
-      return {
-        isAdded: navbar.isAdded,
-        isShowNotification: navbar.isShowNotification,
-        isShowFilter: navbar.isShowFilter,
-      };
-    }
-  );
+  // const { isAdded, isShowNotification, isShowFilter } = useSelector(
+  //   ({ navbar }) => {
+  //     return {
+  //       isAdded: navbar.isAdded,
+  //       isShowNotification: navbar.isShowNotification,
+  //       isShowFilter: navbar.isShowFilter,
+  //     };
+  //   }
+  // );
 
   useEffect(() => {
     dispatch(validatePathname(window.location.pathname));
@@ -30,10 +30,11 @@ const SubNavbar = () => {
           src={add}
           alt="add"
           className="w-[28px] h-[28px] m-2"
+          onClick={onClickAddButton}
         />
       )}
       {isShowNotification && (
-        <div className="relative">
+        <div className="relative" onClick={onClickNotificationButton}>
           <Image
             imageClassName=""
             src={notification}
@@ -49,6 +50,7 @@ const SubNavbar = () => {
           src={filter}
           alt="filter"
           className="w-[28px] h-[28px] m-2"
+          onClick={onClickFilterButton}
         />
       )}
     </Wrapper>

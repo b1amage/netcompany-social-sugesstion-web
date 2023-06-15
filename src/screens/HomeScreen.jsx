@@ -48,6 +48,17 @@ const HomeScreen = () => {
     setLocationCategories(newCategory);
   };
 
+  const { isAdded, isShowNotification, isShowFilter } = useSelector(
+    ({ navbar }) => {
+      return {
+        isAdded: navbar.isAdded,
+        isShowNotification: navbar.isShowNotification,
+        isShowFilter: navbar.isShowFilter,
+        isShowEdit: navbar.isShowEdit,
+      };
+    }
+  );
+
   const {
     category,
     weekdayOpenTime,
@@ -220,7 +231,7 @@ const HomeScreen = () => {
       <Wrapper col className="gap-4 md:flex-row md:items-center">
         <User user={user} src={user.imageUrl} />
         <SearchBar />
-        {width > 768 && <SubNavbar />}
+        {width > 768 && <SubNavbar isAdded={isAdded} isShowNotification={isShowNotification} isShowFilter={isShowFilter} onClickAddButton={() => navigate("/create-location")} />}
       </Wrapper>
 
       {/* <Slider
@@ -230,7 +241,7 @@ const HomeScreen = () => {
         imageClassName="h-[40vh] lg:h-[60vh]"
         // label="Features"
         // name="Netcompany"
-        // address="Opal Tower, 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
+        // address="Opal Tower={} 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
         perView={1}
       /> */}
       <OnBoardingSlider />
