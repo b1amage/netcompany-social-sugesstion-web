@@ -16,13 +16,13 @@ const StaticMap = ({
   title,
   address = "92 Nguyen Huu Canh",
 }) => {
-  const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: key,
-  });
+  // const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
+  // const { isLoaded } = useLoadScript({
+  //   googleMapsApiKey: key,
+  // });
   const [selected, setSelected] = React.useState(false);
 
-  if (!isLoaded) return <LoadingScreen />;
+  // if (!isLoaded) return <LoadingScreen />;
   const location = { lat, lng };
   return (
     <GoogleMap

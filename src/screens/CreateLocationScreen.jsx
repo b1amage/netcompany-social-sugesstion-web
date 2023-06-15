@@ -267,7 +267,7 @@ const CreateLocationScreen = () => {
 
   const dispatch = useDispatch();
   return (
-    <Screen className={`py-8`}>
+    <Screen className={`py-8 !px-12`}>
       <LocationForm image={image} images={images} uploadImageErr={uploadImageErr} isShowImage={isShowImage} handleSubmit={handleSubmit} title={title} titleErr={titleErr} address={address} addressErr={addressErr} lat={lat} lng={lng} category={category} categoryErr={categoryErr} description={description} weekdayOpenTime={weekdayOpenTime} weekdayOpenTimeErr={weekdayOpenTimeErr} weekdayCloseTime={weekdayCloseTime} weekdayCloseTimeErr={weekdayCloseTimeErr} weekendOpenTime={weekendOpenTime} weekendOpenTimeErr={weekendOpenTimeErr} weekendCloseTime={weekdayCloseTime} weekendCloseTimeErr={weekendCloseTimeErr} minPrice={minPrice} maxPrice={maxPrice} priceErr={priceErr} currency={currency} currencyErr={currencyErr} setPriceErr={setPriceErr} uploading={uploading} handleOnChangeImage={handleOnChangeImage} handleShowImage={handleShowImage} submitErr={submitErr} isLoading={isLoading} />
       {isShowImage && (
         <Portal location="body">
