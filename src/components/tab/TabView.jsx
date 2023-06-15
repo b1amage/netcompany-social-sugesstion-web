@@ -16,7 +16,7 @@ import Loading from "@/components/loading/Loading";
 import ROUTE from "@/constants/routes";
 import { useNavigate } from "react-router-dom";
 import Text from "@/components/typography/Text";
-
+import { AiOutlinePlusCircle } from "react-icons/ai";
 const EmptyTab = ({ title, actionName, action }) => (
   <Tab className="!flex w-full h-full flex-center xl:my-20">
     <Wrapper col="true">
@@ -33,6 +33,7 @@ const EmptyTab = ({ title, actionName, action }) => (
 );
 
 const TabView = () => {
+  const [tabType, setTabType] = useState("created");
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [places, setPlaces] = useState(placeList);
@@ -131,36 +132,53 @@ const TabView = () => {
   };
 
   const renderCards = (places, type) => {
-    return places.length === 0 ? (
-      <EmptyTab
-        title={
-          type === "created"
-            ? "You have no post yet!"
-            : "You have not liked any location yet!"
-        }
-        actionName={
-          type === "created" ? "Register new location" : "Explore more location"
-        }
-        action={() =>
-          navigate(type === "created" ? ROUTE.CREATE_LOCATION : "/")
-        }
-      />
-    ) : (
-      <Tab
-        activeTabIndex={activeTabIndex}
-        loadMore={
-          activeTabIndex === 0 ? loadMoreLocation : loadMoreLikedLocation
-        }
-      >
-        {loading ? (
-          <Loading />
-        ) : (
-          places.map((place, index) => (
-            <ProfileCard key={index} place={place} />
-          ))
-        )}
-      </Tab>
-    );
+    const results =
+      places.length === 0 ? (
+        <EmptyTab
+          title={
+            type === "created"
+              ? "You have no post yet!"
+              : "You have not liked any location yet!"
+          }
+          actionName={
+            type === "created"
+              ? "Register new location"
+              : "Explore more location"
+          }
+          action={() =>
+            navigate(type === "created" ? ROUTE.CREATE_LOCATION : "/")
+          }
+        />
+      ) : (
+        <Tab
+          activeTabIndex={activeTabIndex}
+          loadMore={
+            activeTabIndex === 0 ? loadMoreLocation : loadMoreLikedLocation
+          }
+        >
+          {loading ? (
+            <Wrapper className="absolute w-full flex-center">
+              <Loading />
+            </Wrapper>
+          ) : (
+            <>
+              {type === "created" && (
+                <Wrapper
+                  onClick={() => navigate("/create-location")}
+                  className="hover:bg-opacity-10 transition-all flex-center cursor-pointer w-[160px] h-[230px] md:w-full md:h-[180px] xl:max-w-[400px] xl:h-[200px] bg-primary-400 bg-opacity-30 rounded-lg border-2 border-dashed border-primary-400"
+                >
+                  <AiOutlinePlusCircle className="text-4xl text-primary-400" />
+                </Wrapper>
+              )}
+              {places.map((place, index) => (
+                <ProfileCard key={index} place={place} />
+              ))}
+            </>
+          )}
+        </Tab>
+      );
+
+    return results;
   };
 
   const renderTabContent = (index) => {
@@ -216,6 +234,7 @@ const TabView = () => {
         ))}
       </div>
       {/* Tab Content */}
+
       {renderTabContent(activeTabIndex)}
 
       {nextLoading && (
