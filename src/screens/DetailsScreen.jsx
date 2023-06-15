@@ -142,7 +142,7 @@ const DetailsScreen = ({ event }) => {
       ) : (
         <>
           <Wrapper col="true" className="px-3">
-            {deleting && (
+            {!deleting && (
               <Portal>
                 <Wrapper className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
                   <Deleting />
