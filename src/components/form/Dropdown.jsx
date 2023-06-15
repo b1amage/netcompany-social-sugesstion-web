@@ -42,7 +42,7 @@ const Dropdown = ({
 
   return (
     <div
-      className={`flex flex-col relative ${label && "gap-1 md:gap-2 lg:gap-3"}`}
+      className={`flex flex-col relative w-full md:max-w-[240px] ${label && "gap-1 md:gap-2 lg:gap-3"}`}
       ref={dropdownRef}
     >
       {label && <Label required={required}>{label}</Label>}

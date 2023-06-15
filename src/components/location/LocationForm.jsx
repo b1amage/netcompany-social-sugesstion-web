@@ -73,7 +73,7 @@ const LocationForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`${isShowImage && "overflow-hidden h-screen"} !px-12`}
+      className={`${isShowImage && "overflow-hidden h-screen"} location-form`}
     >
       <Heading className="w-full sm:text-center !text-[42px] leading-10">
         Register New Location
@@ -260,8 +260,8 @@ const LocationForm = ({
             <Label>
               Price Range per person <i>(optional)</i>{" "}
             </Label>
-            <Wrapper className="flex-col gap-4 sm:flex-row">
-              <Wrapper className="justify-between w-full gap-4 sm:justify-start">
+            <Wrapper className="flex-col gap-4 sm:flex-row !w-full">
+              <Wrapper className="justify-between gap-4 sm:justify-start">
                 <Input
                   label="From: "
                   className={`rounded-lg w-full !py-4 bg-white ${
@@ -303,10 +303,10 @@ const LocationForm = ({
               </Wrapper>
               <Dropdown
                 label="Currency:"
-                className="h-full rounded-lg"
+                className=" rounded-lg flex-1"
                 options={currencyList}
                 value={currency}
-                // defaultTitle=""
+                defaultTitle={"SELECT CURRENCY"}
                 onChange={(option) => dispatch(changeCurrency(option))}
                 err={currencyErr}
               />
