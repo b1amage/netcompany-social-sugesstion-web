@@ -60,6 +60,7 @@ const LocationForm = ({
   minPrice,
   maxPrice,
   priceErr,
+  setPriceErr,
   currency,
   currencyErr,
   uploading,
@@ -147,7 +148,7 @@ const LocationForm = ({
           />
         </Wrapper>
 
-        <Wrapper col="true" className="gap-8 lg:flex-row">
+        <Wrapper col="true" className="gap-8 xl:flex-row">
           <Wrapper col="true" className="gap-4">
             <Label>
               Time <span className="text-secondary-400">*</span>
@@ -155,12 +156,12 @@ const LocationForm = ({
 
             <Wrapper
               col="true"
-              className={`gap-4 ${width > 520 && "!flex-row !justify-between"}`}
+              className={`gap-4 ${width > 520 && "!flex-row "} w-full`}
             >
-              <Wrapper className="flex-col gap-2 w-fit">
+              <Wrapper className="flex-col gap-2 w-full">
                 <Label>Weekday:</Label>
-                <Wrapper className="gap-4">
-                  <Wrapper col="true">
+                <Wrapper className="gap-4 w-full">
+                  <Wrapper col="true" className="w-full">
                     <Label className="!text-[14px]">
                       Open time: <span className="text-secondary-400">*</span>
                     </Label>
@@ -180,7 +181,7 @@ const LocationForm = ({
                     />
                   </Wrapper>
 
-                  <Wrapper col="true">
+                  <Wrapper col="true" className="w-full">
                     <Label className="!text-[14px]">
                       Close time: <span className="text-secondary-400">*</span>
                     </Label>
@@ -203,13 +204,13 @@ const LocationForm = ({
               </Wrapper>
               {width >= 520 && <div className=" w-[1px] bg-black"></div>}
 
-              <Wrapper className="flex-col gap-2">
-                <Label>Weekend: </Label>
+              <Wrapper className="flex-col gap-2 w-full">
+                <Label>Weekend: <i>(Optional)</i></Label>
 
-                <Wrapper className="gap-4 ">
-                  <Wrapper col="true">
+                <Wrapper className="gap-4">
+                  <Wrapper col="true" className="!w-full">
                     <Label className="!text-[14px]">
-                      Open time: <span className="text-secondary-400">*</span>
+                      Open time: 
                     </Label>
 
                     <Input
@@ -228,9 +229,9 @@ const LocationForm = ({
                     />
                   </Wrapper>
 
-                  <Wrapper col="true">
+                  <Wrapper col="true" className="w-full">
                     <Label className="!text-[14px]">
-                      Close time: <span className="text-secondary-400">*</span>
+                      Close time: 
                     </Label>
                     <Input
                       type="time"
@@ -261,7 +262,7 @@ const LocationForm = ({
               Price Range per person <i>(optional)</i>{" "}
             </Label>
             <Wrapper className="flex-col gap-4 sm:flex-row !w-full">
-              <Wrapper className="justify-between gap-4 sm:justify-start">
+              <Wrapper className="justify-between gap-4 sm:justify-start !w-full">
                 <Input
                   label="From: "
                   className={`rounded-lg w-full !py-4 bg-white ${
@@ -303,7 +304,8 @@ const LocationForm = ({
               </Wrapper>
               <Dropdown
                 label="Currency:"
-                className=" rounded-lg flex-1"
+                className=" rounded-lg"
+                wrapperClassName="xl:max-w-[240px] !w-full"
                 options={currencyList}
                 value={currency}
                 defaultTitle={"SELECT CURRENCY"}
