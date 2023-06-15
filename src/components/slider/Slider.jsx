@@ -78,10 +78,9 @@ const Slider = ({
         handleSlideButtons(abs, minIdx, maxIdx);
       }
     },
-    updated(s){
-      const { abs, minIdx, maxIdx } = s.track.details;
-      handleSlideButtons(abs, minIdx, maxIdx);
-    }
+    // updated(s){
+      
+    // }
   });
 
   useEffect(() => {
@@ -90,6 +89,8 @@ const Slider = ({
     }
     if (slider){
       slider.current.update()
+      const { abs, minIdx, maxIdx } = slider.current.track.details;
+      handleSlideButtons(abs, minIdx, maxIdx);
     }
     console.log(items);
     console.log(imgList);

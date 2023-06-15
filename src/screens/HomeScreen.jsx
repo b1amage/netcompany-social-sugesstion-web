@@ -21,6 +21,7 @@ import Slider from "@/components/slider/Slider";
 import Label from "@/components/form/Label";
 import Loading from "@/components/loading/Loading";
 import { GoPlus } from "react-icons/go";
+import OnBoardingSlider from "@/components/slider/OnBoardingSlider";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -222,7 +223,7 @@ const HomeScreen = () => {
         {width > 768 && <SubNavbar />}
       </Wrapper>
 
-      <Slider
+      {/* <Slider
         imgList={imageList}
         className="!bg-transparent sm:text-left !p-0"
         cardClassName="!w-full"
@@ -231,7 +232,8 @@ const HomeScreen = () => {
         // name="Netcompany"
         // address="Opal Tower, 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
         perView={1}
-      />
+      /> */}
+      <OnBoardingSlider />
 
       <PreferencesSelect
         categoryList={categoryList}
