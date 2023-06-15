@@ -261,7 +261,7 @@ const DetailsScreen = ({ event }) => {
                               className={
                                 "rounded-full dot bg-white w-2 h-2" +
                                 (currentSlide === idx &&
-                                  " active !bg-secondary-400")
+                                  " active !bg-primary-400")
                               }
                             ></button>
                           );
@@ -303,11 +303,13 @@ const DetailsScreen = ({ event }) => {
                   {convertTime(locationDetails.weekday.openTime)} -{" "}
                   {convertTime(locationDetails.weekday.closeTime)}
                 </Text>
-                <Text>
-                  <span className="font-bold">Weekend: </span>
-                  {convertTime(locationDetails.weekend.openTime)} -{" "}
-                  {convertTime(locationDetails.weekend.closeTime)}
-                </Text>
+                {"weekend" in locationDetails && (
+                  <Text>
+                    <span className="font-bold">Weekend: </span>
+                    {convertTime(locationDetails.weekend.openTime)} -{" "}
+                    {convertTime(locationDetails.weekend.closeTime)}
+                  </Text>
+                )}
               </Wrapper>
 
               {event ? (
