@@ -73,7 +73,7 @@ const LocationForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`${isShowImage && "overflow-hidden h-screen"}`}
+      className={`${isShowImage && "overflow-hidden h-screen"} !px-12`}
     >
       <Heading className="w-full sm:text-center !text-[42px] leading-10">
         Register New Location

@@ -6,7 +6,7 @@ import {
   InfoWindow,
 } from "@react-google-maps/api";
 
-import LoadingScreen from "@/screens/LoadingScreen";
+// import LoadingScreen from "@/screens/LoadingScreen";
 
 const StaticMap = ({
   lat = 10.7893008,
