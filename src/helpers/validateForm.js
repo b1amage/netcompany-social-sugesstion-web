@@ -35,7 +35,7 @@ const VALIDATE = {
         // if (price === null) return ERROR.required
         if((minPrice && !maxPrice) || (!minPrice && maxPrice)) return ERROR.required
         if (minPrice < 0 || maxPrice < 0) return "Price must not be lower than 0!"
-        if (Number(minPrice.replace(",", "")) >= Number(maxPrice.replace(",", ""))) return ERROR.price
+        if (Number(minPrice.replace(/,/g, "")) >= Number(maxPrice.replace(/,/g, ""))) return ERROR.price
     },
     selectedImage(file) {
         const MAX_FILE_SIZE = 3072 
