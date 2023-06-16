@@ -304,13 +304,14 @@ const DetailsScreen = ({ event }) => {
                   {convertTime(locationDetails.weekday.openTime)} -{" "}
                   {convertTime(locationDetails.weekday.closeTime)}
                 </Text>
-                {"weekend" in locationDetails && (
-                  <Text>
-                    <span className="font-bold">Weekend: </span>
-                    {convertTime(locationDetails.weekend.openTime)} -{" "}
-                    {convertTime(locationDetails.weekend.closeTime)}
-                  </Text>
-                )}
+                {"weekend" in locationDetails &&
+                  locationDetails.weekend !== null && (
+                    <Text>
+                      <span className="font-bold">Weekend: </span>
+                      {convertTime(locationDetails.weekend.openTime)} -{" "}
+                      {convertTime(locationDetails.weekend.closeTime)}
+                    </Text>
+                  )}
               </Wrapper>
 
               {event ? (
