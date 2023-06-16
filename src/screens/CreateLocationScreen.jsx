@@ -164,7 +164,6 @@ const CreateLocationScreen = () => {
         return;
       }
     }
-
     if (weekendOpenTime && weekendCloseTime) {
       if (!minPrice && !maxPrice) {
         data = {
@@ -221,8 +220,8 @@ const CreateLocationScreen = () => {
             coordinates: [lng, lat],
           },
           pricePerPerson: {
-            min: Number(minPrice.replace(",", "")).toFixed(2),
-            max: Number(maxPrice.replace(",", "")).toFixed(2),
+            min: parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2)),
+            max: parseFloat(Number(maxPrice.replace(/,/g, "")).toFixed(2)),
             currency: currency.title || currency,
           },
           weekday: {
@@ -292,6 +291,9 @@ const CreateLocationScreen = () => {
             setIsLoading(false);
             return;
           }
+          // console.log(typeof parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2)))
+          // console.log(typeof parseFloat(parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2))))
+
           data = {
             placeId: placeId,
             name: title,
@@ -304,8 +306,8 @@ const CreateLocationScreen = () => {
               coordinates: [lng, lat],
             },
             pricePerPerson: {
-              min: Number(minPrice.replace(",", "")).toFixed(2),
-              max: Number(maxPrice.replace(",", "")).toFixed(2),
+              min: parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2)),
+              max: parseFloat(Number(maxPrice.replace(/,/g, "")).toFixed(2)),
               currency: currency.title || currency,
             },
             weekday: {
@@ -314,12 +316,13 @@ const CreateLocationScreen = () => {
             },
           };
         }
+
       }
     }
 
     console.log(data);
     // // console.log(imgList)
-    // locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup);
+    locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup);
     // // // console.log(response)
     setIsLoading(false);
   };
