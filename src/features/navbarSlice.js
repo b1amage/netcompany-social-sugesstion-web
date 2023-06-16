@@ -20,14 +20,14 @@ const navbarSlice = createSlice({
     validatePathname(state, action) {
       switch (action.payload) {
         case "/profile":
-          state.isAdded = true;
+          state.isAdded = false;
           state.isShowNotification = false;
           state.isShowFilter = false;
           state.isShowEdit = true;
           return;
         case "/my-event": 
         case "/":
-          state.isAdded = true;
+          state.isAdded = false;
           state.isShowNotification = true;
           state.isShowFilter = true;
           state.isShowEdit = false;
