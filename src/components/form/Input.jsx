@@ -19,10 +19,11 @@ const Input = ({
   disabled,
   min,
   errClassName,
-  onWheel
+  onWheel,
+  wrapperInputClassName
 }) => {
   return (
-    <div className={`flex flex-col ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
+    <div className={`flex flex-col ${wrapperInputClassName} ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
       <Label id={id} required={required} className={labelClassName}>
         {label}
       </Label>
