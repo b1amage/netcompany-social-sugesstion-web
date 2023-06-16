@@ -37,17 +37,11 @@ const AppRoutes = () => {
     JSON.parse(localStorage.getItem(localStorageKey.alreadyShownOnboarding)) ||
     null;
   useEffect(() => {
-    if (user) {
-      if (onBoardingAlreadyShown) {
+    if (onBoardingAlreadyShown) {
+      if (user) {
         setIsLogin(true);
         setIsShowNavbar(true);
-      } else {
-        setIsLogin(true);
-        setIsShowNavbar(false);
-      }
-    } else {
-      setIsLogin(false);
-      setIsShowNavbar(false);
+      } 
     }
   }, [user, onBoardingAlreadyShown]);
   return (

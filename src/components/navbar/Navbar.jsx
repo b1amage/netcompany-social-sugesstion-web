@@ -38,7 +38,7 @@ const Navbar = () => {
   const navbarRef = useRef();
   useOnClickOutside(navbarRef, () => {
     // dispatch(handleCloseSideBarClick())
-    setShow(!show);
+    setShow(false);
   });
 
   const dispatch = useDispatch();
@@ -98,16 +98,16 @@ const Navbar = () => {
       <div className="">
         {/* Logo */}
         {viewport.width > BREAK_POINT_NAVBAR && (
-          <div className="w-full relative">
-            <Link to="/" className="">
-              {/* <Logo className="!w-14 !h-14" /> */}
-              <Image
-                className="flex justify-center w-full py-4 rounded-none bg-primary-400"
-                imageClassName="!w-fit"
-                src={logo}
-                alt="logo"
-              />
-            </Link>
+          <div className="w-full relative bg-primary-400">
+            {/* <Logo className="!w-14 !h-14" /> */}
+            <Image
+              className="flex justify-center !w-fit mx-auto py-4 rounded-none "
+              imageClassName="!w-fit"
+              src={logo}
+              alt="logo"
+              onClick={() => navigate("/")}
+            />
+
             <Button
               onClick={() => setShowPopup(true)}
               className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
@@ -141,7 +141,8 @@ const Navbar = () => {
                     alt="add"
                     className="w-[28px] h-[28px] m-2"
                     onClick={() => {
-                      if (window.location.pathname === "/") navigate("/create-location")
+                      if (window.location.pathname === "/")
+                        navigate("/create-location");
                     }}
                   />
                 )}
@@ -211,8 +212,8 @@ const Navbar = () => {
               <div className="fixed inset-0 duration-300 md:hidden bg-black/50 backdrop-blur-md"></div>
             )}
             <ul
-              // ref={navbarRef}
-              onClick={() => setShow(!show)}
+              ref={navbarRef}
+              // onClick={() => setShow(!show)}
               className={`flex flex-col ${
                 show ? "translate-x-0" : "-translate-x-full"
               } duration-300 fixed top-0 h-full pb-6 text-white bg-primary-400 md:mt-0 md:text-sm md:font-medium md:bg-white`}
