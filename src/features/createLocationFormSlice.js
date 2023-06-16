@@ -5,7 +5,7 @@ const createLocationFormSlice = createSlice({
   initialState: {
     placeId: '',
     images: [],
-    image: "",
+    image: undefined,
     category: "",
     title: "",
     address: "",

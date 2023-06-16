@@ -15,6 +15,8 @@ import {
   changeMaxPrice,
   changeCurrency,
   changeTitle,
+  changeImage,
+  addImage,
   changeWeekdayCloseTime,
   changeWeekdayOpenTime,
   changeWeekendCloseTime,
@@ -33,6 +35,8 @@ import Wrapper from "@/components/wrapper/Wrapper";
 import Label from "@/components/form/Label";
 import Button from "@/components/button/Button";
 import Loading from "@/components/loading/Loading";
+import VALIDATE from "@/helpers/validateForm";
+import axios from "axios";
 
 const LocationForm = ({
   image,
@@ -64,13 +68,14 @@ const LocationForm = ({
   currency,
   currencyErr,
   uploading,
-  handleOnChangeImage,
   handleShowImage,
   submitErr,
   isLoading,
+  setUploadImageErr,
+  setUploading,
 }) => {
   const { width } = useViewport();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   return (
     <form
       onSubmit={handleSubmit}
@@ -81,19 +86,19 @@ const LocationForm = ({
       </Heading>
       <Wrapper col="true" className="justify-between w-full gap-8 my-4 xl:my-0">
         <Wrapper className="" col="true">
-            <AutoCompleteScreen
-              label="Location"
-              className={`bg-white`}
-              err={addressErr}
-            />
-            <StaticMap
-              title={title}
-              width={"100%"}
-              height={"60vh"}
-              address={address}
-              lat={lat}
-              lng={lng}
-            />
+          <AutoCompleteScreen
+            label="Location"
+            className={`bg-white`}
+            err={addressErr}
+          />
+          <StaticMap
+            title={title}
+            width={"100%"}
+            height={"60vh"}
+            address={address}
+            lat={lat}
+            lng={lng}
+          />
         </Wrapper>
 
         <Wrapper className="my-4" col="true">
@@ -205,13 +210,13 @@ const LocationForm = ({
               {width >= 520 && <div className=" w-[1px] bg-black"></div>}
 
               <Wrapper className="flex-col gap-2 w-full">
-                <Label>Weekend: <i>(Optional)</i></Label>
+                <Label>
+                  Weekend: <i>(Optional)</i>
+                </Label>
 
                 <Wrapper className="gap-4">
                   <Wrapper col="true" className="!w-full">
-                    <Label className="!text-[14px]">
-                      Open time: 
-                    </Label>
+                    <Label className="!text-[14px]">Open time:</Label>
 
                     <Input
                       type="time"
@@ -230,9 +235,7 @@ const LocationForm = ({
                   </Wrapper>
 
                   <Wrapper col="true" className="w-full">
-                    <Label className="!text-[14px]">
-                      Close time: 
-                    </Label>
+                    <Label className="!text-[14px]">Close time:</Label>
                     <Input
                       type="time"
                       className={`h-[60px] appearance-none !w-full flex justify-end bg-white ${
@@ -325,10 +328,58 @@ const LocationForm = ({
               className="lg:my-0 !justify-end"
               icon={camera}
               uploading={uploading}
-              onChange={handleOnChangeImage}
+              onChange={(e) => {
+                (async function () {
+                  setUploadImageErr();
+                  dispatch(changeImage());
+                  setUploading(true);
+                  // console.log(e.target.files[0])
+                  // console.log(e.target.value)
+                  if (e.target.files[0] === undefined) {
+                    if (images.length > 0) {
+                      dispatch(changeImage(images[images.length - 1]));
+                    }
+                    setUploading(false);
+                    return;
+                  }
+                  if (VALIDATE.selectedImage(e.target.files[0])) {
+                    if (images.length > 0) {
+                      dispatch(changeImage(images[images.length - 1]));
+                    }
+                    setUploadImageErr(
+                      VALIDATE.selectedImage(e.target.files[0])
+                    );
+                    setUploading(false);
+                    return;
+                  }
+                  var bodyFormData = new FormData();
+                  bodyFormData.append("image", e.target.files[0]);
+                  axios({
+                    method: "post",
+                    url:
+                      process.env.NODE_ENV === "dev"
+                        ? "http://localhost:8080/image/upload-image"
+                        : "https://netcompany-social-suggestion-backend.vercel.app/image/upload-image",
+                    data: bodyFormData,
+                    headers: { "Content-Type": "multipart/form-data" },
+                  })
+                    .then(function (response) {
+                      console.log(response.data.image);
+                      dispatch(changeImage(response.data.image));
+                      dispatch(addImage(response.data.image));
+                      setUploading(false);
+                    })
+                    .catch(function (response) {
+                      console.log(response);
+                      setUploading(false);
+                    });
+                })();
+              }}
             />
           </Wrapper>
-          <Error className={`${!uploadImageErr && 'invisible'} !my-0`} fluid>{uploadImageErr}</Error>
+          <Error className={`${!uploadImageErr && "invisible"} !my-0`} fluid>
+            {uploadImageErr}
+          </Error>
 
           <div
             className={`border border-black rounded-lg relative h-[60vh] flex justify-center items-center`}
@@ -354,7 +405,7 @@ const LocationForm = ({
               className={`py-2 h-[24vh] items-center ${
                 images.length <= 0 && "invisible"
               }`}
-              items={images}
+              imgList={images}
               perView={width > 768 ? 4 : 2}
             />
           )}
