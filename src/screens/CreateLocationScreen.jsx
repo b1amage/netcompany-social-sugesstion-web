@@ -1,58 +1,62 @@
-import Button from "@/components/button/Button";
 import Screen from "@/components/container/Screen";
-import Wrapper from "@/components/wrapper/Wrapper";
-import Label from "@/components/form/Label";
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import CurrencyFormat from "react-currency-format";
+
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import useViewport from "@/hooks/useScreenWidth";
 import Input from "@/components/form/Input";
 import camera from "@/assets/camera.svg";
+import Slider from "@/components/slider/Slider";
 
 import categoryList from "@/constants/category";
 import Dropdown from "@/components/form/Dropdown";
 import UploadImage from "@/components/image/UploadImage";
+import Portal from "@/components/HOC/Portal";
+import useOnClickOutside from "@/hooks/useOnClickOutside";
+import Image from "@/components/image/Image";
 
-import Slider from "@/components/slider/Slider";
-import { useDispatch, useSelector } from "react-redux";
+import VALIDATE from "@/helpers/validateForm";
+import locationApi from "@/api/locationApi";
+import { useNavigate } from "react-router-dom";
+import { DEFAULT } from "@/constants/defaultData";
+// import { imageList } from "@/constants/images";
+import Loading from "@/components/loading/Loading";
+import Popup from "@/components/popup/Popup";
+import localStorageKey from "@/constants/localStorageKeys";
+import ROUTE from "@/constants/routes";
+// import LocationForm from "@/components/location/LocationForm";
+
 import {
   changeCategory,
-  changeImage,
   changeDescription,
   changeMinPrice,
   changeMaxPrice,
   changeCurrency,
   changeTitle,
+  changeImage,
   addImage,
   changeWeekdayCloseTime,
   changeWeekdayOpenTime,
   changeWeekendCloseTime,
   changeWeekendOpenTime,
 } from "@/features/createLocationFormSlice";
-import axios from "axios";
 
-import Portal from "@/components/HOC/Portal";
-import useOnClickOutside from "@/hooks/useOnClickOutside";
-import Image from "@/components/image/Image";
 import { currencyList } from "@/constants/currencyList";
+
 import Heading from "@/components/typography/Heading";
 import StaticMap from "@/test/StaticMap";
 import AutoCompleteScreen from "@/test/AutoComplete";
-import VALIDATE from "@/helpers/validateForm";
+
 import Error from "@/components/form/Error";
-import { LoadScript } from "@react-google-maps/api";
-import locationApi from "@/api/locationApi";
-import { useNavigate } from "react-router-dom";
-import { DEFAULT } from "@/constants/defaultData";
-import { imageList } from "@/constants/images";
-import Loading from "@/components/loading/Loading";
-import useViewport from "@/hooks/useScreenWidth";
-import Popup from "@/components/popup/Popup";
-import localStorageKey from "@/constants/localStorageKeys";
-import ROUTE from "@/constants/routes";
+import Wrapper from "@/components/wrapper/Wrapper";
+import Label from "@/components/form/Label";
+import Button from "@/components/button/Button";
 
 const CreateLocationScreen = () => {
   const [uploading, setUploading] = useState(false);
   const [isShowImage, setIsShowImage] = useState(false);
   const screen = document.getElementsByTagName("BODY")[0];
-  const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
   const { width } = useViewport();
   const navigate = useNavigate();
   const handleShowImage = () => {
@@ -115,13 +119,16 @@ const CreateLocationScreen = () => {
   const [priceErr, setPriceErr] = useState();
   const [weekdayOpenTimeErr, setWeekdayOpenTimeErr] = useState();
   const [weekdayCloseTimeErr, setWeekdayCloseTimeErr] = useState();
-  const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();
-  const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
+  // const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();
+  // const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
+  const [weekendTimeErr, setWeekendTimeErr] = useState();
   const [uploadImageErr, setUploadImageErr] = useState();
   const [currencyErr, setCurrencyErr] = useState();
   const [submitErr, setSubmitErr] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowPopup, setIsShowPopup] = useState(false);
+
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -136,17 +143,13 @@ const CreateLocationScreen = () => {
       VALIDATE.title(title) ||
       VALIDATE.category(category) ||
       VALIDATE.time(weekdayOpenTime) ||
-      VALIDATE.time(weekdayCloseTime) ||
-      VALIDATE.time(weekendOpenTime) ||
-      VALIDATE.time(weekendCloseTime)
+      VALIDATE.time(weekdayCloseTime)
     ) {
       setTitleErr(VALIDATE.title(title));
       setAddressErr(VALIDATE.location(address));
       setCategoryErr(VALIDATE.category(category));
       setWeekdayOpenTimeErr(VALIDATE.time(weekdayOpenTime));
       setWeekdayCloseTimeErr(VALIDATE.time(weekdayCloseTime));
-      setWeekendOpenTimeErr(VALIDATE.time(weekendOpenTime));
-      setWeekendCloseTimeErr(VALIDATE.time(weekendCloseTime));
       setSubmitErr((prev) => [...prev, "Please fill in all required fields!"]);
       setIsLoading(false);
       return;
@@ -161,66 +164,160 @@ const CreateLocationScreen = () => {
         return;
       }
     }
-    if (minPrice || maxPrice) {
-      if (VALIDATE.price(minPrice, maxPrice)) {
-        setPriceErr(VALIDATE.price(minPrice, maxPrice));
-        setSubmitErr((prev) => [...prev, VALIDATE.price(minPrice, maxPrice)]);
+    if (weekendOpenTime && weekendCloseTime) {
+      if (!minPrice && !maxPrice) {
+        data = {
+          placeId: placeId,
+          name: title,
+          address: address,
+          description: description,
+          imageUrls: imgList,
+          locationCategory: category.title,
+          location: {
+            type: "Point",
+            coordinates: [lng, lat],
+          },
+          weekday: {
+            openTime: weekdayOpenTime.replace(":", ""),
+            closeTime: weekdayCloseTime.replace(":", ""),
+          },
+          weekend: {
+            openTime: weekendOpenTime.replace(":", ""),
+            closeTime: weekendCloseTime.replace(":", ""),
+          },
+        };
+      } else {
+        if ((minPrice && !maxPrice) || (!minPrice && maxPrice)) {
+          setPriceErr('Please fill in all fields in "Price"!');
+          setSubmitErr((prev) => [
+            ...prev,
+            'Please fill in all fields in "Price"!',
+          ]);
+          setIsLoading(false);
+          return;
+        }
+        if (VALIDATE.price(minPrice, maxPrice)) {
+          setPriceErr(VALIDATE.price(minPrice, maxPrice));
+          setSubmitErr((prev) => [...prev, VALIDATE.price(minPrice, maxPrice)]);
+          setIsLoading(false);
+          return;
+        }
+        if (!currency) {
+          setCurrencyErr("Please select the currency!");
+          setSubmitErr((prev) => [...prev, "Please select the currency!"]);
+          setIsLoading(false);
+          return;
+        }
+        data = {
+          placeId: placeId,
+          name: title,
+          address: address,
+          description: description,
+          imageUrls: imgList,
+          locationCategory: category.title,
+          location: {
+            type: "Point",
+            coordinates: [lng, lat],
+          },
+          pricePerPerson: {
+            min: parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2)),
+            max: parseFloat(Number(maxPrice.replace(/,/g, "")).toFixed(2)),
+            currency: currency.title || currency,
+          },
+          weekday: {
+            openTime: weekdayOpenTime.replace(":", ""),
+            closeTime: weekdayCloseTime.replace(":", ""),
+          },
+          weekend: {
+            openTime: weekendOpenTime.replace(":", ""),
+            closeTime: weekendCloseTime.replace(":", ""),
+          },
+        };
+      }
+    } else {
+      if (
+        (weekendOpenTime && !weekendCloseTime) ||
+        (!weekendOpenTime && weekendCloseTime)
+      ) {
+        // setWeekendOpenTimeErr(VALIDATE.time(weekendOpenTime));
+        // setWeekendCloseTimeErr(VALIDATE.time(weekendCloseTime));
+        setWeekendTimeErr('Please fill in all fields in "Weekend" time!');
+        setSubmitErr((prev) => [
+          ...prev,
+          'Please fill in all fields in "Weekend" time!',
+        ]);
         setIsLoading(false);
         return;
+      } else {
+        if (!minPrice && !maxPrice) {
+          data = {
+            placeId: placeId,
+            name: title,
+            address: address,
+            description: description,
+            imageUrls: imgList,
+            locationCategory: category.title,
+            location: {
+              type: "Point",
+              coordinates: [lng, lat],
+            },
+            weekday: {
+              openTime: weekdayOpenTime.replace(":", ""),
+              closeTime: weekdayCloseTime.replace(":", ""),
+            },
+          };
+        } else {
+          if ((minPrice && !maxPrice) || (!minPrice && maxPrice)) {
+            setPriceErr('Please fill in all fields in "Price"!');
+            setSubmitErr((prev) => [
+              ...prev,
+              'Please fill in all fields in "Price"!',
+            ]);
+            setIsLoading(false);
+            return;
+          }
+          if (VALIDATE.price(minPrice, maxPrice)) {
+            setPriceErr(VALIDATE.price(minPrice, maxPrice));
+            setSubmitErr((prev) => [
+              ...prev,
+              VALIDATE.price(minPrice, maxPrice),
+            ]);
+            setIsLoading(false);
+            return;
+          }
+          if (!currency) {
+            setCurrencyErr("Please select the currency!");
+            setSubmitErr((prev) => [...prev, "Please select the currency!"]);
+            setIsLoading(false);
+            return;
+          }
+          // console.log(typeof parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2)))
+          // console.log(typeof parseFloat(parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2))))
+
+          data = {
+            placeId: placeId,
+            name: title,
+            address: address,
+            description: description,
+            imageUrls: imgList,
+            locationCategory: category.title,
+            location: {
+              type: "Point",
+              coordinates: [lng, lat],
+            },
+            pricePerPerson: {
+              min: parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2)),
+              max: parseFloat(Number(maxPrice.replace(/,/g, "")).toFixed(2)),
+              currency: currency.title || currency,
+            },
+            weekday: {
+              openTime: weekdayOpenTime.replace(":", ""),
+              closeTime: weekdayCloseTime.replace(":", ""),
+            },
+          };
+        }
+
       }
-      if (!currency){
-        setCurrencyErr("Please select the currency!")
-        setSubmitErr((prev) => [...prev, "Please select the currency!"]);
-        setIsLoading(false);
-        return;
-      }
-      data = {
-        placeId: placeId,
-        name: title,
-        address: address,
-        description: description,
-        imageUrls: imgList,
-        locationCategory: category.title,
-        location: {
-          type: "Point",
-          coordinates: [lng, lat],
-        },
-        pricePerPerson: {
-          min: parseInt(minPrice),
-          max: parseInt(maxPrice),
-          currency: currency.title || currency,
-        },
-        weekday: {
-          openTime: weekdayOpenTime.replace(":", ""),
-          closeTime: weekdayCloseTime.replace(":", ""),
-        },
-        weekend: {
-          openTime: weekendOpenTime.replace(":", ""),
-          closeTime: weekendCloseTime.replace(":", ""),
-        },
-      };
-    }
-    if (!minPrice && !maxPrice) {
-      data = {
-        placeId: placeId,
-        name: title,
-        address: address,
-        description: description,
-        imageUrls: imgList,
-        locationCategory: category.title,
-        location: {
-          type: "Point",
-          coordinates: [lng, lat],
-        },
-        weekday: {
-          openTime: weekdayOpenTime.replace(":", ""),
-          closeTime: weekdayCloseTime.replace(":", ""),
-        },
-        weekend: {
-          openTime: weekendOpenTime.replace(":", ""),
-          closeTime: weekendCloseTime.replace(":", ""),
-        },
-      };
     }
 
     console.log(data);
@@ -244,81 +341,31 @@ const CreateLocationScreen = () => {
     }
   }, [images]);
 
-  const handleOnChangeImage = (e) => {
-    (async function () {
-      setUploadImageErr();
-      dispatch(changeImage());
-      setUploading(true);
-      // console.log(e.target.files[0])
-      // console.log(e.target.value)
-      if (e.target.files[0] === undefined) {
-        if (images.length > 0) {
-          dispatch(changeImage(images[images.length - 1]));
-        }
-        setUploading(false);
-        return;
-      }
-      if (VALIDATE.selectedImage(e.target.files[0])) {
-        if (images.length > 0) {
-          dispatch(changeImage(images[images.length - 1]));
-        }
-        setUploadImageErr(VALIDATE.selectedImage(e.target.files[0]));
-        setUploading(false);
-        return;
-      }
- 
-      var bodyFormData = new FormData();
-      bodyFormData.append("image", e.target.files[0]);
-      axios({
-        method: "post",
-        url:
-          process.env.NODE_ENV === "dev"
-            ? "http://localhost:8080/image/upload-image"
-            : "https://netcompany-social-suggestion-backend.vercel.app/image/upload-image",
-        data: bodyFormData,
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-        .then(function (response) {
-          console.log(response);
-          dispatch(changeImage(response.data.image));
-          dispatch(addImage(response.data.image));
-          setUploading(false);
-        })
-        .catch(function (response) {
-          console.log(response);
-          setUploading(false);
-        });
-    })();
-  };
-
-  const dispatch = useDispatch();
-  const libraries = useMemo(() => ["places"], []);
   return (
-    <Screen className={`py-8`}>
+    <Screen className={`py-8 location-form`}>
+      <Heading className="w-full sm:text-center !text-[42px] leading-10">
+        Register New Location
+      </Heading>
       <form
         onSubmit={handleSubmit}
         className={`${isShowImage && "overflow-hidden h-screen"}`}
       >
-        <Heading className="w-full sm:text-center !text-[42px] leading-10">
-          Register New Location
-        </Heading>
-        <Wrapper col className="justify-between w-full gap-8 my-4 xl:my-0">
+        <Wrapper col="true" className="justify-between w-full gap-8 my-8">
           <Wrapper className="" col="true">
-            <LoadScript libraries={libraries} googleMapsApiKey={key}>
-              <AutoCompleteScreen
-                label="Location"
-                className={`bg-white`}
-                err={addressErr}
-              />
-              <StaticMap
-                title={title}
-                width={"100%"}
-                height={"60vh"}
-                address={address}
-                lat={lat}
-                lng={lng}
-              />
-            </LoadScript>
+            <AutoCompleteScreen
+              label="Location"
+              className={`bg-white h-[60px] !py-2`}
+              address={address}
+              addressErr={addressErr}
+            />
+            <StaticMap
+              title={title}
+              width={"100%"}
+              height={"60vh"}
+              address={address}
+              lat={lat}
+              lng={lng}
+            />
           </Wrapper>
 
           <Wrapper className="my-4" col="true">
@@ -328,13 +375,16 @@ const CreateLocationScreen = () => {
             <Input
               // label={`Title <span className="text-secondary-400">*</span>`}
               placeholder="Enter the place's name"
-              className={`rounded-lg ${
-                title
-                  ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-                  : titleErr
-                  ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
-                  : "focus:!border-secondary-400 focus:!ring-secondary-400"
-              }`}
+              className={`rounded-lg h-[60px] ${
+                title &&
+                "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+              }
+                ${
+                  titleErr &&
+                  (title
+                    ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                    : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
+                }`}
               value={title}
               // err={titleErr}
               onChange={(e) => {
@@ -373,7 +423,7 @@ const CreateLocationScreen = () => {
             />
           </Wrapper>
 
-          <Wrapper col="true" className="gap-8 lg:flex-row">
+          <Wrapper col="true" className="gap-8 xl:flex-row">
             <Wrapper col="true" className="gap-4">
               <Label>
                 Time <span className="text-secondary-400">*</span>
@@ -381,25 +431,25 @@ const CreateLocationScreen = () => {
 
               <Wrapper
                 col="true"
-                className={`gap-4 ${
-                  width > 520 && "!flex-row !justify-between"
-                }`}
+                className={`gap-4 ${width > 520 && "!flex-row "} w-full`}
               >
-                <Wrapper className="flex-col gap-2 w-fit">
+                <Wrapper className="flex-col gap-2 w-full">
                   <Label>Weekday:</Label>
-                  <Wrapper className="gap-4">
-                    <Wrapper col="true">
+                  <Wrapper className="gap-4 w-full">
+                    <Wrapper col="true" className="w-full">
                       <Label className="!text-[14px]">
                         Open time: <span className="text-secondary-400">*</span>
                       </Label>
                       <Input
                         type="time"
                         className={`h-[60px] appearance-none flex justify-between !w-full bg-white ${
-                          weekdayOpenTime
+                          weekdayOpenTime &&
+                          "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                        } ${
+                          weekdayOpenTimeErr &&
+                          (weekdayOpenTime
                             ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-                            : weekdayOpenTimeErr
-                            ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
-                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                            : "focus:!ring-secondary-400 !border-secondary-400 border-2")
                         }`}
                         onChange={(e) => {
                           dispatch(changeWeekdayOpenTime(e.target.value));
@@ -408,7 +458,7 @@ const CreateLocationScreen = () => {
                       />
                     </Wrapper>
 
-                    <Wrapper col="true">
+                    <Wrapper col="true" className="w-full">
                       <Label className="!text-[14px]">
                         Close time:{" "}
                         <span className="text-secondary-400">*</span>
@@ -416,11 +466,13 @@ const CreateLocationScreen = () => {
                       <Input
                         type="time"
                         className={`h-[60px] appearance-none flex justify-between bg-white !w-full ${
-                          weekdayCloseTime
+                          weekdayCloseTime &&
+                          "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                        } ${
+                          weekdayCloseTimeErr &&
+                          (weekdayCloseTime
                             ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-                            : weekdayCloseTimeErr
-                            ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
-                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                            : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
                         }`}
                         onChange={(e) => {
                           dispatch(changeWeekdayCloseTime(e.target.value));
@@ -430,49 +482,48 @@ const CreateLocationScreen = () => {
                     </Wrapper>
                   </Wrapper>
                 </Wrapper>
+
                 {width >= 520 && <div className=" w-[1px] bg-black"></div>}
 
-                <Wrapper className="flex-col gap-2">
-                  <Label>Weekend: </Label>
+                <Wrapper className="flex-col gap-2 w-full">
+                  <Label>
+                    Weekend: <i>(Optional)</i>
+                  </Label>
 
-                  <Wrapper className="gap-4 ">
-                    <Wrapper col="true">
-                      <Label className="!text-[14px]">
-                        Open time: <span className="text-secondary-400">*</span>
-                      </Label>
-
+                  <Wrapper className="gap-4">
+                    <Wrapper col="true" className="!w-full">
+                      <Label className="!text-[14px]">Open time:</Label>
                       <Input
                         type="time"
                         className={`h-[60px] appearance-none !w-full flex justify-between bg-white ${
                           weekendOpenTime
                             ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-                            : weekendOpenTimeErr
-                            ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
-                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                            : weekendTimeErr &&
+                              weekendCloseTime &&
+                              "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
                         }`}
                         onChange={(e) => {
                           dispatch(changeWeekendOpenTime(e.target.value));
+                          // setWeekendTimeErr(VALIDATE.time(e.target.value))
                         }}
                         value={weekendOpenTime}
                       />
                     </Wrapper>
 
-                    <Wrapper col="true">
-                      <Label className="!text-[14px]">
-                        Close time:{" "}
-                        <span className="text-secondary-400">*</span>
-                      </Label>
+                    <Wrapper col="true" className="w-full">
+                      <Label className="!text-[14px]">Close time:</Label>
                       <Input
                         type="time"
                         className={`h-[60px] appearance-none !w-full flex justify-end bg-white ${
                           weekendCloseTime
                             ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-                            : weekendCloseTimeErr
-                            ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
-                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                            : weekendTimeErr &&
+                              weekendOpenTime &&
+                              "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
                         }`}
                         onChange={(e) => {
                           dispatch(changeWeekendCloseTime(e.target.value));
+                          // setWeekendTimeErr(VALIDATE.time(e.target.value))
                           // setWeekendCloseTimeErr(VALIDATE.time(e.target.value));
                         }}
                         value={weekendCloseTime}
@@ -490,9 +541,11 @@ const CreateLocationScreen = () => {
               <Label>
                 Price Range per person <i>(optional)</i>{" "}
               </Label>
-              <Wrapper className="flex-col gap-4 sm:flex-row">
-                <Wrapper className="justify-between w-full gap-4 sm:justify-start">
-                  <Input
+              <Wrapper className="flex-col gap-4 sm:flex-row !w-full">
+                <Wrapper className="justify-between gap-4 sm:justify-start !w-full">
+                  <Wrapper col="true" className="justify-between">
+                    <Label>From: </Label>
+                    {/* <Input
                     label="From: "
                     className={`rounded-lg w-full !py-4 bg-white ${
                       minPrice &&
@@ -510,8 +563,49 @@ const CreateLocationScreen = () => {
                     // err={minPriceErr}
                     onWheel={(e) => e.target.blur()}
                     placeholder="Enter the price"
-                  />
-                  <Input
+                  /> */}
+
+                    <CurrencyFormat
+                      className={`rounded-lg !py-4 bg-white w-full border border-primary-400 focus:ring-1 focus:ring-primary-400 px-4 text-sm transition-all duration-300 outline-none md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${
+                        minPrice &&
+                        (priceErr
+                          ? " focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
+                          : "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500")
+                      }`}
+                      value={minPrice}
+                      thousandSeparator={true}
+                      onChange={(e) => {
+                        dispatch(changeMinPrice(e.target.value));
+                        setPriceErr(VALIDATE.price(e.target.value, maxPrice));
+                      }}
+                      placeholder="Enter the price"
+                      decimalScale={2}
+                      fixedDecimalScale={true}
+                    />
+                  </Wrapper>
+
+                  <Wrapper col="true" className="justify-between">
+                    <Label>To:</Label>
+                    <CurrencyFormat
+                      className={`rounded-lg !py-4 bg-white w-full border border-primary-400 focus:ring-1 focus:ring-primary-400 px-4 text-sm transition-all duration-300 outline-none md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${
+                        maxPrice &&
+                        (priceErr
+                          ? " focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
+                          : "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500")
+                      }`}
+                      value={maxPrice}
+                      thousandSeparator={true}
+                      onChange={(e) => {
+                        dispatch(changeMaxPrice(e.target.value));
+                        setPriceErr(VALIDATE.price(minPrice, e.target.value));
+                      }}
+                      placeholder="Enter the price"
+                      decimalScale={2}
+                      fixedDecimalScale={true}
+                    />
+                  </Wrapper>
+                </Wrapper>
+                {/* <Input
                     label="To: "
                     className={`rounded-lg w-full py-4 bg-white ${
                       maxPrice &&
@@ -530,13 +624,14 @@ const CreateLocationScreen = () => {
                     onWheel={(e) => e.target.blur()}
                     // err={maxPriceErr}
                   />
-                </Wrapper>
+                </Wrapper>*/}
                 <Dropdown
                   label="Currency:"
-                  className="h-full rounded-lg"
+                  className=" rounded-lg"
+                  wrapperClassName="xl:max-w-[240px] !w-full"
                   options={currencyList}
                   value={currency}
-                  // defaultTitle=""
+                  defaultTitle={"SELECT CURRENCY"}
                   onChange={(option) => dispatch(changeCurrency(option))}
                   err={currencyErr}
                 />
@@ -544,7 +639,7 @@ const CreateLocationScreen = () => {
             </Wrapper>
           </Wrapper>
 
-          <div className="flex flex-col w-full h-auto gap-4">
+          <div className="flex flex-col w-full h-auto gap-1.5">
             <Wrapper className="justify-between">
               <Label className="flex items-center w-full px-4">
                 Location image <i>(optional)</i>
@@ -553,9 +648,58 @@ const CreateLocationScreen = () => {
                 className="lg:my-0 !justify-end"
                 icon={camera}
                 uploading={uploading}
-                onChange={handleOnChangeImage}
+                onChange={(e) => {
+                  (async function () {
+                    setUploadImageErr();
+                    dispatch(changeImage());
+                    setUploading(true);
+                    // console.log(e.target.files[0])
+                    // console.log(e.target.value)
+                    if (e.target.files[0] === undefined) {
+                      if (images.length > 0) {
+                        dispatch(changeImage(images[images.length - 1]));
+                      }
+                      setUploading(false);
+                      return;
+                    }
+                    if (VALIDATE.selectedImage(e.target.files[0])) {
+                      if (images.length > 0) {
+                        dispatch(changeImage(images[images.length - 1]));
+                      }
+                      setUploadImageErr(
+                        VALIDATE.selectedImage(e.target.files[0])
+                      );
+                      setUploading(false);
+                      return;
+                    }
+                    var bodyFormData = new FormData();
+                    bodyFormData.append("image", e.target.files[0]);
+                    axios({
+                      method: "post",
+                      url:
+                        process.env.NODE_ENV === "dev"
+                          ? "http://localhost:8080/image/upload-image"
+                          : "https://netcompany-social-suggestion-backend.vercel.app/image/upload-image",
+                      data: bodyFormData,
+                      headers: { "Content-Type": "multipart/form-data" },
+                    })
+                      .then(function (response) {
+                        console.log(response.data.image);
+                        dispatch(changeImage(response.data.image));
+                        dispatch(addImage(response.data.image));
+                        setUploading(false);
+                      })
+                      .catch(function (response) {
+                        console.log(response);
+                        setUploading(false);
+                      });
+                  })();
+                }}
               />
             </Wrapper>
+            <Error className={`${!uploadImageErr && "invisible"} !my-0`} fluid>
+              {uploadImageErr}
+            </Error>
 
             <div
               className={`border border-black rounded-lg relative h-[60vh] flex justify-center items-center`}
@@ -575,15 +719,16 @@ const CreateLocationScreen = () => {
               )}
             </div>
 
-            {images.length > 0  && <Slider
-              src={image}
-              className={`py-2 h-[24vh] items-center ${
-                images.length <= 0 && "invisible"
-              }`}
-              items={images}
-              perView={width > 768 ? 4 : 2}
-            />}
-            {uploadImageErr && <Error fluid>{uploadImageErr}</Error>}
+            {images.length > 0 && (
+              <Slider
+                src={image}
+                className={`py-2 h-[24vh] items-center ${
+                  images.length <= 0 && "invisible"
+                }`}
+                imgList={images}
+                perView={width > 768 ? 4 : 2}
+              />
+            )}
 
             <Error
               fluid

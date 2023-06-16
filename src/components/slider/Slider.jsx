@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import Image from "../image/Image";
+import Image from "@/components/image/Image";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { useDispatch } from "react-redux";
@@ -78,9 +78,12 @@ const Slider = ({
         handleSlideButtons(abs, minIdx, maxIdx);
       }
     },
-    // updated(s){
-      
-    // }
+    updated(s){
+      if (s) {
+        const { abs, minIdx, maxIdx } = s.track.details;
+        handleSlideButtons(abs, minIdx, maxIdx);
+      }
+    }
   });
 
   useEffect(() => {

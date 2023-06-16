@@ -6,9 +6,11 @@ import Arrow from "@/components/onboarding/Arrow";
 import Dot from "@/components/onboarding/Dot";
 import Slide from "@/components/onboarding/Slide";
 import onboardingScreens from "@/constants/onboarding";
+import useAuthentication from "@/hooks/useAuthentication";
 
 const OnboardingScreen = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { isLogin } = useAuthentication();
   const [loaded, setLoaded] = useState(false);
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
@@ -21,13 +23,17 @@ const OnboardingScreen = () => {
   });
 
   return (
-    <Screen className="!w-screen h-screen max-w-none">
+    <Screen className={`!w-screen h-screen max-w-none ${!isLogin && "!mt-0 "}`}>
       <>
         <div className="relative h-full navigation-wrapper">
           {/* SLIDES */}
           <div ref={sliderRef} className="h-full keen-slider">
             {onboardingScreens.map((slide) => (
-              <Slide slide={slide} key={slide.heading}></Slide>
+              <Slide
+                className={`${!isLogin && "!mt-0 "}`}
+                slide={slide}
+                key={slide.heading}
+              ></Slide>
             ))}
           </div>
 

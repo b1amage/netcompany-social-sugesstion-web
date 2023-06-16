@@ -20,8 +20,9 @@ const Range = ({ min, max, onChange, x, label, required }) => {
             backgroundColor: "#0E1F42",
           },
           thumb: {
-            width: 12,
-            height: 12,
+            width: 16,
+            height: 16,
+            border: "4px solid #5CBCA9",
           },
           disabled: {
             opacity: 0.5,

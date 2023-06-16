@@ -5,6 +5,7 @@ import Arrow from "@/components/onboarding/Arrow";
 import Dot from "@/components/onboarding/Dot";
 import Slide from "@/components/onboarding/Slide";
 import onboardingScreens from "@/constants/onboarding";
+import useAuthentication from "@/hooks/useAuthentication";
 const OnBoardingSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
@@ -18,14 +19,15 @@ const OnBoardingSlider = () => {
       setLoaded(true);
     },
   });
-  
+  const {isLogin} = useAuthentication()
   return (
     <div className="relative">
       <div className="relative h-full navigation-wrapper">
         {/* SLIDES */}
         <div ref={sliderRef} className="h-[60vh] keen-slider">
           {onboardingScreens.map((slide) => (
-            <Slide slide={slide} key={slide.heading}></Slide>
+            <Slide 
+            className={`${isLogin && "!mt-0 "}`} slide={slide} key={slide.heading}></Slide>
           ))}
         </div>
 

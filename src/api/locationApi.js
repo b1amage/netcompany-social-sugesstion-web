@@ -125,6 +125,20 @@ const locationApi = {
       console.log(error);
     }
   },
+
+  async deleteLocation(id, notifyDelete) {
+    try {
+      const url = `/location/${id}`;
+      const response = await axiosClient.delete(url, {
+        withCredentials: true,
+      });
+      notifyDelete();
+
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 export default locationApi;

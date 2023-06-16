@@ -14,6 +14,7 @@ const Dropdown = ({
   className,
   required,
   err,
+  wrapperClassName
 }) => {
   const [isOpen, setIsOpen] = useState(null);
   const handleClick = () => {
@@ -42,7 +43,7 @@ const Dropdown = ({
 
   return (
     <div
-      className={`flex flex-col relative ${label && "gap-1 md:gap-2 lg:gap-3"}`}
+      className={`flex flex-col relative w-full ${wrapperClassName} ${label && "gap-1 md:gap-2 lg:gap-3"}`}
       ref={dropdownRef}
     >
       {label && <Label required={required}>{label}</Label>}

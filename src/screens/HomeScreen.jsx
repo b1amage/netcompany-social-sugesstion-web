@@ -22,6 +22,7 @@ import Label from "@/components/form/Label";
 import Loading from "@/components/loading/Loading";
 import { GoPlus } from "react-icons/go";
 import OnBoardingSlider from "@/components/slider/OnBoardingSlider";
+import Screen from "@/components/container/Screen";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -217,7 +218,7 @@ const HomeScreen = () => {
   };
   // locationCategory=${data.locationCategory}&searchInput=${data.searchInput}&latitude=${data.lat}&longitude=${data.lng}&searchDistance=${data.searchDistance}&weekday[openTime]=${data.weekday[0]}&weekday[closeTime]=${data.weekday[1]}&weekend[openTime]=${data.weekend[0]}&weekend[closeTime]=${data.weekend[1]}
   return (
-    <Wrapper col className="my-4 lg:my-8 px-16 gap-8">
+    <Screen className="my-4 lg:my-8 px-16 flex flex-col gap-8 py-4">
       <Wrapper className="flex gap-4 items-center">
         <Image
           src={locationImg}
@@ -315,7 +316,7 @@ const HomeScreen = () => {
           </Wrapper>
         )}
       </Wrapper>
-    </Wrapper>
+    </Screen>
   );
 };
 

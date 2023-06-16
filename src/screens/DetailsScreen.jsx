@@ -2,13 +2,12 @@ import Screen from "@/components/container/Screen";
 import React, { useRef, useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import eventList from "@/constants/mockEvents";
 import Image from "@/components/image/Image";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Heading from "@/components/typography/Heading";
 import Text from "@/components/typography/Text";
 import Guess from "@/components/guess/Guess";
-import { BsBookmark, BsHeart, BsFillHeartFill } from "react-icons/bs";
+import { BsHeart, BsFillHeartFill, BsFillPencilFill } from "react-icons/bs";
 import CommentCard from "@/components/comment/CommentCard";
 import { useParams } from "react-router-dom";
 import locationApi from "@/api/locationApi";
@@ -21,8 +20,14 @@ import Portal from "@/components/HOC/Portal";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import Loading from "@/components/loading/Loading";
 import { useNavigate } from "react-router-dom";
+import Button from "@/components/button/Button";
+import { MdDelete } from "react-icons/md";
+import Popup from "@/components/popup/Popup";
+import Deleting from "@/components/loading/Deleting";
+import toast, { Toaster } from "react-hot-toast";
 
 const DetailsScreen = ({ event }) => {
+  const notifyDelete = () => toast.success("Successfully delete!");
   const { id } = useParams();
   const { user } = useSelector((state) => state.user);
 
@@ -38,6 +43,8 @@ const DetailsScreen = ({ event }) => {
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [nextLoading, setNextLoading] = useState(false);
   const [likedCount, setLikedCount] = useState(0);
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
@@ -101,36 +108,21 @@ const DetailsScreen = ({ event }) => {
     handleLikeOrUnlike();
   };
 
-  // useEffect(() => {
-  //   console.log("in handleScroll: ", likedListRef.current);
+  const deleteLocation = () => {
+    const handleDelete = async () => {
+      setShowDeletePopup(false);
+      setDeleting(true);
+      const response = await locationApi.deleteLocation(
+        locationDetails._id,
+        notifyDelete
+      );
+      console.log(response);
+      setDeleting(false);
+      navigate("/profile");
+    };
 
-  //   const handleScroll = async () => {
-  //     console.log("in handleScroll: ", likedListRef.current);
-  //     if (!likedListRef.current) return;
-  //     const { scrollTop, scrollHeight, clientHeight } = likedListRef.current;
-  //     const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight;
-
-  //     if (isScrolledToBottom) {
-  //       console.log("Scrolled to bottom!");
-  //       // const nextCursor = localStorage.getItem(
-  //       //   activeTabIndex === 0 ? "createdNextCursor" : "likedNextCursor"
-  //       // );
-  //       // if (nextCursor.length > 10) {
-  //       //   await loadMore(nextCursor);
-  //       // }
-  //     }
-  //   };
-  //   if (likedListRef.current) {
-  //     likedListRef.current.addEventListener("scroll", handleScroll);
-  //   }
-
-  //   return () => {
-  //     if (likedListRef.current) {
-  //       // Remember to remove event listener when the component is unmounted
-  //       likedListRef.current.removeEventListener("scroll", handleScroll);
-  //     }
-  //   };
-  // }, [showLikedUsers]);
+    handleDelete();
+  };
 
   const popupRef = useRef();
   const onClose = () => setShowLikedUsers(false);
@@ -149,24 +141,65 @@ const DetailsScreen = ({ event }) => {
         <LoadingScreen />
       ) : (
         <>
-          {/* <Image
-            className="hidden xl:flex"
-            src="https://images.unsplash.com/photo-1579487785973-74d2ca7abdd5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80"
-          /> */}
           <Wrapper col="true" className="px-3">
-            {!event && (
-              <Wrapper
-                className="items-center my-3 !gap-5"
-                onClick={() => navigate(`/user/${locationDetails.user._id}`)}
-              >
-                <Image
-                  className="w-[75px] h-[75px] !rounded-full"
-                  src={locationDetails?.user?.imageUrl}
-                />
-                <Wrapper col="true">
-                  <Heading>{locationDetails?.user?.username}</Heading>
-                  <Text>{locationDetails?.user?.email}</Text>
+            {deleting && (
+              <Portal>
+                <Wrapper className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
+                  <Deleting />
                 </Wrapper>
+              </Portal>
+            )}
+            {!event && (
+              <Wrapper className="items-center justify-between">
+                <Wrapper
+                  className="items-center my-3 !gap-5"
+                  onClick={() => navigate(`/user/${locationDetails.user._id}`)}
+                >
+                  <Image
+                    className="w-[75px] h-[75px] !rounded-full"
+                    src={locationDetails?.user?.imageUrl}
+                  />
+                  <Wrapper col="true">
+                    <Heading>{locationDetails?.user?.username}</Heading>
+                    <Text>{locationDetails?.user?.email}</Text>
+                  </Wrapper>
+                </Wrapper>
+
+                {locationDetails.userId === user._id && (
+                  <Wrapper>
+                    <Button
+                      onClick={() => {}}
+                      className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl"
+                    >
+                      <BsFillPencilFill />
+                    </Button>
+                    <Button
+                      onClick={() => setShowDeletePopup(true)}
+                      className="!bg-danger !bg-opacity-40 !text-danger !text-xl"
+                    >
+                      <MdDelete />
+                    </Button>
+
+                    {showDeletePopup && (
+                      <Popup
+                        title="Are you sure to delete this location?"
+                        onClose={() => setShowDeletePopup(false)}
+                        actions={[
+                          {
+                            title: "cancel",
+                            danger: false,
+                            action: () => setShowDeletePopup(false),
+                          },
+                          {
+                            title: "delete",
+                            danger: true,
+                            action: deleteLocation,
+                          },
+                        ]}
+                      />
+                    )}
+                  </Wrapper>
+                )}
               </Wrapper>
             )}
 
@@ -210,29 +243,32 @@ const DetailsScreen = ({ event }) => {
                     </>
                   )}
 
-                  {loaded && instanceRef.current && (
-                    <div className="absolute bottom-4 !z-50 flex gap-2 left-1/2 -translate-x-1/2 dots">
-                      {[
-                        ...Array(
-                          instanceRef.current.track.details.slides.length
-                        ).keys(),
-                      ].map((idx) => {
-                        return (
-                          <button
-                            key={idx}
-                            onClick={() => {
-                              instanceRef.current?.moveToIdx(idx);
-                            }}
-                            className={
-                              "rounded-full dot bg-white w-2 h-2" +
-                              (currentSlide === idx &&
-                                " active !bg-secondary-400")
-                            }
-                          ></button>
-                        );
-                      })}
-                    </div>
-                  )}
+                  {loaded &&
+                    locationDetails.imageUrls.length > 1 &&
+                    instanceRef.current && (
+                      <div className="absolute bottom-4 !z-50 flex gap-2 left-1/2 -translate-x-1/2 dots">
+                        {[
+                          ...Array(
+                            instanceRef.current.track.details.slides.length
+                          ).keys(),
+                        ].map((idx) => {
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                instanceRef.current?.moveToIdx(idx);
+                              }}
+                              className={
+                                "!rounded-full dot border border-primary-400 !w-3 !h-3 block" +
+                                (currentSlide === idx
+                                  ? "active !bg-primary-400"
+                                  : "!bg-black !bg-opacity-50")
+                              }
+                            ></button>
+                          );
+                        })}
+                      </div>
+                    )}
                 </div>
               </Wrapper>
             ) : (
@@ -268,11 +304,14 @@ const DetailsScreen = ({ event }) => {
                   {convertTime(locationDetails.weekday.openTime)} -{" "}
                   {convertTime(locationDetails.weekday.closeTime)}
                 </Text>
-                <Text>
-                  <span className="font-bold">Weekend: </span>
-                  {convertTime(locationDetails.weekend.openTime)} -{" "}
-                  {convertTime(locationDetails.weekend.closeTime)}
-                </Text>
+                {"weekend" in locationDetails &&
+                  locationDetails.weekend !== null && (
+                    <Text>
+                      <span className="font-bold">Weekend: </span>
+                      {convertTime(locationDetails.weekend.openTime)} -{" "}
+                      {convertTime(locationDetails.weekend.closeTime)}
+                    </Text>
+                  )}
               </Wrapper>
 
               {event ? (
@@ -432,21 +471,28 @@ const DetailsScreen = ({ event }) => {
 function Arrow(props) {
   const disabeld = props.disabled ? " arrow--disabled hidden" : "";
   return (
-    <svg
+    <div
       onClick={props.onClick}
-      className={`arrow fill-white w-4 h-4 z-50 absolute top-1/2 -translate-y-1/2 ${
-        props.left ? "arrow--left left-4" : "arrow--right right-4"
+      className={`absolute w-10 h-10 z-50 -translate-y-1/2 flex-center top-1/2 bg-opacity-20 bg-black ${
+        props.left
+          ? "arrow--left left-4 cursor-pointer"
+          : "arrow--right right-4 cursor-pointer"
       } ${disabeld}`}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
     >
-      {props.left && (
-        <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" />
-      )}
-      {!props.left && (
-        <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" />
-      )}
-    </svg>
+      <svg
+        onClick={props.onClick}
+        className={`arrow w-4 h-4 fill-white`}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+      >
+        {props.left && (
+          <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" />
+        )}
+        {!props.left && (
+          <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" />
+        )}
+      </svg>
+    </div>
   );
 }
 

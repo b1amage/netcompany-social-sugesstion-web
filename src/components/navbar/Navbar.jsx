@@ -9,6 +9,7 @@ import { darkIcons, lightIcons } from "@/constants/navIcons";
 import darkMenu from "@/assets/dark-menu.svg";
 import add from "@/assets/add.svg";
 import notification from "@/assets/bell.svg";
+import localStorageKey from "@/constants/localStorageKeys";
 
 import filter from "@/assets/filter.svg";
 import darkLogoutImg from "@/assets/navigation/dark-logout.svg";
@@ -17,26 +18,30 @@ import { createPortal } from "react-dom";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useDispatch, useSelector } from "react-redux";
 import { validatePathname } from "@/features/navbarSlice";
+import Wrapper from "@/components/wrapper/Wrapper";
+import Counter from "@/components/counter/Counter";
+import Heading from "@/components/typography/Heading";
 import logoutImg from "@/assets/navigation/logout.svg";
 import { useNavigate } from "react-router-dom";
 import Popup from "@/components/popup/Popup";
 import ROUTE from "@/constants/routes";
 import { logout } from "@/features/userSlice";
-import SubNavbar from "./SubNavbar";
 import Button from "@/components/button/Button";
 import { BsPencilFill } from "react-icons/bs";
+import useAuthentication from "@/hooks/useAuthentication";
 const BREAK_POINT_NAVBAR = 768;
 
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-
+  
   const viewport = useViewport();
 
+  const {isLogin} = useAuthentication()
   const navbarRef = useRef();
   useOnClickOutside(navbarRef, () => {
     // dispatch(handleCloseSideBarClick())
-    setShow(!show);
+    setShow(false);
   });
 
   const dispatch = useDispatch();
@@ -96,29 +101,29 @@ const Navbar = () => {
       <div className="">
         {/* Logo */}
         {viewport.width > BREAK_POINT_NAVBAR && (
-          <div className="w-full relative">
-            <Link to="/" className="">
-              {/* <Logo className="!w-14 !h-14" /> */}
-              <Image
-                className="flex justify-center w-full py-4 rounded-none bg-primary-400"
-                imageClassName="!w-fit"
-                src={logo}
-                alt="logo"
-              />
-            </Link>
-            <Button
-              onClick={() => setShowPopup(true)}
-              className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
-              danger
-            >
-              Logout
-            </Button>
+          <div className="w-full relative bg-primary-400">
+            {/* <Logo className="!w-14 !h-14" /> */}
+            <Image
+              className="flex justify-center !w-fit mx-auto py-4 rounded-none "
+              imageClassName="!w-fit"
+              src={logo}
+              alt="logo"
+              onClick={() => isLogin && navigate("/")}
+            />
+
+          {isLogin && <Button
+            onClick={() => setShowPopup(true)}
+            className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
+            danger
+          >
+            Logout
+          </Button>}
           </div>
         )}
 
         {/* CTA Button */}
-        <div className="flex items-center justify-between">
-          {viewport.width <= BREAK_POINT_NAVBAR && (
+        {isLogin && <div className="flex items-center justify-between">
+          {(viewport.width <= BREAK_POINT_NAVBAR ) && (
             <>
               <Image
                 imageClassName=""
@@ -131,7 +136,38 @@ const Navbar = () => {
                 }}
               />
 
-              <SubNavbar isAdded={isAdded} isShowNotification={isShowNotification} isShowFilter={isShowFilter} />
+              <Wrapper className="mr-4 items-center">
+                {isAdded && (
+                  <Image
+                    imageClassName=""
+                    src={add}
+                    alt="add"
+                    className="w-[28px] h-[28px] m-2"
+                    onClick={() => {
+                      if (window.location.pathname === "/")
+                        navigate("/create-location");
+                    }}
+                  />
+                )}
+                {isShowNotification && (
+                  <div className="relative">
+                    <Image
+                      imageClassName=""
+                      src={notification}
+                      alt="notification"
+                      className="w-[28px] h-[28px] m-2"
+                    />
+                    <Counter count={10} />
+                  </div>
+                )}
+                {isShowFilter && (
+                  <Image
+                    imageClassName=""
+                    src={filter}
+                    alt="filter"
+                    className="w-[28px] h-[28px] m-2"
+                  />
+                )}
                 {isShowEdit && (
                   <Wrapper className="flex-center">
                     <Button
@@ -153,13 +189,14 @@ const Navbar = () => {
                   </Button> */}
                   </Wrapper>
                 )}
+              </Wrapper>
             </>
           )}
-        </div>
+        </div>}
 
         {/* Navigation */}
 
-        {viewport.width > BREAK_POINT_NAVBAR ? (
+        {(viewport.width > BREAK_POINT_NAVBAR && isLogin) ? (
           <div className="flex justify-center p-4 mt-0 text-sm font-medium bg-transparent border-0 rounded-lg">
             {navlinks.length > 0 &&
               navlinks.map((link, index) => (
@@ -179,7 +216,7 @@ const Navbar = () => {
             )}
             <ul
               // ref={navbarRef}
-              onClick={() => setShow(!show)}
+              onClick={() => setShow(false)}
               className={`flex flex-col ${
                 show ? "translate-x-0" : "-translate-x-full"
               } duration-300 fixed top-0 h-full pb-6 text-white bg-primary-400 md:mt-0 md:text-sm md:font-medium md:bg-white`}
