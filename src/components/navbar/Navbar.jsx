@@ -215,8 +215,8 @@ const Navbar = () => {
               <div className="fixed inset-0 duration-300 md:hidden bg-black/50 backdrop-blur-md"></div>
             )}
             <ul
-              ref={navbarRef}
-              // onClick={() => setShow(!show)}
+              // ref={navbarRef}
+              onClick={() => setShow(false)}
               className={`flex flex-col ${
                 show ? "translate-x-0" : "-translate-x-full"
               } duration-300 fixed top-0 h-full pb-6 text-white bg-primary-400 md:mt-0 md:text-sm md:font-medium md:bg-white`}
