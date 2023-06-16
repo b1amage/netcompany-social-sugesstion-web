@@ -1,8 +1,6 @@
-import React, { Suspense, useState, useEffect } from "react";
+import React, { Suspense } from "react";
 import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
-import localStorageKey from "@/constants/localStorageKeys";
-
 const ErrorScreen = React.lazy(() => import("@/screens/ErrorScreen"));
 const CreateLocationScreen = React.lazy(() =>
   import("@/screens/CreateLocationScreen")
@@ -30,23 +28,10 @@ const EditProfileScreen = React.lazy(() =>
 );
 
 const AppRoutes = () => {
-  const [isLogin, setIsLogin] = useState(false);
-  const [isShowNavbar, setIsShowNavbar] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user")) || null;
-  const onBoardingAlreadyShown =
-    JSON.parse(localStorage.getItem(localStorageKey.alreadyShownOnboarding)) ||
-    null;
-  useEffect(() => {
-    if (onBoardingAlreadyShown) {
-      if (user) {
-        setIsLogin(true);
-        setIsShowNavbar(true);
-      } 
-    }
-  }, [user, onBoardingAlreadyShown]);
+  
   return (
     <>
-      {isLogin && isShowNavbar && <Navbar />}
+      <Navbar />
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path={ROUTE.ONBOARDING} element={<OnboardingScreen />} />

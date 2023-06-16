@@ -9,6 +9,7 @@ import { darkIcons, lightIcons } from "@/constants/navIcons";
 import darkMenu from "@/assets/dark-menu.svg";
 import add from "@/assets/add.svg";
 import notification from "@/assets/bell.svg";
+import localStorageKey from "@/constants/localStorageKeys";
 
 import filter from "@/assets/filter.svg";
 import darkLogoutImg from "@/assets/navigation/dark-logout.svg";
@@ -32,6 +33,12 @@ const BREAK_POINT_NAVBAR = 768;
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+
+  const user = JSON.parse(localStorage.getItem("user")) || null;
+  const onBoardingAlreadyShown =
+    JSON.parse(localStorage.getItem(localStorageKey.alreadyShownOnboarding)) ||
+    null;
 
   const viewport = useViewport();
 
@@ -51,6 +58,18 @@ const Navbar = () => {
     dispatch(logout());
     navigate(ROUTE.LOGIN);
   };
+  
+  useEffect(() => {
+    if (onBoardingAlreadyShown) {
+      if (user !== JSON.stringify({})) {
+        setIsLogin(true);
+      } else{
+        setIsLogin(false);
+      }
+    } else{
+      setIsLogin(false)
+    }
+  }, []);
 
   const popupActions = [
     {
@@ -105,22 +124,22 @@ const Navbar = () => {
               imageClassName="!w-fit"
               src={logo}
               alt="logo"
-              onClick={() => navigate("/")}
+              onClick={() => isLogin && navigate("/")}
             />
 
-            <Button
-              onClick={() => setShowPopup(true)}
-              className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
-              danger
-            >
-              Logout
-            </Button>
+          {isLogin && <Button
+            onClick={() => setShowPopup(true)}
+            className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
+            danger
+          >
+            Logout
+          </Button>}
           </div>
         )}
 
         {/* CTA Button */}
-        <div className="flex items-center justify-between">
-          {viewport.width <= BREAK_POINT_NAVBAR && (
+        {isLogin && <div className="flex items-center justify-between">
+          {(viewport.width <= BREAK_POINT_NAVBAR ) && (
             <>
               <Image
                 imageClassName=""
@@ -189,11 +208,11 @@ const Navbar = () => {
               </Wrapper>
             </>
           )}
-        </div>
+        </div>}
 
         {/* Navigation */}
 
-        {viewport.width > BREAK_POINT_NAVBAR ? (
+        {(viewport.width > BREAK_POINT_NAVBAR && isLogin) ? (
           <div className="flex justify-center p-4 mt-0 text-sm font-medium bg-transparent border-0 rounded-lg">
             {navlinks.length > 0 &&
               navlinks.map((link, index) => (
