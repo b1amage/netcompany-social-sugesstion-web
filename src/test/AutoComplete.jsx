@@ -23,9 +23,9 @@ import VALIDATE from "@/helpers/validateForm";
 
 // const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
-const AutoCompleteScreen = ({ label, className, src, err }) => {
+const AutoCompleteScreen = ({ label, address, addressErr, className, src, err }) => {
   const inputRef = useRef();
-  const [value, setValue] = useState("");
+  // const [value, setValue] = useState("");
   const [error, setError] = useState(true);
 
   const formatTime = (timeString) => {
@@ -46,7 +46,7 @@ const AutoCompleteScreen = ({ label, className, src, err }) => {
       console.log(places[0].geometry.location.lat());
       console.log(places[0].geometry.location.lng());
       dispatch(changePlaceId(places[0].place_id));
-      
+
       dispatch(changeTitle(places[0].name));
       dispatch(changeAddress(places[0].formatted_address));
       dispatch(changeLat(places[0].geometry.location.lat()));
@@ -91,16 +91,18 @@ const AutoCompleteScreen = ({ label, className, src, err }) => {
           <input
             // value={value}
             onChange={(e) => {
-              setValue(e.target.value);
-              dispatch(changeAddress(e.target.value))
-              if (e.target.value === "" || !inputRef.current.getPlaces()) {
-                setError(true);
-              }
+              // setValue(e.target.value);
+              dispatch(changeAddress(e.target.value));
+              // if (e.target.value === "" || !inputRef.current.getPlaces()) {
+              //   setError(true);
+              // }
             }}
             type="text"
             placeholder="Enter location name or address"
             autoComplete="on"
-            className={`w-full border border-primary-400 focus:ring-1 my-3 focus:ring-primary-400 p-4 text-sm transition-all duration-300 outline-none rounded-lg  md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 bg-white ${className} ${(err) && 'border-secondary-400 border-2'} ${value ? "!border-green-500 focus:!ring-green-500 border-2" : "focus:!border-secondary-400 focus:!ring-secondary-400 "}`}
+            className={`w-full border border-primary-400 focus:ring-1 my-3 focus:ring-primary-400 p-4 text-sm transition-all duration-300 outline-none rounded-lg  md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 bg-white ${className} ${
+              addressErr && (address ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500" : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
+            } ${ address && "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500" }`}
           />
         </Autocomplete>
       </StandaloneSearchBox>

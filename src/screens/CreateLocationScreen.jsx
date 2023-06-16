@@ -1,5 +1,6 @@
 import Screen from "@/components/container/Screen";
 import React, { useEffect, useRef, useState } from "react";
+import CurrencyFormat from "react-currency-format";
 
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -187,7 +188,7 @@ const CreateLocationScreen = () => {
           },
         };
       } else {
-        if ((minPrice && !maxPrice)  || (!minPrice && maxPrice)) {
+        if ((minPrice && !maxPrice) || (!minPrice && maxPrice)) {
           setPriceErr('Please fill in all fields in "Price"!');
           setSubmitErr((prev) => [
             ...prev,
@@ -198,10 +199,7 @@ const CreateLocationScreen = () => {
         }
         if (VALIDATE.price(minPrice, maxPrice)) {
           setPriceErr(VALIDATE.price(minPrice, maxPrice));
-          setSubmitErr((prev) => [
-            ...prev,
-            VALIDATE.price(minPrice, maxPrice),
-          ]);
+          setSubmitErr((prev) => [...prev, VALIDATE.price(minPrice, maxPrice)]);
           setIsLoading(false);
           return;
         }
@@ -223,8 +221,8 @@ const CreateLocationScreen = () => {
             coordinates: [lng, lat],
           },
           pricePerPerson: {
-            min: parseInt(minPrice),
-            max: parseInt(maxPrice),
+            min: Number(minPrice.replace(",", "")).toFixed(2),
+            max: Number(maxPrice.replace(",", "")).toFixed(2),
             currency: currency.title || currency,
           },
           weekday: {
@@ -270,7 +268,7 @@ const CreateLocationScreen = () => {
             },
           };
         } else {
-          if ((minPrice && !maxPrice)  || (!minPrice && maxPrice)) {
+          if ((minPrice && !maxPrice) || (!minPrice && maxPrice)) {
             setPriceErr('Please fill in all fields in "Price"!');
             setSubmitErr((prev) => [
               ...prev,
@@ -306,8 +304,8 @@ const CreateLocationScreen = () => {
               coordinates: [lng, lat],
             },
             pricePerPerson: {
-              min: parseInt(minPrice),
-              max: parseInt(maxPrice),
+              min: Number(minPrice.replace(",", "")).toFixed(2),
+              max: Number(maxPrice.replace(",", "")).toFixed(2),
               currency: currency.title || currency,
             },
             weekday: {
@@ -321,7 +319,7 @@ const CreateLocationScreen = () => {
 
     console.log(data);
     // // console.log(imgList)
-    locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup);
+    // locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup);
     // // // console.log(response)
     setIsLoading(false);
   };
@@ -347,22 +345,20 @@ const CreateLocationScreen = () => {
   // const dispatch = useDispatch();
   return (
     <Screen className={`py-8 location-form`}>
+      <Heading className="w-full sm:text-center !text-[42px] leading-10">
+        Register New Location
+      </Heading>
       <form
         onSubmit={handleSubmit}
         className={`${isShowImage && "overflow-hidden h-screen"}`}
       >
-        <Heading className="w-full sm:text-center !text-[42px] leading-10">
-          Register New Location
-        </Heading>
-        <Wrapper
-          col="true"
-          className="justify-between w-full gap-8 my-4 xl:my-0"
-        >
+        <Wrapper col="true" className="justify-between w-full gap-8 my-8">
           <Wrapper className="" col="true">
             <AutoCompleteScreen
               label="Location"
-              className={`bg-white`}
-              err={addressErr}
+              className={`bg-white h-[60px] !py-2`}
+              address={address}
+              addressErr={addressErr}
             />
             <StaticMap
               title={title}
@@ -381,13 +377,16 @@ const CreateLocationScreen = () => {
             <Input
               // label={`Title <span className="text-secondary-400">*</span>`}
               placeholder="Enter the place's name"
-              className={`rounded-lg ${
-                title
-                  ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-                  : titleErr
-                  ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
-                  : "focus:!border-secondary-400 focus:!ring-secondary-400"
-              }`}
+              className={`rounded-lg h-[60px] ${
+                title &&
+                "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+              }
+                ${
+                  titleErr &&
+                  (title
+                    ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                    : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
+                }`}
               value={title}
               // err={titleErr}
               onChange={(e) => {
@@ -446,11 +445,13 @@ const CreateLocationScreen = () => {
                       <Input
                         type="time"
                         className={`h-[60px] appearance-none flex justify-between !w-full bg-white ${
-                          weekdayOpenTime
+                          weekdayOpenTime &&
+                          "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                        } ${
+                          weekdayOpenTimeErr &&
+                          (weekdayOpenTime
                             ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-                            : weekdayOpenTimeErr
-                            ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
-                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                            : "focus:!ring-secondary-400 !border-secondary-400 border-2")
                         }`}
                         onChange={(e) => {
                           dispatch(changeWeekdayOpenTime(e.target.value));
@@ -467,11 +468,13 @@ const CreateLocationScreen = () => {
                       <Input
                         type="time"
                         className={`h-[60px] appearance-none flex justify-between bg-white !w-full ${
-                          weekdayCloseTime
+                          weekdayCloseTime &&
+                          "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                        } ${
+                          weekdayCloseTimeErr &&
+                          (weekdayCloseTime
                             ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-                            : weekdayCloseTimeErr
-                            ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
-                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                            : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
                         }`}
                         onChange={(e) => {
                           dispatch(changeWeekdayCloseTime(e.target.value));
@@ -542,7 +545,9 @@ const CreateLocationScreen = () => {
               </Label>
               <Wrapper className="flex-col gap-4 sm:flex-row !w-full">
                 <Wrapper className="justify-between gap-4 sm:justify-start !w-full">
-                  <Input
+                  <Wrapper col="true" className="justify-between">
+                    <Label>From: </Label>
+                    {/* <Input
                     label="From: "
                     className={`rounded-lg w-full !py-4 bg-white ${
                       minPrice &&
@@ -560,8 +565,49 @@ const CreateLocationScreen = () => {
                     // err={minPriceErr}
                     onWheel={(e) => e.target.blur()}
                     placeholder="Enter the price"
-                  />
-                  <Input
+                  /> */}
+
+                    <CurrencyFormat
+                      className={`rounded-lg !py-4 bg-white w-full border border-primary-400 focus:ring-1 focus:ring-primary-400 px-4 text-sm transition-all duration-300 outline-none md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${
+                        minPrice &&
+                        (priceErr
+                          ? " focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
+                          : "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500")
+                      }`}
+                      value={minPrice}
+                      thousandSeparator={true}
+                      onChange={(e) => {
+                        dispatch(changeMinPrice(e.target.value));
+                        setPriceErr(VALIDATE.price(e.target.value, maxPrice));
+                      }}
+                      placeholder="Enter the price"
+                      decimalScale={2}
+                      fixedDecimalScale={true}
+                    />
+                  </Wrapper>
+
+                  <Wrapper col="true" className="justify-between">
+                    <Label>To:</Label>
+                    <CurrencyFormat
+                      className={`rounded-lg !py-4 bg-white w-full border border-primary-400 focus:ring-1 focus:ring-primary-400 px-4 text-sm transition-all duration-300 outline-none md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${
+                        maxPrice &&
+                        (priceErr
+                          ? " focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
+                          : "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500")
+                      }`}
+                      value={maxPrice}
+                      thousandSeparator={true}
+                      onChange={(e) => {
+                        dispatch(changeMaxPrice(e.target.value));
+                        setPriceErr(VALIDATE.price(minPrice, e.target.value));
+                      }}
+                      placeholder="Enter the price"
+                      decimalScale={2}
+                      fixedDecimalScale={true}
+                    />
+                  </Wrapper>
+                </Wrapper>
+                {/* <Input
                     label="To: "
                     className={`rounded-lg w-full py-4 bg-white ${
                       maxPrice &&
@@ -580,7 +626,7 @@ const CreateLocationScreen = () => {
                     onWheel={(e) => e.target.blur()}
                     // err={maxPriceErr}
                   />
-                </Wrapper>
+                </Wrapper>*/}
                 <Dropdown
                   label="Currency:"
                   className=" rounded-lg"
