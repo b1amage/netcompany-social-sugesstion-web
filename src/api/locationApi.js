@@ -20,8 +20,35 @@ const locationApi = {
       return error.response.data.message;
     }
   },
-
-  async getLocationDetails(id, navigate) {
+//   ${data.weekday.openTime ? `&weekday[openTime]=${data.weekday.openTime}` : ""}${data.weekday.closeTime ? `&weekday[closeTime]=${data.weekday.closeTime}` : ""}${data.weekend.openTime ? `&weekend[openTime]=${data.weekend.openTime}` : ""}${data.weekend.closeTime ? `&weekend[closeTime]=${data.weekend.closeTime}` : ""}
+// ${data.weekday.openTime ? `&weekday[openTime]=${data.weekday.openTime}` : ""}${data.weekday.closeTime ? `&weekday[closeTime]=${data.weekday.closeTime}` : ""}${data.weekend.openTime ? `&weekend[openTime]=${data.weekend.openTime}` : ""}${data.weekend.closeTime ? `&weekend[closeTime]=${data.weekend.closeTime}` : ""}
+  async getFeaturedLocation(data, next_cursor){
+    try{
+      const url = `/location/filter/featured?${next_cursor ? `next_cursor=${next_cursor}` : ""}${data.locationCategory ? `&locationCategory=${data.locationCategory}` : ""}${data.searchInput ? `&searchInput=${data.searchInput}` : ""}${data.lat ? `&latitude=${data.lat}` : ""}${data.lng ? `&longitude=${data.lng}` : ""}${data.searchDistance ? `&searchDistance=${data.searchDistance}` : ""}${data.weekday.openTime ? `&weekday[openTime]=${data.weekday.openTime}` : ""}${data.weekday.closeTime ? `&weekday[closeTime]=${data.weekday.closeTime}` : ""}${data.weekend.openTime ? `&weekend[openTime]=${data.weekend.openTime}` : ""}${data.weekend.closeTime ? `&weekend[closeTime]=${data.weekend.closeTime}` : ""}`
+      console.log(url)
+      const response = await axiosClient.get(url, {
+        withCredentials: true
+      })
+      // console.log(response)
+      return response
+    }catch(err){
+      console.log(err)
+    }
+  },
+  async getLatestLocation(data, next_cursor){
+    try{
+      const url = `/location/filter/latest?${next_cursor ? `next_cursor=${next_cursor}` : ""}${data.locationCategory ? `&locationCategory=${data.locationCategory}` : ""}${data.searchInput ? `&searchInput=${data.searchInput}` : ""}${data.lat ? `&latitude=${data.lat}` : ""}${data.lng ? `&longitude=${data.lng}` : ""}${data.searchDistance ? `&searchDistance=${data.searchDistance}` : ""}${data.weekday.openTime ? `&weekday[openTime]=${data.weekday.openTime}` : ""}${data.weekday.closeTime ? `&weekday[closeTime]=${data.weekday.closeTime}` : ""}${data.weekend.openTime ? `&weekend[openTime]=${data.weekend.openTime}` : ""}${data.weekend.closeTime ? `&weekend[closeTime]=${data.weekend.closeTime}` : ""}`
+      console.log(url)
+      const response = await axiosClient.get(url, {
+        withCredentials: true
+      })
+      // console.log(response)
+      return response
+    }catch(err){
+      console.log(err)
+    }
+  },
+  async getLocationDetails(id) {
     try {
       const url = `/location/detail/${id}`;
 

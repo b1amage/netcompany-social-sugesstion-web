@@ -2,10 +2,10 @@ import Label from "@/components/form/Label";
 import Category from "@/components/category/Category";
 import generateId from "@/utilities/generateId";
 
-const PreferencesSelect = ({ onSelect, categoryList, locationCategories }) => {
+const PreferencesSelect = ({ label, onSelect, categoryList, locationCategories }) => {
   return (
     <div>
-      <Label>Preferences</Label>
+      <Label>{label}</Label>
 
       <div className="flex flex-wrap gap-2 mt-2">
         {categoryList.map((item) => (

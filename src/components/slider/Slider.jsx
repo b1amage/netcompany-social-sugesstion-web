@@ -142,10 +142,7 @@ const Slider = ({
                   className={`h-[20vh] ${
                     src === image && "border-2 border-secondary-400"
                   } hover:opacity-60 duration-300 ${imageClassName}`}
-                  onClick={() => {
-                    // console.log(image)
-                    dispatch(changeImage(image))}
-                  }
+                  onClick={() => dispatch(changeImage(image))}
                   src={image}
                   alt="image"
                 />

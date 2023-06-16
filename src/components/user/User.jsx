@@ -5,7 +5,7 @@ import { useRef } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 
 const User = ({ isCol, user, src }) => {
-  const { name, email } = user;
+  const { username, email } = user;
 
   const [isShowImage, setIsShowImage] = useState(false);
   const handleShowImage = () => setIsShowImage(true);
@@ -27,7 +27,7 @@ const User = ({ isCol, user, src }) => {
         onClick={handleShowImage}
       />
       <div className="flex flex-col px-4">
-        <h1 className="text-lg font-bold">{name}</h1>
+        <h1 className="text-lg font-bold">{username}</h1>
         <p className="text-md">{email}</p>
       </div>
 

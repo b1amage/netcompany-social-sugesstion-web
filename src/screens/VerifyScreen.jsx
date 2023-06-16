@@ -121,6 +121,7 @@ const VerifyScreen = () => {
           />
 
           <PreferencesSelect
+            label="Preferences"
             categoryList={categoryList}
             onSelect={handleCategoryClick}
             locationCategories={locationCategories}
