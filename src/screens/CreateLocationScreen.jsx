@@ -340,11 +340,6 @@ const CreateLocationScreen = () => {
     }
   }, [images]);
 
-  // const handleOnChangeImage = (e) => {
-
-  // };
-
-  // const dispatch = useDispatch();
   return (
     <Screen className={`py-8 location-form`}>
       <form

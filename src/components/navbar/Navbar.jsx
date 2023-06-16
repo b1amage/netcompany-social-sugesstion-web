@@ -28,20 +28,16 @@ import ROUTE from "@/constants/routes";
 import { logout } from "@/features/userSlice";
 import Button from "@/components/button/Button";
 import { BsPencilFill } from "react-icons/bs";
+import useAuthentication from "@/hooks/useAuthentication";
 const BREAK_POINT_NAVBAR = 768;
 
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
-
-  const user = JSON.parse(localStorage.getItem("user")) || null;
-  const onBoardingAlreadyShown =
-    JSON.parse(localStorage.getItem(localStorageKey.alreadyShownOnboarding)) ||
-    null;
-
+  
   const viewport = useViewport();
 
+  const {isLogin} = useAuthentication()
   const navbarRef = useRef();
   useOnClickOutside(navbarRef, () => {
     // dispatch(handleCloseSideBarClick())
@@ -58,18 +54,6 @@ const Navbar = () => {
     dispatch(logout());
     navigate(ROUTE.LOGIN);
   };
-  
-  useEffect(() => {
-    if (onBoardingAlreadyShown) {
-      if (user !== JSON.stringify({})) {
-        setIsLogin(true);
-      } else{
-        setIsLogin(false);
-      }
-    } else{
-      setIsLogin(false)
-    }
-  }, []);
 
   const popupActions = [
     {
