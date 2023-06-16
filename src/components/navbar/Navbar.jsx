@@ -9,6 +9,7 @@ import { darkIcons, lightIcons } from "@/constants/navIcons";
 import darkMenu from "@/assets/dark-menu.svg";
 import add from "@/assets/add.svg";
 import notification from "@/assets/bell.svg";
+import localStorageKey from "@/constants/localStorageKeys";
 
 import filter from "@/assets/filter.svg";
 import darkLogoutImg from "@/assets/navigation/dark-logout.svg";
@@ -32,13 +33,19 @@ const BREAK_POINT_NAVBAR = 768;
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+
+  const user = JSON.parse(localStorage.getItem("user")) || null;
+  const onBoardingAlreadyShown =
+    JSON.parse(localStorage.getItem(localStorageKey.alreadyShownOnboarding)) ||
+    null;
 
   const viewport = useViewport();
 
   const navbarRef = useRef();
   useOnClickOutside(navbarRef, () => {
     // dispatch(handleCloseSideBarClick())
-    setShow(!show);
+    setShow(false);
   });
 
   const dispatch = useDispatch();
@@ -51,6 +58,18 @@ const Navbar = () => {
     dispatch(logout());
     navigate(ROUTE.LOGIN);
   };
+  
+  useEffect(() => {
+    if (onBoardingAlreadyShown) {
+      if (user !== JSON.stringify({})) {
+        setIsLogin(true);
+      } else{
+        setIsLogin(false);
+      }
+    } else{
+      setIsLogin(false)
+    }
+  }, []);
 
   const popupActions = [
     {
@@ -98,29 +117,29 @@ const Navbar = () => {
       <div className="">
         {/* Logo */}
         {viewport.width > BREAK_POINT_NAVBAR && (
-          <div className="w-full relative">
-            <Link to="/" className="">
-              {/* <Logo className="!w-14 !h-14" /> */}
-              <Image
-                className="flex justify-center w-full py-4 rounded-none bg-primary-400"
-                imageClassName="!w-fit"
-                src={logo}
-                alt="logo"
-              />
-            </Link>
-            <Button
-              onClick={() => setShowPopup(true)}
-              className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
-              danger
-            >
-              Logout
-            </Button>
+          <div className="w-full relative bg-primary-400">
+            {/* <Logo className="!w-14 !h-14" /> */}
+            <Image
+              className="flex justify-center !w-fit mx-auto py-4 rounded-none "
+              imageClassName="!w-fit"
+              src={logo}
+              alt="logo"
+              onClick={() => isLogin && navigate("/")}
+            />
+
+          {isLogin && <Button
+            onClick={() => setShowPopup(true)}
+            className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
+            danger
+          >
+            Logout
+          </Button>}
           </div>
         )}
 
         {/* CTA Button */}
-        <div className="flex items-center justify-between">
-          {viewport.width <= BREAK_POINT_NAVBAR && (
+        {isLogin && <div className="flex items-center justify-between">
+          {(viewport.width <= BREAK_POINT_NAVBAR ) && (
             <>
               <Image
                 imageClassName=""
@@ -141,7 +160,8 @@ const Navbar = () => {
                     alt="add"
                     className="w-[28px] h-[28px] m-2"
                     onClick={() => {
-                      if (window.location.pathname === "/") navigate("/create-location")
+                      if (window.location.pathname === "/")
+                        navigate("/create-location");
                     }}
                   />
                 )}
@@ -188,11 +208,11 @@ const Navbar = () => {
               </Wrapper>
             </>
           )}
-        </div>
+        </div>}
 
         {/* Navigation */}
 
-        {viewport.width > BREAK_POINT_NAVBAR ? (
+        {(viewport.width > BREAK_POINT_NAVBAR && isLogin) ? (
           <div className="flex justify-center p-4 mt-0 text-sm font-medium bg-transparent border-0 rounded-lg">
             {navlinks.length > 0 &&
               navlinks.map((link, index) => (
@@ -211,8 +231,8 @@ const Navbar = () => {
               <div className="fixed inset-0 duration-300 md:hidden bg-black/50 backdrop-blur-md"></div>
             )}
             <ul
-              // ref={navbarRef}
-              onClick={() => setShow(!show)}
+              ref={navbarRef}
+              // onClick={() => setShow(!show)}
               className={`flex flex-col ${
                 show ? "translate-x-0" : "-translate-x-full"
               } duration-300 fixed top-0 h-full pb-6 text-white bg-primary-400 md:mt-0 md:text-sm md:font-medium md:bg-white`}

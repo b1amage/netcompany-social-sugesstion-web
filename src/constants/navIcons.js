@@ -10,6 +10,6 @@ import whitePlanEvent from '@/assets/white-plan-event.svg'
 import whiteMyPlan from '@/assets/white-my-event.svg'
 import whiteMap from '@/assets/white-map.svg'
 
-export const darkIcons = [home, account, planEvent, myPlan, map]
+export const darkIcons = [home, account, planEvent, map]
 
-export const lightIcons = [whiteHome, whiteAccount, whitePlanEvent, whiteMyPlan, whiteMap]
+export const lightIcons = [whiteHome, whiteAccount, whitePlanEvent, whiteMap]
