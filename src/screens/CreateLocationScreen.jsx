@@ -56,7 +56,7 @@ const CreateLocationScreen = () => {
   const [uploading, setUploading] = useState(false);
   const [isShowImage, setIsShowImage] = useState(false);
   const screen = document.getElementsByTagName("BODY")[0];
-  const {width} = useViewport()
+  const { width } = useViewport();
   const navigate = useNavigate();
   const handleShowImage = () => {
     setIsShowImage(true);
@@ -118,8 +118,9 @@ const CreateLocationScreen = () => {
   const [priceErr, setPriceErr] = useState();
   const [weekdayOpenTimeErr, setWeekdayOpenTimeErr] = useState();
   const [weekdayCloseTimeErr, setWeekdayCloseTimeErr] = useState();
-  const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();
-  const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
+  // const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();
+  // const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
+  const [weekendTimeErr, setWeekendTimeErr] = useState();
   const [uploadImageErr, setUploadImageErr] = useState();
   const [currencyErr, setCurrencyErr] = useState();
   const [submitErr, setSubmitErr] = useState([]);
@@ -152,16 +153,6 @@ const CreateLocationScreen = () => {
       setIsLoading(false);
       return;
     }
-    if (VALIDATE.time(weekendOpenTime) || VALIDATE.time(weekendCloseTime)) {
-      setWeekendOpenTimeErr(VALIDATE.time(weekendOpenTime));
-      setWeekendCloseTimeErr(VALIDATE.time(weekendCloseTime));
-      setSubmitErr((prev) => [
-        ...prev,
-        "Please fill in all fields in Weekend time!",
-      ]);
-      setIsLoading(false);
-      return;
-    }
     if (address) {
       if (!placeId) {
         setSubmitErr((prev) => [
@@ -171,18 +162,6 @@ const CreateLocationScreen = () => {
         setIsLoading(false);
         return;
       }
-    }
-    if (VALIDATE.price(minPrice, maxPrice)) {
-      setPriceErr(VALIDATE.price(minPrice, maxPrice));
-      setSubmitErr((prev) => [...prev, VALIDATE.price(minPrice, maxPrice)]);
-      setIsLoading(false);
-      return;
-    }
-    if (!currency) {
-      setCurrencyErr("Please select the currency!");
-      setSubmitErr((prev) => [...prev, "Please select the currency!"]);
-      setIsLoading(false);
-      return;
     }
 
     if (weekendOpenTime && weekendCloseTime) {
@@ -208,6 +187,30 @@ const CreateLocationScreen = () => {
           },
         };
       } else {
+        if ((minPrice && !maxPrice)  || (!minPrice && maxPrice)) {
+          setPriceErr('Please fill in all fields in "Price"!');
+          setSubmitErr((prev) => [
+            ...prev,
+            'Please fill in all fields in "Price"!',
+          ]);
+          setIsLoading(false);
+          return;
+        }
+        if (VALIDATE.price(minPrice, maxPrice)) {
+          setPriceErr(VALIDATE.price(minPrice, maxPrice));
+          setSubmitErr((prev) => [
+            ...prev,
+            VALIDATE.price(minPrice, maxPrice),
+          ]);
+          setIsLoading(false);
+          return;
+        }
+        if (!currency) {
+          setCurrencyErr("Please select the currency!");
+          setSubmitErr((prev) => [...prev, "Please select the currency!"]);
+          setIsLoading(false);
+          return;
+        }
         data = {
           placeId: placeId,
           name: title,
@@ -235,45 +238,84 @@ const CreateLocationScreen = () => {
         };
       }
     } else {
-      if (!minPrice && !maxPrice) {
-        data = {
-          placeId: placeId,
-          name: title,
-          address: address,
-          description: description,
-          imageUrls: imgList,
-          locationCategory: category.title,
-          location: {
-            type: "Point",
-            coordinates: [lng, lat],
-          },
-          weekday: {
-            openTime: weekdayOpenTime.replace(":", ""),
-            closeTime: weekdayCloseTime.replace(":", ""),
-          },
-        };
+      if (
+        (weekendOpenTime && !weekendCloseTime) ||
+        (!weekendOpenTime && weekendCloseTime)
+      ) {
+        // setWeekendOpenTimeErr(VALIDATE.time(weekendOpenTime));
+        // setWeekendCloseTimeErr(VALIDATE.time(weekendCloseTime));
+        setWeekendTimeErr('Please fill in all fields in "Weekend" time!');
+        setSubmitErr((prev) => [
+          ...prev,
+          'Please fill in all fields in "Weekend" time!',
+        ]);
+        setIsLoading(false);
+        return;
       } else {
-        data = {
-          placeId: placeId,
-          name: title,
-          address: address,
-          description: description,
-          imageUrls: imgList,
-          locationCategory: category.title,
-          location: {
-            type: "Point",
-            coordinates: [lng, lat],
-          },
-          pricePerPerson: {
-            min: parseInt(minPrice),
-            max: parseInt(maxPrice),
-            currency: currency.title || currency,
-          },
-          weekday: {
-            openTime: weekdayOpenTime.replace(":", ""),
-            closeTime: weekdayCloseTime.replace(":", ""),
-          },
-        };
+        if (!minPrice && !maxPrice) {
+          data = {
+            placeId: placeId,
+            name: title,
+            address: address,
+            description: description,
+            imageUrls: imgList,
+            locationCategory: category.title,
+            location: {
+              type: "Point",
+              coordinates: [lng, lat],
+            },
+            weekday: {
+              openTime: weekdayOpenTime.replace(":", ""),
+              closeTime: weekdayCloseTime.replace(":", ""),
+            },
+          };
+        } else {
+          if ((minPrice && !maxPrice)  || (!minPrice && maxPrice)) {
+            setPriceErr('Please fill in all fields in "Price"!');
+            setSubmitErr((prev) => [
+              ...prev,
+              'Please fill in all fields in "Price"!',
+            ]);
+            setIsLoading(false);
+            return;
+          }
+          if (VALIDATE.price(minPrice, maxPrice)) {
+            setPriceErr(VALIDATE.price(minPrice, maxPrice));
+            setSubmitErr((prev) => [
+              ...prev,
+              VALIDATE.price(minPrice, maxPrice),
+            ]);
+            setIsLoading(false);
+            return;
+          }
+          if (!currency) {
+            setCurrencyErr("Please select the currency!");
+            setSubmitErr((prev) => [...prev, "Please select the currency!"]);
+            setIsLoading(false);
+            return;
+          }
+          data = {
+            placeId: placeId,
+            name: title,
+            address: address,
+            description: description,
+            imageUrls: imgList,
+            locationCategory: category.title,
+            location: {
+              type: "Point",
+              coordinates: [lng, lat],
+            },
+            pricePerPerson: {
+              min: parseInt(minPrice),
+              max: parseInt(maxPrice),
+              currency: currency.title || currency,
+            },
+            weekday: {
+              openTime: weekdayOpenTime.replace(":", ""),
+              closeTime: weekdayCloseTime.replace(":", ""),
+            },
+          };
+        }
       }
     }
 
@@ -439,6 +481,7 @@ const CreateLocationScreen = () => {
                     </Wrapper>
                   </Wrapper>
                 </Wrapper>
+
                 {width >= 520 && <div className=" w-[1px] bg-black"></div>}
 
                 <Wrapper className="flex-col gap-2 w-full">
@@ -449,18 +492,18 @@ const CreateLocationScreen = () => {
                   <Wrapper className="gap-4">
                     <Wrapper col="true" className="!w-full">
                       <Label className="!text-[14px]">Open time:</Label>
-
                       <Input
                         type="time"
                         className={`h-[60px] appearance-none !w-full flex justify-between bg-white ${
                           weekendOpenTime
                             ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-                            : weekendOpenTimeErr
-                            ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
-                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                            : weekendTimeErr &&
+                              weekendCloseTime &&
+                              "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
                         }`}
                         onChange={(e) => {
                           dispatch(changeWeekendOpenTime(e.target.value));
+                          // setWeekendTimeErr(VALIDATE.time(e.target.value))
                         }}
                         value={weekendOpenTime}
                       />
@@ -473,12 +516,13 @@ const CreateLocationScreen = () => {
                         className={`h-[60px] appearance-none !w-full flex justify-end bg-white ${
                           weekendCloseTime
                             ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-                            : weekendCloseTimeErr
-                            ? "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
-                            : "focus:!border-secondary-400 focus:!ring-secondary-400"
+                            : weekendTimeErr &&
+                              weekendOpenTime &&
+                              "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
                         }`}
                         onChange={(e) => {
                           dispatch(changeWeekendCloseTime(e.target.value));
+                          // setWeekendTimeErr(VALIDATE.time(e.target.value))
                           // setWeekendCloseTimeErr(VALIDATE.time(e.target.value));
                         }}
                         value={weekendCloseTime}
