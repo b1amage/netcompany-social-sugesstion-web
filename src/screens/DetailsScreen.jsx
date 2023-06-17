@@ -25,6 +25,7 @@ import { MdDelete } from "react-icons/md";
 import Popup from "@/components/popup/Popup";
 import Deleting from "@/components/loading/Deleting";
 import toast, { Toaster } from "react-hot-toast";
+import { GoLocation } from "react-icons/go";
 
 const DetailsScreen = ({ event }) => {
   const notifyDelete = () => toast.success("Successfully delete!");
@@ -296,6 +297,11 @@ const DetailsScreen = ({ event }) => {
               </Wrapper>
 
               <Heading>{locationDetails?.name}</Heading>
+              <Wrapper className="items-center">
+                <GoLocation />
+                <SubHeading>{locationDetails?.address}</SubHeading>
+              </Wrapper>
+
               <Text>{locationDetails?.description}</Text>
 
               <Wrapper className="my-3" col="true">
