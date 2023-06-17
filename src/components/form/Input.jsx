@@ -20,10 +20,14 @@ const Input = ({
   min,
   errClassName,
   onWheel,
-  wrapperInputClassName
+  wrapperInputClassName,
 }) => {
   return (
-    <div className={`flex flex-col ${wrapperInputClassName} ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
+    <div
+      className={`flex flex-col ${wrapperInputClassName} ${
+        label && "gap-1 md:gap-2 lg:gap-3"
+      }`}
+    >
       <Label id={id} required={required} className={labelClassName}>
         {label}
       </Label>
@@ -62,7 +66,7 @@ const Input = ({
           </button>
         )}
 
-        {err && (
+        {err && err !== "" && (
           <Error fluid className={errClassName}>
             {err}
           </Error>
