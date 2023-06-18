@@ -1,6 +1,10 @@
 import React, { Suspense } from "react";
 import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
+
+const CreateEventScreen = React.lazy(() =>
+  import("@/screens/CreateEventScreen")
+);
 const ErrorScreen = React.lazy(() => import("@/screens/ErrorScreen"));
 const CreateLocationScreen = React.lazy(() =>
   import("@/screens/CreateLocationScreen")
@@ -28,7 +32,6 @@ const EditProfileScreen = React.lazy(() =>
 );
 
 const AppRoutes = () => {
-  
   return (
     <>
       <Navbar />
@@ -59,6 +62,8 @@ const AppRoutes = () => {
           <Route path={ROUTE.NOT_FOUND} element={<NotFoundScreen />} />
           <Route path={ROUTE.EDIT_PROFILE} element={<EditProfileScreen />} />
           <Route path="/error/:message" element={<ErrorScreen />} />
+          <Route path="/event/create" element={<CreateEventScreen />} />
+
           <Route path="/user/:_id" element={<UserProfileScreen />} />
         </Routes>
       </Suspense>
