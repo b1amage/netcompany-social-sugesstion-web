@@ -177,7 +177,17 @@ const CreateEventScreen = () => {
 
   const handleTimeChange = (e) => {
     const [hours, minutes] = e.target.value.split(":");
-    setEvent({ ...event, hours: hours * 1, minutes: minutes * 1 });
+    setEvent({
+      ...event,
+      startTime: { hours: hours * 1, minutes: minutes * 1 },
+    });
+  };
+  const handleDurationChange = (e) => {
+    const [hours, minutes] = e.target.value.split(":");
+    setEvent({
+      ...event,
+      duration: { hours: hours * 1, minutes: minutes * 1 },
+    });
   };
   const popupRef = useRef();
   useOnClickOutside(popupRef, () => setShowGuestPortal(false));
@@ -388,6 +398,13 @@ const CreateEventScreen = () => {
                 label="Start time"
                 required
                 onChange={handleTimeChange}
+              />
+
+              {/* duration */}
+              <TimePicker
+                label="Duration time"
+                required
+                onChange={handleDurationChange}
               />
             </Wrapper>
           )}
