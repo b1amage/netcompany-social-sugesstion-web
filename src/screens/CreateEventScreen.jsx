@@ -17,6 +17,7 @@ import useOnClickOutside from "@/hooks/useOnClickOutside";
 import Text from "@/components/typography/Text";
 import { useNavigate } from "react-router-dom";
 import { AiFillDelete } from "react-icons/ai";
+import toast from "react-hot-toast";
 
 const CreateEventScreen = () => {
   const defaultEvent = useMemo(
@@ -124,7 +125,10 @@ const CreateEventScreen = () => {
   const handleGuestSelect = (guest) => {
     // check if exist
     const alreadyExist = event.guests.some((item) => item._id === guest._id);
-    if (alreadyExist) return;
+    if (alreadyExist) {
+      toast.error("Cannot add one guest twice!");
+      return;
+    }
 
     const newGuests = [...event.guests, guest];
     const newEvent = { ...event, guests: newGuests };
