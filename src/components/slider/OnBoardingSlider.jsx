@@ -66,7 +66,7 @@ const OnBoardingSlider = () => {
               onClick={() => {
                 instanceRef.current?.moveToIdx(idx);
               }}
-              className={currentSlide === idx ? "active !bg-secondary-400" : ""}
+              className={`${currentSlide === idx ? "active !bg-secondary-400" : ""} border border-primary-400`}
             />
           ))}
         </div>

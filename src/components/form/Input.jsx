@@ -20,7 +20,8 @@ const Input = ({
   min,
   errClassName,
   onWheel,
-  wrapperInputClassName
+  wrapperInputClassName,
+  onKeyPress
 }) => {
   return (
     <div className={`flex flex-col ${wrapperInputClassName} ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
@@ -46,6 +47,7 @@ const Input = ({
           onChange={onChange}
           min={min}
           onWheel={onWheel}
+          onKeyPress={onKeyPress}
         />
 
         {icon && (

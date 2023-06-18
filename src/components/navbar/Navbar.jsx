@@ -93,7 +93,7 @@ const Navbar = () => {
     dispatch(changeCurrentLocation(location));
     dispatch(changeLatitude(latitude));
     dispatch(changeLongitude(longitude));
-    setShowAutoComplete(false)
+    setShowAutoComplete(false);
   };
   const {
     isAdded,
@@ -119,7 +119,7 @@ const Navbar = () => {
     // console.log(location)
   }, [window.location.pathname, currentLocation]);
 
-  const {isGetCurrentLocation} = useCurrentLocation()
+  const { isGetCurrentLocation } = useCurrentLocation();
 
   return createPortal(
     <nav className="w-full bg-white border-b border-gray-200">
@@ -171,22 +171,25 @@ const Navbar = () => {
                   }}
                 />
 
-              <Wrapper className="w-full truncate">
-              <Wrapper className="flex gap-2  items-center" onClick={() => setShowAutoComplete(true)}>
-                  <Image
-                    src={locationImg}
-                    alt="location"
-                    className="w-[20px] h-[20px]"
-                  />
-                  <Heading className="!text-[16px] ">
-                    {currentLocation ? 
-                      currentLocation.formatted_address
-                      : (!isGetCurrentLocation ?
-                        "Enter a location" : "...Loading")}
-                  </Heading>
+                <Wrapper className="w-full truncate">
+                  <Wrapper
+                    className="flex gap-2  items-center"
+                    onClick={() => setShowAutoComplete(true)}
+                  >
+                    <Image
+                      src={locationImg}
+                      alt="location"
+                      className="w-[20px] h-[20px]"
+                    />
+                    <Heading className="!text-[16px] ">
+                      {currentLocation
+                        ? currentLocation.formatted_address
+                        : !isGetCurrentLocation
+                        ? "Enter a location"
+                        : "...Loading"}
+                    </Heading>
+                  </Wrapper>
                 </Wrapper>
-              </Wrapper>
-                
 
                 {/* <AutoCompleteScreen address  /> */}
                 <Wrapper className="mr-4 items-center w-fit justify-end">
@@ -213,9 +216,7 @@ const Navbar = () => {
                       <Counter count={10} />
                     </div>
                   )}
-                  {isShowFilter && (
-                    <Filter />
-                  )}
+                  {isShowFilter && <Filter />}
                   {isShowEdit && (
                     <Wrapper className="flex-center">
                       <Button
@@ -263,11 +264,13 @@ const Navbar = () => {
         ) : (
           <div className="">
             {show && (
-              <div className="fixed inset-0 duration-300 md:hidden bg-black/50 backdrop-blur-md"></div>
+              <div
+                className="fixed inset-0 duration-300 md:hidden bg-black/50 backdrop-blur-md"
+                onClick={() => setShow(false)}
+              ></div>
             )}
             <ul
               // ref={navbarRef}
-              onClick={() => setShow(false)}
               className={`flex flex-col ${
                 show ? "translate-x-0" : "-translate-x-full"
               } duration-300 fixed top-0 h-full pb-6 text-white bg-primary-400 md:mt-0 md:text-sm md:font-medium md:bg-white`}
@@ -276,7 +279,7 @@ const Navbar = () => {
                 className="w-[28px] h-[28px] ml-5 my-6 md:hidden "
                 src={close}
                 alt="close"
-                onClick={() => setShow(!show)}
+                onClick={() => setShow(false)}
               />
               {navlinks.length > 0 &&
                 navlinks.map((link, index) => (
@@ -302,36 +305,40 @@ const Navbar = () => {
       </div>
 
       {/* { && ( */}
-        <Popup
-          // onClose={() => setShowAutoComplete(false)}
-          actions={[]}
-          // title="Search location"
-          children={
-            <>
-              {/* <Image
+      <Popup
+        // onClose={() => setShowAutoComplete(false)}
+        actions={[]}
+        // title="Search location"
+        children={
+          <>
+            {/* <Image
                   className={``}
                   onClick={() => setShowAutoComplete(false)}
                   src={close}
                   alt="close"
                 /> */}
-              <AiOutlineArrowLeft className="h-full w-[40px]" onClick={() => setShowAutoComplete(false)} />
+            <AiOutlineArrowLeft
+              className="h-full w-[40px]"
+              onClick={() => setShowAutoComplete(false)}
+            />
 
-              <AutoCompleteScreen
-                // label="Location"
-                className={`h-[50px] !py-2`}
-                // address={currentLocation && currentLocation.formatted_address}
-                onChange={onChangeCurrentLocation}
-                // addressErr={addressErr}
-              />
-            </>
-            
-          }
-          className={`${showAutoComplete ? "translate-x-0" : "translate-x-full"} duration-300`}
-          formClassName="items-center animate-zoom h-full w-full !rounded-none !py-0"
-          titleClassName="text-[20px]"
-          childrenClassName="!mt-0 w-full "
-          // setShowPopup={setShowAutoComplete}
-        />
+            <AutoCompleteScreen
+              // label="Location"
+              className={`h-[50px] !py-2`}
+              // address={currentLocation && currentLocation.formatted_address}
+              onChange={onChangeCurrentLocation}
+              // addressErr={addressErr}
+            />
+          </>
+        }
+        className={`${
+          showAutoComplete ? "translate-x-0" : "translate-x-full"
+        } duration-300`}
+        formClassName="items-center animate-zoom h-full w-full !rounded-none !py-0"
+        titleClassName="text-[20px]"
+        childrenClassName="!mt-0 w-full "
+        // setShowPopup={setShowAutoComplete}
+      />
       {/* )} */}
     </nav>,
     document.querySelector(".navbar-container")

@@ -7,9 +7,11 @@ import Wrapper from "@/components/wrapper/Wrapper";
 import Range from "@/components/form/Range";
 import { DISTANCE } from "@/constants/distance";
 import Button from "@/components/button/Button";
+import { useDispatch } from "react-redux";
+import { changeSearchDistance, changeWeekdayTime, changeWeekendTime } from "@/features/filterSlice";
 
 const FilterContent = () => {
-  const [category, setCategory] = useState();
+//   const [category, setCategory] = useState();
   const [weekdayOpenTime, setWeekdayOpenTime] = useState();
   const [weekdayCloseTime, setWeekdayCloseTime] = useState();
   const [weekendOpenTime, setWeekendOpenTime] = useState();
@@ -17,9 +19,16 @@ const FilterContent = () => {
   const [searchDistance, setSearchDistance] = useState(5)
   const handleDistanceChange = ({ x }) => setSearchDistance(x);
 
+  const dispatch = useDispatch()
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    dispatch(changeWeekdayTime({openTime: weekdayOpenTime, closeTime: weekdayCloseTime}))
+    dispatch(changeWeekendTime({openTime: weekendOpenTime, closeTime: weekendCloseTime}))
+    dispatch(changeSearchDistance(searchDistance))
+  }
   return (
-    <form className="flex flex-col gap-4">
-      <Dropdown
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      {/* <Dropdown
         label="Category"
         defaultTitle="SELECT THE CATEGORY"
         options={categoryList}
@@ -27,8 +36,8 @@ const FilterContent = () => {
         onChange={(option) => {
           setCategory(option);
         }}
-      />
-      <Wrapper col="true" className="gap-4">
+      /> */}
+      <Wrapper col="true" className="gap-2">
         <Label>
           Time
         </Label>
@@ -50,7 +59,7 @@ const FilterContent = () => {
                   onChange={(e) => {
                     setWeekdayOpenTime(e.target.value);
                   }}
-                  value={weekdayOpenTime}
+                //   value={weekdayOpenTime}
                 />
               </Wrapper>
 
@@ -64,7 +73,7 @@ const FilterContent = () => {
                   onChange={(e) => {
                     setWeekdayCloseTime(e.target.value);
                   }}
-                  value={weekdayCloseTime}
+                //   value={weekdayCloseTime}
                 />
               </Wrapper>
             </Wrapper>
@@ -85,7 +94,7 @@ const FilterContent = () => {
                     setWeekendOpenTime(e.target.value);
                     // setWeekendTimeErr(VALIDATE.time(e.target.value))
                   }}
-                  value={weekendOpenTime}
+                //   value={weekendOpenTime}
                 />
               </Wrapper>
 
@@ -97,7 +106,7 @@ const FilterContent = () => {
                   onChange={(e) => {
                     setWeekendCloseTime(e.target.value);             
                   }}
-                  value={weekendCloseTime}
+                //   value={weekendCloseTime}
                 />
               </Wrapper>
             </Wrapper>
