@@ -8,6 +8,8 @@ import Error from "@/components/form/Error";
 import InputWithDropdown from "@/components/form/InputWithDropdown";
 import inputState from "@/constants/inputState";
 import eventApi from "@/api/eventApi";
+import { GoLocation } from "react-icons/go";
+import { BiUser } from "react-icons/bi";
 
 const CreateEventScreen = () => {
   const defaultEvent = useMemo(
@@ -49,6 +51,7 @@ const CreateEventScreen = () => {
   const [event, setEvent] = useState(defaultEvent);
   const [error, setError] = useState(defaultEventError);
   const [suggestNextCursor, setSuggestNextCursor] = useState(undefined);
+  const [guestNextCursor, setGuestNextCursor] = useState(undefined);
 
   // check every change of event
   useEffect(() => {
@@ -98,6 +101,33 @@ const CreateEventScreen = () => {
     return apiHandler();
   };
 
+  const handleGetGuestSuggestList = (text) => {
+    const apiHandler = async () => {
+      const response = await eventApi.getSuggestGuest(text);
+      setGuestNextCursor(response.data.next_cursor);
+      return response.data;
+    };
+
+    return apiHandler();
+  };
+
+  const handleGuestSelect = (guest) => {
+    const newGuests = [...event.guests, guest._id];
+    const newEvent = { ...event, guests: newGuests };
+    setEvent(newEvent);
+  };
+
+  const handleLoadmoreGuestList = (text) => {
+    const apiHandler = async () => {
+      if (guestNextCursor === null) return null;
+      const response = await eventApi.getSuggestGuest(text, guestNextCursor);
+      setGuestNextCursor(response.data.next_cursor);
+      return response.data;
+    };
+
+    return apiHandler();
+  };
+
   return (
     <Screen className="p-5">
       {/* headings */}
@@ -130,20 +160,35 @@ const CreateEventScreen = () => {
               err={error.name}
             />
 
-            {/* location */}
+            {/* guest list */}
             <InputWithDropdown
-              label="Location"
+              label="Guest List"
               required
-              handleGet={handleGetLocationSuggestList}
-              placeholder="Select location"
-              onSelect={handlePlaceSelect}
-              loadMore={handleLoadmoreSuggestList}
+              handleGet={handleGetGuestSuggestList}
+              placeholder="Invite guest"
+              onSelect={handleGuestSelect}
+              loadMore={handleLoadmoreGuestList}
+              fieldToDisplay="username"
+              icon={<BiUser />}
+              clearInputAfterSelect="true"
             />
           </form>
         </Wrapper>
 
         {/* right */}
-        <Wrapper className="bg-red-300"></Wrapper>
+        <Wrapper className="">
+          {/* location */}
+          <InputWithDropdown
+            label="Location"
+            required
+            handleGet={handleGetLocationSuggestList}
+            placeholder="Select location"
+            onSelect={handlePlaceSelect}
+            loadMore={handleLoadmoreSuggestList}
+            fieldToDisplay="name"
+            icon={<GoLocation />}
+          />
+        </Wrapper>
       </Wrapper>
 
       <Error

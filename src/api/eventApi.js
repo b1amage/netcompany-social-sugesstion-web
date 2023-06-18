@@ -16,6 +16,22 @@ const eventApi = {
       console.log(error);
     }
   },
+
+  async getSuggestGuest(input, nextCursor) {
+    try {
+      const url = nextCursor
+        ? `/user/search/${input}?next_cursor=${nextCursor}`
+        : `/user/search/${input}`;
+      const response = await axiosClient.get(url, {
+        withCredentials: true,
+      });
+
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 export default eventApi;
