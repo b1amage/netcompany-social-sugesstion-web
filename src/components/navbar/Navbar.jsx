@@ -9,7 +9,7 @@ import { darkIcons, lightIcons } from "@/constants/navIcons";
 import darkMenu from "@/assets/dark-menu.svg";
 import add from "@/assets/add.svg";
 import notification from "@/assets/bell.svg";
-import localStorageKey from "@/constants/localStorageKeys";
+import locationImg from "@/assets/location.svg";
 
 import filter from "@/assets/filter.svg";
 import darkLogoutImg from "@/assets/navigation/dark-logout.svg";
@@ -27,17 +27,32 @@ import Popup from "@/components/popup/Popup";
 import ROUTE from "@/constants/routes";
 import { logout } from "@/features/userSlice";
 import Button from "@/components/button/Button";
-import { BsPencilFill } from "react-icons/bs";
+import { BsArrowBarLeft, BsPencilFill } from "react-icons/bs";
 import useAuthentication from "@/hooks/useAuthentication";
+
+import AutoCompleteScreen from "@/test/AutoComplete";
+import {
+  changeCurrentLocation,
+  changeLatitude,
+  changeLongitude,
+} from "@/features/currentLocationSlice";
+import useCurrentLocation from "@/hooks/useCurrentLocation";
+import { GoArrowLeft } from "react-icons/go";
+import { AiOutlineArrowLeft } from "react-icons/ai";
+import Filter from "@/components/filter/Filter";
+
+// import { Autocomplete } from "@react-google-maps/api";
 const BREAK_POINT_NAVBAR = 768;
 
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  
+  const [isLoading, setIsLoading] = useState(false);
+  const [showAutoComplete, setShowAutoComplete] = useState(false);
+
   const viewport = useViewport();
 
-  const {isLogin} = useAuthentication()
+  const { isLogin } = useAuthentication();
   const navbarRef = useRef();
   useOnClickOutside(navbarRef, () => {
     // dispatch(handleCloseSideBarClick())
@@ -74,20 +89,37 @@ const Navbar = () => {
     }
   }, [showPopup]);
 
-  const { isAdded, isShowNotification, isShowFilter, isShowEdit } = useSelector(
-    ({ navbar }) => {
-      return {
-        isAdded: navbar.isAdded,
-        isShowNotification: navbar.isShowNotification,
-        isShowFilter: navbar.isShowFilter,
-        isShowEdit: navbar.isShowEdit,
-      };
-    }
-  );
-
+  const onChangeCurrentLocation = (location, latitude, longitude) => {
+    dispatch(changeCurrentLocation(location));
+    dispatch(changeLatitude(latitude));
+    dispatch(changeLongitude(longitude));
+    setShowAutoComplete(false)
+  };
+  const {
+    isAdded,
+    isShowNotification,
+    isShowFilter,
+    isShowEdit,
+    currentLocation,
+  } = useSelector(({ navbar, currentLocation }) => {
+    return {
+      isAdded: navbar.isAdded,
+      isShowNotification: navbar.isShowNotification,
+      isShowFilter: navbar.isShowFilter,
+      isShowEdit: navbar.isShowEdit,
+      currentLocation: currentLocation.currentLocation,
+    };
+  });
+  // console.log(places[0].geometry.location.lat());
+  // console.log(places[0].geometry.location.lng());
   useEffect(() => {
     dispatch(validatePathname(window.location.pathname));
-  }, [window.location.pathname]);
+    // console.log(location)
+    // console.log([latitude, longitude])
+    // console.log(location)
+  }, [window.location.pathname, currentLocation]);
+
+  const {isGetCurrentLocation} = useCurrentLocation()
 
   return createPortal(
     <nav className="w-full bg-white border-b border-gray-200">
@@ -111,75 +143,91 @@ const Navbar = () => {
               onClick={() => isLogin && navigate("/")}
             />
 
-          {isLogin && <Button
-            onClick={() => setShowPopup(true)}
-            className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
-            danger
-          >
-            Logout
-          </Button>}
+            {isLogin && (
+              <Button
+                onClick={() => setShowPopup(true)}
+                className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
+                danger
+              >
+                Logout
+              </Button>
+            )}
           </div>
         )}
 
         {/* CTA Button */}
-        {isLogin && <div className="flex items-center justify-between">
-          {(viewport.width <= BREAK_POINT_NAVBAR ) && (
-            <>
-              <Image
-                imageClassName=""
-                src={darkMenu}
-                alt="menu"
-                className="w-[28px] h-[28px] ml-5 my-6"
-                onClick={() => {
-                  // dispatch(handleOpenSideBarClick())
-                  setShow(!show);
-                }}
-              />
+        {isLogin && (
+          <div className="flex items-center gap-4">
+            {viewport.width <= BREAK_POINT_NAVBAR && (
+              <>
+                <Image
+                  imageClassName=""
+                  src={darkMenu}
+                  alt="menu"
+                  className="w-[40px] h-[28px] ml-5 my-6"
+                  onClick={() => {
+                    // dispatch(handleOpenSideBarClick())
+                    setShow(!show);
+                  }}
+                />
 
-              <Wrapper className="mr-4 items-center">
-                {isAdded && (
+              <Wrapper className="w-full truncate">
+              <Wrapper className="flex gap-2  items-center" onClick={() => setShowAutoComplete(true)}>
                   <Image
-                    imageClassName=""
-                    src={add}
-                    alt="add"
-                    className="w-[28px] h-[28px] m-2"
-                    onClick={() => {
-                      if (window.location.pathname === "/")
-                        navigate("/create-location");
-                    }}
+                    src={locationImg}
+                    alt="location"
+                    className="w-[20px] h-[20px]"
                   />
-                )}
-                {isShowNotification && (
-                  <div className="relative">
+                  <Heading className="!text-[16px] ">
+                    {currentLocation ? 
+                      currentLocation.formatted_address
+                      : (!isGetCurrentLocation ?
+                        "Enter a location" : "...Loading")}
+                  </Heading>
+                </Wrapper>
+              </Wrapper>
+                
+
+                {/* <AutoCompleteScreen address  /> */}
+                <Wrapper className="mr-4 items-center w-fit justify-end">
+                  {isAdded && (
                     <Image
                       imageClassName=""
-                      src={notification}
-                      alt="notification"
+                      src={add}
+                      alt="add"
                       className="w-[28px] h-[28px] m-2"
+                      onClick={() => {
+                        if (window.location.pathname === "/")
+                          navigate("/create-location");
+                      }}
                     />
-                    <Counter count={10} />
-                  </div>
-                )}
-                {isShowFilter && (
-                  <Image
-                    imageClassName=""
-                    src={filter}
-                    alt="filter"
-                    className="w-[28px] h-[28px] m-2"
-                  />
-                )}
-                {isShowEdit && (
-                  <Wrapper className="flex-center">
-                    <Button
-                      onClick={() => navigate(ROUTE.EDIT_PROFILE)}
-                      className="!text-primary-800 !relative !gap-2"
-                    >
-                      <BsPencilFill />
-                      <span className="hidden capitalize lg:block">
-                        Edit info
-                      </span>
-                    </Button>
-                    {/* <Button
+                  )}
+                  {isShowNotification && (
+                    <div className="relative">
+                      <Image
+                        imageClassName=""
+                        src={notification}
+                        alt="notification"
+                        className="w-[28px] h-[28px] m-2"
+                      />
+                      <Counter count={10} />
+                    </div>
+                  )}
+                  {isShowFilter && (
+                    <Filter />
+                  )}
+                  {isShowEdit && (
+                    <Wrapper className="flex-center">
+                      <Button
+                        onClick={() => navigate(ROUTE.EDIT_PROFILE)}
+                        className="!text-primary-800 !relative !gap-2"
+                      >
+                        <BsPencilFill />
+                        <span className="hidden capitalize lg:block">
+                          Edit info
+                        </span>
+                      </Button>
+                      {/* <Button
                     className="!bg-danger"
                     onClick={() => {
                       setShowPopup(true);
@@ -187,28 +235,31 @@ const Navbar = () => {
                   >
                     Logout
                   </Button> */}
-                  </Wrapper>
-                )}
-              </Wrapper>
-            </>
-          )}
-        </div>}
+                    </Wrapper>
+                  )}
+                </Wrapper>
+              </>
+            )}
+          </div>
+        )}
 
         {/* Navigation */}
 
-        {(viewport.width > BREAK_POINT_NAVBAR && isLogin) ? (
-          <div className="flex justify-center p-4 mt-0 text-sm font-medium bg-transparent border-0 rounded-lg">
-            {navlinks.length > 0 &&
-              navlinks.map((link, index) => (
-                <NavButton
-                  to={link.path}
-                  key={index}
-                  label={link.label}
-                  src={darkIcons[index]}
-                  className=""
-                />
-              ))}
-          </div>
+        {viewport.width > BREAK_POINT_NAVBAR && isLogin ? (
+          <Wrapper col="true" className="gap-4 bg-white">
+            <div className="flex justify-center mt-0 text-sm font-medium bg-transparent border-0 rounded-lg">
+              {navlinks.length > 0 &&
+                navlinks.map((link, index) => (
+                  <NavButton
+                    to={link.path}
+                    key={index}
+                    label={link.label}
+                    src={darkIcons[index]}
+                    className=""
+                  />
+                ))}
+            </div>
+          </Wrapper>
         ) : (
           <div className="">
             {show && (
@@ -249,6 +300,39 @@ const Navbar = () => {
           </div>
         )}
       </div>
+
+      {/* { && ( */}
+        <Popup
+          // onClose={() => setShowAutoComplete(false)}
+          actions={[]}
+          // title="Search location"
+          children={
+            <>
+              {/* <Image
+                  className={``}
+                  onClick={() => setShowAutoComplete(false)}
+                  src={close}
+                  alt="close"
+                /> */}
+              <AiOutlineArrowLeft className="h-full w-[40px]" onClick={() => setShowAutoComplete(false)} />
+
+              <AutoCompleteScreen
+                // label="Location"
+                className={`h-[50px] !py-2`}
+                // address={currentLocation && currentLocation.formatted_address}
+                onChange={onChangeCurrentLocation}
+                // addressErr={addressErr}
+              />
+            </>
+            
+          }
+          className={`${showAutoComplete ? "translate-x-0" : "translate-x-full"} duration-300`}
+          formClassName="items-center animate-zoom h-full w-full !rounded-none !py-0"
+          titleClassName="text-[20px]"
+          childrenClassName="!mt-0 w-full "
+          // setShowPopup={setShowAutoComplete}
+        />
+      {/* )} */}
     </nav>,
     document.querySelector(".navbar-container")
   );

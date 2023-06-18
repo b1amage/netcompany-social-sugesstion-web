@@ -28,6 +28,7 @@ import ROUTE from "@/constants/routes";
 // import LocationForm from "@/components/location/LocationForm";
 
 import {
+  changePlaceId,
   changeCategory,
   changeDescription,
   changeMinPrice,
@@ -40,6 +41,7 @@ import {
   changeWeekdayOpenTime,
   changeWeekendCloseTime,
   changeWeekendOpenTime,
+  changeAddress,
 } from "@/features/createLocationFormSlice";
 
 import { currencyList } from "@/constants/currencyList";
@@ -112,6 +114,35 @@ const CreateLocationScreen = () => {
     };
   });
 
+  const onChangeLocationForm = (place, lat, lng) => {
+    dispatch(changePlaceId(place.place_id));
+    dispatch(changeTitle(place.name));
+    dispatch(changeAddress(place.formatted_address));
+    dispatch(changeLat(lat));
+    dispatch(changeLng(lng));
+    dispatch(
+      changeWeekdayOpenTime(
+        formatTime(place.opening_hours.periods[0].open.time)
+      )
+    );
+    dispatch(
+      changeWeekdayCloseTime(
+        formatTime(place.opening_hours.periods[0].close.time)
+      )
+    );
+    if (place.opening_hours.periods.length > 5) {
+      dispatch(
+        changeWeekendOpenTime(
+          formatTime(place.opening_hours.periods[5].open.time)
+        )
+      );
+      dispatch(
+        changeWeekendCloseTime(
+          formatTime(place.opening_hours.periods[5].close.time)
+        )
+      );
+    }
+  };
   const [imgList, setImgList] = useState([DEFAULT.location]);
   const [titleErr, setTitleErr] = useState();
   const [categoryErr, setCategoryErr] = useState();
@@ -316,7 +347,6 @@ const CreateLocationScreen = () => {
             },
           };
         }
-
       }
     }
 
@@ -342,7 +372,7 @@ const CreateLocationScreen = () => {
   }, [images]);
 
   return (
-    <Screen className={`py-8 location-form`}>
+    <Screen className={`py-8 md:py-16 lg:py-0 location-form`}>
       <Heading className="w-full sm:text-center !text-[42px] leading-10">
         Register New Location
       </Heading>
@@ -354,18 +384,29 @@ const CreateLocationScreen = () => {
           <Wrapper className="" col="true">
             <AutoCompleteScreen
               label="Location"
-              className={`bg-white h-[60px] !py-2`}
-              address={address}
-              addressErr={addressErr}
+              className={`bg-white h-[60px] !py-2 ${
+                addressErr &&
+                (address
+                  ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                  : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
+              } ${
+                address &&
+                "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+              }`}
+              // address={address}
+              // addressErr={addressErr}
+              onChange={onChangeLocationForm}
             />
-            <StaticMap
-              title={title}
-              width={"100%"}
-              height={"60vh"}
-              address={address}
-              lat={lat}
-              lng={lng}
-            />
+            {lat && lng && (
+              <StaticMap
+                title={title}
+                width={"100%"}
+                height={"60vh"}
+                address={address}
+                lat={lat}
+                lng={lng}
+              />
+            )}
           </Wrapper>
 
           <Wrapper className="my-4" col="true">

@@ -27,7 +27,7 @@ const OnBoardingSlider = () => {
         <div ref={sliderRef} className="h-[60vh] keen-slider">
           {onboardingScreens.map((slide) => (
             <Slide 
-            className={`${isLogin && "!mt-0 "}`} slide={slide} key={slide.heading}></Slide>
+            className={`!mt-0`} slide={slide} key={slide.heading}></Slide>
           ))}
         </div>
 

@@ -29,6 +29,8 @@ const Popup = ({
   children,
   titleClassName,
   formClassName,
+  childrenClassName,
+  onClick
 }) => {
   const popupRef = useRef();
   useOnClickOutside(popupRef, onClose);
@@ -46,7 +48,7 @@ const Popup = ({
           className={`w-[300px] h-[200px] md:w-[400px] md:h-[220px] bg-white  drop-shadow-lg rounded-xl p-5 md:p-10 lg:w-[450px] lg:h-[250px] ${formClassName}`}
         >
           <Heading className={`text-center ${titleClassName}`}>{title}</Heading>
-          <Wrapper className="justify-between mt-auto !py-0">
+          <Wrapper className={`justify-between mt-auto !py-0 ${childrenClassName}`}>
             {actions.length > 0 &&
               actions.map((item) => (
                 <Button
