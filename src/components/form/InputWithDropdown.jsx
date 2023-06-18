@@ -104,7 +104,7 @@ const InputWithDropdown = ({
             setInput(e.target.value);
             // if (suggestions.length === 0)
             //   setErr(`No place with name ${input} found in database`);
-            if (!selected) setErr("Please select a place!");
+            if (!selected) setErr("Please select!");
           }}
         />
 
