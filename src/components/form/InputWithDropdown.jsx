@@ -112,7 +112,7 @@ const InputWithDropdown = ({
           <Wrapper
             _ref={listRef}
             col="true"
-            className="absolute bottom-0 left-0 w-full translate-y-full bg-white border pb-8 h-[200px] overflow-y-scroll border-gray-200 rounded shadow-xl cursor-pointer"
+            className="absolute !z-[9999] bottom-0 left-0 w-full translate-y-full bg-white border pb-8 h-[200px] overflow-y-scroll border-gray-200 rounded shadow-xl cursor-pointer"
           >
             {suggestions.map((suggestion, index) => (
               <Wrapper
