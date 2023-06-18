@@ -22,6 +22,7 @@ import TextArea from "@/components/form/TextArea";
 
 import DatePicker from "@/components/form/DatePicker";
 import { DateTime } from "luxon";
+import Switch from "@/components/form/Switch";
 
 const CreateEventScreen = () => {
   const defaultEvent = useMemo(
@@ -363,6 +364,16 @@ const CreateEventScreen = () => {
                 ? inputState.success
                 : inputState.err
             }`}
+          />
+
+          {/* isAllDay */}
+          <Switch
+            label="All day"
+            checked={event.allDay}
+            onClick={() => {
+              const oldAllDay = event.allDay;
+              setEvent({ ...event, allDay: !oldAllDay });
+            }}
           />
         </Wrapper>
       </Wrapper>
