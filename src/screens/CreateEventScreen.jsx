@@ -5,6 +5,9 @@ import { useState, useEffect, useMemo } from "react";
 import SubHeading from "@/components/typography/SubHeading";
 import Input from "@/components/form/Input";
 import Error from "@/components/form/Error";
+import InputWithDropdown from "@/components/form/InputWithDropdown";
+import inputState from "@/constants/inputState";
+import eventApi from "@/api/eventApi";
 
 const CreateEventScreen = () => {
   const defaultEvent = useMemo(
@@ -41,19 +44,16 @@ const CreateEventScreen = () => {
     }),
     []
   );
+
   const [submitErr, setSubmitErr] = useState([]);
   const [event, setEvent] = useState(defaultEvent);
   const [error, setError] = useState(defaultEventError);
+  const [suggestNextCursor, setSuggestNextCursor] = useState(undefined);
 
   // check every change of event
   useEffect(() => {
     console.log(`Event change: ${JSON.stringify(event, null, 2)}`);
   }, [event]);
-
-  const inputState = {
-    success: "!ring-green-500 !border-green-500",
-    err: "!ring-danger !border-danger",
-  };
 
   const handleNameChange = (e) => {
     const enteredText = e.target.value;
@@ -67,6 +67,35 @@ const CreateEventScreen = () => {
 
     const newEvent = { ...event, name: enteredText };
     setEvent(newEvent);
+  };
+
+  const handleGetLocationSuggestList = (text) => {
+    const apiHandler = async () => {
+      const response = await eventApi.getSuggestLocation(text);
+      setSuggestNextCursor(response.data.next_cursor);
+      return response.data;
+    };
+
+    return apiHandler();
+  };
+
+  const handlePlaceSelect = (location) => {
+    const newEvent = { ...event, locationId: location._id };
+    setEvent(newEvent);
+  };
+
+  const handleLoadmoreSuggestList = (text) => {
+    const apiHandler = async () => {
+      if (suggestNextCursor === null) return null;
+      const response = await eventApi.getSuggestLocation(
+        text,
+        suggestNextCursor
+      );
+      setSuggestNextCursor(response.data.next_cursor);
+      return response.data;
+    };
+
+    return apiHandler();
   };
 
   return (
@@ -83,7 +112,7 @@ const CreateEventScreen = () => {
       <Wrapper className="w-full !grid grid-cols-2 gap-10 bg-slate-200 my-10 p-5">
         {/* left */}
         <Wrapper col="true">
-          <form>
+          <form className="flex flex-col gap-4">
             {/* name */}
             <Input
               required
@@ -102,6 +131,14 @@ const CreateEventScreen = () => {
             />
 
             {/* location */}
+            <InputWithDropdown
+              label="Location"
+              required
+              handleGet={handleGetLocationSuggestList}
+              placeholder="Select location"
+              onSelect={handlePlaceSelect}
+              loadMore={handleLoadmoreSuggestList}
+            />
           </form>
         </Wrapper>
 
