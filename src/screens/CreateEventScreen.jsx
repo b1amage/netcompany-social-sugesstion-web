@@ -23,6 +23,7 @@ import TextArea from "@/components/form/TextArea";
 import DatePicker from "@/components/form/DatePicker";
 import { DateTime } from "luxon";
 import Switch from "@/components/form/Switch";
+import TimePicker from "@/components/form/TimePicker";
 
 const CreateEventScreen = () => {
   const defaultEvent = useMemo(
@@ -174,6 +175,10 @@ const CreateEventScreen = () => {
     setError({ ...error, startDate: "" });
   };
 
+  const handleTimeChange = (e) => {
+    const [hours, minutes] = e.target.value.split(":");
+    setEvent({ ...event, hours: hours * 1, minutes: minutes * 1 });
+  };
   const popupRef = useRef();
   useOnClickOutside(popupRef, () => setShowGuestPortal(false));
 
@@ -375,6 +380,17 @@ const CreateEventScreen = () => {
               setEvent({ ...event, allDay: !oldAllDay });
             }}
           />
+
+          {!event.allDay && (
+            <Wrapper col="true">
+              {/* startTime */}
+              <TimePicker
+                label="Start time"
+                required
+                onChange={handleTimeChange}
+              />
+            </Wrapper>
+          )}
         </Wrapper>
       </Wrapper>
 
