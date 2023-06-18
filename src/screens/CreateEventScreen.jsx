@@ -18,13 +18,17 @@ import Text from "@/components/typography/Text";
 import { useNavigate } from "react-router-dom";
 import { AiFillDelete } from "react-icons/ai";
 import toast from "react-hot-toast";
+import TextArea from "@/components/form/TextArea";
+
+import DatePicker from "@/components/form/DatePicker";
+import { DateTime } from "luxon";
 
 const CreateEventScreen = () => {
   const defaultEvent = useMemo(
     () => ({
       name: "",
       locationId: null,
-      description: null,
+      description: "",
       startDate: null,
       startTime: {
         hours: null,
@@ -46,7 +50,7 @@ const CreateEventScreen = () => {
       name: null,
       locationId: "",
       description: "",
-      startDate: "",
+      startDate: null,
       startTime: "",
       duration: "",
       imageUrls: "",
@@ -144,6 +148,29 @@ const CreateEventScreen = () => {
     };
 
     return apiHandler();
+  };
+
+  const handleDescriptionChange = (e) => {
+    setEvent({ ...event, description: e.target.value });
+  };
+
+  const handleDateChange = (e) => {
+    let chosenDate = new Date(e.target.value);
+    let today = new Date();
+
+    // Remove the time part of both dates for a fair comparison
+    chosenDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    if (chosenDate < today) {
+      setError({ ...error, startDate: "Cannot choose past day!" });
+      return;
+    }
+
+    const luxonDateTime = DateTime.fromJSDate(chosenDate);
+    const newStartDate = luxonDateTime.toISO();
+    setEvent({ ...event, startDate: newStartDate });
+    setError({ ...error, startDate: "" });
   };
 
   const popupRef = useRef();
@@ -288,21 +315,54 @@ const CreateEventScreen = () => {
                 </Wrapper>
               )}
             </Wrapper>
+
+            <TextArea
+              placeholder="Description"
+              label="Description"
+              onChange={handleDescriptionChange}
+            />
           </form>
         </Wrapper>
 
         {/* right */}
-        <Wrapper className="">
+        <Wrapper className="gap-4" col="true">
           {/* location */}
-          <InputWithDropdown
-            label="Location"
+          <Wrapper col="true" className="!w-full !gap-1">
+            <InputWithDropdown
+              label="Location"
+              required
+              handleGet={handleGetLocationSuggestList}
+              placeholder="Select location"
+              onSelect={handlePlaceSelect}
+              loadMore={handleLoadmoreSuggestList}
+              fieldToDisplay="name"
+              icon={<GoLocation />}
+            />
+
+            <Wrapper className="!w-full relative flex-center text-center">
+              <Text className="text-center">Dont have location?</Text>
+              <Text
+                className="font-bold underline cursor-pointer"
+                onClick={() => navigate("/create-location")}
+              >
+                Create new one
+              </Text>
+            </Wrapper>
+          </Wrapper>
+
+          {/* date */}
+          <DatePicker
+            err={error.startDate}
             required
-            handleGet={handleGetLocationSuggestList}
-            placeholder="Select location"
-            onSelect={handlePlaceSelect}
-            loadMore={handleLoadmoreSuggestList}
-            fieldToDisplay="name"
-            icon={<GoLocation />}
+            label="Date"
+            onChange={handleDateChange}
+            className={`${
+              error.startDate === null
+                ? ""
+                : error.startDate === ""
+                ? inputState.success
+                : inputState.err
+            }`}
           />
         </Wrapper>
       </Wrapper>
