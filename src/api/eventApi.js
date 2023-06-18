@@ -32,6 +32,19 @@ const eventApi = {
       console.log(error);
     }
   },
+
+  async createEvent(data) {
+    try {
+      const url = "/event";
+      const response = await axiosClient.post(url, data, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 export default eventApi;

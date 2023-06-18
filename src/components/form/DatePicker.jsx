@@ -10,7 +10,7 @@ const DatePicker = ({ onChange, label, err, required, id, className }) => {
       <div
         className={`relative flex flex-col ${
           label && "gap-1 md:gap-2 lg:gap-3"
-        }`}
+        } ${className}`}
       >
         <Label htmlFor={id} required={required}>
           {label}

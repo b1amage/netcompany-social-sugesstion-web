@@ -24,6 +24,7 @@ import DatePicker from "@/components/form/DatePicker";
 import { DateTime } from "luxon";
 import Switch from "@/components/form/Switch";
 import TimePicker from "@/components/form/TimePicker";
+import Button from "@/components/button/Button";
 
 const CreateEventScreen = () => {
   const defaultEvent = useMemo(
@@ -191,6 +192,18 @@ const CreateEventScreen = () => {
   };
   const popupRef = useRef();
   useOnClickOutside(popupRef, () => setShowGuestPortal(false));
+
+  const handleSubmit = () => {
+    console.log(event);
+    const apiHandle = async () => {
+      const newGuests = event.guests.map((guest) => guest._id);
+      const newEvent = { ...event, guests: newGuests };
+      setEvent(newEvent);
+      const response = await eventApi.createEvent(newEvent);
+    };
+
+    apiHandle();
+  };
 
   return (
     <Screen className="relative p-5">
@@ -392,9 +405,10 @@ const CreateEventScreen = () => {
           />
 
           {!event.allDay && (
-            <Wrapper col="true">
+            <Wrapper className="justify-start w-full">
               {/* startTime */}
               <TimePicker
+                className="!w-[120px]"
                 label="Start time"
                 required
                 onChange={handleTimeChange}
@@ -402,7 +416,8 @@ const CreateEventScreen = () => {
 
               {/* duration */}
               <TimePicker
-                label="Duration time"
+                className="!w-[120px]"
+                label="Duration"
                 required
                 onChange={handleDurationChange}
               />
@@ -410,6 +425,10 @@ const CreateEventScreen = () => {
           )}
         </Wrapper>
       </Wrapper>
+
+      <Button onClick={handleSubmit} primary active>
+        Create location
+      </Button>
 
       <Error
         fluid
