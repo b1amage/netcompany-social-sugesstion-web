@@ -28,7 +28,6 @@ import useCurrentLocation from "@/hooks/useCurrentLocation";
 // import Image from "@/components/image/Image";
 import { changeCategory, changeSearchInput } from "@/features/filterSlice";
 
-
 // const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
 const HomeScreen = () => {
@@ -43,7 +42,7 @@ const HomeScreen = () => {
   const [locationCategories, setLocationCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleCategoryClick = (category) => {
     const selectedCategory = locationCategories.includes(category)
@@ -51,7 +50,7 @@ const HomeScreen = () => {
       : [category];
 
     setLocationCategories(selectedCategory);
-    dispatch(changeCategory(selectedCategory))
+    dispatch(changeCategory(selectedCategory));
   };
 
   const {
@@ -63,7 +62,7 @@ const HomeScreen = () => {
     currentLocation,
     latitude,
     longitude,
-  } = useSelector(({ filter,currentLocation }) => {
+  } = useSelector(({ filter, currentLocation }) => {
     return {
       currentLocation: currentLocation.currentLocation,
       latitude: currentLocation.latitude,
@@ -77,8 +76,6 @@ const HomeScreen = () => {
   });
 
   useCurrentLocation();
-  const [searchText, setSearchText] = useState("");
-
 
   const onSelectLocation = (id) => {
     navigate(id);
@@ -129,16 +126,31 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: { openTime: weekdayTime.openTime, closeTime: weekdayTime.closeTime },
-          weekend: { openTime: weekendTime.openTime, closeTime: weekendTime.closeTime },
+          weekday: {
+            openTime: weekdayTime.openTime,
+            closeTime: weekdayTime.closeTime,
+          },
+          weekend: {
+            openTime: weekendTime.openTime,
+            closeTime: weekendTime.closeTime,
+          },
         });
         setFeaturedLocations(response.data.results);
         setFeaturedNextCursor(response.data.next_cursor);
         setIsLoading(false);
-      };     
+      };
       fetchFeaturedLocations();
     }
-  }, [currentLocation, latitude, longitude, category, searchInput]);
+  }, [
+    currentLocation,
+    latitude,
+    longitude,
+    category,
+    searchInput,
+    weekdayTime,
+    weekendTime,
+    searchDistance,
+  ]);
 
   useEffect(() => {
     if (currentLocation && latitude && longitude) {
@@ -149,8 +161,14 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: { openTime: weekdayTime.openTime, closeTime: weekdayTime.closeTime },
-          weekend: { openTime: weekendTime.openTime, closeTime: weekendTime.closeTime },
+          weekday: {
+            openTime: weekdayTime.openTime,
+            closeTime: weekdayTime.closeTime,
+          },
+          weekend: {
+            openTime: weekendTime.openTime,
+            closeTime: weekendTime.closeTime,
+          },
         });
         setLatestLocations(response.data.results);
         setLatestNextCursor(response.data.next_cursor);
@@ -158,7 +176,16 @@ const HomeScreen = () => {
       };
       fetchLatestLocations();
     }
-  }, [currentLocation, latitude, longitude, category, searchInput])
+  }, [
+    currentLocation,
+    latitude,
+    longitude,
+    category,
+    searchInput,
+    weekdayTime,
+    weekendTime,
+    searchDistance,
+  ]);
 
   const handleLoadMoreFeaturedData = (nextCursor) => {
     setIsFeaturedUpdating(true);
@@ -170,8 +197,14 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: { openTime: weekdayTime.openTime, closeTime: weekdayTime.closeTime },
-          weekend: { openTime: weekendTime.openTime, closeTime: weekendTime.closeTime },
+          weekday: {
+            openTime: weekdayTime.openTime,
+            closeTime: weekdayTime.closeTime,
+          },
+          weekend: {
+            openTime: weekendTime.openTime,
+            closeTime: weekendTime.closeTime,
+          },
         },
         nextCursor
       );
@@ -192,8 +225,14 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: { openTime: weekdayTime.openTime, closeTime: weekdayTime.closeTime },
-          weekend: { openTime: weekendTime.openTime, closeTime: weekendTime.closeTime },
+          weekday: {
+            openTime: weekdayTime.openTime,
+            closeTime: weekdayTime.closeTime,
+          },
+          weekend: {
+            openTime: weekendTime.openTime,
+            closeTime: weekendTime.closeTime,
+          },
         },
         nextCursor
       );
@@ -206,9 +245,10 @@ const HomeScreen = () => {
   };
 
   const handleSearchValue = (value) => {
-    dispatch(changeSearchInput(value))
-  }
-  // locationCategory=${data.locationCategory}&searchInput=${data.searchInput}&latitude=${data.lat}&longitude=${data.lng}&searchDistance=${data.searchDistance}&weekday[openTime]=${data.weekday[0]}&weekday[closeTime]=${data.weekday[1]}&weekend[openTime]=${data.weekend[0]}&weekend[closeTime]=${data.weekend[1]}
+    if (value.trim() === "") return;
+    dispatch(changeSearchInput(value));
+  };
+
   return (
     <Screen className="my-4 lg:my-12 px-10 flex flex-col gap-8 lg:px-16 py-8 md:py-16 lg:py-0">
       <Wrapper col="true" className="gap-4 md:flex-row md:items-center">
@@ -216,16 +256,6 @@ const HomeScreen = () => {
         <SearchBar onChange={handleSearchValue} />
       </Wrapper>
 
-      {/* <Slider
-        imgList={imageList}
-        className="!bg-transparent sm:text-left !p-0"
-        cardClassName="!w-full"
-        imageClassName="h-[40vh] lg:h-[60vh]"
-        // label="Features"
-        // name="Netcompany"
-        // address="Opal Tower={} 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
-        perView={1}
-      /> */}
       <OnBoardingSlider />
 
       <PreferencesSelect
@@ -239,12 +269,12 @@ const HomeScreen = () => {
           <Label>Features</Label>
           {featuredNextCursor &&
             (!isFeaturedUpdating ? (
-              <GoPlus
-                className="h-10 w-10 cursor-pointer hover:animate-bounce"
-                onClick={() => {
-                  handleLoadMoreFeaturedData(featuredNextCursor);
-                }}
-              />
+              <Heading
+                onClick={() => handleLoadMoreFeaturedData(featuredNextCursor)}
+                className="cursor-pointer hover:animate-bounce text-primary-400"
+              >
+                + Load more
+              </Heading>
             ) : (
               <Loading className="!h-10 !w-10" />
             ))}
@@ -254,19 +284,16 @@ const HomeScreen = () => {
             items={featuredLocations}
             className="!bg-transparent sm:text-left !p-0"
             cardClassName="bg-neutral-100 p-4 text-center hover:opacity-70 cursor-pointer"
-            // label="Features"
-            // name="Netcompany"
-            // address="Opal Tower, 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
             perView={4}
             onClick={onSelectLocation}
           />
         ) : (
           <Wrapper className="justify-center">
-            {/* {currentLocation ? (
+            {currentLocation ? (
               <Loading />
-            ) : ( */}
-              <Heading>No results found!</Heading>
-            {/* )} */}
+            ) : (
+            <Heading>No results found!</Heading>
+            )}
           </Wrapper>
         )}
       </Wrapper>
@@ -276,11 +303,14 @@ const HomeScreen = () => {
           <Label>Latest</Label>
           {latestNextCursor &&
             (!isLatestUpdating ? (
-              <GoPlus
-                className="h-10 w-10 cursor-pointer hover:animate-bounce"
+              <Heading
                 onClick={() => handleLoadMoreLatestData(latestNextCursor)}
-              />
+                className="cursor-pointer hover:animate-bounce text-primary-400"
+              >
+                + Load more
+              </Heading>
             ) : (
+              // className="h-10 w-10"
               <Loading className="!h-10 !w-10" />
             ))}
         </Wrapper>
@@ -289,19 +319,16 @@ const HomeScreen = () => {
             items={latestLocations}
             className="!bg-transparent sm:text-left !p-0"
             cardClassName="bg-neutral-100 p-4 text-center"
-            // label="Latest"
-            // name="Netcompany"
-            // address="Opal Tower, 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
             perView={4}
             onClick={onSelectLocation}
           />
         ) : (
           <Wrapper className="justify-center">
-            {/* {currentLocation ? (
+            {currentLocation ? (
               <Loading />
-            ) : ( */}
-              <Heading>No results found!</Heading>
-            {/* )} */}
+            ) : (
+            <Heading>No results found!</Heading>
+            )}
           </Wrapper>
         )}
       </Wrapper>

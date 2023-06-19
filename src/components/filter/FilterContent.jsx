@@ -9,34 +9,46 @@ import { DISTANCE } from "@/constants/distance";
 import Button from "@/components/button/Button";
 import { useDispatch } from "react-redux";
 import { changeSearchDistance, changeWeekdayTime, changeWeekendTime } from "@/features/filterSlice";
+import VALIDATE from "@/helpers/validateForm";
+import Error from "@/components/form/Error";
 
-const FilterContent = () => {
+const FilterContent = ({setIsClicked}) => {
 //   const [category, setCategory] = useState();
-  const [weekdayOpenTime, setWeekdayOpenTime] = useState();
-  const [weekdayCloseTime, setWeekdayCloseTime] = useState();
-  const [weekendOpenTime, setWeekendOpenTime] = useState();
-  const [weekendCloseTime, setWeekendCloseTime] = useState();
+  const [weekdayOpenTime, setWeekdayOpenTime] = useState("");
+  const [weekdayCloseTime, setWeekdayCloseTime] = useState("");
+  const [weekendOpenTime, setWeekendOpenTime] = useState("");
+  const [weekendCloseTime, setWeekendCloseTime] = useState("");
   const [searchDistance, setSearchDistance] = useState(5)
+  const [weekdayOpenTimeErr, setWeekdayOpenTimeErr] = useState();
+  const [weekdayCloseTimeErr, setWeekdayCloseTimeErr] = useState();
+  const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();
+  const [weekendCloseTimeErr, setWeekendCloseTimeErr] = useState();
+  const [submitErr, setSubmitErr] = useState()
   const handleDistanceChange = ({ x }) => setSearchDistance(x);
 
   const dispatch = useDispatch()
   const handleSubmit = (e) => {
     e.preventDefault()
-    dispatch(changeWeekdayTime({openTime: weekdayOpenTime, closeTime: weekdayCloseTime}))
-    dispatch(changeWeekendTime({openTime: weekendOpenTime, closeTime: weekendCloseTime}))
+    if ((weekdayOpenTime && !weekdayCloseTime)|| (!weekdayOpenTime && weekdayCloseTime )){
+      setWeekdayOpenTimeErr(VALIDATE.time(weekdayOpenTime))
+      setWeekdayCloseTimeErr(VALIDATE.time(weekdayCloseTime))
+      setSubmitErr('Please fill both open and close time in "Weekday"!')
+      return
+    }
+    if((weekendOpenTime && !weekendCloseTime)|| (!weekendOpenTime && weekendCloseTime )){
+      setWeekendOpenTimeErr(VALIDATE.time(weekendOpenTime))
+      setWeekendCloseTimeErr(VALIDATE.time(weekendCloseTime))
+      setSubmitErr('Please fill both open and close time in "Weekend"!')
+      return
+    }
+    dispatch(changeWeekdayTime({openTime: weekdayOpenTime.replace(":", ""), closeTime: weekdayCloseTime.replace(":", "")}))
+    dispatch(changeWeekendTime({openTime: weekendOpenTime.replace(":", ""), closeTime: weekendCloseTime.replace(":", "")}))
     dispatch(changeSearchDistance(searchDistance))
+    setIsClicked(false)
   }
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      {/* <Dropdown
-        label="Category"
-        defaultTitle="SELECT THE CATEGORY"
-        options={categoryList}
-        value={category}
-        onChange={(option) => {
-          setCategory(option);
-        }}
-      /> */}
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
       <Wrapper col="true" className="gap-2">
         <Label>
           Time
@@ -55,7 +67,7 @@ const FilterContent = () => {
                 </Label>
                 <Input
                   type="time"
-                  className={`h-[60px] appearance-none flex justify-between !w-full bg-white`}
+                  className={`h-[60px] appearance-none flex justify-between !w-full bg-white ${(weekdayOpenTimeErr && !weekdayOpenTime) && "focus:!ring-secondary-400 !border-secondary-400 border-2"}`}
                   onChange={(e) => {
                     setWeekdayOpenTime(e.target.value);
                   }}
@@ -69,7 +81,7 @@ const FilterContent = () => {
                 </Label>
                 <Input
                   type="time"
-                  className={`h-[60px] appearance-none flex justify-between bg-white !w-full`}
+                  className={`h-[60px] appearance-none flex justify-between bg-white !w-full ${(weekdayCloseTimeErr && !weekdayCloseTime) && "focus:!ring-secondary-400 !border-secondary-400 border-2"}`}
                   onChange={(e) => {
                     setWeekdayCloseTime(e.target.value);
                   }}
@@ -89,7 +101,7 @@ const FilterContent = () => {
                 <Label className="!text-[14px]">Open time:</Label>
                 <Input
                   type="time"
-                  className={`h-[60px] appearance-none !w-full flex justify-between bg-white`}
+                  className={`h-[60px] appearance-none !w-full flex justify-between bg-white ${(weekendOpenTimeErr && !weekendOpenTime) && "focus:!ring-secondary-400 !border-secondary-400 border-2"}`}
                   onChange={(e) => {
                     setWeekendOpenTime(e.target.value);
                     // setWeekendTimeErr(VALIDATE.time(e.target.value))
@@ -102,7 +114,7 @@ const FilterContent = () => {
                 <Label className="!text-[14px]">Close time:</Label>
                 <Input
                   type="time"
-                  className={`h-[60px] appearance-none !w-full flex justify-end bg-white`}
+                  className={`h-[60px] appearance-none !w-full flex justify-end bg-white ${(weekendCloseTimeErr && !weekendCloseTime) && "focus:!ring-secondary-400 !border-secondary-400 border-2"}`}
                   onChange={(e) => {
                     setWeekendCloseTime(e.target.value);             
                   }}
@@ -121,7 +133,9 @@ const FilterContent = () => {
       x={searchDistance}
       label={`Distance: ${searchDistance}km`}
       />
-      <Button primary active className="mt-8 mb-0">Submit</Button>
+
+      <Error fluid className={`mt-8 ${!submitErr && "invisible"}`}>{submitErr}</Error>
+      <Button primary active className="!my-0">Submit</Button>
     </form>
   );
 };

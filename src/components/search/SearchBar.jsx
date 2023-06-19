@@ -12,9 +12,10 @@ const SearchBar = ({onChange, className, wrapperClassName}) => {
     <div className={`w-full ${wrapperClassName}`}>
         <Input
             placeholder="Search"
-            className={`bg-neutral-100 border-none ${className}`}
+            className={`bg-white focus:ring-primary-400 focus:ring-1 border-primary-400 ${className}`}
             icon={search}
             onChange={(e) => setValue(e.target.value)}
+            onIconClick={() => onChange(value)}
             onKeyPress={handleKeyPress}
         />
     </div>
