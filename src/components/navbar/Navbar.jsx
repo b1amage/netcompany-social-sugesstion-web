@@ -256,6 +256,7 @@ const Navbar = () => {
                     key={index}
                     label={link.label}
                     src={darkIcons[index]}
+                    isActive={link.path === window.location.pathname}
                     className=""
                   />
                 ))}
@@ -306,7 +307,7 @@ const Navbar = () => {
 
       {/* { && ( */}
       <Popup
-        // onClose={() => setShowAutoComplete(false)}
+        onClose={() => {}}
         actions={[]}
         // title="Search location"
         children={
