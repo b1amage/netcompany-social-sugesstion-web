@@ -205,7 +205,7 @@ const Navbar = () => {
                       }}
                     />
                   )}
-                  {isShowNotification && (
+                  {/* {isShowNotification && (
                     <div className="relative">
                       <Image
                         imageClassName=""
@@ -215,7 +215,7 @@ const Navbar = () => {
                       />
                       <Counter count={10} />
                     </div>
-                  )}
+                  )} */}
                   {isShowFilter && <Filter />}
                   {isShowEdit && (
                     <Wrapper className="flex-center">
