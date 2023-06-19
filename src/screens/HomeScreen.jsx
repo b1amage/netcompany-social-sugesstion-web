@@ -6,15 +6,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "@/components/search/SearchBar";
 import Wrapper from "@/components/wrapper/Wrapper";
-import { imageList } from "@/constants/images";
+// import { imageList } from "@/constants/images";
 import PreferencesSelect from "@/components/form/PreferencesSelect";
 import categoryList from "@/constants/category";
-import SubNavbar from "@/components/navbar/SubNavbar";
-import useViewport from "@/hooks/useScreenWidth";
-import { useGeolocated } from "react-geolocated";
-import axios from "axios";
-import Image from "@/components/image/Image";
-import locationImg from "@/assets/location.svg";
+// import SubNavbar from "@/components/navbar/SubNavbar";
+// import useViewport from "@/hooks/useScreenWidth";
+// import { useGeolocated } from "react-geolocated";
+// import axios from "axios";
+// import Image from "@/components/image/Image";
+// import locationImg from "@/assets/location.svg";
 import Heading from "@/components/typography/Heading";
 import locationApi from "@/api/locationApi";
 import Slider from "@/components/slider/Slider";
@@ -23,62 +23,64 @@ import Loading from "@/components/loading/Loading";
 import { GoPlus } from "react-icons/go";
 import OnBoardingSlider from "@/components/slider/OnBoardingSlider";
 import Screen from "@/components/container/Screen";
+import useCurrentLocation from "@/hooks/useCurrentLocation";
+// import locationImg from "@/assets/location.svg";
+// import Image from "@/components/image/Image";
+import { changeCategory, changeSearchInput } from "@/features/filterSlice";
+
+// const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
 const HomeScreen = () => {
   const navigate = useNavigate();
-  const { width } = useViewport();
-  const [location, setLocation] = useState();
-  const [latitude, setLatitude] = useState();
-  const [longitude, setLongitude] = useState();
   const [featuredLocations, setFeaturedLocations] = useState([]);
   const [latestLocations, setLatestLocations] = useState([]);
-  const [searchInput, setSearchInput] = useState();
-  const [searchDistance, setSearchDistance] = useState();
   const [featuredNextCursor, setFeaturedNextCursor] = useState();
   const [latestNextCursor, setLatestNextCursor] = useState();
   const [isFeaturedUpdating, setIsFeaturedUpdating] = useState(false);
   const [isLatestUpdating, setIsLatestUpdating] = useState(false);
 
-  const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
   const [locationCategories, setLocationCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useDispatch();
+
   const handleCategoryClick = (category) => {
-    const newCategory = locationCategories.includes(category)
+    const selectedCategory = locationCategories.includes(category)
       ? locationCategories.filter((item) => item !== category)
-      : [...locationCategories, category];
+      : [category];
 
-    setLocationCategories(newCategory);
+    setLocationCategories(selectedCategory);
+    dispatch(changeCategory(selectedCategory));
   };
-
-  const { isAdded, isShowNotification, isShowFilter } = useSelector(
-    ({ navbar }) => {
-      return {
-        isAdded: navbar.isAdded,
-        isShowNotification: navbar.isShowNotification,
-        isShowFilter: navbar.isShowFilter,
-        isShowEdit: navbar.isShowEdit,
-      };
-    }
-  );
 
   const {
     category,
-    weekdayOpenTime,
-    weekdayCloseTime,
-    weekendOpenTime,
-    weekendCloseTime,
-  } = useSelector(({ createLocationForm }) => {
+    searchInput,
+    weekdayTime,
+    weekendTime,
+    searchDistance,
+    currentLocation,
+    latitude,
+    longitude,
+  } = useSelector(({ filter, currentLocation }) => {
     return {
-      category: createLocationForm.category,
-      weekdayOpenTime: createLocationForm.weekdayOpenTime,
-      weekdayCloseTime: createLocationForm.weekdayCloseTime,
-      weekendOpenTime: createLocationForm.weekendOpenTime,
-      weekendCloseTime: createLocationForm.weekendCloseTime,
+      currentLocation: currentLocation.currentLocation,
+      latitude: currentLocation.latitude,
+      longitude: currentLocation.longitude,
+      category: filter.category,
+      searchInput: filter.searchInput,
+      searchDistance: filter.searchDistance,
+      weekdayTime: filter.weekdayTime,
+      weekendTime: filter.weekendTime,
     };
   });
+
+  useCurrentLocation();
 
   const onSelectLocation = (id) => {
     navigate(id);
   };
+
   // const data = {
   //   locationCategory: category,
   //   searchInput: searchInput,
@@ -112,63 +114,78 @@ const HomeScreen = () => {
     }
   }, []);
   const { user } = useSelector((state) => state.user);
-  // console.log(user);
-
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-    useGeolocated({
-      positionOptions: {
-        enableHighAccuracy: false,
-      },
-      userDecisionTimeout: 5000,
-    });
 
   useEffect(() => {
-    if (isGeolocationAvailable && isGeolocationEnabled && coords) {
-      // console.log(coords.latitude);
-      // console.log(coords.longitude);
-      setLatitude(coords.latitude);
-      setLongitude(coords.longitude);
-      const fetchAddress = async () => {
-        const { data } = await axios.get(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.latitude},${coords.longitude}&key=${key}`
-        );
-        setLocation(data.results[0].formatted_address);
-        console.log(data.results[0].formatted_address);
-      };
-
+    if (currentLocation && latitude && longitude) {
+      // if (currentLocation) {
+      setIsLoading(true);
       const fetchFeaturedLocations = async () => {
         const response = await locationApi.getFeaturedLocation({
           locationCategory: category,
           searchInput: searchInput,
-          lat: coords.latitude,
-          lng: coords.longitude,
+          lat: latitude,
+          lng: longitude,
           searchDistance: searchDistance,
-          weekday: { openTime: weekdayOpenTime, closeTime: weekdayCloseTime },
-          weekend: { openTime: weekendOpenTime, closeTime: weekendCloseTime },
+          weekday: {
+            openTime: weekdayTime.openTime,
+            closeTime: weekdayTime.closeTime,
+          },
+          weekend: {
+            openTime: weekendTime.openTime,
+            closeTime: weekendTime.closeTime,
+          },
         });
         setFeaturedLocations(response.data.results);
         setFeaturedNextCursor(response.data.next_cursor);
-        // console.log(response)
+        setIsLoading(false);
       };
+      fetchFeaturedLocations();
+    }
+  }, [
+    currentLocation,
+    latitude,
+    longitude,
+    category,
+    searchInput,
+    weekdayTime,
+    weekendTime,
+    searchDistance,
+  ]);
+
+  useEffect(() => {
+    if (currentLocation && latitude && longitude) {
       const fetchLatestLocations = async () => {
         const response = await locationApi.getLatestLocation({
           locationCategory: category,
           searchInput: searchInput,
-          lat: coords.latitude,
-          lng: coords.longitude,
+          lat: latitude,
+          lng: longitude,
           searchDistance: searchDistance,
-          weekday: { openTime: weekdayOpenTime, closeTime: weekdayCloseTime },
-          weekend: { openTime: weekendOpenTime, closeTime: weekendCloseTime },
+          weekday: {
+            openTime: weekdayTime.openTime,
+            closeTime: weekdayTime.closeTime,
+          },
+          weekend: {
+            openTime: weekendTime.openTime,
+            closeTime: weekendTime.closeTime,
+          },
         });
         setLatestLocations(response.data.results);
         setLatestNextCursor(response.data.next_cursor);
-        // console.log(response)
+        setIsLoading(false);
       };
-      fetchFeaturedLocations();
       fetchLatestLocations();
-      fetchAddress();
     }
-  }, [isGeolocationAvailable, isGeolocationEnabled, coords]);
+  }, [
+    currentLocation,
+    latitude,
+    longitude,
+    category,
+    searchInput,
+    weekdayTime,
+    weekendTime,
+    searchDistance,
+  ]);
 
   const handleLoadMoreFeaturedData = (nextCursor) => {
     setIsFeaturedUpdating(true);
@@ -180,14 +197,19 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: { openTime: weekdayOpenTime, closeTime: weekdayCloseTime },
-          weekend: { openTime: weekendOpenTime, closeTime: weekendCloseTime },
+          weekday: {
+            openTime: weekdayTime.openTime,
+            closeTime: weekdayTime.closeTime,
+          },
+          weekend: {
+            openTime: weekendTime.openTime,
+            closeTime: weekendTime.closeTime,
+          },
         },
         nextCursor
       );
       setFeaturedLocations((prev) => [...prev, ...response.data.results]);
       setFeaturedNextCursor(response.data.next_cursor);
-      // console.log(response)
       setIsFeaturedUpdating(false);
     };
     fetchFeaturedLocations();
@@ -198,14 +220,19 @@ const HomeScreen = () => {
     const fetchLatestLocations = async () => {
       const response = await locationApi.getLatestLocation(
         {
-          next_cursor: nextCursor,
           locationCategory: category,
           searchInput: searchInput,
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: { openTime: weekdayOpenTime, closeTime: weekdayCloseTime },
-          weekend: { openTime: weekendOpenTime, closeTime: weekendCloseTime },
+          weekday: {
+            openTime: weekdayTime.openTime,
+            closeTime: weekdayTime.closeTime,
+          },
+          weekend: {
+            openTime: weekendTime.openTime,
+            closeTime: weekendTime.closeTime,
+          },
         },
         nextCursor
       );
@@ -216,35 +243,19 @@ const HomeScreen = () => {
     };
     fetchLatestLocations();
   };
-  // locationCategory=${data.locationCategory}&searchInput=${data.searchInput}&latitude=${data.lat}&longitude=${data.lng}&searchDistance=${data.searchDistance}&weekday[openTime]=${data.weekday[0]}&weekday[closeTime]=${data.weekday[1]}&weekend[openTime]=${data.weekend[0]}&weekend[closeTime]=${data.weekend[1]}
+
+  const handleSearchValue = (value) => {
+    if (value.trim() === "") return;
+    dispatch(changeSearchInput(value));
+  };
+
   return (
-    <Screen className="my-4 lg:my-8 px-16 flex flex-col gap-8 py-4">
-      <Wrapper className="flex gap-4 items-center">
-        <Image
-          src={locationImg}
-          alt="location"
-          className="max-w-[20px] max-h-[20px]"
-        />
-        <Heading className="!text-[16px] truncate">
-          {location ? location : "Loading..."}
-        </Heading>
-      </Wrapper>
-      <Wrapper col className="gap-4 md:flex-row md:items-center">
+    <Screen className="my-4 lg:my-12 px-10 flex flex-col gap-8 lg:px-16 py-8 md:py-16 lg:py-0">
+      <Wrapper col="true" className="gap-4 md:flex-row md:items-center">
         <User user={user} src={user.imageUrl} />
-        <SearchBar />
-        {width > 768 && <SubNavbar isAdded={isAdded} isShowNotification={isShowNotification} isShowFilter={isShowFilter} onClickAddButton={() => navigate("/create-location")} />}
+        <SearchBar onChange={handleSearchValue} />
       </Wrapper>
 
-      {/* <Slider
-        imgList={imageList}
-        className="!bg-transparent sm:text-left !p-0"
-        cardClassName="!w-full"
-        imageClassName="h-[40vh] lg:h-[60vh]"
-        // label="Features"
-        // name="Netcompany"
-        // address="Opal Tower={} 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
-        perView={1}
-      /> */}
       <OnBoardingSlider />
 
       <PreferencesSelect
@@ -253,66 +264,71 @@ const HomeScreen = () => {
         locationCategories={locationCategories}
       />
 
-      <Wrapper col="true" className="">
-        <Wrapper className="justify-between items-center">
+      <Wrapper col="true" className="gap-4">
+        <Wrapper className="justify-between items-end">
           <Label>Features</Label>
           {featuredNextCursor &&
             (!isFeaturedUpdating ? (
-              <GoPlus
-                className="h-16 w-16 cursor-pointer hover:animate-bounce"
-                onClick={() => {
-                  handleLoadMoreFeaturedData(featuredNextCursor);
-                }}
-              />
+              <Heading
+                onClick={() => handleLoadMoreFeaturedData(featuredNextCursor)}
+                className="cursor-pointer hover:animate-bounce text-primary-400"
+              >
+                + Load more
+              </Heading>
             ) : (
-              <Loading />
+              <Loading className="!h-10 !w-10" />
             ))}
         </Wrapper>
-        {featuredLocations.length > 0 ? (
+        {featuredLocations.length > 0 && !isLoading ? (
           <Slider
             items={featuredLocations}
             className="!bg-transparent sm:text-left !p-0"
             cardClassName="bg-neutral-100 p-4 text-center hover:opacity-70 cursor-pointer"
-            // label="Features"
-            // name="Netcompany"
-            // address="Opal Tower, 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
             perView={4}
             onClick={onSelectLocation}
           />
         ) : (
           <Wrapper className="justify-center">
-            <Loading />
+            {currentLocation ? (
+              <Loading />
+            ) : (
+            <Heading>No results found!</Heading>
+            )}
           </Wrapper>
         )}
       </Wrapper>
 
-      <Wrapper col="true" className="">
-        <Wrapper className="justify-between items-center">
+      <Wrapper col="true" className="gap-4">
+        <Wrapper className="justify-between items-end">
           <Label>Latest</Label>
           {latestNextCursor &&
             (!isLatestUpdating ? (
-              <GoPlus
-                className="h-16 w-16 cursor-pointer hover:animate-bounce"
+              <Heading
                 onClick={() => handleLoadMoreLatestData(latestNextCursor)}
-              />
+                className="cursor-pointer hover:animate-bounce text-primary-400"
+              >
+                + Load more
+              </Heading>
             ) : (
-              <Loading />
+              // className="h-10 w-10"
+              <Loading className="!h-10 !w-10" />
             ))}
         </Wrapper>
-        {latestLocations.length > 0 ? (
+        {latestLocations.length > 0 && !isLoading ? (
           <Slider
             items={latestLocations}
             className="!bg-transparent sm:text-left !p-0"
             cardClassName="bg-neutral-100 p-4 text-center"
-            // label="Latest"
-            // name="Netcompany"
-            // address="Opal Tower, 92 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, Thành phố Hồ Chí Minh"
             perView={4}
             onClick={onSelectLocation}
           />
         ) : (
           <Wrapper className="justify-center">
-            <Loading />
+            {currentLocation ? (
+              <Loading />
+            ) : (
+            <Heading>No results found!</Heading>
+            )}
           </Wrapper>
         )}
       </Wrapper>

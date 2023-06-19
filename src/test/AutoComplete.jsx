@@ -4,28 +4,20 @@ import {
   // LoadScript,
   Autocomplete,
 } from "@react-google-maps/api";
-import Error from "@/components/form/Error";
 import { useDispatch } from "react-redux";
-import {
-  changePlaceId,
-  changeLat,
-  changeLng,
-  changeAddress,
-  changeTitle,
-  changeWeekdayCloseTime,
-  changeWeekdayOpenTime,
-  changeWeekendCloseTime,
-  changeWeekendOpenTime,
-} from "@/features/createLocationFormSlice";
 import Label from "@/components/form/Label";
-import Image from "@/components/image/Image";
-import VALIDATE from "@/helpers/validateForm";
 
 // const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
-const AutoCompleteScreen = ({ label, address, addressErr, className, src, err }) => {
+const AutoCompleteScreen = ({ label, address, className, onChange, setShowPopup }) => {
+  // const {currentLocation} = useSelector(({currentLocation}) => {
+  //   return {
+  //     currentLocation: currentLocation.currentLocation
+  //   }
+  // })
+
   const inputRef = useRef();
-  // const [value, setValue] = useState("");
+  const [value, setValue] = useState("");
   const [error, setError] = useState(true);
 
   const formatTime = (timeString) => {
@@ -36,6 +28,7 @@ const AutoCompleteScreen = ({ label, address, addressErr, className, src, err })
   };
 
   const dispatch = useDispatch();
+
   const handlePlaceChange = () => {
     console.log("place changed");
 
@@ -43,36 +36,39 @@ const AutoCompleteScreen = ({ label, address, addressErr, className, src, err })
 
     if (places) {
       console.log(places[0]);
-      console.log(places[0].geometry.location.lat());
-      console.log(places[0].geometry.location.lng());
-      dispatch(changePlaceId(places[0].place_id));
+      setValue(places[0].formatted_address)
+      onChange(places[0], places[0].geometry.location.lat(), places[0].geometry.location.lng());
+      // console.log(places[0].geometry.location.lat());
+      // console.log(places[0].geometry.location.lng());
+      // dispatch(changePlaceId(places[0].place_id));
 
-      dispatch(changeTitle(places[0].name));
-      dispatch(changeAddress(places[0].formatted_address));
-      dispatch(changeLat(places[0].geometry.location.lat()));
-      dispatch(changeLng(places[0].geometry.location.lng()));
-      dispatch(
-        changeWeekdayOpenTime(
-          formatTime(places[0].opening_hours.periods[0].open.time)
-        )
-      );
-      dispatch(
-        changeWeekdayCloseTime(
-          formatTime(places[0].opening_hours.periods[0].close.time)
-        )
-      );
-      if (places[0].opening_hours.periods.length > 5) {
-        dispatch(
-          changeWeekendOpenTime(
-            formatTime(places[0].opening_hours.periods[5].open.time)
-          )
-        );
-        dispatch(
-          changeWeekendCloseTime(
-            formatTime(places[0].opening_hours.periods[5].close.time)
-          )
-        );
-      }
+      // dispatch(changeTitle(places[0].name));
+      // dispatch(changeAddress(places[0].formatted_address));
+      // dispatch(changeLat(places[0].geometry.location.lat()));
+      // dispatch(changeLng(places[0].geometry.location.lng()));
+      // dispatch(
+      //   changeWeekdayOpenTime(
+      //     formatTime(places[0].opening_hours.periods[0].open.time)
+      //   )
+      // );
+      // dispatch(
+      //   changeWeekdayCloseTime(
+      //     formatTime(places[0].opening_hours.periods[0].close.time)
+      //   )
+      // );
+      // if (places[0].opening_hours.periods.length > 5) {
+      //   dispatch(
+      //     changeWeekendOpenTime(
+      //       formatTime(places[0].opening_hours.periods[5].open.time)
+      //     )
+      //   );
+      //   dispatch(
+      //     changeWeekendCloseTime(
+      //       formatTime(places[0].opening_hours.periods[5].close.time)
+      //     )
+      //   );
+      // }
+      setShowPopup(false)
       setError(false);
     } else {
       setError(true);
@@ -89,20 +85,18 @@ const AutoCompleteScreen = ({ label, address, addressErr, className, src, err })
       >
         <Autocomplete className="">
           <input
-            // value={value}
+            // value={value} 
             onChange={(e) => {
-              // setValue(e.target.value);
-              dispatch(changeAddress(e.target.value));
-              // if (e.target.value === "" || !inputRef.current.getPlaces()) {
-              //   setError(true);
-              // }
+              if (e.target.value === "" || !inputRef.current.getPlaces()) {
+                setError(true);
+              }
+              setValue(e.target.value)
             }}
+            // value={address}
             type="text"
             placeholder="Enter location name or address"
             autoComplete="on"
-            className={`w-full border border-primary-400 focus:ring-1 my-3 focus:ring-primary-400 p-4 text-sm transition-all duration-300 outline-none rounded-lg  md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 bg-white ${className} ${
-              addressErr && (address ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500" : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
-            } ${ address && "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500" }`}
+            className={`w-full border border-primary-400 focus:ring-1 my-3 focus:ring-primary-400 p-4 text-sm transition-all duration-300 outline-none rounded-lg  md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 bg-white ${className} `}
           />
         </Autocomplete>
       </StandaloneSearchBox>

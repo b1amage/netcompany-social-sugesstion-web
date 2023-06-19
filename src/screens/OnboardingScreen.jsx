@@ -23,14 +23,14 @@ const OnboardingScreen = () => {
   });
 
   return (
-    <Screen className={`!w-screen h-screen max-w-none ${!isLogin && "!mt-0 "}`}>
+    <Screen className={`!w-screen h-screen max-w-none !mt-0`}>
       <>
         <div className="relative h-full navigation-wrapper">
           {/* SLIDES */}
           <div ref={sliderRef} className="h-full keen-slider">
             {onboardingScreens.map((slide) => (
               <Slide
-                className={`${!isLogin && "!mt-0 "}`}
+                className={`!mt-0`}
                 slide={slide}
                 key={slide.heading}
               ></Slide>

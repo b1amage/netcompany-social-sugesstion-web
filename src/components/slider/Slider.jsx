@@ -100,7 +100,7 @@ const Slider = ({
   }, [items,  imgList, sliderRef.current, slider]);
 
   return (
-    <Wrapper col className="relative">
+    <Wrapper col="true" className="relative">
       <div
         ref={sliderRef}
         className={`keen-slider bg-primary-400 rounded-lg py-4 ${className}`}
@@ -120,7 +120,7 @@ const Slider = ({
                 alt="image"
               />
 
-              <Wrapper col className="">
+              <Wrapper col="true" className="">
                 <Heading className="break-words">{item.name}</Heading>
 
                 <SubHeading className="truncate">{item.address}</SubHeading>

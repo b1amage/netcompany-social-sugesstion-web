@@ -16,8 +16,8 @@ const useAuthentication = () => {
     if (!user || !onBoardingAlreadyShown){
       setIsLogin(false);
     }
-    console.log(isLogin)
-    console.log(onBoardingAlreadyShown)
+    // console.log(isLogin)
+    // console.log(onBoardingAlreadyShown)
 
   }, []);
   

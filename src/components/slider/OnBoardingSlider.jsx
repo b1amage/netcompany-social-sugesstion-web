@@ -27,7 +27,7 @@ const OnBoardingSlider = () => {
         <div ref={sliderRef} className="h-[60vh] keen-slider">
           {onboardingScreens.map((slide) => (
             <Slide 
-            className={`${isLogin && "!mt-0 "}`} slide={slide} key={slide.heading}></Slide>
+            className={`!mt-0`} slide={slide} key={slide.heading}></Slide>
           ))}
         </div>
 
@@ -66,7 +66,7 @@ const OnBoardingSlider = () => {
               onClick={() => {
                 instanceRef.current?.moveToIdx(idx);
               }}
-              className={currentSlide === idx ? "active !bg-secondary-400" : ""}
+              className={`${currentSlide === idx ? "active !bg-secondary-400" : ""} border border-primary-400`}
             />
           ))}
         </div>
