@@ -3,7 +3,6 @@ import Image from "@/components/image/Image";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { useDispatch } from "react-redux";
-import { changeImage, removeImage } from "@/features/createLocationFormSlice";
 import close from "@/assets/close.svg";
 import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import Wrapper from "@/components/wrapper/Wrapper";
@@ -19,8 +18,9 @@ const Slider = ({
   perView,
   imageClassName,
   onClick,
+  setImgList, setImage
 }) => {
-  const dispatch = useDispatch();
+
   const [isShowButtonRight, setIsShowButtonRight] = useState(false);
   const [isShowButtonLeft, setIsShowButtonLeft] = useState(false);
 
@@ -115,7 +115,7 @@ const Slider = ({
             >
               <Image
                 className={`h-[20vh] ${imageClassName}`}
-                onClick={() => dispatch(changeImage(item.imageUrls[0]))}
+                // onClick={() => setImage(item.imageUrls[0])}
                 src={item.imageUrls[0]}
                 alt="image"
               />
@@ -142,7 +142,7 @@ const Slider = ({
                   className={`h-[20vh] ${
                     src === image && "border-2 border-secondary-400"
                   } hover:opacity-60 duration-300 ${imageClassName}`}
-                  onClick={() => dispatch(changeImage(image))}
+                  onClick={() => setImage(image)}
                   src={image}
                   alt="image"
                 />
@@ -150,7 +150,15 @@ const Slider = ({
                   className={`absolute top-0 right-0 ${
                     src === image ? "bg-secondary-400 p-1" : "hidden"
                   }`}
-                  onClick={() => dispatch(removeImage(image))}
+                  onClick={() => {
+                    setImgList(imgList.filter(img => img !== image))
+                    const filterList = imgList.filter(img => img !== image)
+                    if (filterList.length <= 0){
+                      setImage()
+                    } else{
+                      setImage(filterList[filterList.length - 1])
+                    }
+                  }}
                   src={close}
                   alt="close"
                 />

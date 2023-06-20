@@ -191,6 +191,24 @@ const locationApi = {
       console.log(error);
     }
   },
+  async updateLocation(data, navigate, setSubmitErr, setIsShowPopup){
+    const url = `/location`;
+
+    try {
+      const response = await axiosClient.patch(url, data, {
+        withCredentials: true
+      });
+      setIsShowPopup(true);
+      setTimeout(() => {
+        setIsShowPopup(false);
+        navigate(-1);
+      }, 2000);
+      return response;
+    } catch (error) {
+      console.log(error);
+      setSubmitErr((prev) => [...prev, error.response.data.message]);
+    }
+  }
 };
 
 export default locationApi;
