@@ -3,7 +3,7 @@ import Wrapper from "@/components/wrapper/Wrapper";
 import React from "react";
 import CurrencyFormat from "react-currency-format";
 
-const Price = ({label, value, err,onChange, wrapperClassName, className}) => {
+const Price = ({label, value, err, onChange, wrapperClassName, className}) => {
   return (
     <Wrapper col="true" className={`justify-between ${wrapperClassName}`}>
       <Label>{label}</Label>
@@ -13,7 +13,7 @@ const Price = ({label, value, err,onChange, wrapperClassName, className}) => {
           value &&
           (err
             ? " focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400"
-            : "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500")
+            : "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 !ring-green-500")
         } ${className}`}
         value={value}
         thousandSeparator={true}
@@ -21,6 +21,7 @@ const Price = ({label, value, err,onChange, wrapperClassName, className}) => {
         placeholder="Enter the price"
         decimalScale={2}
         fixedDecimalScale={true}
+        min={0}
       />
     </Wrapper>
   );

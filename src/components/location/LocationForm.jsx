@@ -140,7 +140,10 @@ const LocationForm = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setPriceErr()
+    setCurrencyErr()
     setSubmitErr([]);
+    console.log(typeof minPrice)
     let data;
     if (uploadImageErr) {
       setUploadImageErr();
