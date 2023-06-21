@@ -23,7 +23,7 @@ const FilterContent = ({ setIsClicked }) => {
   const [weekdayCloseTime, setWeekdayCloseTime] = useState("");
   const [weekendOpenTime, setWeekendOpenTime] = useState("");
   const [weekendCloseTime, setWeekendCloseTime] = useState("");
-  const [searchDistance, setSearchDistance] = useState(0);
+  const [searchDistance, setSearchDistance] = useState(5);
   const [weekdayOpenTimeErr, setWeekdayOpenTimeErr] = useState();
   const [weekdayCloseTimeErr, setWeekdayCloseTimeErr] = useState();
   const [weekendOpenTimeErr, setWeekendOpenTimeErr] = useState();

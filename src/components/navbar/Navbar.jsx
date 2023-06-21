@@ -45,6 +45,7 @@ const BREAK_POINT_NAVBAR = 768;
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState();
 
   const viewport = useViewport();
 
@@ -103,10 +104,11 @@ const Navbar = () => {
   // console.log(places[0].geometry.location.lng());
   useEffect(() => {
     dispatch(validatePathname(window.location.pathname));
+    setCurrentLocation(window.location.pathname)
     // console.log(location)
     // console.log([latitude, longitude])
     // console.log(location)
-  }, [window.location.pathname]);
+  }, [window.location.pathname, currentLocation]);
 
   return createPortal(
     <nav className="w-full bg-white border-b border-gray-200">
@@ -201,7 +203,7 @@ const Navbar = () => {
 
         {viewport.width > BREAK_POINT_NAVBAR && isLogin ? (
           <Wrapper col="true" className="gap-4 bg-white">
-            <div className="flex justify-center mt-0 text-sm font-medium bg-transparent border-0 rounded-lg">
+            <div className="flex justify-center gap-4 mt-0 text-sm font-medium bg-transparent border-0 rounded-lg">
               {navlinks.length > 0 &&
                 navlinks.map((link, index) => (
                   <NavButton
@@ -209,7 +211,7 @@ const Navbar = () => {
                     key={index}
                     label={link.label}
                     src={darkIcons[index]}
-                    isActive={link.path === window.location.pathname}
+                    isActive={window.location.pathname === link.path}
                     className=""
                   />
                 ))}

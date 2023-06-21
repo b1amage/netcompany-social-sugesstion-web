@@ -348,7 +348,7 @@ const LocationForm = ({
         locationCategory: category.title,
         location: {
           type: "Point",
-          coordinates: [lat, lng],
+          coordinates: [lng, lat],
         },
         pricePerPerson:
           minPrice && maxPrice && currency
@@ -365,8 +365,8 @@ const LocationForm = ({
         weekend:
           weekendOpenTime && weekendCloseTime
             ? {
-                openTime: weekdayOpenTime.replace(":", ""),
-                closeTime: weekdayCloseTime.replace(":", ""),
+                openTime: weekendOpenTime.replace(":", ""),
+                closeTime: weekendCloseTime.replace(":", ""),
               }
             : null,
       };
