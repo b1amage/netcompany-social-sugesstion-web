@@ -41,8 +41,8 @@ const useCurrentLocation = () => {
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.latitude},${coords.longitude}&key=${key}`
         );
         dispatch(changeCurrentLocation(data.results[0]));
-        dispatch(changeLatitude(data.results[0].geometry.location.lat))
-        dispatch(changeLongitude(data.results[0].geometry.location.lng))
+        dispatch(changeLatitude(data.results[0]?.geometry?.location?.lat))
+        dispatch(changeLongitude(data.results[0]?.geometry?.location?.lng))
         console.log(data.results[0]);
         localStorage.setItem("currentLocation", JSON.stringify(data.results[0]))
         setIsGetCurrentLocation(false)
