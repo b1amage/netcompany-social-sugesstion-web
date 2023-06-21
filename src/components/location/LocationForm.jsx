@@ -683,6 +683,7 @@ const LocationForm = ({
                 perView={width > 768 ? 4 : 2}
                 setImgList={setImgList}
                 setImage={setImage}
+                loadMore={() => {}}
               />
             )}
 

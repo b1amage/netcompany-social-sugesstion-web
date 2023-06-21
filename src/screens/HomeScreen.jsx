@@ -142,6 +142,7 @@ const HomeScreen = () => {
           },
         });
         setLatestLocations(response.data.results);
+      localStorage.setItem("latestNextCursor", response.data.next_cursor)
         setLatestNextCursor(response.data.next_cursor);
         setIsLoading(false);
       };
@@ -225,6 +226,7 @@ const HomeScreen = () => {
         nextCursor
       );
       setLatestLocations((prev) => [...prev, ...response.data.results]);
+      localStorage.setItem("latestNextCursor", response.data.next_cursor)
       setLatestNextCursor(response.data.next_cursor);
       // console.log(response)
       setIsLatestUpdating(false);
@@ -243,7 +245,7 @@ const HomeScreen = () => {
       <Wrapper col="true" className="gap-4">
         <Wrapper className="justify-between items-end">
           <Label>Features</Label>
-          {featuredNextCursor &&
+          {/* {featuredNextCursor &&
             (!isFeaturedUpdating ? (
               <Heading
                 onClick={() => handleLoadMoreFeaturedData(featuredNextCursor)}
@@ -253,7 +255,7 @@ const HomeScreen = () => {
               </Heading>
             ) : (
               <Loading className="!h-10 !w-10" />
-            ))}
+            ))} */}
         </Wrapper>
         {!isLoading ? (
           featuredLocations.length > 0 ? (
@@ -264,7 +266,8 @@ const HomeScreen = () => {
               perView={4}
               onClick={onSelectLocation}
               loadMore={handleLoadMoreFeaturedData}
-              nextCursor={localStorage.getItem("featuredNextCursor")}
+              // nextCursor={localStorage.getItem("featuredNextCursor") || null}
+              type="featuredLocations"
             />
           ) : (
             <Wrapper className="justify-center">
@@ -279,7 +282,7 @@ const HomeScreen = () => {
       <Wrapper col="true" className="gap-4">
         <Wrapper className="justify-between items-end">
           <Label>Latest</Label>
-          {latestNextCursor &&
+          {/* {latestNextCursor &&
             (!isLatestUpdating ? (
               <Heading
                 onClick={() => handleLoadMoreLatestData(latestNextCursor)}
@@ -290,7 +293,7 @@ const HomeScreen = () => {
             ) : (
               // className="h-10 w-10"
               <Loading className="!h-10 !w-10" />
-            ))}
+            ))} */}
         </Wrapper>
         {!isLoading ? (
           latestLocations.length > 0 ? (
@@ -300,6 +303,8 @@ const HomeScreen = () => {
               cardClassName="bg-neutral-100 text-center"
               perView={4}
               onClick={onSelectLocation}
+              loadMore={handleLoadMoreLatestData}
+              type="latestLocations"
             />
           ) : (
             <Wrapper className="justify-center">

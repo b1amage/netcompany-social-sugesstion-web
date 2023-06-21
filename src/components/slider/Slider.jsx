@@ -22,8 +22,8 @@ const Slider = ({
   onClick,
   setImgList,
   setImage,
-  nextCursor,
-  loadMore
+  type,
+  loadMore,
 }) => {
   const [isShowButtonRight, setIsShowButtonRight] = useState(false);
   const [isShowButtonLeft, setIsShowButtonLeft] = useState(false);
@@ -74,24 +74,27 @@ const Slider = ({
       const { abs, minIdx, maxIdx } = s.track.details;
 
       handleSlideButtons(abs, minIdx, maxIdx);
-      if (abs === maxIdx && nextCursor){
-        console.log(nextCursor)
-        loadMore(nextCursor)
-
+      if (abs === maxIdx) {
+        const nextCursor = localStorage.getItem(type === "featuredLocations" ? "featuredNextCursor" : "latestNextCursor");
+        console.log(nextCursor);
+        if (nextCursor){
+          loadMore(nextCursor);
+        }
       }
+      
     },
     created(s) {
       console.log(s);
       if (s) {
         const { abs, minIdx, maxIdx } = s.track.details;
         handleSlideButtons(abs, minIdx, maxIdx);
-        
       }
     },
     updated(s) {
       if (s) {
         const { abs, minIdx, maxIdx } = s.track.details;
         handleSlideButtons(abs, minIdx, maxIdx);
+        
       }
     },
   });
@@ -108,7 +111,7 @@ const Slider = ({
     }
     console.log(items);
     console.log(imgList);
-  }, [items, imgList, sliderRef.current]);
+  }, [ items ,imgList, sliderRef.current]);
 
   return (
     <Wrapper col="true" className="relative">
@@ -126,13 +129,13 @@ const Slider = ({
             >
               <ProfileCard
                 place={{
-                  // _id, , , 
+                  // _id, , ,
                   imageUrls: item.imageUrls,
                   name: item.name,
                   address: item.address,
                   // description: item.description,
                 }}
-                className='!w-full'
+                className="!w-full"
               />
             </div>
             // <div
