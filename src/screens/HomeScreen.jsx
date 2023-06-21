@@ -6,9 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Wrapper from "@/components/wrapper/Wrapper";
 
-import PreferencesSelect from "@/components/form/PreferencesSelect";
-import categoryList from "@/constants/category";
-
 import Heading from "@/components/typography/Heading";
 import locationApi from "@/api/locationApi";
 import Slider from "@/components/slider/Slider";
@@ -32,19 +29,11 @@ const HomeScreen = () => {
   const [isFeaturedUpdating, setIsFeaturedUpdating] = useState(false);
   const [isLatestUpdating, setIsLatestUpdating] = useState(false);
 
-  const [locationCategories, setLocationCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
 
-  const handleCategoryClick = (category) => {
-    const selectedCategory = locationCategories.includes(category)
-      ? locationCategories.filter((item) => item !== category)
-      : [category];
-
-    setLocationCategories(selectedCategory);
-    dispatch(changeCategory(selectedCategory));
-  };
+  const [lastFetch, setLastFetch] = useState(Date.now());
 
   const {
     category,
@@ -97,7 +86,7 @@ const HomeScreen = () => {
   const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (currentLocation && latitude && longitude) {
+    if (latitude && longitude) {
       // if (currentLocation) {
       setIsLoading(true);
       const fetchFeaturedLocations = async () => {
@@ -117,13 +106,14 @@ const HomeScreen = () => {
           },
         });
         setFeaturedLocations(response.data.results);
+        localStorage.setItem("featuredNextCursor", response.data.next_cursor)
         setFeaturedNextCursor(response.data.next_cursor);
         setIsLoading(false);
       };
       fetchFeaturedLocations();
     }
   }, [
-    currentLocation,
+    // currentLocation,
     latitude,
     longitude,
     category,
@@ -134,7 +124,7 @@ const HomeScreen = () => {
   ]);
 
   useEffect(() => {
-    if (currentLocation && latitude && longitude) {
+    if ( latitude && longitude) {
       const fetchLatestLocations = async () => {
         const response = await locationApi.getLatestLocation({
           locationCategory: category,
@@ -157,8 +147,10 @@ const HomeScreen = () => {
       };
       fetchLatestLocations();
     }
+    console.log(featuredNextCursor)
+    console.log(latestNextCursor)
   }, [
-    currentLocation,
+    // currentLocation,
     latitude,
     longitude,
     category,
@@ -169,7 +161,14 @@ const HomeScreen = () => {
   ]);
 
   const handleLoadMoreFeaturedData = (nextCursor) => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 1000) return;
+    if (nextCursor === null) return;
     setIsFeaturedUpdating(true);
+    setLastFetch(now);
+
     const fetchFeaturedLocations = async () => {
       const response = await locationApi.getFeaturedLocation(
         {
@@ -190,6 +189,7 @@ const HomeScreen = () => {
         nextCursor
       );
       setFeaturedLocations((prev) => [...prev, ...response.data.results]);
+      localStorage.setItem("featuredNextCursor", response.data.next_cursor)
       setFeaturedNextCursor(response.data.next_cursor);
       setIsFeaturedUpdating(false);
     };
@@ -197,7 +197,14 @@ const HomeScreen = () => {
   };
 
   const handleLoadMoreLatestData = (nextCursor) => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 1000) return;
+    if (nextCursor === null) return;
     setIsLatestUpdating(true);
+    setLastFetch(now);
+
     const fetchLatestLocations = async () => {
       const response = await locationApi.getLatestLocation(
         {
@@ -226,23 +233,12 @@ const HomeScreen = () => {
   };
 
   return (
-    <Screen className="my-4 lg:my-12 px-8 flex flex-col gap-4 lg:px-16 py-8 md:py-16 lg:py-0">
+    <Screen className="my-4 lg:my-12 px-10 flex flex-col gap-4 lg:px-16 py-8 md:py-16 lg:py-0">
       <Wrapper col="true" className="gap-4 md:items-center">
-        {/* <Wrapper col="true" className="md:items-center md:flex-row w-full">
-          <User user={user} src={user.imageUrl} />
-          <SearchBar onChange={handleSearchValue} className="w-full" />
-          {width > 768 && <Filter />}
-        </Wrapper> */}
         <SubNavbar user={user} />
       </Wrapper>
 
       <OnBoardingSlider />
-
-      <PreferencesSelect
-        categoryList={categoryList}
-        onSelect={handleCategoryClick}
-        locationCategories={locationCategories}
-      />
 
       <Wrapper col="true" className="gap-4">
         <Wrapper className="justify-between items-end">
@@ -267,6 +263,8 @@ const HomeScreen = () => {
               cardClassName="text-center hover:opacity-70 cursor-pointer"
               perView={4}
               onClick={onSelectLocation}
+              loadMore={handleLoadMoreFeaturedData}
+              nextCursor={localStorage.getItem("featuredNextCursor")}
             />
           ) : (
             <Wrapper className="justify-center">

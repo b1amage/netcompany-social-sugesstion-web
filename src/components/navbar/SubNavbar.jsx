@@ -21,6 +21,7 @@ import SearchBar from "@/components/search/SearchBar";
 import { changeSearchInput } from "@/features/filterSlice";
 import Button from "@/components/button/Button";
 import { useNavigate } from "react-router-dom";
+import useViewport from "@/hooks/useScreenWidth";
 
 const SubNavbar = ({ user }) => {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ const SubNavbar = ({ user }) => {
     }
   );
 
+  const {width} = useViewport()
   const navigate = useNavigate()
   const [address, setAddress] = useState();
   const [showAutoComplete, setShowAutoComplete] = useState(false);
@@ -58,7 +60,7 @@ const SubNavbar = ({ user }) => {
   }, [window.location.pathname]);
   return (
     <Wrapper col="true" className="w-full gap-4">
-      <Wrapper col="true" className="md:flex-row gap-4 truncate">
+      <Wrapper col="true" className="md:flex-row justify-between gap-4 truncate">
         <User user={user} src={user.imageUrl} />
         <Wrapper
           className="flex items-center"
@@ -110,27 +112,31 @@ const SubNavbar = ({ user }) => {
         // title="Search location"
         children={
           <>
-            <AiOutlineArrowLeft
-              className="h-full w-[40px]"
-              onClick={() => setShowAutoComplete(false)}
-            />
+            {width >= 768 && <Heading className="text-center">Set current location</Heading>}
+            <Wrapper>
+              <AiOutlineArrowLeft
+                className="h-full w-[40px]"
+                onClick={() => setShowAutoComplete(false)}
+              /> 
 
-            <AutoCompleteScreen
-              // label="Location"
-              className={`h-[50px] !py-2`}
-              // address={currentLocation && currentLocation.formatted_address}
-              onChange={onChangeCurrentLocation}
-              setAddress={setAddress}
-              // addressErr={addressErr}
-            />
+              <AutoCompleteScreen
+                // label="Location"
+                className={`h-[50px] !py-2`}
+                // address={currentLocation && currentLocation.formatted_address}
+                onChange={onChangeCurrentLocation}
+                setAddress={setAddress}
+                // addressErr={addressErr}
+              />
+            </Wrapper>
+            
           </>
         }
         className={`${
           showAutoComplete ? "translate-x-0" : "translate-x-full"
-        } duration-300`}
-        formClassName="items-center animate-zoom h-full w-full !rounded-none !py-0"
+        } duration-500 `}
+        formClassName="items-center h-full w-full !rounded-none md:!py-2 md:!px-4 md:!rounded-lg"
         titleClassName="text-[20px]"
-        childrenClassName="!mt-0 w-full "
+        childrenClassName="!mt-0 w-full flex-col"
         // setShowPopup={setShowAutoComplete}
       />
     </Wrapper>
