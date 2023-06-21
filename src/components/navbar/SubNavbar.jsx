@@ -63,7 +63,7 @@ const SubNavbar = ({ user }) => {
       <Wrapper col="true" className="md:flex-row justify-between gap-4 truncate">
         <User user={user} src={user.imageUrl} />
         <Wrapper
-          className="flex items-center"
+          className="flex items-center cursor-pointer hover:bg-gray-200/60 px-3 duration-300 rounded-lg"
           onClick={() => setShowAutoComplete(true)}
         >
           <Image
