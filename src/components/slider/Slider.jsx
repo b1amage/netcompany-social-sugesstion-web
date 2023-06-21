@@ -22,6 +22,8 @@ const Slider = ({
   onClick,
   setImgList,
   setImage,
+  nextCursor,
+  loadMore
 }) => {
   const [isShowButtonRight, setIsShowButtonRight] = useState(false);
   const [isShowButtonLeft, setIsShowButtonLeft] = useState(false);
@@ -60,7 +62,7 @@ const Slider = ({
           spacing: 20,
         },
       },
-      "(min-width: 250px) and (max-width: 550px)": {
+      "(max-width: 550px)": {
         slides: {
           perView: 1,
           spacing: 20,
@@ -68,16 +70,22 @@ const Slider = ({
       },
     },
     slideChanged(s) {
-      // console.log(s);
+      console.log(s);
       const { abs, minIdx, maxIdx } = s.track.details;
 
       handleSlideButtons(abs, minIdx, maxIdx);
+      if (abs === maxIdx && nextCursor){
+        console.log(nextCursor)
+        loadMore(nextCursor)
+
+      }
     },
     created(s) {
       console.log(s);
       if (s) {
         const { abs, minIdx, maxIdx } = s.track.details;
         handleSlideButtons(abs, minIdx, maxIdx);
+        
       }
     },
     updated(s) {
@@ -96,10 +104,11 @@ const Slider = ({
       slider.current.update();
       const { abs, minIdx, maxIdx } = slider.current.track.details;
       handleSlideButtons(abs, minIdx, maxIdx);
+      
     }
     console.log(items);
     console.log(imgList);
-  }, [items, imgList, sliderRef.current, slider]);
+  }, [items, imgList, sliderRef.current]);
 
   return (
     <Wrapper col="true" className="relative">

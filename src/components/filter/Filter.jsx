@@ -33,8 +33,8 @@ const Filter = ({wrapperClassName, className}) => {
           }
           className={`${
             isClicked ? "translate-y-0" : "translate-y-full"
-          } duration-300 items-end`}
-          formClassName="h-[70vh] w-full justify-center !py-0 "
+          } duration-300 items-end md:items-center`}
+          formClassName="!h-auto w-full justify-center !py-0 "
           titleClassName="text-[20px]"
           childrenClassName="!mt-0 w-full"
           // setShowPopup={setShowAutoComplete}

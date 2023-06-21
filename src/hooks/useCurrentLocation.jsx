@@ -51,10 +51,10 @@ const useCurrentLocation = () => {
     } else{
         setIsTurnOnGPS(false)
         dispatch(changeCurrentLocation(JSON.parse(localStorage.getItem("currentLocation"))) || null);
-        dispatch(changeLatitude(JSON.parse(localStorage.getItem("currentLocation")).geometry.location.lat) || null)
-        dispatch(changeLongitude(JSON.parse(localStorage.getItem("currentLocation")).geometry.location.lng) || null)
+        dispatch(changeLatitude(JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lat) || null)
+        dispatch(changeLongitude(JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lng) || null)
     }
-  }, [isGeolocationAvailable, isGeolocationEnabled, coords]);
+  }, [isGeolocationAvailable, isGeolocationEnabled, coords, isTurnOnGPS]);
   return {isGetCurrentLocation, isTurnOnGPS};
 };
 
