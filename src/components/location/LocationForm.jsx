@@ -406,7 +406,7 @@ const LocationForm = ({
               label="Location"
               className={`bg-white h-[60px] !py-2 ${
                 addressErr &&
-                (address
+                (address.trim() !== ""
                   ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
                   : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
               } ${
@@ -443,7 +443,7 @@ const LocationForm = ({
               }
                 ${
                   titleErr &&
-                  (title
+                  (title.trim() !== ""
                     ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
                     : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
                 }`}
@@ -683,6 +683,7 @@ const LocationForm = ({
                 perView={width > 768 ? 4 : 2}
                 setImgList={setImgList}
                 setImage={setImage}
+                loadMore={() => {}}
               />
             )}
 

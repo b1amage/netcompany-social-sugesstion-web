@@ -22,7 +22,7 @@ const Slider = ({
   onClick,
   setImgList,
   setImage,
-  nextCursor,
+  type,
   loadMore,
 }) => {
   const [isShowButtonRight, setIsShowButtonRight] = useState(false);
@@ -74,10 +74,14 @@ const Slider = ({
       const { abs, minIdx, maxIdx } = s.track.details;
 
       handleSlideButtons(abs, minIdx, maxIdx);
-      if (abs === maxIdx && nextCursor) {
+      if (abs === maxIdx) {
+        const nextCursor = localStorage.getItem(type === "featuredLocations" ? "featuredNextCursor" : "latestNextCursor");
         console.log(nextCursor);
-        loadMore(nextCursor);
+        if (nextCursor){
+          loadMore(nextCursor);
+        }
       }
+      
     },
     created(s) {
       console.log(s);
@@ -90,6 +94,7 @@ const Slider = ({
       if (s) {
         const { abs, minIdx, maxIdx } = s.track.details;
         handleSlideButtons(abs, minIdx, maxIdx);
+        
       }
     },
   });
@@ -105,7 +110,7 @@ const Slider = ({
     }
     console.log(items);
     console.log(imgList);
-  }, [items, imgList, sliderRef.current]);
+  }, [ items ,imgList, sliderRef.current]);
 
   return (
     <Wrapper col="true" className="relative">
@@ -119,11 +124,10 @@ const Slider = ({
             <div
               className={`relative w-fit rounded-lg !bg-transparent keen-slider__slide ${cardClassName}`}
               key={index}
-              onClick={() => onClick(`/location/details/${item._id}`)}
             >
               <ProfileCard
                 place={{
-                  // _id, , ,
+                  _id: item._id,
                   imageUrls: item.imageUrls,
                   name: item.name,
                   address: item.address,
