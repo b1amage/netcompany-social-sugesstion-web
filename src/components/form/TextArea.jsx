@@ -11,7 +11,7 @@ const TextArea = ({ label, required, id, err, placeholder, onChange }) => {
       </Label>
 
       <textarea
-        className="!w-full resize-none border border-primary-400 focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-2xl md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100"
+        className="!w-full resize-none border border-primary-400 focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100"
         rows="4"
         // cols="50"
         placeholder={placeholder}

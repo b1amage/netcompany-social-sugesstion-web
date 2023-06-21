@@ -9,7 +9,7 @@ const TimePicker = ({ onChange, label, id, required, err }) => {
         {label}
       </Label>
       <input
-        className="w-full px-4 py-3 text-sm transition-all duration-300 border outline-none border-primary-400 focus:ring-1 focus:ring-primary-400 rounded-2xl md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100"
+        className="w-full px-4 py-3 text-sm transition-all duration-300 border rounded-lg outline-none border-primary-400 focus:ring-1 focus:ring-primary-400 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100"
         id="time"
         type="time"
         onChange={onChange}

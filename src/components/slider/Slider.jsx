@@ -78,26 +78,26 @@ const Slider = ({
         handleSlideButtons(abs, minIdx, maxIdx);
       }
     },
-    updated(s){
+    updated(s) {
       if (s) {
         const { abs, minIdx, maxIdx } = s.track.details;
         handleSlideButtons(abs, minIdx, maxIdx);
       }
-    }
+    },
   });
 
   useEffect(() => {
     if (sliderRef.current) {
       sliderRef.current.reload();
     }
-    if (slider){
-      slider.current.update()
+    if (slider) {
+      slider.current.update();
       const { abs, minIdx, maxIdx } = slider.current.track.details;
       handleSlideButtons(abs, minIdx, maxIdx);
     }
     console.log(items);
     console.log(imgList);
-  }, [items,  imgList, sliderRef.current, slider]);
+  }, [items, imgList, sliderRef.current, slider]);
 
   return (
     <Wrapper col="true" className="relative">
