@@ -106,7 +106,7 @@ const HomeScreen = () => {
           },
         });
         setFeaturedLocations(response.data.results);
-        localStorage.setItem("featuredNextCursor", response.data.next_cursor)
+        localStorage.setItem("featuredNextCursor", response.data.next_cursor);
         setFeaturedNextCursor(response.data.next_cursor);
         setIsLoading(false);
       };
@@ -124,7 +124,7 @@ const HomeScreen = () => {
   ]);
 
   useEffect(() => {
-    if ( latitude && longitude) {
+    if (latitude && longitude) {
       const fetchLatestLocations = async () => {
         const response = await locationApi.getLatestLocation({
           locationCategory: category,
@@ -142,14 +142,14 @@ const HomeScreen = () => {
           },
         });
         setLatestLocations(response.data.results);
-      localStorage.setItem("latestNextCursor", response.data.next_cursor)
+        localStorage.setItem("latestNextCursor", response.data.next_cursor);
         setLatestNextCursor(response.data.next_cursor);
         setIsLoading(false);
       };
       fetchLatestLocations();
     }
-    console.log(featuredNextCursor)
-    console.log(latestNextCursor)
+    console.log(featuredNextCursor);
+    console.log(latestNextCursor);
   }, [
     // currentLocation,
     latitude,
@@ -190,7 +190,7 @@ const HomeScreen = () => {
         nextCursor
       );
       setFeaturedLocations((prev) => [...prev, ...response.data.results]);
-      localStorage.setItem("featuredNextCursor", response.data.next_cursor)
+      localStorage.setItem("featuredNextCursor", response.data.next_cursor);
       setFeaturedNextCursor(response.data.next_cursor);
       setIsFeaturedUpdating(false);
     };
@@ -226,7 +226,7 @@ const HomeScreen = () => {
         nextCursor
       );
       setLatestLocations((prev) => [...prev, ...response.data.results]);
-      localStorage.setItem("latestNextCursor", response.data.next_cursor)
+      localStorage.setItem("latestNextCursor", response.data.next_cursor);
       setLatestNextCursor(response.data.next_cursor);
       // console.log(response)
       setIsLatestUpdating(false);
@@ -275,7 +275,9 @@ const HomeScreen = () => {
             </Wrapper>
           )
         ) : (
-          <Loading />
+          <Wrapper className="justify-center">
+            <Loading />
+          </Wrapper>
         )}
       </Wrapper>
 
@@ -312,7 +314,9 @@ const HomeScreen = () => {
             </Wrapper>
           )
         ) : (
-          <Loading />
+          <Wrapper className="justify-center">
+            <Loading />
+          </Wrapper>
         )}
       </Wrapper>
     </Screen>

@@ -3,9 +3,10 @@ import Portal from "@/components/HOC/Portal";
 import Image from "@/components/image/Image";
 import { useRef } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
+import { useNavigate } from "react-router-dom";
 
 const User = ({ isCol, user, src }) => {
-  const { username, email } = user;
+  const { username, email, _id } = user;
 
   const [isShowImage, setIsShowImage] = useState(false);
   const handleShowImage = () => setIsShowImage(true);
@@ -13,12 +14,14 @@ const User = ({ isCol, user, src }) => {
 
   const avatarRef = useRef();
   useOnClickOutside(avatarRef, handleCloseImage);
-
+  const navigate = useNavigate()
+  
   return (
     <div
       className={`${
         isCol && "flex-col text-center"
       } w-fit flex items-center cursor-pointer`}
+      onClick={() => navigate(`/user/${_id}`)}
     >
       <Image
         src={src}
