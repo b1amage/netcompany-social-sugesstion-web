@@ -107,7 +107,6 @@ const Slider = ({
       slider.current.update();
       const { abs, minIdx, maxIdx } = slider.current.track.details;
       handleSlideButtons(abs, minIdx, maxIdx);
-      
     }
     console.log(items);
     console.log(imgList);
@@ -125,11 +124,10 @@ const Slider = ({
             <div
               className={`relative w-fit rounded-lg !bg-transparent keen-slider__slide ${cardClassName}`}
               key={index}
-              onClick={() => onClick(`/location/details/${item._id}`)}
             >
               <ProfileCard
                 place={{
-                  // _id, , ,
+                  _id: item._id,
                   imageUrls: item.imageUrls,
                   name: item.name,
                   address: item.address,

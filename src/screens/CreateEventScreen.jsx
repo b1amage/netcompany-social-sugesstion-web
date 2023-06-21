@@ -25,6 +25,9 @@ import { DateTime } from "luxon";
 import Switch from "@/components/form/Switch";
 import TimePicker from "@/components/form/TimePicker";
 import Button from "@/components/button/Button";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import ImageUpload from "@/components/form/ImageUpload";
+import Label from "@/components/form/Label";
 
 const CreateEventScreen = () => {
   const defaultEvent = useMemo(
@@ -183,6 +186,7 @@ const CreateEventScreen = () => {
       startTime: { hours: hours * 1, minutes: minutes * 1 },
     });
   };
+
   const handleDurationChange = (e) => {
     const [hours, minutes] = e.target.value.split(":");
     setEvent({
@@ -190,6 +194,7 @@ const CreateEventScreen = () => {
       duration: { hours: hours * 1, minutes: minutes * 1 },
     });
   };
+
   const popupRef = useRef();
   useOnClickOutside(popupRef, () => setShowGuestPortal(false));
 
@@ -198,8 +203,33 @@ const CreateEventScreen = () => {
     const apiHandle = async () => {
       const newGuests = event.guests.map((guest) => guest._id);
       const newEvent = { ...event, guests: newGuests };
+      const imageUrls = localStorage.getItem("eventCreateImages")
+        ? JSON.parse(localStorage.getItem("eventCreateImages"))
+        : [];
+
+      newEvent.imageUrls = imageUrls;
       setEvent(newEvent);
+
+      // check
+      if (event.name.length === 0 || !event.name) {
+        setError({ ...error, name: "Cannot be null" });
+        return;
+      }
+
+      if (event.locationId.length === 0 || !event.locationId) {
+        setError({ ...error, locationId: "Cannot be null" });
+        return;
+      }
+
       const response = await eventApi.createEvent(newEvent);
+
+      // success
+      if (response.status === 200) {
+        toast.success("Successfully create event!");
+        setEvent(defaultEvent);
+        localStorage.clear("eventCreateImages");
+        navigate("/events");
+      }
     };
 
     apiHandle();
@@ -285,7 +315,10 @@ const CreateEventScreen = () => {
         <SubHeading>Let &lsquo;s create your own event</SubHeading>
       </Wrapper>
 
-      <Wrapper className="w-full !grid grid-cols-2 gap-10 bg-slate-200 my-10 p-5">
+      <Wrapper
+        col="true"
+        className="w-full gap-4 p-5 my-10 rounded-lg bg-slate-200 max-w-[600px] mx-auto"
+      >
         {/* left */}
         <Wrapper col="true">
           <form className="flex flex-col gap-4">
@@ -318,6 +351,7 @@ const CreateEventScreen = () => {
                 fieldToDisplay="username"
                 icon={<BiUser />}
                 clearInputAfterSelect="true"
+                subFieldToDisplay="email"
               />
               {event.guests.length > 0 && (
                 <Wrapper
@@ -357,42 +391,64 @@ const CreateEventScreen = () => {
         <Wrapper className="gap-4" col="true">
           {/* location */}
           <Wrapper col="true" className="!w-full !gap-1">
-            <InputWithDropdown
-              label="Location"
-              required
-              handleGet={handleGetLocationSuggestList}
-              placeholder="Select location"
-              onSelect={handlePlaceSelect}
-              loadMore={handleLoadmoreSuggestList}
-              fieldToDisplay="name"
-              icon={<GoLocation />}
-            />
+            <Wrapper className="items-center">
+              <InputWithDropdown
+                label="Location"
+                required
+                handleGet={handleGetLocationSuggestList}
+                placeholder="Select location"
+                onSelect={handlePlaceSelect}
+                loadMore={handleLoadmoreSuggestList}
+                fieldToDisplay="name"
+                subFieldToDisplay="address"
+                icon={<GoLocation />}
+              />
 
-            <Wrapper className="!w-full relative flex-center text-center">
-              <Text className="text-center">Dont have location?</Text>
               <Text
-                className="font-bold underline cursor-pointer"
+                className="font-bold underline cursor-pointer !text-xs w-[200px] gap-1 flex items-center self-center justify-center translate-y-full"
                 onClick={() => navigate("/create-location")}
               >
-                Create new one
+                <AiOutlinePlusCircle />
+                <span> Create new location</span>
               </Text>
             </Wrapper>
           </Wrapper>
 
-          {/* date */}
-          <DatePicker
-            err={error.startDate}
-            required
-            label="Date"
-            onChange={handleDateChange}
-            className={`${
-              error.startDate === null
-                ? ""
-                : error.startDate === ""
-                ? inputState.success
-                : inputState.err
-            }`}
-          />
+          <Wrapper>
+            {/* date */}
+            <DatePicker
+              err={error.startDate}
+              required
+              label="Date"
+              onChange={handleDateChange}
+              className={`${
+                error.startDate === null
+                  ? ""
+                  : error.startDate === ""
+                  ? inputState.success
+                  : inputState.err
+              }`}
+            />
+            {!event.allDay && (
+              <Wrapper className="justify-start w-full">
+                {/* startTime */}
+                <TimePicker
+                  className="!w-[120px]"
+                  label="Start time"
+                  required
+                  onChange={handleTimeChange}
+                />
+
+                {/* duration */}
+                <TimePicker
+                  className="!w-[120px]"
+                  label="Duration"
+                  required
+                  onChange={handleDurationChange}
+                />
+              </Wrapper>
+            )}
+          </Wrapper>
 
           {/* isAllDay */}
           <Switch
@@ -404,30 +460,15 @@ const CreateEventScreen = () => {
             }}
           />
 
-          {!event.allDay && (
-            <Wrapper className="justify-start w-full">
-              {/* startTime */}
-              <TimePicker
-                className="!w-[120px]"
-                label="Start time"
-                required
-                onChange={handleTimeChange}
-              />
-
-              {/* duration */}
-              <TimePicker
-                className="!w-[120px]"
-                label="Duration"
-                required
-                onChange={handleDurationChange}
-              />
-            </Wrapper>
-          )}
+          <Wrapper col="true">
+            <Label>Event image(s)</Label>
+            <ImageUpload />
+          </Wrapper>
         </Wrapper>
       </Wrapper>
 
       <Button onClick={handleSubmit} primary active>
-        Create location
+        Create Event
       </Button>
 
       <Error

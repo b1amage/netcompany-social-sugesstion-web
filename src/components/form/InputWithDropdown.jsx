@@ -19,6 +19,7 @@ const InputWithDropdown = ({
   id,
   loadMore,
   fieldToDisplay,
+  subFieldToDisplay,
   icon,
   clearInputAfterSelect,
 }) => {
@@ -117,21 +118,31 @@ const InputWithDropdown = ({
             {suggestions.map((suggestion, index) => (
               <Wrapper
                 key={index}
-                className="items-center px-3 py-2 cursor-pointer hover:bg-gray-200"
+                className="items-center justify-between gap-3 px-3 py-2 cursor-pointer hover:bg-gray-200"
                 onClick={() => handleSuggestionClick(suggestion)}
               >
+                <Wrapper className="items-center">
+                  <Image
+                    className="!w-10 !h-10 !shrink-0 !rounded-full"
+                    src={
+                      fieldToDisplay === "name"
+                        ? suggestion.imageUrls.length > 0
+                          ? suggestion.imageUrls[0]
+                          : DEFAULT.location
+                        : suggestion.imageUrl || DEFAULT.avatar
+                    }
+                  />
+                  <Wrapper col="true" className="!gap-0">
+                    <Text className="!font-bold text-overflow-ellipsis">
+                      {suggestion[fieldToDisplay]}
+                    </Text>
+                    <Text className="!text-xs !text-neutral-500 text-overflow-ellipsis">
+                      {suggestion[subFieldToDisplay]}
+                    </Text>
+                  </Wrapper>
+                </Wrapper>
+
                 {icon}
-                <Image
-                  className="w-6 h-6 !rounded-full"
-                  src={
-                    fieldToDisplay === "name"
-                      ? suggestion.imageUrls.length > 0
-                        ? suggestion.imageUrls[0]
-                        : DEFAULT.location
-                      : suggestion.imageUrl || DEFAULT.avatar
-                  }
-                />
-                <Text>{suggestion[fieldToDisplay]}</Text>
               </Wrapper>
             ))}
 
