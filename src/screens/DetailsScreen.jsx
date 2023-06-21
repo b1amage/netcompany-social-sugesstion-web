@@ -12,7 +12,7 @@ import CommentCard from "@/components/comment/CommentCard";
 import { useParams } from "react-router-dom";
 import locationApi from "@/api/locationApi";
 import LoadingScreen from "./LoadingScreen";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { DEFAULT } from "@/constants/defaultData";
 import Category from "@/components/category/Category";
 import SubHeading from "@/components/typography/SubHeading";
@@ -26,6 +26,7 @@ import Popup from "@/components/popup/Popup";
 import Deleting from "@/components/loading/Deleting";
 import toast, { Toaster } from "react-hot-toast";
 import { GoLocation } from "react-icons/go";
+import { changeLocation } from "@/features/locationSlice";
 
 const DetailsScreen = ({ event }) => {
   const notifyDelete = () => toast.success("Successfully delete!");
@@ -47,6 +48,8 @@ const DetailsScreen = ({ event }) => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
     slideChanged(slider) {
@@ -63,6 +66,7 @@ const DetailsScreen = ({ event }) => {
     const getLocationDetails = async () => {
       setLoading(true);
       const response = await locationApi.getLocationDetails(id, navigate);
+      localStorage.setItem('locationDetails', JSON.stringify(response.data))
       setLocationDetails(response.data);
       setLiked(response.data.likedByUser);
       setLikedCount(response.data.heartCount);
@@ -169,7 +173,9 @@ const DetailsScreen = ({ event }) => {
                 {locationDetails.userId === user._id && (
                   <Wrapper>
                     <Button
-                      onClick={() => {}}
+                      onClick={() => {
+                        navigate(`/location/edit/${id}`)
+                      }}
                       className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl"
                     >
                       <BsFillPencilFill />

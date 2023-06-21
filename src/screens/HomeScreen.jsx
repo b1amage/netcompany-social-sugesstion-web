@@ -1,32 +1,25 @@
 import localStorageKey from "@/constants/localStorageKeys";
 import ROUTE from "@/constants/routes";
-import User from "@/components/user/User";
+
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import SearchBar from "@/components/search/SearchBar";
 import Wrapper from "@/components/wrapper/Wrapper";
-// import { imageList } from "@/constants/images";
+
 import PreferencesSelect from "@/components/form/PreferencesSelect";
 import categoryList from "@/constants/category";
-// import SubNavbar from "@/components/navbar/SubNavbar";
-// import useViewport from "@/hooks/useScreenWidth";
-// import { useGeolocated } from "react-geolocated";
-// import axios from "axios";
-// import Image from "@/components/image/Image";
-// import locationImg from "@/assets/location.svg";
+
 import Heading from "@/components/typography/Heading";
 import locationApi from "@/api/locationApi";
 import Slider from "@/components/slider/Slider";
 import Label from "@/components/form/Label";
 import Loading from "@/components/loading/Loading";
-import { GoPlus } from "react-icons/go";
+
 import OnBoardingSlider from "@/components/slider/OnBoardingSlider";
 import Screen from "@/components/container/Screen";
-import useCurrentLocation from "@/hooks/useCurrentLocation";
-// import locationImg from "@/assets/location.svg";
-// import Image from "@/components/image/Image";
 import { changeCategory, changeSearchInput } from "@/features/filterSlice";
+
+import SubNavbar from "@/components/navbar/SubNavbar";
 
 // const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
@@ -75,21 +68,9 @@ const HomeScreen = () => {
     };
   });
 
-  useCurrentLocation();
-
   const onSelectLocation = (id) => {
     navigate(id);
   };
-
-  // const data = {
-  //   locationCategory: category,
-  //   searchInput: searchInput,
-  //   lat: latitude,
-  //   lng: longitude,
-  //   searchDistance: searchDistance,
-  //   weekday: {openTime: weekdayOpenTime, closeTime: weekdayCloseTime},
-  //   weekend: {openTime: weekendOpenTime, closeTime: weekendCloseTime},
-  // }
 
   // ONBOARDING CHECK
   useEffect(() => {
@@ -244,16 +225,15 @@ const HomeScreen = () => {
     fetchLatestLocations();
   };
 
-  const handleSearchValue = (value) => {
-    if (value.trim() === "") return;
-    dispatch(changeSearchInput(value));
-  };
-
   return (
-    <Screen className="my-4 lg:my-12 px-10 flex flex-col gap-8 lg:px-16 py-8 md:py-16 lg:py-0">
-      <Wrapper col="true" className="gap-4 md:flex-row md:items-center">
-        <User user={user} src={user.imageUrl} />
-        <SearchBar onChange={handleSearchValue} />
+    <Screen className="my-4 lg:my-12 px-8 flex flex-col gap-4 lg:px-16 py-8 md:py-16 lg:py-0">
+      <Wrapper col="true" className="gap-4 md:items-center">
+        {/* <Wrapper col="true" className="md:items-center md:flex-row w-full">
+          <User user={user} src={user.imageUrl} />
+          <SearchBar onChange={handleSearchValue} className="w-full" />
+          {width > 768 && <Filter />}
+        </Wrapper> */}
+        <SubNavbar user={user} />
       </Wrapper>
 
       <OnBoardingSlider />
@@ -279,22 +259,22 @@ const HomeScreen = () => {
               <Loading className="!h-10 !w-10" />
             ))}
         </Wrapper>
-        {featuredLocations.length > 0 && !isLoading ? (
-          <Slider
-            items={featuredLocations}
-            className="!bg-transparent sm:text-left !p-0"
-            cardClassName="bg-neutral-100 p-4 text-center hover:opacity-70 cursor-pointer"
-            perView={4}
-            onClick={onSelectLocation}
-          />
+        {!isLoading ? (
+          featuredLocations.length > 0 ? (
+            <Slider
+              items={featuredLocations}
+              className="!bg-transparent sm:text-left !p-0"
+              cardClassName="text-center hover:opacity-70 cursor-pointer"
+              perView={4}
+              onClick={onSelectLocation}
+            />
+          ) : (
+            <Wrapper className="justify-center">
+              <Heading>No results found!</Heading>
+            </Wrapper>
+          )
         ) : (
-          <Wrapper className="justify-center">
-            {currentLocation ? (
-              <Loading />
-            ) : (
-            <Heading>No results found!</Heading>
-            )}
-          </Wrapper>
+          <Loading />
         )}
       </Wrapper>
 
@@ -314,22 +294,22 @@ const HomeScreen = () => {
               <Loading className="!h-10 !w-10" />
             ))}
         </Wrapper>
-        {latestLocations.length > 0 && !isLoading ? (
-          <Slider
-            items={latestLocations}
-            className="!bg-transparent sm:text-left !p-0"
-            cardClassName="bg-neutral-100 p-4 text-center"
-            perView={4}
-            onClick={onSelectLocation}
-          />
+        {!isLoading ? (
+          latestLocations.length > 0 ? (
+            <Slider
+              items={latestLocations}
+              className="!bg-transparent sm:text-left !p-0"
+              cardClassName="bg-neutral-100 text-center"
+              perView={4}
+              onClick={onSelectLocation}
+            />
+          ) : (
+            <Wrapper className="justify-center">
+              <Heading>No results found!</Heading>
+            </Wrapper>
+          )
         ) : (
-          <Wrapper className="justify-center">
-            {currentLocation ? (
-              <Loading />
-            ) : (
-            <Heading>No results found!</Heading>
-            )}
-          </Wrapper>
+          <Loading />
         )}
       </Wrapper>
     </Screen>

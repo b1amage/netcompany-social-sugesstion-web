@@ -14,6 +14,7 @@ const AutoCompleteScreen = React.lazy(() => import("@/test/AutoComplete"));
 const VerifyScreen = React.lazy(() => import("@/screens/VerifyScreen"));
 const LoadingScreen = React.lazy(() => import("@/screens/LoadingScreen"));
 const HomeScreen = React.lazy(() => import("@/screens/HomeScreen"));
+const EditLocationScreen = React.lazy(() => import("@/screens/EditLocationScreen"));
 const LoginScreen = React.lazy(() => import("@/screens/LoginScreen"));
 const NotFoundScreen = React.lazy(() => import("@/screens/404Screen"));
 const MyRouteScreen = React.lazy(() => import("@/screens/MyRouteScreen"));
@@ -42,7 +43,8 @@ const AppRoutes = () => {
           <Route path={ROUTE.LOGIN} element={<LoginScreen />} />
           <Route path={ROUTE.VERIFY} element={<VerifyScreen />} />
           <Route path={ROUTE.PROFILE} element={<ProfileScreen />} />
-
+          <Route path={"/location/edit/:id"} element={<EditLocationScreen />} />
+          
           <Route path="/plan-event" element={<PlanEventScreen />} />
           <Route path="/my-event" element={<MyEvent />} />
           <Route path="/my-route" element={<MyRouteScreen />} />

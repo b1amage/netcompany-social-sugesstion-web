@@ -18,6 +18,7 @@ const useCurrentLocation = () => {
 //     }
 //   );
     const [isGetCurrentLocation, setIsGetCurrentLocation] = useState(false)
+    const [isTurnOnGPS, setIsTurnOnGPS] = useState(false)
   const dispatch = useDispatch();
 
   const { coords, isGeolocationAvailable, isGeolocationEnabled } =
@@ -28,12 +29,13 @@ const useCurrentLocation = () => {
       userDecisionTimeout: Infinity,
     });
   useEffect(() => {
-    setIsGetCurrentLocation(true)
     if (isGeolocationAvailable && isGeolocationEnabled && coords) {
       // console.log(coords.latitude);
       // console.log(coords.longitude);
     //   dispatch(changeLatitude(coords.latitude));
     //   dispatch(changeLongitude(coords.longitude));
+      setIsGetCurrentLocation(true)
+      setIsTurnOnGPS(true)
       const fetchAddress = async () => {
         const { data } = await axios.get(
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.latitude},${coords.longitude}&key=${key}`
@@ -42,14 +44,18 @@ const useCurrentLocation = () => {
         dispatch(changeLatitude(data.results[0].geometry.location.lat))
         dispatch(changeLongitude(data.results[0].geometry.location.lng))
         console.log(data.results[0]);
+        localStorage.setItem("currentLocation", JSON.stringify(data.results[0]))
         setIsGetCurrentLocation(false)
       };
       fetchAddress();
     } else{
-        setIsGetCurrentLocation(false)
+        setIsTurnOnGPS(false)
+        dispatch(changeCurrentLocation(JSON.parse(localStorage.getItem("currentLocation"))) || null);
+        dispatch(changeLatitude(JSON.parse(localStorage.getItem("currentLocation")).geometry.location.lat) || null)
+        dispatch(changeLongitude(JSON.parse(localStorage.getItem("currentLocation")).geometry.location.lng) || null)
     }
   }, [isGeolocationAvailable, isGeolocationEnabled, coords]);
-  return {isGetCurrentLocation};
+  return {isGetCurrentLocation, isTurnOnGPS};
 };
 
 export default useCurrentLocation;

@@ -9,7 +9,6 @@ import { darkIcons, lightIcons } from "@/constants/navIcons";
 import darkMenu from "@/assets/dark-menu.svg";
 import add from "@/assets/add.svg";
 import notification from "@/assets/bell.svg";
-import locationImg from "@/assets/location.svg";
 
 import filter from "@/assets/filter.svg";
 import darkLogoutImg from "@/assets/navigation/dark-logout.svg";
@@ -37,8 +36,7 @@ import {
   changeLongitude,
 } from "@/features/currentLocationSlice";
 import useCurrentLocation from "@/hooks/useCurrentLocation";
-import { GoArrowLeft } from "react-icons/go";
-import { AiOutlineArrowLeft } from "react-icons/ai";
+
 import Filter from "@/components/filter/Filter";
 
 // import { Autocomplete } from "@react-google-maps/api";
@@ -47,8 +45,6 @@ const BREAK_POINT_NAVBAR = 768;
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showAutoComplete, setShowAutoComplete] = useState(false);
 
   const viewport = useViewport();
 
@@ -89,25 +85,18 @@ const Navbar = () => {
     }
   }, [showPopup]);
 
-  const onChangeCurrentLocation = (location, latitude, longitude) => {
-    dispatch(changeCurrentLocation(location));
-    dispatch(changeLatitude(latitude));
-    dispatch(changeLongitude(longitude));
-    setShowAutoComplete(false);
-  };
+
   const {
     isAdded,
     isShowNotification,
     isShowFilter,
     isShowEdit,
-    currentLocation,
-  } = useSelector(({ navbar, currentLocation }) => {
+  } = useSelector(({ navbar }) => {
     return {
       isAdded: navbar.isAdded,
       isShowNotification: navbar.isShowNotification,
       isShowFilter: navbar.isShowFilter,
       isShowEdit: navbar.isShowEdit,
-      currentLocation: currentLocation.currentLocation,
     };
   });
   // console.log(places[0].geometry.location.lat());
@@ -117,9 +106,7 @@ const Navbar = () => {
     // console.log(location)
     // console.log([latitude, longitude])
     // console.log(location)
-  }, [window.location.pathname, currentLocation]);
-
-  const { isGetCurrentLocation } = useCurrentLocation();
+  }, [window.location.pathname]);
 
   return createPortal(
     <nav className="w-full bg-white border-b border-gray-200">
@@ -171,41 +158,8 @@ const Navbar = () => {
                   }}
                 />
 
-                <Wrapper className="w-full truncate">
-                  <Wrapper
-                    className="flex gap-2  items-center"
-                    onClick={() => setShowAutoComplete(true)}
-                  >
-                    <Image
-                      src={locationImg}
-                      alt="location"
-                      className="w-[20px] h-[20px]"
-                    />
-                    <Heading className="!text-[16px] ">
-                      {currentLocation
-                        ? currentLocation.formatted_address
-                        : !isGetCurrentLocation
-                        ? "Enter a location"
-                        : "...Loading"}
-                    </Heading>
-                  </Wrapper>
-                </Wrapper>
-
-                {/* <AutoCompleteScreen address  /> */}
-                <Wrapper className="mr-4 items-center w-fit justify-end">
-                  {isAdded && (
-                    <Image
-                      imageClassName=""
-                      src={add}
-                      alt="add"
-                      className="w-[28px] h-[28px] m-2"
-                      onClick={() => {
-                        if (window.location.pathname === "/")
-                          navigate("/create-location");
-                      }}
-                    />
-                  )}
-                  {/* {isShowNotification && (
+                <Wrapper className="mr-4 items-center w-full justify-end">
+                  {isShowNotification && (
                     <div className="relative">
                       <Image
                         imageClassName=""
@@ -213,10 +167,9 @@ const Navbar = () => {
                         alt="notification"
                         className="w-[28px] h-[28px] m-2"
                       />
-                      <Counter count={10} />
+                      {/* <Counter count={10} /> */}
                     </div>
-                  )} */}
-                  {isShowFilter && <Filter />}
+                  )}
                   {isShowEdit && (
                     <Wrapper className="flex-center">
                       <Button
@@ -304,43 +257,6 @@ const Navbar = () => {
           </div>
         )}
       </div>
-
-      {/* { && ( */}
-      <Popup
-        onClose={() => {}}
-        actions={[]}
-        // title="Search location"
-        children={
-          <>
-            {/* <Image
-                  className={``}
-                  onClick={() => setShowAutoComplete(false)}
-                  src={close}
-                  alt="close"
-                /> */}
-            <AiOutlineArrowLeft
-              className="h-full w-[40px]"
-              onClick={() => setShowAutoComplete(false)}
-            />
-
-            <AutoCompleteScreen
-              // label="Location"
-              className={`h-[50px] !py-2`}
-              // address={currentLocation && currentLocation.formatted_address}
-              onChange={onChangeCurrentLocation}
-              // addressErr={addressErr}
-            />
-          </>
-        }
-        className={`${
-          showAutoComplete ? "translate-x-0" : "translate-x-full"
-        } duration-300`}
-        formClassName="items-center animate-zoom h-full w-full !rounded-none !py-0"
-        titleClassName="text-[20px]"
-        childrenClassName="!mt-0 w-full "
-        // setShowPopup={setShowAutoComplete}
-      />
-      {/* )} */}
     </nav>,
     document.querySelector(".navbar-container")
   );

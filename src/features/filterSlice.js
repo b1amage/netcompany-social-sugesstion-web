@@ -7,7 +7,7 @@ const filterSlice = createSlice({
     searchInput: "",
     weekdayTime: { openTime: "", closeTime: "" },
     weekendTime: { openTime: "", closeTime: "" },
-    searchDistance: 5,
+    searchDistance: null,
   },
   reducers: {
     changeCategory(state, action) {
