@@ -21,7 +21,7 @@ const AutoCompleteScreen = ({ label, address, setAddress, className, onChange })
 
     if (places) {
       console.log(places[0]);
-      setAddress(places[0].formatted_address)
+      // setAddress(places[0].formatted_address)
       onChange(places[0], places[0].geometry.location.lat(), places[0].geometry.location.lng());
       setError(false);
     } else {

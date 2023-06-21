@@ -725,7 +725,7 @@ const LocationForm = ({
       {isShowPopup && (
         <Popup
           actions={[]}
-          title="Created successful. Wait for a few seconds to be directed to the previous page"
+          title={`${window.location.pathname === '/create-location' ? "Create successful" : "Update successful"}. Wait for a few seconds to be directed to the previous page`}
           children={<Loading />}
           className="!fixed"
           formClassName="items-center"

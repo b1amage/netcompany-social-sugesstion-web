@@ -7,16 +7,16 @@ import Popup from "@/components/popup/Popup";
 import FilterContent from "./FilterContent";
 import Heading from '@/components/typography/Heading'
 
-const Filter = () => {
+const Filter = ({wrapperClassName, className}) => {
   const [isClicked, setIsClicked] = useState(false);
   return (
-    <Wrapper>
-      <Button className="!bg-transparent !p-0 !border-none" onClick={() => setIsClicked(true)}>
+    <Wrapper className={`w-full ${wrapperClassName}`}>
+      <Button className={`!bg-transparent !p-0 !border-none ${className}`} onClick={() => setIsClicked(true)}>
         <Image
           imageClassName=""
           src={filter}
           alt="filter"
-          className="w-[28px] h-[28px] m-2"
+          className="w-[28px] h-[28px]"
         />
       </Button>
       

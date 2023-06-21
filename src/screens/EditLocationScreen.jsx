@@ -69,11 +69,17 @@ const EditLocationScreen = () => {
                   closeTime: "",
                 }
           }
-          defaultPriceRange={{
+          defaultPriceRange={
+            locationDetails?.pricePerPerson ?{
             min: locationDetails?.pricePerPerson.min.toString(),
             max: locationDetails?.pricePerPerson.max.toString(),
             currency: {title: locationDetails?.pricePerPerson.currency},
-          }}
+          } : {
+            min: undefined,
+            max: undefined,
+            currency: undefined,
+          }
+        }
         />
       </Screen>}
     </>

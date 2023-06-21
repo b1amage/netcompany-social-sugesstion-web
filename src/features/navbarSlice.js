@@ -27,7 +27,7 @@ const navbarSlice = createSlice({
           return;
         case "/my-event": 
         case "/":
-          state.isAdded = false;
+          state.isAdded = true;
           state.isShowNotification = true;
           state.isShowFilter = true;
           state.isShowEdit = false;

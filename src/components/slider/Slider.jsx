@@ -8,6 +8,8 @@ import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Heading from "@/components/typography/Heading";
 import SubHeading from "@/components/typography/SubHeading";
+import PlaceCard from "@/components/card/PlaceCard";
+import ProfileCard from "@/components/card/ProfileCard";
 
 const Slider = ({
   items,
@@ -18,9 +20,9 @@ const Slider = ({
   perView,
   imageClassName,
   onClick,
-  setImgList, setImage
+  setImgList,
+  setImage,
 }) => {
-
   const [isShowButtonRight, setIsShowButtonRight] = useState(false);
   const [isShowButtonLeft, setIsShowButtonLeft] = useState(false);
 
@@ -78,26 +80,26 @@ const Slider = ({
         handleSlideButtons(abs, minIdx, maxIdx);
       }
     },
-    updated(s){
+    updated(s) {
       if (s) {
         const { abs, minIdx, maxIdx } = s.track.details;
         handleSlideButtons(abs, minIdx, maxIdx);
       }
-    }
+    },
   });
 
   useEffect(() => {
     if (sliderRef.current) {
       sliderRef.current.reload();
     }
-    if (slider){
-      slider.current.update()
+    if (slider) {
+      slider.current.update();
       const { abs, minIdx, maxIdx } = slider.current.track.details;
       handleSlideButtons(abs, minIdx, maxIdx);
     }
     console.log(items);
     console.log(imgList);
-  }, [items,  imgList, sliderRef.current, slider]);
+  }, [items, imgList, sliderRef.current, slider]);
 
   return (
     <Wrapper col="true" className="relative">
@@ -109,25 +111,42 @@ const Slider = ({
           items.length > 0 &&
           items.map((item, index) => (
             <div
-              className={`relative w-fit rounded-lg keen-slider__slide ${cardClassName}`}
+              className={`relative w-fit rounded-lg !bg-transparent keen-slider__slide ${cardClassName}`}
               key={index}
               onClick={() => onClick(`/location/details/${item._id}`)}
             >
-              <Image
-                className={`h-[20vh] ${imageClassName}`}
-                // onClick={() => setImage(item.imageUrls[0])}
-                src={item.imageUrls[0]}
-                alt="image"
+              <ProfileCard
+                place={{
+                  // _id, , , 
+                  imageUrls: item.imageUrls,
+                  name: item.name,
+                  address: item.address,
+                  // description: item.description,
+                }}
+                className='!w-full'
               />
-
-              <Wrapper col="true" className="">
-                <Heading className="break-words">{item.name}</Heading>
-
-                <SubHeading className="truncate">{item.address}</SubHeading>
-
-                <SubHeading>{item.description}</SubHeading>
-              </Wrapper>
             </div>
+            // <div
+            //   className={`relative w-fit rounded-lg keen-slider__slide ${cardClassName}`}
+            //   key={index}
+            //   onClick={() => onClick(`/location/details/${item._id}`)}
+            // >
+            //<PlaceCard place={{images: }}/>
+            //<Image
+            // className={`h-[20vh] ${imageClassName}`}
+            // onClick={() => setImage(item.imageUrls[0])}
+            // src={item.imageUrls[0]}
+            // alt="image"
+            // />
+
+            // <Wrapper col="true" className="">
+            //   <Heading className="break-words">{item.name}</Heading>
+
+            //   <SubHeading className="truncate">{item.address}</SubHeading>
+
+            //   <SubHeading>{item.description}</SubHeading>
+            // </Wrapper>
+            // </div>
           ))}
 
         {imgList &&
@@ -151,12 +170,12 @@ const Slider = ({
                     src === image ? "bg-secondary-400 p-1" : "hidden"
                   }`}
                   onClick={() => {
-                    setImgList(imgList.filter(img => img !== image))
-                    const filterList = imgList.filter(img => img !== image)
-                    if (filterList.length <= 0){
-                      setImage()
-                    } else{
-                      setImage(filterList[filterList.length - 1])
+                    setImgList(imgList.filter((img) => img !== image));
+                    const filterList = imgList.filter((img) => img !== image);
+                    if (filterList.length <= 0) {
+                      setImage();
+                    } else {
+                      setImage(filterList[filterList.length - 1]);
                     }
                   }}
                   src={close}
