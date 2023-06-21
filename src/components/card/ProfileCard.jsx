@@ -7,7 +7,7 @@ import { DEFAULT } from "@/constants/defaultData";
 import { useNavigate } from "react-router-dom";
 import ROUTE from "@/constants/routes";
 
-const ProfileCard = ({ place }) => {
+const ProfileCard = ({ place, className }) => {
   const { _id, address, name, imageUrls } = place;
   const navigate = useNavigate();
   const cardSizeStyles = useMemo(
@@ -18,7 +18,7 @@ const ProfileCard = ({ place }) => {
   return (
     <div
       onClick={() => navigate(`/location/details/${_id}`)}
-      className={`${cardSizeStyles} relative flex-col gap-3 transition-all cursor-pointer bg-neutral-300 flex-center xl:flex-row rounded-xl group`}
+      className={`${cardSizeStyles} ${className}  relative flex-col gap-3 transition-all cursor-pointer bg-neutral-300 flex-center xl:flex-row rounded-xl group`}
     >
       <Image
         src={imageUrls.length > 0 ? imageUrls[0] : DEFAULT.location}

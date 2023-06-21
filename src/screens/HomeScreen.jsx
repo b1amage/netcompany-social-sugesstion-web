@@ -1,32 +1,22 @@
 import localStorageKey from "@/constants/localStorageKeys";
 import ROUTE from "@/constants/routes";
-import User from "@/components/user/User";
+
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import SearchBar from "@/components/search/SearchBar";
 import Wrapper from "@/components/wrapper/Wrapper";
-// import { imageList } from "@/constants/images";
-import PreferencesSelect from "@/components/form/PreferencesSelect";
-import categoryList from "@/constants/category";
-// import SubNavbar from "@/components/navbar/SubNavbar";
-// import useViewport from "@/hooks/useScreenWidth";
-// import { useGeolocated } from "react-geolocated";
-// import axios from "axios";
-// import Image from "@/components/image/Image";
-// import locationImg from "@/assets/location.svg";
+
 import Heading from "@/components/typography/Heading";
 import locationApi from "@/api/locationApi";
 import Slider from "@/components/slider/Slider";
 import Label from "@/components/form/Label";
 import Loading from "@/components/loading/Loading";
-import { GoPlus } from "react-icons/go";
+
 import OnBoardingSlider from "@/components/slider/OnBoardingSlider";
 import Screen from "@/components/container/Screen";
-import useCurrentLocation from "@/hooks/useCurrentLocation";
-// import locationImg from "@/assets/location.svg";
-// import Image from "@/components/image/Image";
 import { changeCategory, changeSearchInput } from "@/features/filterSlice";
+
+import SubNavbar from "@/components/navbar/SubNavbar";
 
 // const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
@@ -39,19 +29,11 @@ const HomeScreen = () => {
   const [isFeaturedUpdating, setIsFeaturedUpdating] = useState(false);
   const [isLatestUpdating, setIsLatestUpdating] = useState(false);
 
-  const [locationCategories, setLocationCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
 
-  const handleCategoryClick = (category) => {
-    const selectedCategory = locationCategories.includes(category)
-      ? locationCategories.filter((item) => item !== category)
-      : [category];
-
-    setLocationCategories(selectedCategory);
-    dispatch(changeCategory(selectedCategory));
-  };
+  const [lastFetch, setLastFetch] = useState(Date.now());
 
   const {
     category,
@@ -75,21 +57,9 @@ const HomeScreen = () => {
     };
   });
 
-  useCurrentLocation();
-
   const onSelectLocation = (id) => {
     navigate(id);
   };
-
-  // const data = {
-  //   locationCategory: category,
-  //   searchInput: searchInput,
-  //   lat: latitude,
-  //   lng: longitude,
-  //   searchDistance: searchDistance,
-  //   weekday: {openTime: weekdayOpenTime, closeTime: weekdayCloseTime},
-  //   weekend: {openTime: weekendOpenTime, closeTime: weekendCloseTime},
-  // }
 
   // ONBOARDING CHECK
   useEffect(() => {
@@ -116,7 +86,7 @@ const HomeScreen = () => {
   const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (currentLocation && latitude && longitude) {
+    if (latitude && longitude) {
       // if (currentLocation) {
       setIsLoading(true);
       const fetchFeaturedLocations = async () => {
@@ -136,13 +106,14 @@ const HomeScreen = () => {
           },
         });
         setFeaturedLocations(response.data.results);
+        localStorage.setItem("featuredNextCursor", response.data.next_cursor)
         setFeaturedNextCursor(response.data.next_cursor);
         setIsLoading(false);
       };
       fetchFeaturedLocations();
     }
   }, [
-    currentLocation,
+    // currentLocation,
     latitude,
     longitude,
     category,
@@ -153,7 +124,7 @@ const HomeScreen = () => {
   ]);
 
   useEffect(() => {
-    if (currentLocation && latitude && longitude) {
+    if ( latitude && longitude) {
       const fetchLatestLocations = async () => {
         const response = await locationApi.getLatestLocation({
           locationCategory: category,
@@ -176,8 +147,10 @@ const HomeScreen = () => {
       };
       fetchLatestLocations();
     }
+    console.log(featuredNextCursor)
+    console.log(latestNextCursor)
   }, [
-    currentLocation,
+    // currentLocation,
     latitude,
     longitude,
     category,
@@ -188,7 +161,14 @@ const HomeScreen = () => {
   ]);
 
   const handleLoadMoreFeaturedData = (nextCursor) => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 1000) return;
+    if (nextCursor === null) return;
     setIsFeaturedUpdating(true);
+    setLastFetch(now);
+
     const fetchFeaturedLocations = async () => {
       const response = await locationApi.getFeaturedLocation(
         {
@@ -209,6 +189,7 @@ const HomeScreen = () => {
         nextCursor
       );
       setFeaturedLocations((prev) => [...prev, ...response.data.results]);
+      localStorage.setItem("featuredNextCursor", response.data.next_cursor)
       setFeaturedNextCursor(response.data.next_cursor);
       setIsFeaturedUpdating(false);
     };
@@ -216,7 +197,14 @@ const HomeScreen = () => {
   };
 
   const handleLoadMoreLatestData = (nextCursor) => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 1000) return;
+    if (nextCursor === null) return;
     setIsLatestUpdating(true);
+    setLastFetch(now);
+
     const fetchLatestLocations = async () => {
       const response = await locationApi.getLatestLocation(
         {
@@ -244,25 +232,13 @@ const HomeScreen = () => {
     fetchLatestLocations();
   };
 
-  const handleSearchValue = (value) => {
-    if (value.trim() === "") return;
-    dispatch(changeSearchInput(value));
-  };
-
   return (
-    <Screen className="my-4 lg:my-12 px-10 flex flex-col gap-8 lg:px-16 py-8 md:py-16 lg:py-0">
-      <Wrapper col="true" className="gap-4 md:flex-row md:items-center">
-        <User user={user} src={user.imageUrl} />
-        <SearchBar onChange={handleSearchValue} />
+    <Screen className="my-4 lg:my-12 px-10 flex flex-col gap-4 lg:px-16 py-8 md:py-16 lg:py-0">
+      <Wrapper col="true" className="gap-4 md:items-center">
+        <SubNavbar user={user} />
       </Wrapper>
 
       <OnBoardingSlider />
-
-      <PreferencesSelect
-        categoryList={categoryList}
-        onSelect={handleCategoryClick}
-        locationCategories={locationCategories}
-      />
 
       <Wrapper col="true" className="gap-4">
         <Wrapper className="justify-between items-end">
@@ -279,22 +255,24 @@ const HomeScreen = () => {
               <Loading className="!h-10 !w-10" />
             ))}
         </Wrapper>
-        {featuredLocations.length > 0 && !isLoading ? (
-          <Slider
-            items={featuredLocations}
-            className="!bg-transparent sm:text-left !p-0"
-            cardClassName="bg-neutral-100 p-4 text-center hover:opacity-70 cursor-pointer"
-            perView={4}
-            onClick={onSelectLocation}
-          />
+        {!isLoading ? (
+          featuredLocations.length > 0 ? (
+            <Slider
+              items={featuredLocations}
+              className="!bg-transparent sm:text-left !p-0"
+              cardClassName="text-center hover:opacity-70 cursor-pointer"
+              perView={4}
+              onClick={onSelectLocation}
+              loadMore={handleLoadMoreFeaturedData}
+              nextCursor={localStorage.getItem("featuredNextCursor")}
+            />
+          ) : (
+            <Wrapper className="justify-center">
+              <Heading>No results found!</Heading>
+            </Wrapper>
+          )
         ) : (
-          <Wrapper className="justify-center">
-            {currentLocation ? (
-              <Loading />
-            ) : (
-            <Heading>No results found!</Heading>
-            )}
-          </Wrapper>
+          <Loading />
         )}
       </Wrapper>
 
@@ -314,22 +292,22 @@ const HomeScreen = () => {
               <Loading className="!h-10 !w-10" />
             ))}
         </Wrapper>
-        {latestLocations.length > 0 && !isLoading ? (
-          <Slider
-            items={latestLocations}
-            className="!bg-transparent sm:text-left !p-0"
-            cardClassName="bg-neutral-100 p-4 text-center"
-            perView={4}
-            onClick={onSelectLocation}
-          />
+        {!isLoading ? (
+          latestLocations.length > 0 ? (
+            <Slider
+              items={latestLocations}
+              className="!bg-transparent sm:text-left !p-0"
+              cardClassName="bg-neutral-100 text-center"
+              perView={4}
+              onClick={onSelectLocation}
+            />
+          ) : (
+            <Wrapper className="justify-center">
+              <Heading>No results found!</Heading>
+            </Wrapper>
+          )
         ) : (
-          <Wrapper className="justify-center">
-            {currentLocation ? (
-              <Loading />
-            ) : (
-            <Heading>No results found!</Heading>
-            )}
-          </Wrapper>
+          <Loading />
         )}
       </Wrapper>
     </Screen>

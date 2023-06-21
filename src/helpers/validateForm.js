@@ -32,9 +32,8 @@ const VALIDATE = {
         // if (parseInt(openTime.replace(':', '')) >= parseInt(closeTime.replace(':', ''))) return ERROR.time
     },
     price(minPrice, maxPrice){
-        // if (price === null) return ERROR.required
         if((minPrice && !maxPrice) || (!minPrice && maxPrice)) return ERROR.required
-        if (minPrice < 0 || maxPrice < 0) return "Price must not be lower than 0!"
+        if (minPrice === "" || Number(minPrice.replace(/,/g, "")) <= 0 || maxPrice === "" || Number(maxPrice.replace(/,/g, "")) <= 0) return "Price must not be lower than 0!"
         if (Number(minPrice.replace(/,/g, "")) >= Number(maxPrice.replace(/,/g, ""))) return ERROR.price
     },
     selectedImage(file) {
