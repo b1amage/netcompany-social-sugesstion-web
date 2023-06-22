@@ -44,8 +44,8 @@ const EditLocationScreen = () => {
           defaultTitle={locationDetails?.name}
           defaultAddress={locationDetails?.address}
           defaultDescription={locationDetails?.description}
-          defaultLat={locationDetails?.location.coordinates[0]}
-          defaultLng={locationDetails?.location.coordinates[1]}
+          defaultLat={locationDetails?.location.coordinates[1]}
+          defaultLng={locationDetails?.location.coordinates[0]}
           defaultCategory={{ title: locationDetails?.locationCategory }}
           defaultWeekdayTime={
             locationDetails?.weekday

@@ -202,7 +202,7 @@ const Slider = ({
         }}
         className={`${
           isShowButtonLeft ? "visible" : "invisible"
-        } bg-primary-400 hover:opacity-70 cursor-pointer text-white h-[40px] w-[28px] rounded-l-lg p-1 absolute top-1/2 left-0 -translate-y-1/2 -translate-x-full`}
+        } bg-primary-400 cursor-pointer text-white h-[40px] w-[40px] rounded-full p-1 absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 hover:scale-150 duration-300`}
       />
       <GoChevronRight
         onClick={(e) => {
@@ -210,7 +210,7 @@ const Slider = ({
         }}
         className={`${
           isShowButtonRight ? "visible" : "invisible"
-        } bg-primary-400 hover:opacity-70 cursor-pointer text-white h-[40px] w-[28px] rounded-r-lg absolute top-1/2 right-0 -translate-y-1/2 translate-x-full`}
+        } bg-primary-400  cursor-pointer text-white h-[40px] w-[40px] rounded-full absolute top-1/2 right-0 -translate-y-1/2 hover:scale-150 duration-300 translate-x-1/2`}
       />
     </Wrapper>
   );
