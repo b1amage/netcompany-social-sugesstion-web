@@ -6,7 +6,7 @@ const SearchBar = ({ onChange, className, wrapperClassName }) => {
   const [value, setValue] = useState();
   const [isSearching, setIsSearching] = useState(false);
   const handleKeyPress = (event) => {
-    if (event.key === "Enter" && value.trim() !== "") {
+    if (event.key === "Enter") {
       setIsSearching(true);
       setTimeout(() => {
         onChange(value);
