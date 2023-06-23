@@ -24,7 +24,7 @@ const Filter = ({wrapperClassName, className}) => {
           onClose={() => setIsClicked(false)}
           actions={[]}
           children={
-            <Wrapper col="true" className="w-full px-4 py-3 ">
+            <Wrapper col="true" className="w-full px-8 py-3 ">
                 <Heading className="text-center !text-[36px]">Filter</Heading>
                 < FilterContent
                   setIsClicked={setIsClicked}
@@ -34,7 +34,7 @@ const Filter = ({wrapperClassName, className}) => {
           className={`${
             isClicked ? "translate-y-0" : "translate-y-full"
           } duration-300 items-end md:items-center 2xl:!py-8`}
-          formClassName="!h-auto w-full justify-center !py-4 "
+          formClassName="!h-auto w-full justify-center md:p-0 "
           titleClassName="text-[20px]"
           childrenClassName="!mt-0 w-full"
           // setShowPopup={setShowAutoComplete}

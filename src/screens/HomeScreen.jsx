@@ -14,7 +14,6 @@ import Loading from "@/components/loading/Loading";
 
 import OnBoardingSlider from "@/components/slider/OnBoardingSlider";
 import Screen from "@/components/container/Screen";
-import { changeCategory, changeSearchInput } from "@/features/filterSlice";
 
 import SubNavbar from "@/components/navbar/SubNavbar";
 
@@ -41,10 +40,10 @@ const HomeScreen = () => {
     weekdayTime,
     weekendTime,
     searchDistance,
-    currentLocation,
+    isAdded,
     latitude,
     longitude,
-  } = useSelector(({ filter, currentLocation }) => {
+  } = useSelector(({ filter, navbar, currentLocation }) => {
     return {
       currentLocation: currentLocation.currentLocation,
       latitude: currentLocation.latitude,
@@ -54,21 +53,23 @@ const HomeScreen = () => {
       searchDistance: filter.searchDistance,
       weekdayTime: filter.weekdayTime,
       weekendTime: filter.weekendTime,
+      isAdded: navbar.isAdded
     };
   });
+
 
   const onSelectLocation = (id) => {
     navigate(id);
   };
 
   // ONBOARDING CHECK
-  useEffect(() => {
-    const onBoardingAlreadyShown = JSON.parse(
-      localStorage.getItem(localStorageKey.alreadyShownOnboarding)
-    );
+  // useEffect(() => {
+  //   const onBoardingAlreadyShown = JSON.parse(
+  //     localStorage.getItem(localStorageKey.alreadyShownOnboarding)
+  //   );
 
-    !onBoardingAlreadyShown && navigate(ROUTE.ONBOARDING);
-  }, []);
+  //   !onBoardingAlreadyShown && navigate(ROUTE.ONBOARDING);
+  // }, []);
 
   // LOGIN CHECK
   useEffect(() => {
@@ -244,7 +245,7 @@ const HomeScreen = () => {
 
       <Wrapper col="true" className="gap-4">
         <Wrapper className="justify-between items-end">
-          <Label>Features</Label>
+          <Label>Popular</Label>
           {/* {featuredNextCursor &&
             (!isFeaturedUpdating ? (
               <Heading
@@ -319,6 +320,7 @@ const HomeScreen = () => {
           </Wrapper>
         )}
       </Wrapper>
+      
     </Screen>
   );
 };
