@@ -3,10 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const filterSlice = createSlice({
   name: "filter",
   initialState: {
-    category: undefined,
+    category: "",
     searchInput: "",
-    weekdayTime: { openTime: "", closeTime: "" },
-    weekendTime: { openTime: "", closeTime: "" },
+    time: { openFrom: "", closeTo: "", dayType: "" },
     searchDistance: null,
   },
   reducers: {
@@ -16,11 +15,8 @@ const filterSlice = createSlice({
     changeSearchInput(state, action) {
       state.searchInput = action.payload;
     },
-    changeWeekdayTime(state, action) {
-      state.weekdayTime = action.payload;
-    },
-    changeWeekendTime(state, action) {
-      state.weekendTime = action.payload;
+    changeTime(state, action) {
+      state.time = action.payload;
     },
     changeSearchDistance(state, action) {
       state.searchDistance = action.payload;
@@ -32,7 +28,6 @@ export const {
   changeCategory,
   changeSearchInput,
   changeSearchDistance,
-  changeWeekdayTime,
-  changeWeekendTime,
+  changeTime,
 } = filterSlice.actions;
 export const filterReducer = filterSlice.reducer;

@@ -1,7 +1,7 @@
 import axiosClient from "@/api/axiosClient";
 
 const locationApi = {
-  async createLocation(data, navigate, setSubmitErr, setIsShowPopup) {
+  async createLocation(data, navigate, setSubmitErr, setIsShowPopup, notfifyCreate) {
     try {
       const url = "/location";
       const response = await axiosClient.post(url, data, {
@@ -11,6 +11,7 @@ const locationApi = {
       setIsShowPopup(true);
       setTimeout(() => {
         setIsShowPopup(false);
+        notfifyCreate()
         navigate(-1);
       }, 2000);
       return response;
@@ -35,20 +36,12 @@ const locationApi = {
       }${data.lng ? `&longitude=${data.lng}` : ""}${
         data.searchDistance ? `&searchDistance=${data.searchDistance}` : ""
       }${
-        data.weekday.openTime
-          ? `&weekday[openTime]=${data.weekday.openTime}`
+        data.weekday
+          ? `&weekday[openTime]=${data.weekday.openTime}&weekday[closeTime]=${data.weekday.closeTime}`
           : ""
       }${
-        data.weekday.closeTime
-          ? `&weekday[closeTime]=${data.weekday.closeTime}`
-          : ""
-      }${
-        data.weekend.openTime
-          ? `&weekend[openTime]=${data.weekend.openTime}`
-          : ""
-      }${
-        data.weekend.closeTime
-          ? `&weekend[closeTime]=${data.weekend.closeTime}`
+        data.weekend
+          ? `&weekend[openTime]=${data.weekend.openTime}&weekend[closeTime]=${data.weekend.closeTime}`
           : ""
       }`;
       console.log(url);
@@ -74,20 +67,12 @@ const locationApi = {
       }${data.lng ? `&longitude=${data.lng}` : ""}${
         data.searchDistance ? `&searchDistance=${data.searchDistance}` : ""
       }${
-        data.weekday.openTime
-          ? `&weekday[openTime]=${data.weekday.openTime}`
+        data.weekday
+          ? `&weekday[openTime]=${data.weekday.openTime}&weekday[closeTime]=${data.weekday.closeTime}`
           : ""
       }${
-        data.weekday.closeTime
-          ? `&weekday[closeTime]=${data.weekday.closeTime}`
-          : ""
-      }${
-        data.weekend.openTime
-          ? `&weekend[openTime]=${data.weekend.openTime}`
-          : ""
-      }${
-        data.weekend.closeTime
-          ? `&weekend[closeTime]=${data.weekend.closeTime}`
+        data.weekend
+          ? `&weekend[openTime]=${data.weekend.openTime}&weekend[closeTime]=${data.weekend.closeTime}`
           : ""
       }`;
       console.log(url);
@@ -191,16 +176,17 @@ const locationApi = {
       console.log(error);
     }
   },
-  async updateLocation(data, navigate, setSubmitErr, setIsShowPopup){
+  async updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate) {
     const url = `/location`;
 
     try {
       const response = await axiosClient.patch(url, data, {
-        withCredentials: true
+        withCredentials: true,
       });
       setIsShowPopup(true);
       setTimeout(() => {
         setIsShowPopup(false);
+        notifyUpdate()
         navigate(-1);
       }, 2000);
       return response;
@@ -208,7 +194,7 @@ const locationApi = {
       console.log(error);
       setSubmitErr((prev) => [...prev, error.response.data.message]);
     }
-  }
+  },
 };
 
 export default locationApi;

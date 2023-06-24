@@ -5,13 +5,51 @@ import filter from "@/assets/filter.svg";
 import Button from "@/components/button/Button";
 import Popup from "@/components/popup/Popup";
 import FilterContent from "./FilterContent";
-import Heading from '@/components/typography/Heading'
+import Heading from "@/components/typography/Heading";
+import close from "@/assets/close.svg";
+import { AiOutlineClose } from "react-icons/ai";
+import { useSelector } from "react-redux";
 
-const Filter = ({wrapperClassName, className}) => {
+const Filter = ({ wrapperClassName, className }) => {
+  const formatTime = (timeString) => {
+    const hours = timeString.slice(0, 2);
+    const minutes = timeString.slice(2, 4);
+
+    return `${hours}:${minutes}`;
+  };
+
   const [isClicked, setIsClicked] = useState(false);
+  const { category, time, searchDistance } = useSelector(({ filter }) => {
+    return {
+      category: filter.category,
+      searchDistance: filter.searchDistance,
+      time: filter.time,
+    };
+  });
+
+  const [categoryValue, setCategoryValue] = useState(category);
+  const [dayType, setDayType] = useState(time?.dayType);
+  const [openTime, setOpenTime] = useState(time?.openFrom);
+  const [closeTime, setCloseTime] = useState(time?.closeTo);
+  const [searchDistanceValue, setSearchDistanceValue] = useState(
+    searchDistance || 5
+  );
+
+  const handleCloseFilter= () => {
+    setCategoryValue(category)
+    setOpenTime(time?.openFrom !== "" ? formatTime(time?.openFrom) : "")
+    setCloseTime(time?.closeTo !== "" ? formatTime(time?.closeTo) : "")
+    setDayType(time?.dayType)
+    setSearchDistanceValue(searchDistance || 5)
+    // console.log("Clicked")
+    setIsClicked(false)
+  }
   return (
     <Wrapper className={`w-full ${wrapperClassName}`}>
-      <Button className={`!bg-transparent !p-0 !border-none ${className}`} onClick={() => setIsClicked(true)}>
+      <Button
+        className={`!bg-transparent !p-0 !border-none ${className}`}
+        onClick={() => setIsClicked(true)}
+      >
         <Image
           imageClassName=""
           src={filter}
@@ -19,27 +57,46 @@ const Filter = ({wrapperClassName, className}) => {
           className="w-[28px] h-[28px]"
         />
       </Button>
-      
-        <Popup
-          onClose={() => setIsClicked(false)}
-          actions={[]}
-          children={
+
+      <Popup
+        onClose={() => handleCloseFilter()}
+        actions={[]}
+        children={
+          <>
             <Wrapper col="true" className="w-full px-8 py-3 ">
-                <Heading className="text-center !text-[36px]">Filter</Heading>
-                < FilterContent
-                  setIsClicked={setIsClicked}
-                />
+              <Heading className="text-center !text-[36px]">Filter</Heading>
+              <FilterContent
+                setIsClicked={setIsClicked}
+                categoryValue={categoryValue}
+                setCategoryValue={setCategoryValue}
+                dayType={dayType}
+                setDayType={setDayType}
+                openTime={openTime}
+                setOpenTime={setOpenTime}
+                closeTime={closeTime}
+                setCloseTime={setCloseTime}
+                searchDistanceValue={searchDistanceValue}
+                setSearchDistanceValue={setSearchDistanceValue}
+              />
             </Wrapper>
-          }
-          className={`${
-            isClicked ? "translate-y-0" : "translate-y-full"
-          } duration-300 items-end md:items-center 2xl:!py-8`}
-          formClassName="!h-auto w-full justify-center md:p-0 "
-          titleClassName="text-[20px]"
-          childrenClassName="!mt-0 w-full"
-          // setShowPopup={setShowAutoComplete}
-        />
-    
+            <Button
+              className="!absolute top-0 right-0 !bg-transparent !rounded-none !border-none !my-0"
+              onClick={() => {
+                handleCloseFilter()
+              }}
+            >
+              <AiOutlineClose className="text-[32px] text-black " />
+            </Button>
+          </>
+        }
+        className={`${
+          isClicked ? "animate-zoom" : "hidden"
+        } duration-300  items-end md:items-center 2xl:!py-16`}
+        formClassName="!h-auto w-full justify-center md:p-0 md:px-2 !rounded-b-none rounded-t-xl md:!rounded-2xl"
+        titleClassName="text-[20px]"
+        childrenClassName="!mt-0 w-full"
+        // setShowPopup={setShowAutoComplete}
+      />
     </Wrapper>
   );
 };

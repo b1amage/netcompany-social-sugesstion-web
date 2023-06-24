@@ -35,6 +35,7 @@ import Label from "@/components/form/Label";
 import Button from "@/components/button/Button";
 import Time from "./Time";
 import Price from "./Price";
+import { toast } from "react-hot-toast";
 
 const LocationForm = ({
   locationId,
@@ -52,9 +53,12 @@ const LocationForm = ({
   defaultPriceRange,
   onGetAPI,
 }) => {
+  const notifyCreate = () => toast.success("Successfully register!");
+  const notifyUpdate = () => toast.success("Successfully update!");
+
+
   const [uploading, setUploading] = useState(false);
   const [isShowImage, setIsShowImage] = useState(false);
-
   const [imgList, setImgList] = useState(defaultImgList);
   const [image, setImage] = useState(currentImg);
   const [placeId, setPlaceId] = useState(defaultPlaceId);
@@ -332,7 +336,7 @@ const LocationForm = ({
     console.log(data);
     // // console.log(imgList)
     if (window.location.pathname === "/create-location") {
-      locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup);
+      locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyCreate);
       console.log(data);
       setIsLoading(false);
 
@@ -370,7 +374,7 @@ const LocationForm = ({
               }
             : null,
       };
-      locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup);
+      locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
       console.log(data);
       setIsLoading(false);
 
@@ -466,6 +470,11 @@ const LocationForm = ({
               setCategory(option);
             }}
             err={categoryErr}
+            className={`${
+              category?.title || category
+                ? "!border-green-500 focus:!border-green-500 ring-1 !ring-green-500"
+                : "focus:!border-secondary-400"
+            } ${categoryErr && "border-secondary-400 ring-1 ring-secondary-400"}`}
           />
 
           <Wrapper className="my-4" col="true">
@@ -726,7 +735,7 @@ const LocationForm = ({
       {isShowPopup && (
         <Popup
           actions={[]}
-          title={`${window.location.pathname === '/create-location' ? "Create successful" : "Update successful"}. Wait for a few seconds to be directed to the previous page`}
+          title={`${window.location.pathname === '/create-location' ? "Registering location" : "Updating loacation"}. Wait for a few seconds to be directed to the previous page`}
           children={<Loading />}
           className="!fixed"
           formClassName="items-center"
