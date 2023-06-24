@@ -54,10 +54,24 @@ const FilterContent = ({
       return;
     }
 
-    if (openTime && closeTime && VALIDATE.category(dayType)) {
+    if (VALIDATE.category(dayType)) {
       setDayTypeErr(VALIDATE.category(dayType));
       setSubmitErr("Please select day type!");
       return;
+    } else{
+      if (!openTime && !closeTime){
+        setOpenTimeErr(VALIDATE.time(openTime));
+        setCloseTimeErr(VALIDATE.time(closeTime));
+        setSubmitErr("Please fill both open and close time!");
+        dispatch(
+          changeTime({
+            openFrom: openTime.replace(":", ""),
+            closeTo: closeTime.replace(":", ""),
+            dayType: dayType,
+          })
+        );
+        return
+      }
     }
 
     dispatch(

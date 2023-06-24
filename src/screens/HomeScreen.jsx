@@ -99,11 +99,11 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: time?.dayType?.title === "Weekday" ? {
+          weekday: (time?.dayType?.title === "Weekday" && time?.openFrom !== "" && time?.closeTo !== "") ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
-          weekend: time?.dayType?.title === "Weekend" ? {
+          weekend: (time?.dayType?.title === "Weekend" && time?.openFrom !== "" && time?.closeTo !== "") ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
@@ -134,11 +134,11 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: time?.dayType?.title === "Weekday" ? {
+          weekday: (time?.dayType?.title === "Weekday" && time?.openFrom !== "" && time?.closeTo !== "") ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
-          weekend: time?.dayType?.title === "Weekend" ? {
+          weekend: (time?.dayType?.title === "Weekend" && time?.openFrom !== "" && time?.closeTo !== "") ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
@@ -179,11 +179,11 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: time?.dayType?.title === "Weekday" ? {
+          weekday: (time?.dayType?.title === "Weekday" && time?.openFrom !== "" && time?.closeTo !== "") ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
-          weekend: time?.dayType?.title === "Weekend" ? {
+          weekend: (time?.dayType?.title === "Weekend" && time?.openFrom !== "" && time?.closeTo !== "") ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
@@ -215,11 +215,11 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: time?.dayType?.title === "Weekday" ? {
+          weekday: (time?.dayType?.title === "Weekday" && time?.openFrom !== "" && time?.closeTo !== "") ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
-          weekend: time?.dayType?.title === "Weekend" ? {
+          weekend: (time?.dayType?.title === "Weekend" && time?.openFrom !== "" && time?.closeTo !== "") ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,

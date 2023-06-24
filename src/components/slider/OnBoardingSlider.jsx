@@ -24,7 +24,7 @@ const OnBoardingSlider = () => {
     <div className="relative">
       <div className="relative h-full navigation-wrapper">
         {/* SLIDES */}
-        <div ref={sliderRef} className="h-[400px] keen-slider">
+        <div ref={sliderRef} className="h-[500px] keen-slider">
           {onboardingScreens.map((slide) => (
             <Slide 
             className={`!mt-0`} slide={slide} key={slide.heading}></Slide>

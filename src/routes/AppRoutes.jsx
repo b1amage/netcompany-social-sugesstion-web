@@ -2,6 +2,9 @@ import React, { Suspense } from "react";
 import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
 
+const SearchLocationScreen = React.lazy(() =>
+  import("@/screens/SearchLocationScreen")
+);
 const CreateEventScreen = React.lazy(() =>
   import("@/screens/CreateEventScreen")
 );
@@ -67,6 +70,8 @@ const AppRoutes = () => {
           <Route path="/event/create" element={<CreateEventScreen />} />
 
           <Route path="/user/:_id" element={<UserProfileScreen />} />
+          <Route path={ROUTE.SEARCH_LOCATION} element={<SearchLocationScreen />} />
+
         </Routes>
       </Suspense>
     </>

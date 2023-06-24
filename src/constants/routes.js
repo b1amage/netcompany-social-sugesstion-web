@@ -11,6 +11,7 @@ const ROUTE = {
   TEST: "/test",
   EDIT_PROFILE: "/profile/edit",
   CREATE_LOCATION: "/create-location",
+  SEARCH_LOCATION: "/location/search"
 };
 
 export default ROUTE;

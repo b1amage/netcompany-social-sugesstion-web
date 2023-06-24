@@ -34,6 +34,7 @@ const Filter = ({ wrapperClassName, className }) => {
   const [searchDistanceValue, setSearchDistanceValue] = useState(
     searchDistance || 5
   );
+  
   const [isFiltered, setIsFiltered] = useState(false)
 
   const handleCloseFilter= () => {
@@ -88,14 +89,14 @@ const Filter = ({ wrapperClassName, className }) => {
                 handleCloseFilter()
               }}
             >
-              <AiOutlineClose className="text-[32px] text-black " />
+              <AiOutlineClose className="text-[32px] my-2 text-black " />
             </Button>
           </>
         }
         className={`${
           isClicked ? "translate-y-0" : "translate-y-full"
-        } duration-300 overflow-hidden  items-end md:items-center 2xl:!py-16`}
-        formClassName="overflow-y-scroll !h-auto w-full justify-center md:p-0 md:px-2 !rounded-b-none rounded-t-xl md:!rounded-2xl"
+        } duration-300 overflow-hidden items-end md:items-center 2xl:!py-16`}
+        formClassName="overflow-y-scroll !h-auto w-full justify-center md:p-0 md:px-2 !rounded-b-none rounded-t-xl md:!rounded-2xl md:py-0"
         titleClassName="text-[20px]"
         childrenClassName="!mt-0 w-full"
         // setShowPopup={setShowAutoComplete}
