@@ -58,8 +58,8 @@ const FilterContent = ({
       setDayTypeErr(VALIDATE.category(dayType));
       setSubmitErr("Please select day type!");
       return;
-    } else{
-      if (!openTime && !closeTime){
+    } else {
+      if (!openTime && !closeTime) {
         setOpenTimeErr(VALIDATE.time(openTime));
         setCloseTimeErr(VALIDATE.time(closeTime));
         setSubmitErr("Please fill both open and close time!");
@@ -70,7 +70,7 @@ const FilterContent = ({
             dayType: dayType,
           })
         );
-        return
+        return;
       }
     }
 
@@ -132,6 +132,7 @@ const FilterContent = ({
             <Wrapper className="gap-4 w-full">
               <Time
                 label="Open From:"
+                labelClassName="!text-[12px]"
                 onChange={(e) => {
                   setOpenTime(e.target.value);
                 }}
@@ -140,6 +141,7 @@ const FilterContent = ({
               />
               <Time
                 label="Close To:"
+                labelClassName="!text-[12px]"
                 onChange={(e) => {
                   setCloseTime(e.target.value);
                 }}
@@ -180,17 +182,20 @@ const FilterContent = ({
       <Error fluid className={`mt-4 ${!submitErr && "invisible"}`}>
         {submitErr}
       </Error>
-      <Button primary active className="!my-0">
-        Submit
-      </Button>
-      <Button
-        type="button"
-        onClick={handleResetFilter}
-        primary
-        className="!my-0 bg-danger"
-      >
-        Reset
-      </Button>
+
+      <Wrapper>
+        <Button
+          type="button"
+          onClick={handleResetFilter}
+          primary
+          className="!my-0 !bg-danger"
+        >
+          Reset
+        </Button>
+        <Button primary active className="!my-0">
+          Submit
+        </Button>
+      </Wrapper>
     </form>
   );
 };
