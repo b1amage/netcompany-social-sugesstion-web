@@ -12,11 +12,14 @@ import {
   changeSearchDistance,
   changeTime,
   changeCategory,
+  resetFilter,
 } from "@/features/filterSlice";
 import VALIDATE from "@/helpers/validateForm";
 import Error from "@/components/form/Error";
+import Time from "@/components/location/Time";
 
 const FilterContent = ({
+  setIsFiltered,
   setIsClicked,
   categoryValue,
   setCategoryValue,
@@ -29,7 +32,6 @@ const FilterContent = ({
   searchDistanceValue,
   setSearchDistanceValue,
 }) => {
-  
   const dayTypes = [{ title: "Weekday" }, { title: "Weekend" }];
   const [dayTypeErr, setDayTypeErr] = useState();
   const [openTimeErr, setOpenTimeErr] = useState();
@@ -41,13 +43,8 @@ const FilterContent = ({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    setOpenTimeErr();
-    setCloseTimeErr();
-    setDayTypeErr();
-    setSubmitErr();
-
     if (categoryValue) {
-      dispatch(changeCategory(category.title));
+      dispatch(changeCategory(categoryValue));
     }
 
     if ((openTime && !closeTime) || (!openTime && closeTime)) {
@@ -57,7 +54,7 @@ const FilterContent = ({
       return;
     }
 
-    if (VALIDATE.category(dayType)) {
+    if (openTime && closeTime && VALIDATE.category(dayType)) {
       setDayTypeErr(VALIDATE.category(dayType));
       setSubmitErr("Please select day type!");
       return;
@@ -67,14 +64,40 @@ const FilterContent = ({
       changeTime({
         openFrom: openTime.replace(":", ""),
         closeTo: closeTime.replace(":", ""),
-        dayType: dayType.title,
+        dayType: dayType,
       })
     );
     dispatch(changeSearchDistance(searchDistanceValue));
-    
+    setSubmitErr();
+    setIsFiltered(true);
     setIsClicked(false);
   };
 
+  const handleResetFilter = () => {
+    setOpenTime("");
+    setCloseTime("");
+    setDayType("");
+    setCategoryValue("");
+    setSearchDistanceValue(DISTANCE.min); // replace with the default value
+    setOpenTimeErr(null);
+    setCloseTimeErr(null);
+    setDayTypeErr(null);
+    setSubmitErr(null);
+
+    dispatch(changeCategory(""));
+
+    dispatch(
+      changeTime({
+        openFrom: "",
+        closeTo: "",
+        dayType: "",
+      })
+    );
+    dispatch(changeSearchDistance());
+
+    setIsFiltered(false);
+    // setIsClicked(false);
+  };
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <Dropdown
@@ -85,11 +108,7 @@ const FilterContent = ({
         onChange={(option) => {
           setCategoryValue(option);
         }}
-        className={`${
-          categoryValue &&
-          `!border-black focus:!border-black ring-1 !ring-black`
-        }`}
-        // err={categoryErr}
+        className={`ring-black ${categoryValue && `ring-1 `}`}
       />
       <Wrapper col="true" className="gap-2">
         <Label>Time</Label>
@@ -97,47 +116,22 @@ const FilterContent = ({
         <Wrapper col="true" className={`gap-2 w-full`}>
           <Wrapper className="flex-col gap-2 w-full">
             <Wrapper className="gap-4 w-full">
-              <Wrapper col="true" className="w-full">
-                <Label className="!text-[14px]">Open From:</Label>
-                <Input
-                  type="time"
-                  className={`h-[60px] appearance-none flex justify-between !w-full bg-white  ${
-                    openTimeErr
-                      ? !openTime
-                        ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
-                        : "ring-1 !border-black"
-                      : "!border-black focus:!border-black !ring-black"
-                  } ${
-                    openTime &&
-                    "!border-black focus:!border-black !ring-black ring-1 "
-                  } !rounded-lg`}
-                  onChange={(e) => {
-                    setOpenTime(e.target.value);
-                  }}
-                    value={openTime}
-                />
-              </Wrapper>
-
-              <Wrapper col="true" className="w-full">
-                <Label className="!text-[14px]">Close to:</Label>
-                <Input
-                  type="time"
-                  className={`h-[60px] appearance-none flex justify-between !w-full bg-white ${
-                    closeTimeErr
-                      ? !closeTime
-                        ? "focus:!ring-secondary-400 !border-secondary-400 border-2"
-                        : "ring-1 !border-black"
-                      : "!border-black focus:!border-black !ring-black"
-                  } ${
-                    closeTime &&
-                    "!border-black focus:!border-black !ring-black ring-1 "
-                  } !rounded-lg`}
-                  onChange={(e) => {
-                    setCloseTime(e.target.value);
-                  }}
-                    value={closeTime}
-                />
-              </Wrapper>
+              <Time
+                label="Open From:"
+                onChange={(e) => {
+                  setOpenTime(e.target.value);
+                }}
+                value={openTime}
+                err={openTimeErr}
+              />
+              <Time
+                label="Close To:"
+                onChange={(e) => {
+                  setCloseTime(e.target.value);
+                }}
+                value={closeTime}
+                err={closeTimeErr}
+              />
             </Wrapper>
             <Wrapper col="true" className="w-full">
               <Label className="!text-[14px]">On:</Label>
@@ -149,11 +143,13 @@ const FilterContent = ({
                 onChange={(option) => {
                   setDayType(option);
                 }}
-                className={`!border-black focus:!border-black !ring-black ${
-                  !dayTypeErr
-                    ? dayType?.title && "ring-1 !border-black"
-                    : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 !ring-secondary-400"
+                className={`${
+                  dayType?.title || dayType
+                    ? "ring-1 ring-black border-black"
+                    : dayTypeErr &&
+                      "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 "
                 }`}
+                // err={dayTypeErr}
               />
             </Wrapper>
           </Wrapper>
@@ -167,11 +163,19 @@ const FilterContent = ({
         label={`Distance: ${searchDistanceValue}km`}
       />
 
-      <Error fluid className={`mt-8 ${!submitErr && "invisible"}`}>
+      <Error fluid className={`mt-4 ${!submitErr && "invisible"}`}>
         {submitErr}
       </Error>
       <Button primary active className="!my-0">
         Submit
+      </Button>
+      <Button
+        type="button"
+        onClick={handleResetFilter}
+        primary
+        className="!my-0 bg-danger"
+      >
+        Reset
       </Button>
     </form>
   );

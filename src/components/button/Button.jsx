@@ -14,6 +14,7 @@ const Button = ({
   danger,
   rounded,
   small,
+  type,
   ...rest
 }) => {
   const classes = classNames(
@@ -30,7 +31,7 @@ const Button = ({
     }
   );
   return (
-    <button {...rest} disabled={isLoading} className={classes}>
+    <button type={type} {...rest} disabled={isLoading} className={classes}>
       {isLoading ? (
         <Loading className={loadingClassName} />
       ) : (

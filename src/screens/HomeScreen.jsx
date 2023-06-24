@@ -94,16 +94,16 @@ const HomeScreen = () => {
       setIsLoading(true);
       const fetchFeaturedLocations = async () => {
         const response = await locationApi.getFeaturedLocation({
-          locationCategory: category,
+          locationCategory: category.title,
           searchInput: searchInput,
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: time?.dayType === "Weekday" ? {
+          weekday: time?.dayType?.title === "Weekday" ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
-          weekend: time?.dayType === "Weekend" ? {
+          weekend: time?.dayType?.title === "Weekend" ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
@@ -129,16 +129,16 @@ const HomeScreen = () => {
     if (latitude && longitude) {
       const fetchLatestLocations = async () => {
         const response = await locationApi.getLatestLocation({
-          locationCategory: category,
+          locationCategory: category.title,
           searchInput: searchInput,
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: time?.dayType === "Weekday" ? {
+          weekday: time?.dayType?.title === "Weekday" ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
-          weekend: time?.dayType === "Weekend" ? {
+          weekend: time?.dayType?.title === "Weekend" ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
@@ -174,16 +174,16 @@ const HomeScreen = () => {
     const fetchFeaturedLocations = async () => {
       const response = await locationApi.getFeaturedLocation(
         {
-          locationCategory: category,
+          locationCategory: category.title,
           searchInput: searchInput,
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: time?.dayType === "Weekday" ? {
+          weekday: time?.dayType?.title === "Weekday" ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
-          weekend: time?.dayType === "Weekend" ? {
+          weekend: time?.dayType?.title === "Weekend" ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
@@ -210,16 +210,16 @@ const HomeScreen = () => {
     const fetchLatestLocations = async () => {
       const response = await locationApi.getLatestLocation(
         {
-          locationCategory: category,
+          locationCategory: category.title,
           searchInput: searchInput,
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: time?.dayType === "Weekday" ? {
+          weekday: time?.dayType?.title === "Weekday" ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,
-          weekend: time?.dayType === "Weekend" ? {
+          weekend: time?.dayType?.title === "Weekend" ? {
             openTime: time?.openFrom,
             closeTime: time?.closeTo,
           } : null,

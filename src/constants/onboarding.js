@@ -7,21 +7,21 @@ const onboardingScreens = [
     img: onboarding1,
     heading: "Post your favorite location",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel eros mi. Fusce eleifend eros a molestie bibendum. Vestibulum tincidunt, arcu ut",
+      "Register every location that you feel satisfied and you want to introduce to others",
     bg: "navy",
   },
   {
     img: onboarding2,
     heading: "Plan your event",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel eros mi. Fusce eleifend eros a molestie bibendum. Vestibulum tincidunt, arcu ut",
+      "Create event by selecting the location, time, and invite other users to join the event",
     bg: "slate",
   },
   {
     img: onboarding3,
     heading: "Plan your itinerary",
     description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel eros mi. Fusce eleifend eros a molestie bibendum. Vestibulum tincidunt, arcu ut",
+      "Make your own plans to visit every location that you want to go in the future",
     bg: "gray",
   },
 ];
