@@ -50,7 +50,7 @@ const FilterContent = ({
     if ((openTime && !closeTime) || (!openTime && closeTime)) {
       setOpenTimeErr(VALIDATE.time(openTime));
       setCloseTimeErr(VALIDATE.time(closeTime));
-      setSubmitErr('Please fill both "Open from" and "On" fields!');
+      setSubmitErr('Please fill both "Open from" and "Close to" fields!');
       return;
     }
 
@@ -62,7 +62,7 @@ const FilterContent = ({
       if (!openTime && !closeTime) {
         setOpenTimeErr(VALIDATE.time(openTime));
         setCloseTimeErr(VALIDATE.time(closeTime));
-        setSubmitErr("Please fill both open and close time!");
+        setSubmitErr('Please fill both "Open from" and "Close to" fields!');
         dispatch(
           changeTime({
             openFrom: openTime.replace(":", ""),
