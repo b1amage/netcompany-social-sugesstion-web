@@ -7,7 +7,7 @@ import Popup from "@/components/popup/Popup";
 import FilterContent from "./FilterContent";
 import Heading from "@/components/typography/Heading";
 import close from "@/assets/close.svg";
-import { AiOutlineClose } from "react-icons/ai";
+import { AiFillCheckCircle, AiOutlineClose } from "react-icons/ai";
 import { useSelector } from "react-redux";
 
 const Filter = ({ wrapperClassName, className }) => {
@@ -34,6 +34,7 @@ const Filter = ({ wrapperClassName, className }) => {
   const [searchDistanceValue, setSearchDistanceValue] = useState(
     searchDistance || 5
   );
+  const [isFiltered, setIsFiltered] = useState(false)
 
   const handleCloseFilter= () => {
     setCategoryValue(category)
@@ -47,7 +48,7 @@ const Filter = ({ wrapperClassName, className }) => {
   return (
     <Wrapper className={`w-full ${wrapperClassName}`}>
       <Button
-        className={`!bg-transparent !p-0 !border-none ${className}`}
+        className={`!bg-transparent relative !p-1.5 !border-none ${className}`}
         onClick={() => setIsClicked(true)}
       >
         <Image
@@ -56,6 +57,7 @@ const Filter = ({ wrapperClassName, className }) => {
           alt="filter"
           className="w-[28px] h-[28px]"
         />
+        {isFiltered && <AiFillCheckCircle className={`text-black absolute bottom-0 right-0 `} />}
       </Button>
 
       <Popup
@@ -66,6 +68,7 @@ const Filter = ({ wrapperClassName, className }) => {
             <Wrapper col="true" className="w-full px-8 py-3 ">
               <Heading className="text-center !text-[36px]">Filter</Heading>
               <FilterContent
+                setIsFiltered={setIsFiltered}
                 setIsClicked={setIsClicked}
                 categoryValue={categoryValue}
                 setCategoryValue={setCategoryValue}
@@ -90,9 +93,9 @@ const Filter = ({ wrapperClassName, className }) => {
           </>
         }
         className={`${
-          isClicked ? "animate-zoom" : "hidden"
-        } duration-300  items-end md:items-center 2xl:!py-16`}
-        formClassName="!h-auto w-full justify-center md:p-0 md:px-2 !rounded-b-none rounded-t-xl md:!rounded-2xl"
+          isClicked ? "translate-y-0" : "translate-y-full"
+        } duration-300 overflow-hidden  items-end md:items-center 2xl:!py-16`}
+        formClassName="overflow-y-scroll !h-auto w-full justify-center md:p-0 md:px-2 !rounded-b-none rounded-t-xl md:!rounded-2xl"
         titleClassName="text-[20px]"
         childrenClassName="!mt-0 w-full"
         // setShowPopup={setShowAutoComplete}

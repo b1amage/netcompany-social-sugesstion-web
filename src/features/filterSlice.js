@@ -21,6 +21,9 @@ const filterSlice = createSlice({
     changeSearchDistance(state, action) {
       state.searchDistance = action.payload;
     },
+    resetFilter(){
+      return this.initialState;
+    },
   },
 });
 
@@ -29,5 +32,6 @@ export const {
   changeSearchInput,
   changeSearchDistance,
   changeTime,
+  resetFilter
 } = filterSlice.actions;
 export const filterReducer = filterSlice.reducer;
