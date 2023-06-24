@@ -20,7 +20,7 @@ const User = ({ isCol, user, src }) => {
     <div
       className={`${
         isCol && "flex-col text-center"
-      } w-fit flex items-center cursor-pointer`}
+      } w-fit flex items-center cursor-pointer hover:bg-gray-200/60 px-3 py-4 duration-300 rounded-lg`}
       onClick={() => navigate(`/user/${_id}`)}
     >
       <Image

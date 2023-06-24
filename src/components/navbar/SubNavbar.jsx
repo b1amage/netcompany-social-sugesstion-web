@@ -96,7 +96,7 @@ const SubNavbar = ({ user }) => {
                 navigate("/create-location");
               }}
               active
-              className="!fixed md:!static flex justify-evenly !rounded-2xl z-[8000] bottom-0 right-4 md:!w-[320px] !w-[240px] gap-2 !h-[60px] !border-none"
+              className="md:!w-[400px] flex justify-evenly gap-2 h-[60px] !rounded-2xl !fixed md:!static z-[4000] right-4 !w-[250px] bottom-4 border-primary-400"
             >
               <Image
                 imageClassName=""

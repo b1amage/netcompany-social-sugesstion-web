@@ -37,10 +37,11 @@ const HomeScreen = () => {
   const {
     category,
     searchInput,
-    weekdayTime,
-    weekendTime,
+    // weekdayTime,
+    // weekendTime,
+    time,
     searchDistance,
-    isAdded,
+    // isAdded,
     latitude,
     longitude,
   } = useSelector(({ filter, navbar, currentLocation }) => {
@@ -51,9 +52,10 @@ const HomeScreen = () => {
       category: filter.category,
       searchInput: filter.searchInput,
       searchDistance: filter.searchDistance,
-      weekdayTime: filter.weekdayTime,
-      weekendTime: filter.weekendTime,
-      isAdded: navbar.isAdded
+      time: filter.time
+      // weekdayTime: filter.weekdayTime,
+      // weekendTime: filter.weekendTime,
+      // isAdded: navbar.isAdded
     };
   });
 
@@ -97,14 +99,14 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: {
-            openTime: weekdayTime.openTime,
-            closeTime: weekdayTime.closeTime,
-          },
-          weekend: {
-            openTime: weekendTime.openTime,
-            closeTime: weekendTime.closeTime,
-          },
+          weekday: time?.dayType === "Weekday" ? {
+            openTime: time?.openFrom,
+            closeTime: time?.closeTo,
+          } : null,
+          weekend: time?.dayType === "Weekend" ? {
+            openTime: time?.openFrom,
+            closeTime: time?.closeTo,
+          } : null,
         });
         setFeaturedLocations(response.data.results);
         localStorage.setItem("featuredNextCursor", response.data.next_cursor);
@@ -119,8 +121,7 @@ const HomeScreen = () => {
     longitude,
     category,
     searchInput,
-    weekdayTime,
-    weekendTime,
+    time,
     searchDistance,
   ]);
 
@@ -133,14 +134,14 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: {
-            openTime: weekdayTime.openTime,
-            closeTime: weekdayTime.closeTime,
-          },
-          weekend: {
-            openTime: weekendTime.openTime,
-            closeTime: weekendTime.closeTime,
-          },
+          weekday: time?.dayType === "Weekday" ? {
+            openTime: time?.openFrom,
+            closeTime: time?.closeTo,
+          } : null,
+          weekend: time?.dayType === "Weekend" ? {
+            openTime: time?.openFrom,
+            closeTime: time?.closeTo,
+          } : null,
         });
         setLatestLocations(response.data.results);
         localStorage.setItem("latestNextCursor", response.data.next_cursor);
@@ -157,8 +158,7 @@ const HomeScreen = () => {
     longitude,
     category,
     searchInput,
-    weekdayTime,
-    weekendTime,
+    time,
     searchDistance,
   ]);
 
@@ -179,14 +179,14 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: {
-            openTime: weekdayTime.openTime,
-            closeTime: weekdayTime.closeTime,
-          },
-          weekend: {
-            openTime: weekendTime.openTime,
-            closeTime: weekendTime.closeTime,
-          },
+          weekday: time?.dayType === "Weekday" ? {
+            openTime: time?.openFrom,
+            closeTime: time?.closeTo,
+          } : null,
+          weekend: time?.dayType === "Weekend" ? {
+            openTime: time?.openFrom,
+            closeTime: time?.closeTo,
+          } : null,
         },
         nextCursor
       );
@@ -215,14 +215,14 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: {
-            openTime: weekdayTime.openTime,
-            closeTime: weekdayTime.closeTime,
-          },
-          weekend: {
-            openTime: weekendTime.openTime,
-            closeTime: weekendTime.closeTime,
-          },
+          weekday: time?.dayType === "Weekday" ? {
+            openTime: time?.openFrom,
+            closeTime: time?.closeTo,
+          } : null,
+          weekend: time?.dayType === "Weekend" ? {
+            openTime: time?.openFrom,
+            closeTime: time?.closeTo,
+          } : null,
         },
         nextCursor
       );
@@ -243,9 +243,9 @@ const HomeScreen = () => {
 
       <OnBoardingSlider />
 
-      <Wrapper col="true" className="gap-4">
+      <Wrapper col="true" className="gap-4 my-4">
         <Wrapper className="justify-between items-end">
-          <Label>Popular</Label>
+          <Label className="!text-[32px]">Popular</Label>
           {/* {featuredNextCursor &&
             (!isFeaturedUpdating ? (
               <Heading
@@ -284,7 +284,7 @@ const HomeScreen = () => {
 
       <Wrapper col="true" className="gap-4">
         <Wrapper className="justify-between items-end">
-          <Label>Latest</Label>
+          <Label className="!text-[32px]">Latest</Label>
           {/* {latestNextCursor &&
             (!isLatestUpdating ? (
               <Heading

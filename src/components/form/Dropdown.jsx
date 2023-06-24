@@ -48,16 +48,7 @@ const Dropdown = ({
     >
       {label && <Label required={required}>{label}</Label>}
       <div
-        className={`w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg border border-black  bg-white md:text-base md:p-4 placeholder:text-secondary-100 font-bold ${
-          value?.title || value
-            ? "!border-green-500 focus:!border-green-500 ring-1 !ring-green-500"
-            : "focus:!border-secondary-400"
-        } ${
-          isOpen &&
-          (value?.tilte || value
-            ? "border-green-500 focus:!border-green-500 "
-            : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
-        } ${err && "border-secondary-400 ring-1 ring-secondary-400"} ${className}`}
+        className={`w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg border border-black  bg-white md:text-base md:p-4 placeholder:text-secondary-100 font-bold ${isOpen && "!border-black focus:!border-black ring-1 !ring-black"} ${className}`}
         onClick={handleClick}
       >
         {value?.title || defaultTitle}
@@ -69,7 +60,7 @@ const Dropdown = ({
       </div>
       {isOpen && (
         <ul
-          className={`border border-primary-400  w-full max-h-[400px] block my-2 overflow-y-scroll bg-primary-400 text-white  absolute z-50 text-sm top-full transition-all duration-300 outline-none  md:text-base md:px-2 placeholder:text-secondary-100 font-bold`}
+          className={`border border-primary-400 w-full max-h-[400px] block my-2 overflow-y-scroll bg-primary-400 text-white  absolute z-50 text-sm top-full transition-all duration-300 outline-none  md:text-base md:px-2 placeholder:text-secondary-100 font-bold`}
         >
           {renderedOptions}
         </ul>
