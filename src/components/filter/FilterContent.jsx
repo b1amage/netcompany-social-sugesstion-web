@@ -187,7 +187,7 @@ const FilterContent = ({
             Reset
           </Button>
           <Button primary active className="!my-0">
-            Submit
+            Filter
           </Button>
         </Wrapper>
       </Wrapper>
