@@ -19,6 +19,7 @@ const Filter = ({ wrapperClassName, className }) => {
   };
 
   const [isClicked, setIsClicked] = useState(false);
+  const [isFiltered, setIsFiltered] = useState(false)
   const { category, time, searchDistance } = useSelector(({ filter }) => {
     return {
       category: filter.category,
@@ -35,7 +36,6 @@ const Filter = ({ wrapperClassName, className }) => {
     searchDistance || 5
   );
   
-  const [isFiltered, setIsFiltered] = useState(false)
 
   const handleCloseFilter= () => {
     setCategoryValue(category)
@@ -66,7 +66,7 @@ const Filter = ({ wrapperClassName, className }) => {
         actions={[]}
         children={
           <>
-            <Wrapper col="true" className="w-full px-8 py-3 ">
+            <Wrapper col="true" className="w-full h-full gap-4 items-center">
               <Heading className="text-center !text-[36px]">Filter</Heading>
               <FilterContent
                 setIsFiltered={setIsFiltered}
@@ -89,14 +89,16 @@ const Filter = ({ wrapperClassName, className }) => {
                 handleCloseFilter()
               }}
             >
-              <AiOutlineClose className="text-[32px] my-2 text-black " />
+              <AiOutlineClose className="text-[32px]  text-black " />
             </Button>
           </>
         }
         className={`${
           isClicked ? "translate-y-0" : "translate-y-full"
-        } duration-300 overflow-hidden items-end md:items-center 2xl:!py-16`}
-        formClassName="overflow-y-scroll !h-auto w-full justify-center md:p-0 md:px-2 !rounded-b-none rounded-t-xl md:!rounded-2xl md:py-0"
+        } duration-300 items-center  `}
+        formClassName="overflow-y-scroll justify-center  !h-[600px] md:!h-[650px] !py-0 !px-4 "
+        // overflow-hidden justify-center items-end md:items-center 2xl:!py-16
+        // overflow-y-scroll !h-auto w-full justify-center md:p-0 md:px-2 !rounded-b-none rounded-t-xl md:!rounded-2xl md:py-0
         titleClassName="text-[20px]"
         childrenClassName="!mt-0 w-full"
         // setShowPopup={setShowAutoComplete}
