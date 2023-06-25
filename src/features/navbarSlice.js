@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import ROUTE from "@/constants/routes";
 
 const navbarSlice = createSlice({
   name: "navbar",
@@ -27,6 +28,7 @@ const navbarSlice = createSlice({
           return;
         case "/my-event": 
         case "/":
+          case ROUTE.SEARCH_LOCATION:
           state.isAdded = true;
           state.isShowNotification = true;
           state.isShowFilter = true;

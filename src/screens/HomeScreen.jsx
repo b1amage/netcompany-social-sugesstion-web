@@ -236,7 +236,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <Screen className="my-4 lg:my-12 px-10 flex flex-col gap-4 lg:px-16 py-8 md:py-16 lg:py-0">
+    <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       <Wrapper col="true" className="gap-4 md:items-center">
         <SubNavbar user={user} />
       </Wrapper>
@@ -246,17 +246,6 @@ const HomeScreen = () => {
       <Wrapper col="true" className="gap-4 my-4">
         <Wrapper className="justify-between items-end">
           <Label className="!text-[32px]">Popular</Label>
-          {/* {featuredNextCursor &&
-            (!isFeaturedUpdating ? (
-              <Heading
-                onClick={() => handleLoadMoreFeaturedData(featuredNextCursor)}
-                className="cursor-pointer hover:animate-bounce text-primary-400"
-              >
-                + Load more
-              </Heading>
-            ) : (
-              <Loading className="!h-10 !w-10" />
-            ))} */}
         </Wrapper>
         {!isLoading ? (
           featuredLocations.length > 0 ? (
@@ -285,18 +274,6 @@ const HomeScreen = () => {
       <Wrapper col="true" className="gap-4">
         <Wrapper className="justify-between items-end">
           <Label className="!text-[32px]">Latest</Label>
-          {/* {latestNextCursor &&
-            (!isLatestUpdating ? (
-              <Heading
-                onClick={() => handleLoadMoreLatestData(latestNextCursor)}
-                className="cursor-pointer hover:animate-bounce text-primary-400"
-              >
-                + Load more
-              </Heading>
-            ) : (
-              // className="h-10 w-10"
-              <Loading className="!h-10 !w-10" />
-            ))} */}
         </Wrapper>
         {!isLoading ? (
           latestLocations.length > 0 ? (

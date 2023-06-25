@@ -18,12 +18,13 @@ import locationImg from "@/assets/location.svg";
 import Heading from "@/components/typography/Heading";
 import User from "@/components/user/User";
 import SearchBar from "@/components/search/SearchBar";
-import { changeSearchInput } from "@/features/filterSlice";
+import {FaSearch} from "react-icons/fa"
 import Button from "@/components/button/Button";
 import { useNavigate } from "react-router-dom";
 import useViewport from "@/hooks/useScreenWidth";
+import ROUTE from "@/constants/routes";
 
-const SubNavbar = ({ user }) => {
+const SubNavbar = ({ user, canSearching }) => {
   const dispatch = useDispatch();
   const { isAdded, isShowFilter, currentLocation } = useSelector(
     ({ navbar, currentLocation }) => {
@@ -50,10 +51,6 @@ const SubNavbar = ({ user }) => {
     setShowAutoComplete(false);
   };
 
-  const handleSearchValue = (value) => {
-    if (value.trim() === "") return;
-    dispatch(changeSearchInput(value));
-  };
 
   useEffect(() => {
     dispatch(validatePathname(window.location.pathname));
@@ -107,7 +104,7 @@ const SubNavbar = ({ user }) => {
               Register new location
             </Button>
           )}
-          <SearchBar onChange={handleSearchValue} className="w-full" />
+          {canSearching ? <SearchBar className="w-full" /> : <Button primary active className="h-[60px] !rounded-2xl gap-2" onClick={() => navigate(ROUTE.SEARCH_LOCATION)}> <FaSearch /> Search locations</Button>}
           <Wrapper className="items-center w-fit justify-end gap-4">
             {isShowFilter && <Filter wrapperClassName="" className="m-0" />}
           </Wrapper>

@@ -7,6 +7,7 @@ const filterSlice = createSlice({
     searchInput: "",
     time: { openFrom: "", closeTo: "", dayType: "" },
     searchDistance: null,
+    isFiltering: false
   },
   reducers: {
     changeCategory(state, action) {
@@ -21,6 +22,9 @@ const filterSlice = createSlice({
     changeSearchDistance(state, action) {
       state.searchDistance = action.payload;
     },
+    changeFiltering(state, action){
+      state.isFiltering = action.payload
+    },
     resetFilter(){
       return this.initialState;
     },
@@ -32,6 +36,7 @@ export const {
   changeSearchInput,
   changeSearchDistance,
   changeTime,
-  resetFilter
+  resetFilter,
+  changeFiltering
 } = filterSlice.actions;
 export const filterReducer = filterSlice.reducer;

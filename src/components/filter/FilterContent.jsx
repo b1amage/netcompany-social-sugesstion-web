@@ -43,10 +43,6 @@ const FilterContent = ({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (categoryValue) {
-      dispatch(changeCategory(categoryValue));
-    }
-
     if ((openTime && !closeTime) || (!openTime && closeTime)) {
       setOpenTimeErr(VALIDATE.time(openTime));
       setCloseTimeErr(VALIDATE.time(closeTime));
@@ -54,24 +50,21 @@ const FilterContent = ({
       return;
     }
 
-    if (VALIDATE.category(dayType)) {
+    if (openTime && closeTime && VALIDATE.category(dayType)) {
       setDayTypeErr(VALIDATE.category(dayType));
       setSubmitErr("Please select day type!");
       return;
-    } else {
-      if (!openTime && !closeTime) {
+    } 
+
+    if (dayType && !openTime && !closeTime){
         setOpenTimeErr(VALIDATE.time(openTime));
         setCloseTimeErr(VALIDATE.time(closeTime));
         setSubmitErr('Please fill both "Open from" and "Close to" fields!');
-        dispatch(
-          changeTime({
-            openFrom: openTime.replace(":", ""),
-            closeTo: closeTime.replace(":", ""),
-            dayType: dayType,
-          })
-        );
         return;
-      }
+    }
+
+    if (categoryValue) {
+      dispatch(changeCategory(categoryValue));
     }
 
     dispatch(
@@ -113,7 +106,7 @@ const FilterContent = ({
     // setIsClicked(false);
   };
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
       <Dropdown
         label="Category"
         defaultTitle="SELECT THE CATEGORY"
@@ -179,22 +172,24 @@ const FilterContent = ({
         label={`Distance: ${searchDistanceValue}km`}
       />
 
-      <Error fluid className={`mt-4 ${!submitErr && "invisible"}`}>
-        {submitErr}
-      </Error>
+      <Wrapper col="true" className="">
+        <Error fluid className={`mt-4 ${!submitErr && "invisible"}`}>
+          {submitErr}
+        </Error>
 
-      <Wrapper>
-        <Button
-          type="button"
-          onClick={handleResetFilter}
-          primary
-          className="!my-0 !bg-danger"
-        >
-          Reset
-        </Button>
-        <Button primary active className="!my-0">
-          Submit
-        </Button>
+        <Wrapper>
+          <Button
+            type="button"
+            onClick={handleResetFilter}
+            primary
+            className="!my-0 !bg-danger"
+          >
+            Reset
+          </Button>
+          <Button primary active className="!my-0">
+            Submit
+          </Button>
+        </Wrapper>
       </Wrapper>
     </form>
   );
