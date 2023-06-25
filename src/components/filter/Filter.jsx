@@ -49,7 +49,7 @@ const Filter = ({ wrapperClassName, className }) => {
   return (
     <Wrapper className={`w-full ${wrapperClassName}`}>
       <Button
-        className={`!bg-transparent relative !p-1.5 !border-none ${className}`}
+        className={`hover:bg-gray-200/60 h-[60px] w-[60px] bg-transparent relative !p-1.5 !border-none ${className}`}
         onClick={() => setIsClicked(true)}
       >
         <Image
@@ -58,7 +58,7 @@ const Filter = ({ wrapperClassName, className }) => {
           alt="filter"
           className="w-[28px] h-[28px]"
         />
-        {isFiltered && <AiFillCheckCircle className={`text-black absolute bottom-0 right-0 `} />}
+        {isFiltered && <AiFillCheckCircle className={`text-black absolute bottom-2 left-1/2 translate-x-1/4`} />}
       </Button>
 
       <Popup
