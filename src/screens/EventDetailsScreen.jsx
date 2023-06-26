@@ -142,7 +142,7 @@ const EventDetailsScreen = () => {
             )}
           </Wrapper>
 
-          {!event.imageUrls.length > 0 ? (
+          {event.imageUrls.length > 0 ? (
             <Wrapper>
               <div className="navigation-wrapper w-full relative h-[350px] md:h-[550px]">
                 <div ref={sliderRef} className="h-full keen-slider">
