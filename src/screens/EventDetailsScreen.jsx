@@ -19,6 +19,22 @@ import { useSelector } from "react-redux";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import { DEFAULT } from "@/constants/defaultData";
+import Guess from "@/components/guess/Guess";
+import { AiFillCalendar, AiFillClockCircle } from "react-icons/ai";
+import { HiLocationMarker } from "react-icons/hi";
+
+function convertDateTime(dateTimeString) {
+  var date = new Date(dateTimeString);
+
+  var day = ("0" + date.getUTCDate()).slice(-2);
+  var month = ("0" + (date.getUTCMonth() + 1)).slice(-2); // Months are zero indexed
+  var year = date.getUTCFullYear();
+
+  var hours = ("0" + date.getUTCHours()).slice(-2);
+  var minutes = ("0" + date.getUTCMinutes()).slice(-2);
+
+  return `${day}/${month}/${year}, ${hours}:${minutes}`;
+}
 
 const EventDetailsScreen = () => {
   const { id } = useParams();
@@ -65,7 +81,7 @@ const EventDetailsScreen = () => {
       {loading ? (
         <LoadingScreen />
       ) : (
-        <Wrapper col="true">
+        <Wrapper className="px-3" col="true">
           <Wrapper className="items-center justify-between">
             <Wrapper
               className="items-center my-3 !gap-5"
@@ -201,7 +217,57 @@ const EventDetailsScreen = () => {
             />
           )}
 
-          <Wrapper col="true"></Wrapper>
+          <Wrapper col="true">
+            <Heading>{event.name}</Heading>
+
+            <Wrapper className="justify-between !flex-col lg:!flex-row">
+              <Wrapper col="true" className="!gap-0">
+                <SubHeading className="flex items-center gap-1">
+                  <AiFillCalendar />
+                  Start at {convertDateTime(event.startDateTime)}
+                </SubHeading>
+
+                <Text className="flex items-center gap-1">
+                  <AiFillClockCircle />
+                  {event.allDay
+                    ? "All Day"
+                    : `Duration: ${event.duration.hours} ${
+                        event.duration.hours === 1 ? "hour" : "hours"
+                      } ${event.duration.minutes} ${
+                        event.duration.minutes === 1 ? "minute" : "minutes"
+                      }`}
+                </Text>
+              </Wrapper>
+              <Wrapper col="true">
+                <SubHeading className="flex items-center gap-1 font-bold">
+                  <HiLocationMarker />
+                  {event.location.name}
+                </SubHeading>
+
+                <Text className="flex items-center gap-1 underline">
+                  <HiLocationMarker />
+                  {event.location.address}
+                </Text>
+              </Wrapper>
+            </Wrapper>
+
+            <Text className="py-4 border-b border-b-neutral-400">
+              {event.description}
+            </Text>
+
+            <SubHeading>Guest List</SubHeading>
+            <Wrapper className="overflow-y-scroll">
+              {event.guests.map((item) => (
+                <Guess
+                  img={item.imageUrl}
+                  name={item.username}
+                  key={item._id}
+                  id={item._id}
+                  email={item.email}
+                />
+              ))}
+            </Wrapper>
+          </Wrapper>
         </Wrapper>
       )}
     </Screen>
