@@ -227,7 +227,7 @@ const CreateEventScreen = () => {
       if (response.status === 200) {
         toast.success("Successfully create event!");
         setEvent(defaultEvent);
-        localStorage.clear("eventCreateImages");
+        localStorage.removeItem("eventCreateImages");
         navigate("/events");
       }
     };
