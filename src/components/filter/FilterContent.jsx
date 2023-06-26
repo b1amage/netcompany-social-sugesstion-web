@@ -17,6 +17,7 @@ import {
 import VALIDATE from "@/helpers/validateForm";
 import Error from "@/components/form/Error";
 import Time from "@/components/location/Time";
+import { useSearchParams } from "react-router-dom";
 
 const FilterContent = ({
   setIsFiltered,
@@ -38,6 +39,7 @@ const FilterContent = ({
   const [closeTimeErr, setCloseTimeErr] = useState();
   const [submitErr, setSubmitErr] = useState();
   const handleDistanceChange = ({ x }) => setSearchDistanceValue(x);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const dispatch = useDispatch();
   const handleSubmit = (e) => {
@@ -54,27 +56,34 @@ const FilterContent = ({
       setDayTypeErr(VALIDATE.category(dayType));
       setSubmitErr("Please select day type!");
       return;
-    } 
-
-    if (dayType && !openTime && !closeTime){
-        setOpenTimeErr(VALIDATE.time(openTime));
-        setCloseTimeErr(VALIDATE.time(closeTime));
-        setSubmitErr('Please fill both "Open from" and "Close to" fields!');
-        return;
     }
 
-    if (categoryValue) {
-      dispatch(changeCategory(categoryValue));
+    if (dayType && !openTime && !closeTime) {
+      setOpenTimeErr(VALIDATE.time(openTime));
+      setCloseTimeErr(VALIDATE.time(closeTime));
+      setSubmitErr('Please fill both "Open from" and "Close to" fields!');
+      return;
     }
 
-    dispatch(
-      changeTime({
-        openFrom: openTime.replace(":", ""),
-        closeTo: closeTime.replace(":", ""),
-        dayType: dayType,
-      })
-    );
-    dispatch(changeSearchDistance(searchDistanceValue));
+    setSearchParams({
+      searchInput: searchParams.get('searchInput'),
+      locationCategory: categoryValue.title || "",
+      openFrom: openTime.replace(":", ""),
+      closeTo: closeTime.replace(":", ""),
+      dayType: dayType.title,
+      searchDistance: searchDistanceValue
+    });
+    // dispatch(changeCategory(categoryValue));
+
+    // dispatch(
+    //   changeTime({
+    //     openFrom: openTime.replace(":", ""),
+    //     closeTo: closeTime.replace(":", ""),
+    //     dayType: dayType,
+    //   })
+    // );
+    // dispatch(changeSearchDistance(searchDistanceValue));
+
     setSubmitErr();
     setIsFiltered(true);
     setIsClicked(false);

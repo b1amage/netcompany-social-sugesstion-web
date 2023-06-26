@@ -136,7 +136,7 @@ const Navbar = () => {
                 className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
                 danger
               >
-                Logout
+                Log out
               </Button>
             )}
           </div>

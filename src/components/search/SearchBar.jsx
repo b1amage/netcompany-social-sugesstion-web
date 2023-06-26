@@ -4,19 +4,22 @@ import search from "@/assets/search.svg";
 import Image from "@/components/image/Image";
 import { changeSearchInput, changeFiltering } from "@/features/filterSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import ROUTE from "@/constants/routes";
 const SearchBar = ({ className, wrapperClassName }) => {
   const [value, setValue] = useState();
   const [lastFetch, setLastFetch] = useState(Date.now());
-
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       const now = Date.now();
       // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
       if (now - lastFetch < 1000) return;
-      if (value.trim() === "") return;
+      setLastFetch(now)
+      // if (value.trim() === "") return;
       dispatch(changeFiltering(true));
-      dispatch(changeSearchInput(value));
+      navigate({pathname: ROUTE.SEARCH_LOCATION, search: `?searchInput=${value || ''}`})
       dispatch(changeFiltering(false));
     }
   };
@@ -37,7 +40,8 @@ const SearchBar = ({ className, wrapperClassName }) => {
         className={`absolute w-[24px] h-[24px] top-1/2 right-4 -translate-y-1/2 `}
         onClick={() => {
           dispatch(changeFiltering(true));
-          dispatch(changeSearchInput(value));
+          // dispatch(changeSearchInput(value));
+          navigate({pathname: ROUTE.SEARCH_LOCATION, search: `?searchInput=${value || ''}`})
           dispatch(changeFiltering(false));
         }}
         onKeyPress={handleKeyPress}

@@ -123,6 +123,7 @@ const HomeScreen = () => {
     searchInput,
     time,
     searchDistance,
+    featuredNextCursor
   ]);
 
   useEffect(() => {
@@ -160,6 +161,7 @@ const HomeScreen = () => {
     searchInput,
     time,
     searchDistance,
+    latestNextCursor
   ]);
 
   const handleLoadMoreFeaturedData = (nextCursor) => {

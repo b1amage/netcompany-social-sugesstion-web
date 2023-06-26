@@ -24,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 import useViewport from "@/hooks/useScreenWidth";
 import ROUTE from "@/constants/routes";
 
-const SubNavbar = ({ user, canSearching }) => {
+const SubNavbar = ({ user }) => {
   const dispatch = useDispatch();
   const { isAdded, isShowFilter, currentLocation } = useSelector(
     ({ navbar, currentLocation }) => {
@@ -104,7 +104,7 @@ const SubNavbar = ({ user, canSearching }) => {
               Register new location
             </Button>
           )}
-          {canSearching ? <SearchBar className="w-full" /> : <Button primary active className="h-[60px] !rounded-2xl gap-2" onClick={() => navigate(ROUTE.SEARCH_LOCATION)}> <FaSearch /> Search locations</Button>}
+          <SearchBar className="w-full" />
           <Wrapper className="items-center w-fit justify-end gap-4">
             {isShowFilter && <Filter wrapperClassName="" className="m-0" />}
           </Wrapper>
