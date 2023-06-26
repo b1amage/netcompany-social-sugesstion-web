@@ -239,9 +239,20 @@ const EventDetailsScreen = () => {
                 </Text>
               </Wrapper>
               <Wrapper col="true">
-                <SubHeading className="flex items-center gap-1 font-bold">
+                <SubHeading
+                  onClick={() => {
+                    navigate(
+                      event.location.isDeleted
+                        ? `/error/This location is no longer exists`
+                        : `/location/details/${event.location._id}`
+                    );
+                  }}
+                  className="flex items-center gap-1 font-bold cursor-pointer"
+                >
                   <HiLocationMarker />
-                  {event.location.name}
+                  {event.location.name}{" "}
+                  {event.location.isDeleted &&
+                    "(This location is no longer exist)"}
                 </SubHeading>
 
                 <Text className="flex items-center gap-1 underline">
