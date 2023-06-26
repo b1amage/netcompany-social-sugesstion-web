@@ -309,7 +309,7 @@ const CreateEventScreen = () => {
       {/* headings */}
       <Wrapper
         col="true"
-        className="w-full pb-10 border-b border-b-neutral-100"
+        className="items-center justify-center w-full pb-10 border-b border-b-neutral-100"
       >
         <Heading>Add New Event</Heading>
         <SubHeading>Let &lsquo;s create your own event</SubHeading>
@@ -391,7 +391,7 @@ const CreateEventScreen = () => {
         <Wrapper className="gap-4" col="true">
           {/* location */}
           <Wrapper col="true" className="!w-full !gap-1">
-            <Wrapper className="items-center">
+            <Wrapper className="!flex-col md:items-center md:!flex-row">
               <InputWithDropdown
                 label="Location"
                 required
@@ -405,7 +405,7 @@ const CreateEventScreen = () => {
               />
 
               <Text
-                className="font-bold underline cursor-pointer !text-xs w-[200px] gap-1 flex items-center self-center justify-center translate-y-full"
+                className="font-bold underline cursor-pointer !text-xs md:w-[200px] gap-1 flex md:items-center md:self-center md:justify-center md:translate-y-full"
                 onClick={() => navigate("/create-location")}
               >
                 <AiOutlinePlusCircle />
@@ -414,7 +414,7 @@ const CreateEventScreen = () => {
             </Wrapper>
           </Wrapper>
 
-          <Wrapper>
+          <Wrapper className="!flex-col lg:flex-row">
             {/* date */}
             <DatePicker
               err={error.startDate}
@@ -465,11 +465,10 @@ const CreateEventScreen = () => {
             <ImageUpload />
           </Wrapper>
         </Wrapper>
+        <Button onClick={handleSubmit} primary active>
+          Create Event
+        </Button>
       </Wrapper>
-
-      <Button onClick={handleSubmit} primary active>
-        Create Event
-      </Button>
 
       <Error
         fluid
