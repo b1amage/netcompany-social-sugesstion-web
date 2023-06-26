@@ -220,7 +220,7 @@ const EventDetailsScreen = () => {
           <Wrapper col="true">
             <Heading>{event.name}</Heading>
 
-            <Wrapper className="justify-between !flex-col lg:!flex-row">
+            <Wrapper className="justify-between !flex-col lg:!flex-row lg:items-center">
               <Wrapper col="true" className="!gap-0">
                 <SubHeading className="flex items-center gap-1">
                   <AiFillCalendar />
@@ -238,7 +238,7 @@ const EventDetailsScreen = () => {
                       }`}
                 </Text>
               </Wrapper>
-              <Wrapper col="true">
+              <Wrapper col="true" className="!gap-0">
                 <SubHeading
                   onClick={() => {
                     navigate(
