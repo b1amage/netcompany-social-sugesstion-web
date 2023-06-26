@@ -28,7 +28,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { GoLocation } from "react-icons/go";
 import { changeLocation } from "@/features/locationSlice";
 
-const DetailsScreen = ({ event }) => {
+const DetailsScreen = () => {
   const notifyDelete = () => toast.success("Successfully delete!");
   const { id } = useParams();
   const { user } = useSelector((state) => state.user);
@@ -48,7 +48,7 @@ const DetailsScreen = ({ event }) => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
@@ -66,7 +66,7 @@ const DetailsScreen = ({ event }) => {
     const getLocationDetails = async () => {
       setLoading(true);
       const response = await locationApi.getLocationDetails(id, navigate);
-      localStorage.setItem('locationDetails', JSON.stringify(response.data))
+      localStorage.setItem("locationDetails", JSON.stringify(response.data));
       setLocationDetails(response.data);
       setLiked(response.data.likedByUser);
       setLikedCount(response.data.heartCount);
@@ -154,61 +154,66 @@ const DetailsScreen = ({ event }) => {
                 </Wrapper>
               </Portal>
             )}
-            {!event && (
-              <Wrapper className="items-center justify-between">
-                <Wrapper
-                  className="items-center my-3 !gap-5"
-                  onClick={() => navigate(`/user/${locationDetails.user._id}`)}
-                >
-                  <Image
-                    className="w-[75px] h-[75px] !rounded-full"
-                    src={locationDetails?.user?.imageUrl}
-                  />
-                  <Wrapper col="true">
-                    <Heading>{locationDetails?.user?.username}</Heading>
-                    <Text>{locationDetails?.user?.email}</Text>
-                  </Wrapper>
+
+            <Wrapper className="items-center justify-between">
+              <Wrapper
+                className="items-center my-3 !gap-5"
+                onClick={() =>
+                  navigate(
+                    user._id === locationDetails.user._id
+                      ? `/profile`
+                      : `/user/${locationDetails.user._id}`
+                  )
+                }
+              >
+                <Image
+                  className="w-[75px] h-[75px] !rounded-full"
+                  src={locationDetails?.user?.imageUrl}
+                />
+                <Wrapper col="true">
+                  <Heading>{locationDetails?.user?.username}</Heading>
+                  <Text>{locationDetails?.user?.email}</Text>
                 </Wrapper>
-
-                {locationDetails.userId === user._id && (
-                  <Wrapper>
-                    <Button
-                      onClick={() => {
-                        navigate(`/location/edit/${id}`)
-                      }}
-                      className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl"
-                    >
-                      <BsFillPencilFill />
-                    </Button>
-                    <Button
-                      onClick={() => setShowDeletePopup(true)}
-                      className="!bg-danger !bg-opacity-40 !text-danger !text-xl"
-                    >
-                      <MdDelete />
-                    </Button>
-
-                    {showDeletePopup && (
-                      <Popup
-                        title="Are you sure to delete this location?"
-                        onClose={() => setShowDeletePopup(false)}
-                        actions={[
-                          {
-                            title: "cancel",
-                            danger: false,
-                            action: () => setShowDeletePopup(false),
-                          },
-                          {
-                            title: "delete",
-                            danger: true,
-                            action: deleteLocation,
-                          },
-                        ]}
-                      />
-                    )}
-                  </Wrapper>
-                )}
               </Wrapper>
-            )}
+
+              {locationDetails.userId === user._id && (
+                <Wrapper>
+                  <Button
+                    onClick={() => {
+                      navigate(`/location/edit/${id}`);
+                    }}
+                    className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl"
+                  >
+                    <BsFillPencilFill />
+                  </Button>
+                  <Button
+                    onClick={() => setShowDeletePopup(true)}
+                    className="!bg-danger !bg-opacity-40 !text-danger !text-xl"
+                  >
+                    <MdDelete />
+                  </Button>
+
+                  {showDeletePopup && (
+                    <Popup
+                      title="Are you sure to delete this location?"
+                      onClose={() => setShowDeletePopup(false)}
+                      actions={[
+                        {
+                          title: "cancel",
+                          danger: false,
+                          action: () => setShowDeletePopup(false),
+                        },
+                        {
+                          title: "delete",
+                          danger: true,
+                          action: deleteLocation,
+                        },
+                      ]}
+                    />
+                  )}
+                </Wrapper>
+              )}
+            </Wrapper>
 
             {locationDetails.imageUrls.length > 0 ? (
               <Wrapper>
@@ -326,152 +331,138 @@ const DetailsScreen = ({ event }) => {
                   )}
               </Wrapper>
 
-              {event ? (
-                <Wrapper col="true" className="my-4 mt-auto">
-                  <Heading>Guess List</Heading>
-                  <Wrapper className="gap-0 overflow-x-scroll lg:gap-8 snap-mandatory snap-x scroll-smooth">
-                    {Array(20)
-                      .fill(0)
-                      .map((item, index) => (
-                        <Guess key={index} />
-                      ))}
-                  </Wrapper>
-                </Wrapper>
-              ) : (
-                <Wrapper col="true" className="flex-1 my-4">
-                  {/* Like + Save */}
-                  <Wrapper className="!gap-5 pb-5 border-b border-b-neutral-200 w-full items-center">
-                    {liked ? (
-                      <BsFillHeartFill
-                        className="text-lg cursor-pointer text-secondary-400"
-                        onClick={handleLikeClick}
-                      />
-                    ) : (
-                      <BsHeart
-                        className="text-lg cursor-pointer"
-                        onClick={handleLikeClick}
-                      />
-                    )}
-
-                    <Text
-                      className="underline cursor-pointer"
-                      onClick={() => setShowLikedUsers(true)}
-                    >
-                      {likedCount} liked this post
-                    </Text>
-                  </Wrapper>
-
-                  {showLikedUsers && (
-                    <Portal>
-                      <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
-                        <Wrapper
-                          _ref={popupRef}
-                          className="h-[450px] w-[400px] max-w-[95vw] drop-shadow-xl bg-white rounded-xl p-5 items-center"
-                          col="true"
-                        >
-                          <Wrapper className="py-4 !border-b-2 border-b-neutral-600 w-full">
-                            <Heading className="!text-center w-full">
-                              Likes
-                            </Heading>
-                          </Wrapper>
-
-                          <div
-                            ref={likedListRef}
-                            onScroll={() => {
-                              const loadMore = async () => {
-                                const now = Date.now();
-                                // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
-                                if (now - lastFetch < 1000) return;
-                                if (likedUserNextCursor === null) return;
-                                setNextLoading(true);
-                                const response =
-                                  await locationApi.getUserLikedPost(
-                                    locationDetails._id,
-                                    likedUserNextCursor
-                                  );
-
-                                console.log(response);
-                                const newLikedList = [
-                                  ...likedUsers,
-                                  ...response.data.results,
-                                ];
-                                setLikedUsers(newLikedList);
-                                setLikedUserNextCursor(
-                                  response.data.next_cursor
-                                );
-
-                                setNextLoading(false);
-                              };
-
-                              if (
-                                likedListRef.current.scrollTop +
-                                  likedListRef.current.clientHeight >=
-                                likedListRef.current.scrollHeight
-                              ) {
-                                console.log("Scrolled to bottom!");
-                                if (likedUserNextCursor === null) return;
-                                // Implement your logic here
-                                loadMore();
-                              }
-                            }}
-                            className="flex flex-1 w-full overflow-scroll flex-center"
-                          >
-                            {likedUsersLoading ? (
-                              <Loading />
-                            ) : likedUsers.length === 0 ? (
-                              <Text>No user like this post</Text>
-                            ) : (
-                              <Wrapper
-                                className="self-start w-full my-2 justify-self-start"
-                                col="true"
-                              >
-                                {likedUsers.map((user) => (
-                                  <Wrapper
-                                    key={user.email}
-                                    className="items-center my-3 !gap-2"
-                                    onClick={() =>
-                                      navigate(`/user/${user._id}`)
-                                    }
-                                  >
-                                    <Image
-                                      className="w-[50px] h-[50px] !rounded-full"
-                                      src={user.imageUrl}
-                                    />
-                                    <Wrapper col="true">
-                                      <Heading className="!text-sm">
-                                        {user.username}
-                                      </Heading>
-                                      <Text className="!text-xs">
-                                        {user.email}
-                                      </Text>
-                                    </Wrapper>
-                                  </Wrapper>
-                                ))}
-
-                                {nextLoading && (
-                                  <Wrapper className="my-3 flex-center">
-                                    <Loading />
-                                  </Wrapper>
-                                )}
-                              </Wrapper>
-                            )}
-                          </div>
-                        </Wrapper>
-                      </div>
-                    </Portal>
+              <Wrapper col="true" className="flex-1 my-4">
+                {/* Like + Save */}
+                <Wrapper className="!gap-5 pb-5 border-b border-b-neutral-200 w-full items-center">
+                  {liked ? (
+                    <BsFillHeartFill
+                      className="text-lg cursor-pointer text-secondary-400"
+                      onClick={handleLikeClick}
+                    />
+                  ) : (
+                    <BsHeart
+                      className="text-lg cursor-pointer"
+                      onClick={handleLikeClick}
+                    />
                   )}
 
-                  {/* Comment */}
-                  <Wrapper
-                    col="true"
-                    className="xl:h-[300px] xl:overflow-y-auto"
+                  <Text
+                    className="underline cursor-pointer"
+                    onClick={() => setShowLikedUsers(true)}
                   >
-                    <CommentCard />
-                    <CommentCard />
-                    <CommentCard />
-                  </Wrapper>
+                    {likedCount} liked this post
+                  </Text>
                 </Wrapper>
-              )}
+
+                {showLikedUsers && (
+                  <Portal>
+                    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
+                      <Wrapper
+                        _ref={popupRef}
+                        className="h-[450px] w-[400px] max-w-[95vw] drop-shadow-xl bg-white rounded-xl p-5 items-center"
+                        col="true"
+                      >
+                        <Wrapper className="py-4 !border-b-2 border-b-neutral-600 w-full">
+                          <Heading className="!text-center w-full">
+                            Likes
+                          </Heading>
+                        </Wrapper>
+
+                        <div
+                          ref={likedListRef}
+                          onScroll={() => {
+                            const loadMore = async () => {
+                              const now = Date.now();
+                              // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+                              if (now - lastFetch < 1000) return;
+                              if (likedUserNextCursor === null) return;
+                              setNextLoading(true);
+                              const response =
+                                await locationApi.getUserLikedPost(
+                                  locationDetails._id,
+                                  likedUserNextCursor
+                                );
+
+                              console.log(response);
+                              const newLikedList = [
+                                ...likedUsers,
+                                ...response.data.results,
+                              ];
+                              setLikedUsers(newLikedList);
+                              setLikedUserNextCursor(response.data.next_cursor);
+
+                              setNextLoading(false);
+                            };
+
+                            if (
+                              likedListRef.current.scrollTop +
+                                likedListRef.current.clientHeight >=
+                              likedListRef.current.scrollHeight
+                            ) {
+                              console.log("Scrolled to bottom!");
+                              if (likedUserNextCursor === null) return;
+                              // Implement your logic here
+                              loadMore();
+                            }
+                          }}
+                          className="flex flex-1 w-full overflow-scroll flex-center"
+                        >
+                          {likedUsersLoading ? (
+                            <Loading />
+                          ) : likedUsers.length === 0 ? (
+                            <Text>No user like this post</Text>
+                          ) : (
+                            <Wrapper
+                              className="self-start w-full my-2 justify-self-start"
+                              col="true"
+                            >
+                              {likedUsers.map((_user) => (
+                                <Wrapper
+                                  key={_user.email}
+                                  className="items-center my-3 !gap-2 cursor-pointer"
+                                  onClick={() =>
+                                    navigate(
+                                      _user._id === user._id
+                                        ? `/profile`
+                                        : `/user/${_user._id}`
+                                    )
+                                  }
+                                >
+                                  <Image
+                                    className="w-[50px] h-[50px] !rounded-full"
+                                    src={_user.imageUrl}
+                                  />
+                                  <Wrapper col="true">
+                                    <Heading className="!text-sm">
+                                      {_user.username}
+                                    </Heading>
+                                    <Text className="!text-xs">
+                                      {_user.email}
+                                    </Text>
+                                  </Wrapper>
+                                </Wrapper>
+                              ))}
+
+                              {nextLoading && (
+                                <Wrapper className="my-3 flex-center">
+                                  <Loading />
+                                </Wrapper>
+                              )}
+                            </Wrapper>
+                          )}
+                        </div>
+                      </Wrapper>
+                    </div>
+                  </Portal>
+                )}
+
+                {/* Comment */}
+                <Wrapper col="true" className="xl:h-[300px] xl:overflow-y-auto">
+                  <CommentCard />
+                  <CommentCard />
+                  <CommentCard />
+                </Wrapper>
+              </Wrapper>
             </Wrapper>
           </Wrapper>
         </>

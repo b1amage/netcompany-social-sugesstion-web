@@ -165,7 +165,7 @@ const TabView = () => {
               {type === "created" && (
                 <Wrapper
                   onClick={() => navigate("/create-location")}
-                  className="hover:bg-opacity-10 transition-all flex-center cursor-pointer w-[160px] h-[230px] md:w-full md:h-[180px] xl:max-w-[400px] xl:h-[200px] bg-primary-400 bg-opacity-30 rounded-lg border-2 border-dashed border-primary-400"
+                  className="hover:bg-opacity-10 transition-all flex-center cursor-pointer w-[160px] h-[230px] md:w-full md:h-[180px] xl:max-w-[400px] xl:h-[200px] bg-neutral-400 bg-opacity-30 rounded-lg border-2 border-dashed border-primary-400"
                 >
                   <AiOutlinePlusCircle className="text-4xl text-primary-400" />
                 </Wrapper>
