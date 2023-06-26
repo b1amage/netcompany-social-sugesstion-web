@@ -57,8 +57,8 @@ const CreateEventScreen = () => {
       locationId: "",
       description: "",
       startDate: null,
-      startTime: "",
-      duration: "",
+      startTime: null,
+      duration: null,
       imageUrls: "",
       guests: "",
     }),
@@ -179,12 +179,50 @@ const CreateEventScreen = () => {
     setError({ ...error, startDate: "" });
   };
 
+  function isDateToday(dateString) {
+    if (!dateString) return false;
+    const currentDate = new Date(); // Current date
+    const inputDate = new Date(dateString);
+
+    // Set time to 00:00:00 to compare only dates
+    currentDate.setHours(0, 0, 0, 0);
+    inputDate.setHours(0, 0, 0, 0);
+
+    return currentDate.getTime() === inputDate.getTime();
+  }
+
+  function isInvalidTime(timeString) {
+    const currentTime = new Date(); // Current time
+
+    const [hours, minutes] = timeString.split(":");
+    const startTime = new Date();
+
+    startTime.setHours(hours);
+    startTime.setMinutes(minutes);
+
+    return startTime < currentTime;
+  }
+
   const handleTimeChange = (e) => {
+    if (!event.startDate) {
+      setError({ ...error, startTime: "Choose a date first" });
+
+      return;
+    }
+
+    if (isDateToday(event.startDate) && isInvalidTime(e.target.value)) {
+      setError({ ...error, startTime: "Cannot choose time from past!" });
+      return;
+    }
+
     const [hours, minutes] = e.target.value.split(":");
+
     setEvent({
       ...event,
       startTime: { hours: hours * 1, minutes: minutes * 1 },
     });
+
+    setError({ ...error, startTime: "" });
   };
 
   const handleDurationChange = (e) => {
@@ -433,6 +471,7 @@ const CreateEventScreen = () => {
               <Wrapper className="justify-start w-full">
                 {/* startTime */}
                 <TimePicker
+                  err={error.startTime}
                   className="!w-[120px]"
                   label="Start time"
                   required
@@ -441,6 +480,7 @@ const CreateEventScreen = () => {
 
                 {/* duration */}
                 <TimePicker
+                  err={error.duration}
                   className="!w-[120px]"
                   label="Duration"
                   required
