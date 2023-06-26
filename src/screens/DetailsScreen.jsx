@@ -48,7 +48,7 @@ const DetailsScreen = ({ event }) => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
@@ -66,7 +66,7 @@ const DetailsScreen = ({ event }) => {
     const getLocationDetails = async () => {
       setLoading(true);
       const response = await locationApi.getLocationDetails(id, navigate);
-      localStorage.setItem('locationDetails', JSON.stringify(response.data))
+      localStorage.setItem("locationDetails", JSON.stringify(response.data));
       setLocationDetails(response.data);
       setLiked(response.data.likedByUser);
       setLikedCount(response.data.heartCount);
@@ -158,7 +158,13 @@ const DetailsScreen = ({ event }) => {
               <Wrapper className="items-center justify-between">
                 <Wrapper
                   className="items-center my-3 !gap-5"
-                  onClick={() => navigate(`/user/${locationDetails.user._id}`)}
+                  onClick={() =>
+                    navigate(
+                      user._id === locationDetails.user._id
+                        ? `/profile`
+                        : `/user/${locationDetails.user._id}`
+                    )
+                  }
                 >
                   <Image
                     className="w-[75px] h-[75px] !rounded-full"
@@ -174,7 +180,7 @@ const DetailsScreen = ({ event }) => {
                   <Wrapper>
                     <Button
                       onClick={() => {
-                        navigate(`/location/edit/${id}`)
+                        navigate(`/location/edit/${id}`);
                       }}
                       className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl"
                     >
