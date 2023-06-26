@@ -45,6 +45,19 @@ const eventApi = {
       console.log(error);
     }
   },
+
+  async getEvent(id) {
+    try {
+      const url = `/event/${id}`;
+      const response = await axiosClient.get(url, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 export default eventApi;
