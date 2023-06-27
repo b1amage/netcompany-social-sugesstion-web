@@ -1,7 +1,13 @@
 import axiosClient from "@/api/axiosClient";
 
 const locationApi = {
-  async createLocation(data, navigate, setSubmitErr, setIsShowPopup, notfifyCreate) {
+  async createLocation(
+    data,
+    navigate,
+    setSubmitErr,
+    setIsShowPopup,
+    notfifyCreate
+  ) {
     try {
       const url = "/location";
       const response = await axiosClient.post(url, data, {
@@ -11,7 +17,7 @@ const locationApi = {
       setIsShowPopup(true);
       setTimeout(() => {
         setIsShowPopup(false);
-        notfifyCreate()
+        notfifyCreate();
         navigate(-1);
       }, 2000);
       return response;
@@ -95,6 +101,9 @@ const locationApi = {
 
       console.log("response of details", url, response);
 
+      if (response.data?.isDeleted && response.data.isDeleted === true) {
+        navigate("/error/This location no longer exists");
+      }
       return response;
     } catch (error) {
       console.log(error);
@@ -176,7 +185,13 @@ const locationApi = {
       console.log(error);
     }
   },
-  async updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate) {
+  async updateLocation(
+    data,
+    navigate,
+    setSubmitErr,
+    setIsShowPopup,
+    notifyUpdate
+  ) {
     const url = `/location`;
 
     try {
@@ -186,7 +201,7 @@ const locationApi = {
       setIsShowPopup(true);
       setTimeout(() => {
         setIsShowPopup(false);
-        notifyUpdate()
+        notifyUpdate();
         navigate(-1);
       }, 2000);
       return response;
