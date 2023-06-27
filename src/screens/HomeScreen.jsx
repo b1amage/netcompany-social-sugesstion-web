@@ -52,13 +52,12 @@ const HomeScreen = () => {
       category: filter.category,
       searchInput: filter.searchInput,
       searchDistance: filter.searchDistance,
-      time: filter.time
+      time: filter.time,
       // weekdayTime: filter.weekdayTime,
       // weekendTime: filter.weekendTime,
       // isAdded: navbar.isAdded
     };
   });
-
 
   const onSelectLocation = (id) => {
     navigate(id);
@@ -82,6 +81,12 @@ const HomeScreen = () => {
 
     const user =
       localStorage.getItem(localStorageKey.user) || JSON.stringify({});
+    console.log("user", user);
+
+    // check verify
+    if (user.isVerified === false) {
+      navigate("/onboarding");
+    }
     if (user === JSON.stringify({})) {
       navigate(ROUTE.LOGIN);
     }
@@ -99,14 +104,24 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: (time?.dayType?.title === "Weekday" && time?.openFrom !== "" && time?.closeTo !== "") ? {
-            openTime: time?.openFrom,
-            closeTime: time?.closeTo,
-          } : null,
-          weekend: (time?.dayType?.title === "Weekend" && time?.openFrom !== "" && time?.closeTo !== "") ? {
-            openTime: time?.openFrom,
-            closeTime: time?.closeTo,
-          } : null,
+          weekday:
+            time?.dayType?.title === "Weekday" &&
+            time?.openFrom !== "" &&
+            time?.closeTo !== ""
+              ? {
+                  openTime: time?.openFrom,
+                  closeTime: time?.closeTo,
+                }
+              : null,
+          weekend:
+            time?.dayType?.title === "Weekend" &&
+            time?.openFrom !== "" &&
+            time?.closeTo !== ""
+              ? {
+                  openTime: time?.openFrom,
+                  closeTime: time?.closeTo,
+                }
+              : null,
         });
         setFeaturedLocations(response.data.results);
         localStorage.setItem("featuredNextCursor", response.data.next_cursor);
@@ -134,14 +149,24 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: (time?.dayType?.title === "Weekday" && time?.openFrom !== "" && time?.closeTo !== "") ? {
-            openTime: time?.openFrom,
-            closeTime: time?.closeTo,
-          } : null,
-          weekend: (time?.dayType?.title === "Weekend" && time?.openFrom !== "" && time?.closeTo !== "") ? {
-            openTime: time?.openFrom,
-            closeTime: time?.closeTo,
-          } : null,
+          weekday:
+            time?.dayType?.title === "Weekday" &&
+            time?.openFrom !== "" &&
+            time?.closeTo !== ""
+              ? {
+                  openTime: time?.openFrom,
+                  closeTime: time?.closeTo,
+                }
+              : null,
+          weekend:
+            time?.dayType?.title === "Weekend" &&
+            time?.openFrom !== "" &&
+            time?.closeTo !== ""
+              ? {
+                  openTime: time?.openFrom,
+                  closeTime: time?.closeTo,
+                }
+              : null,
         });
         setLatestLocations(response.data.results);
         localStorage.setItem("latestNextCursor", response.data.next_cursor);
@@ -179,14 +204,24 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: (time?.dayType?.title === "Weekday" && time?.openFrom !== "" && time?.closeTo !== "") ? {
-            openTime: time?.openFrom,
-            closeTime: time?.closeTo,
-          } : null,
-          weekend: (time?.dayType?.title === "Weekend" && time?.openFrom !== "" && time?.closeTo !== "") ? {
-            openTime: time?.openFrom,
-            closeTime: time?.closeTo,
-          } : null,
+          weekday:
+            time?.dayType?.title === "Weekday" &&
+            time?.openFrom !== "" &&
+            time?.closeTo !== ""
+              ? {
+                  openTime: time?.openFrom,
+                  closeTime: time?.closeTo,
+                }
+              : null,
+          weekend:
+            time?.dayType?.title === "Weekend" &&
+            time?.openFrom !== "" &&
+            time?.closeTo !== ""
+              ? {
+                  openTime: time?.openFrom,
+                  closeTime: time?.closeTo,
+                }
+              : null,
         },
         nextCursor
       );
@@ -215,14 +250,24 @@ const HomeScreen = () => {
           lat: latitude,
           lng: longitude,
           searchDistance: searchDistance,
-          weekday: (time?.dayType?.title === "Weekday" && time?.openFrom !== "" && time?.closeTo !== "") ? {
-            openTime: time?.openFrom,
-            closeTime: time?.closeTo,
-          } : null,
-          weekend: (time?.dayType?.title === "Weekend" && time?.openFrom !== "" && time?.closeTo !== "") ? {
-            openTime: time?.openFrom,
-            closeTime: time?.closeTo,
-          } : null,
+          weekday:
+            time?.dayType?.title === "Weekday" &&
+            time?.openFrom !== "" &&
+            time?.closeTo !== ""
+              ? {
+                  openTime: time?.openFrom,
+                  closeTime: time?.closeTo,
+                }
+              : null,
+          weekend:
+            time?.dayType?.title === "Weekend" &&
+            time?.openFrom !== "" &&
+            time?.closeTo !== ""
+              ? {
+                  openTime: time?.openFrom,
+                  closeTime: time?.closeTo,
+                }
+              : null,
         },
         nextCursor
       );
@@ -244,7 +289,7 @@ const HomeScreen = () => {
       <OnBoardingSlider />
 
       <Wrapper col="true" className="gap-4 my-4">
-        <Wrapper className="justify-between items-end">
+        <Wrapper className="items-end justify-between">
           <Label className="!text-[32px]">Popular</Label>
         </Wrapper>
         {!isLoading ? (
@@ -272,7 +317,7 @@ const HomeScreen = () => {
       </Wrapper>
 
       <Wrapper col="true" className="gap-4">
-        <Wrapper className="justify-between items-end">
+        <Wrapper className="items-end justify-between">
           <Label className="!text-[32px]">Latest</Label>
         </Wrapper>
         {!isLoading ? (
@@ -297,7 +342,6 @@ const HomeScreen = () => {
           </Wrapper>
         )}
       </Wrapper>
-      
     </Screen>
   );
 };
