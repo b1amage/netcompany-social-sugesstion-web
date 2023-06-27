@@ -30,7 +30,7 @@ const Popup = ({
   titleClassName,
   formClassName,
   childrenClassName,
-  onClick
+  onClick,
 }) => {
   const popupRef = useRef();
   useOnClickOutside(popupRef, onClose);
@@ -48,14 +48,18 @@ const Popup = ({
           className={`w-[300px] h-[200px] md:w-[400px] md:h-[220px] bg-white  drop-shadow-lg rounded-xl p-5 md:p-10 lg:w-[450px] lg:h-[250px] ${formClassName}`}
         >
           <Heading className={`text-center ${titleClassName}`}>{title}</Heading>
-          <Wrapper className={`justify-between mt-auto !py-0 ${childrenClassName}`}>
+          <Wrapper
+            className={`justify-between mt-auto !py-0 ${childrenClassName}`}
+          >
             {actions.length > 0 &&
               actions.map((item) => (
                 <Button
                   onClick={item.action}
                   key={generateId()}
                   className={`w-1/2 my-0 capitalize ${
-                    item.danger && "!bg-danger"
+                    item.danger
+                      ? "!bg-danger"
+                      : "!bg-white !border !border-primary-400 !text-primary-400 hover:!text-white hover:!bg-primary-400 hover:!opacity-100"
                   }`}
                   active={!item.danger}
                 >
