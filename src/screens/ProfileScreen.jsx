@@ -56,12 +56,12 @@ const ProfileScreen = () => {
   };
 
   const popupActions = [
+    { title: "logout", danger: true, action: confirmLogout },
     {
       title: "cancel",
       danger: false,
       action: closePopup,
     },
-    { title: "logout", danger: true, action: confirmLogout },
   ];
 
   useEffect(() => {
@@ -124,7 +124,8 @@ const ProfileScreen = () => {
                   >
                     <Button
                       onClick={() => navigate(ROUTE.EDIT_PROFILE)}
-                      className="!text-primary-800 !my-0  !relative !gap-2"
+                      className="!bg-primary-400 !my-0 !relative !gap-2"
+                      primary
                     >
                       <BsPencilFill />
                       <span className="capitalize">Edit info</span>
