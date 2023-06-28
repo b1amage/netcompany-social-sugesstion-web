@@ -61,14 +61,14 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
 
   const handleCloseFilter = () => {
     // console.log("Clicked")
-    console.log(searchParams.get("locationCategory"));
-    console.log(searchParams.get("openFrom"));
-    console.log(searchParams.get("closeTo"));
-    console.log(searchParams.get("dayType"));
+    // console.log(searchParams.get("locationCategory"));
+    // console.log(searchParams.get("openFrom"));
+    // console.log(searchParams.get("closeTo"));
+    // console.log(searchParams.get("dayType"));
     // console.log(searchParams.get('searchDistance'))
     setCategoryValue(
       searchParams.get("locationCategory")
-        ? searchParams.get("locationCategory")
+        ? {title: searchParams.get("locationCategory")}
         : ""
     );
     setOpenTime(
@@ -79,7 +79,7 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
     setCloseTime(
       searchParams.get("closeTo") ? formatTime(searchParams.get("closeTo")) : ""
     );
-    setDayType(searchParams.get("dayType") ? searchParams.get("dayType") : "");
+    setDayType(searchParams.get("dayType") ? {title: searchParams.get("dayType")} : "");
     setSearchDistanceValue(
       searchParams.get("searchDistance")
         ? searchParams.get("searchDistance")
@@ -101,7 +101,7 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
               alt="filter"
               className="w-[28px] h-[28px]"
             />
-            {(categoryValue || (openTime && closeTime && dayType)) && (
+            {(categoryValue || (openTime && closeTime && dayType) || searchDistanceValue) && (
               <AiFillCheckCircle
                 className={`text-black absolute bottom-2 left-1/2 translate-x-1/4`}
               />
@@ -171,7 +171,7 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
         className={`${
           locationListType?.title || locationListType
             && "ring-1 ring-black border-black"  
-        } !w-[150px]`}
+        } !w-[150px] ring-1 ring-black border-black`}
       />}
     </Wrapper>
   );

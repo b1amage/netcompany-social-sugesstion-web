@@ -67,10 +67,10 @@ const FilterContent = ({
 
     setSearchParams({
       searchInput: searchParams.get('searchInput') || "",
-      locationCategory: categoryValue ? categoryValue?.title : "",
+      locationCategory: categoryValue !== "" ? (categoryValue?.title || categoryValue) : "",
       openFrom: openTime.replace(":", ""),
       closeTo: closeTime.replace(":", ""),
-      dayType: dayType.title || "",
+      dayType: dayType !== "" ? (dayType?.title || dayType) : "",
       searchDistance: searchDistanceValue || ""
     });
 
@@ -90,7 +90,7 @@ const FilterContent = ({
     setDayTypeErr(null);
     setSubmitErr(null);
 
-    searchParams.delete('searchInput')
+    // searchParams.delete('searchInput')
     searchParams.delete('locationCategory')
     searchParams.delete('openFrom')
     searchParams.delete('closeTo')
