@@ -168,10 +168,11 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
         // onClick={() => {
         //   setSearchParams({listType: locationListType.title})
         // }}
+        openClassName="!ring-black ring-1 focus:ring-black !border-black"
         className={`${
           locationListType?.title || locationListType
-            && "ring-1 ring-black border-black"  
-        } !w-[150px] ring-1 ring-black border-black`}
+            && " "  
+        } !w-[150px] h-[60px] !rounded-2xl flex items-center`}
       />}
     </Wrapper>
   );

@@ -111,6 +111,8 @@ const FilterContent = ({
         onChange={(option) => {
           setCategoryValue(option);
         }}
+        openClassName="!ring-black ring-1 focus:ring-black !border-black"
+
         className={`ring-black ${categoryValue && `ring-1 `}`}
       />
       <Wrapper col="true" className="gap-2">
@@ -148,6 +150,8 @@ const FilterContent = ({
                 onChange={(option) => {
                   setDayType(option);
                 }}
+        openClassName="!ring-black ring-1 focus:ring-black !border-black"
+
                 className={`${
                   dayType?.title || dayType
                     ? "ring-1 ring-black border-black"

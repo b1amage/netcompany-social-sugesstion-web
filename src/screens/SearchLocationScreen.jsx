@@ -14,8 +14,8 @@ const SearchLocationScreen = () => {
   // useCurrentLocation()
   const { user } = useSelector((state) => state.user);
   const [locations, setLocations] = useState([]);
-  const [nextCursor, setNextCursor] = useState([]);
-  const [isLoading, setIsLoading] = useState([]);
+  const [nextCursor, setNextCursor] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [isFeaturedUpdating, setIsFeaturedUpdating] = useState(false);
 
@@ -33,7 +33,6 @@ const SearchLocationScreen = () => {
   useEffect(() => {
     if (latitude && longitude) {
       // if (currentLocation) {
-      setIsLoading(true);
       const fetchLocations = async () => {
         const response = await locationApi.getFeaturedLocation({
           locationCategory:
@@ -63,7 +62,9 @@ const SearchLocationScreen = () => {
                 }
               : null,
         });
+        localStorage.setItem("searchLocations", JSON.stringify(response.data.results))
         setLocations(response.data.results);
+
         localStorage.setItem("nextCursor", response.data.next_cursor);
         setNextCursor(response.data.next_cursor);
         setIsLoading(false);
@@ -84,13 +85,14 @@ const SearchLocationScreen = () => {
     };
   }, []);
 
-  const handleLoadMoreData = async (nextCursor) => {
-    // const now = Date.now();
+  const loadMoreData = async (nextCursor) => {
+    const now = Date.now();
 
-    // // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
-    // if (now - lastFetch < 1000) return;
-    // // if (nextCursor === null) return;
-    // setLastFetch(now);
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 1000) return;
+    if (nextCursor === null) return;
+    
+    setLastFetch(now);
     // setIsFeaturedUpdating(true)
     // const fetchLocations = async () => {
       // setIsFeaturedUpdating(true)
@@ -125,6 +127,11 @@ const SearchLocationScreen = () => {
       },
       nextCursor
     );
+    const newPlaces = [
+      ...JSON.parse(localStorage.getItem("searchLocations")),
+      ...response.data.results,
+    ];
+    localStorage.setItem("searchLocations", JSON.stringify(newPlaces))
     setLocations((prev) => [...prev, ...response.data.results]);
     localStorage.setItem("nextCursor", response.data.next_cursor);
     setNextCursor(response.data.next_cursor);
@@ -149,17 +156,11 @@ const SearchLocationScreen = () => {
       
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
-        // const nextCursor = localStorage.getItem("nextCursor");
+        const nextCursor = localStorage.getItem("nextCursor");
         // if (nextCursor.length > 10) {
         // }
-        const now = Date.now();
-
-        // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
-        if (now - lastFetch < 1000) return;
-        if (nextCursor === null) return;
-        setLastFetch(now);
-        
-        await handleLoadMoreData(nextCursor);
+       
+        await loadMoreData(nextCursor);
 
         // if (!isFeaturedUpdating){
         // } 
@@ -174,7 +175,7 @@ const SearchLocationScreen = () => {
         tabRef.current.removeEventListener("scroll", handleScroll);
       }
     };
-  }, [handleLoadMoreData, nextCursor]);
+  }, [loadMoreData]);
 
   useEffect(() => {
     if (tabRef.current) {

@@ -15,7 +15,8 @@ const Dropdown = ({
   required,
   err,
   // onClick,
-  wrapperClassName
+  wrapperClassName,
+  openClassName
 }) => {
   const [isOpen, setIsOpen] = useState(null);
   const handleClick = () => {
@@ -53,7 +54,7 @@ const Dropdown = ({
         className={`w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg border border-black  bg-white md:text-base md:p-4 placeholder:text-secondary-100 font-bold 
         ${isOpen &&
           (value?.tilte || value
-            ? "border-green-500 focus:!border-green-500 !ring-green-500" : "ring-1 ring-black ")
+            ? `border-green-500 focus:!border-green-500 ring-green-500 ${openClassName}` : "ring-1 ring-black ")
         }  ${className}`}
         onClick={handleClick}
       >
