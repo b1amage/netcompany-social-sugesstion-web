@@ -37,17 +37,9 @@ const HomeScreen = () => {
   const [lastFetch, setLastFetch] = useState(Date.now());
 
   const {
-    category,
-    searchInput,
-    // weekdayTime,
-    // weekendTime,
-    time,
-    searchDistance,
-    // isAdded,
     latitude,
     longitude,
-    currentLocation,
-  } = useSelector(({ filter, navbar, currentLocation }) => {
+  } = useSelector(({ filter, currentLocation }) => {
     return {
       currentLocation: currentLocation.currentLocation,
       latitude: currentLocation.latitude,
@@ -61,16 +53,7 @@ const HomeScreen = () => {
   };
 
   const [searchParams, setSearchParams] = useSearchParams();
-  // ONBOARDING CHECK
-  // useEffect(() => {
-  //   const onBoardingAlreadyShown = JSON.parse(
-  //     localStorage.getItem(localStorageKey.alreadyShownOnboarding)
-  //   );
 
-  //   !onBoardingAlreadyShown && navigate(ROUTE.ONBOARDING);
-  // }, []);
-
-  // LOGIN CHECK
   useEffect(() => {
     if (localStorage.getItem("loginReload") === "true") {
       localStorage.setItem("loginReload", "false");
@@ -119,15 +102,9 @@ const HomeScreen = () => {
       fetchFeaturedLocations();
     }
   }, [
-    // currentLocation,
     latitude,
     longitude,
     searchParams,
-    // category,
-    // searchInput,
-    // time,
-    // searchDistance,
-    // featuredNextCursor
   ]);
 
   useEffect(() => {

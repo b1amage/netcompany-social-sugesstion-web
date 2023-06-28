@@ -92,7 +92,7 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
       {searchFilter && (
         <>
           <Button
-            className={`hover:bg-gray-200/60 h-[60px] w-[60px] bg-transparent relative !p-1.5 !border-none ${className}`}
+            className={`hover:bg-gray-200/60 h-[60px] w-[60px] bg-transparent relative !my-0 !p-1.5 !border-none ${className}`}
             onClick={() => setIsClicked(true)}
           >
             <Image
@@ -172,7 +172,7 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
         className={`${
           locationListType?.title || locationListType
             && " "  
-        } !w-[150px] h-[60px] !rounded-2xl flex items-center`}
+        } !w-[150px] h-[60px] !rounded-2xl flex items-center cursor-pointer`}
       />}
     </Wrapper>
   );

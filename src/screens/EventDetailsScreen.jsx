@@ -22,6 +22,7 @@ import { DEFAULT } from "@/constants/defaultData";
 import Guess from "@/components/guess/Guess";
 import { AiFillCalendar, AiFillClockCircle } from "react-icons/ai";
 import { HiLocationMarker } from "react-icons/hi";
+import parse from "html-react-parser";
 
 function convertDateTime(dateTimeString) {
   var date = new Date(dateTimeString);
@@ -64,6 +65,7 @@ const EventDetailsScreen = () => {
       setLoading(true);
       const response = await eventApi.getEvent(id);
       setEvent(response.data);
+      console.log(response.data.description);
       setLoading(false);
     };
     handleApi();
@@ -76,6 +78,12 @@ const EventDetailsScreen = () => {
 
     handleApi();
   };
+
+  function decode(str) {
+    let txt = new DOMParser().parseFromString(str, "text/html");
+
+    return txt.documentElement.textContent;
+  }
   return (
     <Screen className="py-2 pb-4 xl:gap-10 xl:pb-10">
       {loading ? (
@@ -262,9 +270,11 @@ const EventDetailsScreen = () => {
               </Wrapper>
             </Wrapper>
 
-            <Text className="py-4 border-b border-b-neutral-400">
-              {event.description}
-            </Text>
+            <Wrapper col="true" className="py-4 border-b border-b-neutral-400">
+              {event.description.split("\n").map((item, index) => (
+                <Text key={index}>{item}</Text>
+              ))}
+            </Wrapper>
 
             <SubHeading>Guest List</SubHeading>
             <Wrapper className="overflow-y-scroll">

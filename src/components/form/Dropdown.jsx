@@ -35,7 +35,7 @@ const Dropdown = ({
   const renderedOptions = options.map((option) => {
     return (
       <li
-        className="py-2 px-4 my-2 hover:bg-neutral-100/30 duration-300"
+        className="py-2 px-4 my-2 hover:bg-neutral-100/30 duration-300 cursor-pointer"
         key={option.title}
         onClick={() => handleOptionClick(option)}
       >

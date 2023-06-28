@@ -121,13 +121,13 @@ const SubNavbar = ({ user, homeFilter, searchFilter }) => {
               )}
               <Wrapper>
                 <AiOutlineArrowLeft
-                  className="h-full w-[40px]"
+                  className="h-full w-[60px] cursor-pointer "
                   onClick={() => setShowAutoComplete(false)}
                 />
 
                 <AutoCompleteScreen
                   // label="Location"
-                  className={`h-[50px] !py-2`}
+                  className={`!h-[60px] !py-2`}
                   // address={currentLocation && currentLocation.formatted_address}
                   onChange={onChangeCurrentLocation}
                   setAddress={setAddress}

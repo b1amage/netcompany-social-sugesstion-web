@@ -66,12 +66,13 @@ const FilterContent = ({
     }
 
     setSearchParams({
-      searchInput: searchParams.get('searchInput') || "",
-      locationCategory: categoryValue !== "" ? (categoryValue?.title || categoryValue) : "",
+      searchInput: searchParams.get("searchInput") || "",
+      locationCategory:
+        categoryValue !== "" ? categoryValue?.title || categoryValue : "",
       openFrom: openTime.replace(":", ""),
       closeTo: closeTime.replace(":", ""),
-      dayType: dayType !== "" ? (dayType?.title || dayType) : "",
-      searchDistance: searchDistanceValue || ""
+      dayType: dayType !== "" ? dayType?.title || dayType : "",
+      searchDistance: searchDistanceValue || "",
     });
 
     setSubmitErr();
@@ -91,11 +92,11 @@ const FilterContent = ({
     setSubmitErr(null);
 
     // searchParams.delete('searchInput')
-    searchParams.delete('locationCategory')
-    searchParams.delete('openFrom')
-    searchParams.delete('closeTo')
-    searchParams.delete('dayType')
-    searchParams.delete('searchDistance')
+    searchParams.delete("locationCategory");
+    searchParams.delete("openFrom");
+    searchParams.delete("closeTo");
+    searchParams.delete("dayType");
+    searchParams.delete("searchDistance");
 
     setSearchParams(searchParams);
     setIsFiltered(false);
@@ -112,7 +113,6 @@ const FilterContent = ({
           setCategoryValue(option);
         }}
         openClassName="!ring-black ring-1 focus:ring-black !border-black"
-
         className={`ring-black ${categoryValue && `ring-1 `}`}
       />
       <Wrapper col="true" className="gap-2">
@@ -150,8 +150,7 @@ const FilterContent = ({
                 onChange={(option) => {
                   setDayType(option);
                 }}
-        openClassName="!ring-black ring-1 focus:ring-black !border-black"
-
+                openClassName="!ring-black ring-1 focus:ring-black !border-black"
                 className={`${
                   dayType?.title || dayType
                     ? "ring-1 ring-black border-black"
@@ -169,7 +168,9 @@ const FilterContent = ({
         max={DISTANCE.max}
         onChange={handleDistanceChange}
         x={searchDistanceValue}
-        label={`Distance: ${searchDistanceValue ? `${searchDistanceValue} km` : "(Not filter)"}`}
+        label={`Distance: ${
+          searchDistanceValue ? `${searchDistanceValue} km` : "(Not filter)"
+        }`}
       />
 
       <Wrapper col="true" className="">
