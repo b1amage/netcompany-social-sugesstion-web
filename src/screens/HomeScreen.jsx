@@ -64,13 +64,13 @@ const HomeScreen = () => {
   };
 
   // ONBOARDING CHECK
-  // useEffect(() => {
-  //   const onBoardingAlreadyShown = JSON.parse(
-  //     localStorage.getItem(localStorageKey.alreadyShownOnboarding)
-  //   );
+  useEffect(() => {
+    const onBoardingAlreadyShown = JSON.parse(
+      localStorage.getItem(localStorageKey.alreadyShownOnboarding)
+    );
 
-  //   !onBoardingAlreadyShown && navigate(ROUTE.ONBOARDING);
-  // }, []);
+    !onBoardingAlreadyShown && navigate(ROUTE.ONBOARDING);
+  }, []);
 
   // LOGIN CHECK
   useEffect(() => {
@@ -84,9 +84,9 @@ const HomeScreen = () => {
     console.log("user", user);
 
     // check verify
-    if (user.isVerified === false) {
-      navigate("/onboarding");
-    }
+    // if (user.isVerified === false) {
+    //   navigate("/onboarding");
+    // }
     if (user === JSON.stringify({})) {
       navigate(ROUTE.LOGIN);
     }
