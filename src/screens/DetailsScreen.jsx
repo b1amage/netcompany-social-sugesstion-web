@@ -313,7 +313,11 @@ const DetailsScreen = () => {
                 <SubHeading>{locationDetails?.address}</SubHeading>
               </Wrapper>
 
-              <Text>{locationDetails?.description}</Text>
+              <Wrapper col="true">
+                {locationDetails?.description.split("\n").map((item, index) => (
+                  <Text key={index}>{item}</Text>
+                ))}
+              </Wrapper>
 
               <Wrapper className="my-3" col="true">
                 <Text>
