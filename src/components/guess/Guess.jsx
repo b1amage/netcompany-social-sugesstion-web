@@ -14,7 +14,7 @@ const Guess = ({ img, name, id, email }) => {
         navigate(user._id === id ? `/profile` : `/user/${id}`);
       }}
       col="true"
-      className="items-center w-[130px] p-4 md:py-4 md:w-[120px] lg:w-[180px] h-[150px] bg-neutral-200 rounded-xl snap-start !flex-shrink-0 transition-all duration-200 ease-in-out hover:w-[250px]"
+      className="!cursor-pointer items-center w-[130px] p-4 md:py-4 md:w-[120px] lg:w-[180px] h-[150px] bg-neutral-200 rounded-xl snap-start !flex-shrink-0 transition-all duration-200 ease-in-out hover:w-[250px]"
     >
       <Image
         src={img}

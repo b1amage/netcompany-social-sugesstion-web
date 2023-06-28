@@ -347,7 +347,7 @@ const DetailsScreen = () => {
                   )}
 
                   <Text
-                    className="underline cursor-pointer"
+                    className="cursor-pointer"
                     onClick={() => setShowLikedUsers(true)}
                   >
                     {likedCount} liked this post
