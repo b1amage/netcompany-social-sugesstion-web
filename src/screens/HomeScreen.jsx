@@ -69,11 +69,12 @@ const HomeScreen = () => {
       localStorage.getItem(localStorageKey.alreadyShownOnboarding)
     );
 
-    !onBoardingAlreadyShown && navigate(ROUTE.ONBOARDING);
-  }, []);
+    if (!onBoardingAlreadyShown) {
+      navigate(ROUTE.ONBOARDING);
+      return;
+    }
 
-  // LOGIN CHECK
-  useEffect(() => {
+    // LOGIN CHECK
     if (localStorage.getItem("loginReload") === "true") {
       localStorage.setItem("loginReload", "false");
       location.reload();
@@ -91,6 +92,8 @@ const HomeScreen = () => {
       navigate(ROUTE.LOGIN);
     }
   }, []);
+
+  // useEffect(() => {}, []);
   const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
