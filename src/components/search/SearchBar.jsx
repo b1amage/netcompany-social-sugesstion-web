@@ -18,9 +18,9 @@ const SearchBar = ({ className, wrapperClassName }) => {
       if (now - lastFetch < 1000) return;
       setLastFetch(now)
       // if (value.trim() === "") return;
-      dispatch(changeFiltering(true));
+      // dispatch(changeFiltering(true));
       navigate({pathname: ROUTE.SEARCH_LOCATION, search: `?searchInput=${value || ''}`})
-      dispatch(changeFiltering(false));
+      // dispatch(changeFiltering(false));
     }
   };
 
@@ -39,10 +39,10 @@ const SearchBar = ({ className, wrapperClassName }) => {
         alt="search"
         className={`absolute w-[24px] h-[24px] top-1/2 right-4 -translate-y-1/2 `}
         onClick={() => {
-          dispatch(changeFiltering(true));
+          // dispatch(changeFiltering(true));
           // dispatch(changeSearchInput(value));
           navigate({pathname: ROUTE.SEARCH_LOCATION, search: `?searchInput=${value || ''}`})
-          dispatch(changeFiltering(false));
+          // dispatch(changeFiltering(false));
         }}
         onKeyPress={handleKeyPress}
       />

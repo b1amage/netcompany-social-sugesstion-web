@@ -7,17 +7,17 @@ import { changeCurrentLocation, changeLatitude, changeLongitude } from "@/featur
 const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
 const useCurrentLocation = () => {
-//   const [latitude, setLatitude] = useState();
-//   const [longitude, setLongitude] = useState();
-//   const [location, setLocation] = useState()
-//   const {currentLocation} = useSelector(
-//     ({ currentLocation }) => {
-//       return {
-//         currentLocation: currentLocation.currentLocation,
-//       };
-//     }
-//   );
-    const [isGetCurrentLocation, setIsGetCurrentLocation] = useState(false)
+  //   const [latitude, setLatitude] = useState();
+  //   const [longitude, setLongitude] = useState();
+  //   const [location, setLocation] = useState()
+  //   const {currentLocation} = useSelector(
+  //     ({ currentLocation }) => {
+  //       return {
+  //         currentLocation: currentLocation.currentLocation,
+  //       };
+  //     }
+  //   );
+    const [isGetCurrentLocation, setIsGetCurrentLocation] = useState(true)
     const [isTurnOnGPS, setIsTurnOnGPS] = useState(false)
   const dispatch = useDispatch();
 
@@ -34,7 +34,7 @@ const useCurrentLocation = () => {
       // console.log(coords.longitude);
     //   dispatch(changeLatitude(coords.latitude));
     //   dispatch(changeLongitude(coords.longitude));
-      setIsGetCurrentLocation(true)
+      // setIsGetCurrentLocation(true)
       setIsTurnOnGPS(true)
       const fetchAddress = async () => {
         const { data } = await axios.get(
@@ -53,8 +53,9 @@ const useCurrentLocation = () => {
         dispatch(changeCurrentLocation(JSON.parse(localStorage.getItem("currentLocation"))) || null);
         dispatch(changeLatitude(JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lat) || null)
         dispatch(changeLongitude(JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lng) || null)
+        setIsGetCurrentLocation(false)
     }
-  }, [isGeolocationAvailable, isGeolocationEnabled, coords, isTurnOnGPS]);
+  }, [isGeolocationAvailable, isGeolocationEnabled, coords]);
   return {isGetCurrentLocation, isTurnOnGPS};
 };
 

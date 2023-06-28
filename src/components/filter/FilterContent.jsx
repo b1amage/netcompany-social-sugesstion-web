@@ -52,7 +52,7 @@ const FilterContent = ({
       return;
     }
 
-    if (openTime && closeTime && VALIDATE.category(dayType)) {
+    if (openTime && closeTime && !dayType) {
       setDayTypeErr(VALIDATE.category(dayType));
       setSubmitErr("Please select day type!");
       return;
@@ -66,23 +66,13 @@ const FilterContent = ({
     }
 
     setSearchParams({
-      searchInput: searchParams.get('searchInput'),
-      locationCategory: categoryValue.title || "",
+      searchInput: searchParams.get('searchInput') || "",
+      locationCategory: categoryValue ? categoryValue?.title : "",
       openFrom: openTime.replace(":", ""),
       closeTo: closeTime.replace(":", ""),
-      dayType: dayType.title,
-      searchDistance: searchDistanceValue
+      dayType: dayType.title || "",
+      searchDistance: searchDistanceValue || ""
     });
-    // dispatch(changeCategory(categoryValue));
-
-    // dispatch(
-    //   changeTime({
-    //     openFrom: openTime.replace(":", ""),
-    //     closeTo: closeTime.replace(":", ""),
-    //     dayType: dayType,
-    //   })
-    // );
-    // dispatch(changeSearchDistance(searchDistanceValue));
 
     setSubmitErr();
     setIsFiltered(true);
@@ -94,25 +84,22 @@ const FilterContent = ({
     setCloseTime("");
     setDayType("");
     setCategoryValue("");
-    setSearchDistanceValue(DISTANCE.min); // replace with the default value
+    setSearchDistanceValue(null); // replace with the default value
     setOpenTimeErr(null);
     setCloseTimeErr(null);
     setDayTypeErr(null);
     setSubmitErr(null);
 
-    dispatch(changeCategory(""));
+    searchParams.delete('searchInput')
+    searchParams.delete('locationCategory')
+    searchParams.delete('openFrom')
+    searchParams.delete('closeTo')
+    searchParams.delete('dayType')
+    searchParams.delete('searchDistance')
 
-    dispatch(
-      changeTime({
-        openFrom: "",
-        closeTo: "",
-        dayType: "",
-      })
-    );
-    dispatch(changeSearchDistance());
-
+    setSearchParams(searchParams);
     setIsFiltered(false);
-    // setIsClicked(false);
+    setIsClicked(false);
   };
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
@@ -178,7 +165,7 @@ const FilterContent = ({
         max={DISTANCE.max}
         onChange={handleDistanceChange}
         x={searchDistanceValue}
-        label={`Distance: ${searchDistanceValue}km`}
+        label={`Distance: ${searchDistanceValue ? `${searchDistanceValue} km` : "(Not filter)"}`}
       />
 
       <Wrapper col="true" className="">
@@ -191,12 +178,12 @@ const FilterContent = ({
             type="button"
             onClick={handleResetFilter}
             primary
-            className="!my-0 !bg-danger"
+            className="!my-0 !bg-white border-primary-400 !border !text-primary-400"
           >
             Reset
           </Button>
           <Button primary active className="!my-0">
-            Filter
+            Apply
           </Button>
         </Wrapper>
       </Wrapper>

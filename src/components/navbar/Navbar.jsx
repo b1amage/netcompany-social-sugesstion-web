@@ -71,6 +71,7 @@ const Navbar = () => {
     {
       title: "cancel",
       danger: false,
+      buttonClassName: "bg-white border-primary-400 border !text-primary-400 hover:bg-primary-400 hover:opacity-100 hover:!text-white",
       action: closePopup,
     },
     { title: "logout", danger: true, action: confirmLogout },

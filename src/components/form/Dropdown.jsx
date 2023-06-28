@@ -14,10 +14,12 @@ const Dropdown = ({
   className,
   required,
   err,
+  // onClick,
   wrapperClassName
 }) => {
   const [isOpen, setIsOpen] = useState(null);
   const handleClick = () => {
+    // onClick()
     setIsOpen(!isOpen);
   };
 
@@ -55,7 +57,7 @@ const Dropdown = ({
         }  ${className}`}
         onClick={handleClick}
       >
-        {value?.title || defaultTitle}
+        {value?.title || value || defaultTitle}
         <Image
           src={dropdown}
           alt="dropdown-btn"

@@ -24,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 import useViewport from "@/hooks/useScreenWidth";
 import ROUTE from "@/constants/routes";
 
-const SubNavbar = ({ user }) => {
+const SubNavbar = ({ user, homeFilter, searchFilter }) => {
   const dispatch = useDispatch();
   const { isAdded, isShowFilter, currentLocation } = useSelector(
     ({ navbar, currentLocation }) => {
@@ -106,7 +106,7 @@ const SubNavbar = ({ user }) => {
           )}
           <SearchBar className="w-full" />
           <Wrapper className="items-center w-fit justify-end gap-4">
-            {isShowFilter && <Filter wrapperClassName="" className="m-0" />}
+            {isShowFilter && <Filter homeFilter={homeFilter} searchFilter={searchFilter} wrapperClassName="" className="m-0" />}
           </Wrapper>
         </Wrapper>
 

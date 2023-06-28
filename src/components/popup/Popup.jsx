@@ -22,15 +22,17 @@ const Popup = ({
     {
       title: "delete",
       danger: true,
+      buttonClassName: "",
       action: () => {},
     },
-    { title: "cancel", danger: false, action: () => {} },
+    { title: "cancel", danger: false, 
+    buttonClassName: "",
+    action: () => {} },
   ],
   children,
   titleClassName,
   formClassName,
   childrenClassName,
-  onClick
 }) => {
   const popupRef = useRef();
   useOnClickOutside(popupRef, onClose);
@@ -56,7 +58,7 @@ const Popup = ({
                   key={generateId()}
                   className={`w-1/2 my-0 capitalize ${
                     item.danger && "!bg-danger"
-                  }`}
+                  } ${item.buttonClassName}`}
                   active={!item.danger}
                 >
                   {item.title}
