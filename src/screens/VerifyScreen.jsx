@@ -54,6 +54,8 @@ const VerifyScreen = () => {
       imageUrl: localStorage.getItem("avatar") || DEFAULT.avatar,
     };
 
+    localStorage.setItem("loginReload", "true");
+
     console.log(userInfo);
 
     await authApi.verifyAccount(

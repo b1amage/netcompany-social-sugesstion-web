@@ -75,9 +75,11 @@ const HomeScreen = () => {
     }
 
     // LOGIN CHECK
+    console.log("Login reload", localStorage.getItem("loginReload"));
     if (localStorage.getItem("loginReload") === "true") {
       localStorage.setItem("loginReload", "false");
       location.reload();
+      return;
     }
 
     const user =
