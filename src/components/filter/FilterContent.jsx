@@ -18,7 +18,7 @@ import VALIDATE from "@/helpers/validateForm";
 import Error from "@/components/form/Error";
 import Time from "@/components/location/Time";
 import { useSearchParams } from "react-router-dom";
-
+import question from "@/assets/question.svg"
 const FilterContent = ({
   setIsFiltered,
   setIsClicked,
@@ -85,7 +85,7 @@ const FilterContent = ({
     setCloseTime("");
     setDayType("");
     setCategoryValue("");
-    setSearchDistanceValue(null); // replace with the default value
+    setSearchDistanceValue(JSON.parse(localStorage.getItem("user")).searchDistance); // replace with the default value
     setOpenTimeErr(null);
     setCloseTimeErr(null);
     setDayTypeErr(null);
@@ -103,7 +103,7 @@ const FilterContent = ({
     setIsClicked(false);
   };
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full relative">
       <Dropdown
         label="Category"
         defaultTitle="SELECT THE CATEGORY"
@@ -168,9 +168,10 @@ const FilterContent = ({
         max={DISTANCE.max}
         onChange={handleDistanceChange}
         x={searchDistanceValue}
-        label={`Distance: ${
-          searchDistanceValue ? `${searchDistanceValue} km` : "(Not filter)"
-        }`}
+        label={`Distance: ${searchDistanceValue} km`}
+        labelClassName="relative"
+        isHint
+        src={question}
       />
 
       <Wrapper col="true" className="">
@@ -183,7 +184,7 @@ const FilterContent = ({
             type="button"
             onClick={handleResetFilter}
             primary
-            className="!my-0 !bg-white border-primary-400 !border !text-primary-400"
+            className="!my-0 !bg-white border-primary-400 !border !text-primary-400 hover:!border-danger hover:!bg-danger hover:!text-white"
           >
             Reset
           </Button>

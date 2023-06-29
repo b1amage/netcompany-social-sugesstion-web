@@ -32,7 +32,7 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isFiltered, setIsFiltered] = useState(false);
 
-  const [searchDistanceValue, setSearchDistanceValue] = useState(null);
+  const [searchDistanceValue, setSearchDistanceValue] = useState("");
 
   const [categoryValue, setCategoryValue] = useState("");
   const [dayType, setDayType] = useState("");
@@ -54,7 +54,7 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
     setSearchDistanceValue(
       searchParams.get("searchDistance")
         ? searchParams.get("searchDistance")
-        : null
+        : JSON.parse(localStorage.getItem("user")).searchDistance
     );
     setLocationListType(searchParams.get('listType') ? {title: searchParams.get('listType')} : homeFilterList[0])
   }, [searchParams]);
@@ -83,7 +83,8 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
     setSearchDistanceValue(
       searchParams.get("searchDistance")
         ? searchParams.get("searchDistance")
-        : null
+        : JSON.parse(localStorage.getItem("user")).searchDistance
+
     );
     setIsClicked(false);
   };
@@ -101,7 +102,7 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
               alt="filter"
               className="w-[28px] h-[28px]"
             />
-            {(categoryValue || (openTime && closeTime && dayType) || searchDistanceValue) && (
+            {(categoryValue || (openTime && closeTime && dayType)) && (
               <AiFillCheckCircle
                 className={`text-black absolute bottom-2 left-1/2 translate-x-1/4`}
               />
@@ -109,7 +110,9 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
           </Button>
 
           <Popup
-            onClose={() => {}}
+            onClose={() => {
+              handleCloseFilter();
+            }}
             actions={[]}
             children={
               <>
@@ -145,7 +148,7 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
             }
             className={`${
               isClicked ? "translate-y-0" : "translate-y-full"
-            } duration-300 items-center  `}
+            } duration-300 items-center !z-[8500] `}
             formClassName="overflow-y-scroll justify-center  !h-[600px] md:!h-[650px] !py-0 !px-4 "
             // overflow-hidden justify-center items-end md:items-center 2xl:!py-16
             // overflow-y-scroll !h-auto w-full justify-center md:p-0 md:px-2 !rounded-b-none rounded-t-xl md:!rounded-2xl md:py-0

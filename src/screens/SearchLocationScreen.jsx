@@ -216,7 +216,7 @@ const SearchLocationScreen = () => {
         locations.length > 0 && (
           <Wrapper
             _ref={tabRef}
-            className="flex-wrap gap-4 overflow-y-scroll"
+            className="grid sm:grid-cols-3 grid-cols-2 gap-4 overflow-y-scroll"
           >
             {locations.map((location) => {
               return (
@@ -229,13 +229,14 @@ const SearchLocationScreen = () => {
                     address: location.address,
                     // description: location.description,
                   }}
-                  className="w-[220px] sm:w-[300px] md:w-[350px] lg:w-[420px] xl:w-[360px] !h-[400px] !max-w-none"
+                  className="!w-full !h-[350px]"
                 />
               );
             })}
           </Wrapper>
         )
       )}
+      {/* w-[220px] sm:w-[300px] md:w-[350px] lg:w-[420px] xl:w-[360px] !h-[400px] !max-w-none */}
     </Screen>
   );
 };

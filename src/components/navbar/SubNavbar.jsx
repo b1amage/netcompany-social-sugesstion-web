@@ -18,7 +18,7 @@ import locationImg from "@/assets/location.svg";
 import Heading from "@/components/typography/Heading";
 import User from "@/components/user/User";
 import SearchBar from "@/components/search/SearchBar";
-import {FaSearch} from "react-icons/fa"
+import { FaSearch } from "react-icons/fa";
 import Button from "@/components/button/Button";
 import { useNavigate } from "react-router-dom";
 import useViewport from "@/hooks/useScreenWidth";
@@ -50,7 +50,6 @@ const SubNavbar = ({ user, homeFilter, searchFilter }) => {
     dispatch(changeLongitude(longitude));
     setShowAutoComplete(false);
   };
-
 
   useEffect(() => {
     dispatch(validatePathname(window.location.pathname));
@@ -105,9 +104,16 @@ const SubNavbar = ({ user, homeFilter, searchFilter }) => {
             </Button>
           )}
           <SearchBar className="w-full" />
-          <Wrapper className="items-center w-fit justify-end gap-4">
-            {isShowFilter && <Filter homeFilter={homeFilter} searchFilter={searchFilter} wrapperClassName="" className="m-0" />}
-          </Wrapper>
+          {isShowFilter && (
+            <Wrapper className="items-center w-fit justify-end gap-4">
+              <Filter
+                homeFilter={homeFilter}
+                searchFilter={searchFilter}
+                wrapperClassName=""
+                className="m-0"
+              />
+            </Wrapper>
+          )}
         </Wrapper>
 
         <Popup

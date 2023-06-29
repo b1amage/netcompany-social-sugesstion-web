@@ -9,7 +9,7 @@ const navbarSlice = createSlice({
     isShowNotification: false,
     isShowFilter: false,
     isShowEdit: false,
-    currentPath: ''
+    currentPath: "",
   },
   reducers: {
     handleOpenSideBarClick(state, action) {
@@ -26,14 +26,15 @@ const navbarSlice = createSlice({
           state.isShowFilter = false;
           state.isShowEdit = true;
           return;
-        case "/my-event": 
-        case "/":
-          case ROUTE.SEARCH_LOCATION:
+        case "/my-event":
+        // case "/":
+        case ROUTE.SEARCH_LOCATION:
           state.isAdded = true;
           state.isShowNotification = true;
           state.isShowFilter = true;
           state.isShowEdit = false;
           return;
+        case "/":
         case "/my-route":
           state.isAdded = true;
           state.isShowNotification = false;
@@ -60,6 +61,9 @@ const navbarSlice = createSlice({
   },
 });
 
-export const { handleCloseSideBarClick, handleOpenSideBarClick, validatePathname } =
-  navbarSlice.actions;
+export const {
+  handleCloseSideBarClick,
+  handleOpenSideBarClick,
+  validatePathname,
+} = navbarSlice.actions;
 export const navbarReducer = navbarSlice.reducer;
