@@ -4,6 +4,7 @@ import Image from "@/components/image/Image";
 import { useRef } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useNavigate } from "react-router-dom";
+import ROUTE from "@/constants/routes";
 
 const User = ({ isCol, user, src }) => {
   const { username, email, _id } = user;
@@ -21,7 +22,7 @@ const User = ({ isCol, user, src }) => {
       className={`${
         isCol && "flex-col text-center"
       } w-fit flex items-center cursor-pointer hover:bg-gray-200/60 px-3 py-4 duration-300 rounded-lg`}
-      onClick={() => navigate(`/user/${_id}`)}
+      onClick={() => navigate(`${_id === JSON.parse(localStorage.getItem("user"))._id ? ROUTE.PROFILE :`/user/${_id}`}`)}
     >
       <Image
         src={src}

@@ -537,7 +537,6 @@ const LocationForm = ({
 
                   <Wrapper className="gap-4 w-full">
                     <Time
-                      required
                       label="Open time:"
                       onChange={(e) => {
                         setWeekendOpenTime(e.target.value);
@@ -546,7 +545,6 @@ const LocationForm = ({
                       err={weekendTimeErr}
                     />
                     <Time
-                      required
                       label="Close time:"
                       onChange={(e) => {
                         setWeekendCloseTime(e.target.value);

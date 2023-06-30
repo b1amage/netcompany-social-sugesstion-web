@@ -71,6 +71,7 @@ const Navbar = () => {
     {
       title: "cancel",
       danger: false,
+      buttonClassName: "bg-white border-primary-400 border !text-primary-400 hover:bg-primary-400 hover:opacity-100 hover:!text-white",
       action: closePopup,
     },
     { title: "logout", danger: true, action: confirmLogout },
@@ -136,7 +137,7 @@ const Navbar = () => {
                 className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
                 danger
               >
-                Logout
+                Log out
               </Button>
             )}
           </div>

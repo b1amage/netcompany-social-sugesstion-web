@@ -14,10 +14,13 @@ const Dropdown = ({
   className,
   required,
   err,
-  wrapperClassName
+  // onClick,
+  wrapperClassName,
+  openClassName
 }) => {
   const [isOpen, setIsOpen] = useState(null);
   const handleClick = () => {
+    // onClick()
     setIsOpen(!isOpen);
   };
 
@@ -32,7 +35,7 @@ const Dropdown = ({
   const renderedOptions = options.map((option) => {
     return (
       <li
-        className="py-2 px-4 my-2 hover:bg-neutral-100/30 duration-300"
+        className="py-2 px-4 my-2 hover:bg-neutral-100/30 duration-300 cursor-pointer"
         key={option.title}
         onClick={() => handleOptionClick(option)}
       >
@@ -51,11 +54,11 @@ const Dropdown = ({
         className={`w-full p-4 relative text-sm transition-all duration-300 outline-none rounded-lg border border-black  bg-white md:text-base md:p-4 placeholder:text-secondary-100 font-bold 
         ${isOpen &&
           (value?.tilte || value
-            ? "border-green-500 focus:!border-green-500 !ring-green-500" : "ring-1 ring-black ")
+            ? `border-green-500 focus:!border-green-500 ring-green-500 ${openClassName}` : "ring-1 ring-black ")
         }  ${className}`}
         onClick={handleClick}
       >
-        {value?.title || defaultTitle}
+        {value?.title || value || defaultTitle}
         <Image
           src={dropdown}
           alt="dropdown-btn"

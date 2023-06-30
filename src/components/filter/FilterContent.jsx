@@ -17,7 +17,8 @@ import {
 import VALIDATE from "@/helpers/validateForm";
 import Error from "@/components/form/Error";
 import Time from "@/components/location/Time";
-
+import { useSearchParams } from "react-router-dom";
+import question from "@/assets/question.svg"
 const FilterContent = ({
   setIsFiltered,
   setIsClicked,
@@ -38,6 +39,7 @@ const FilterContent = ({
   const [closeTimeErr, setCloseTimeErr] = useState();
   const [submitErr, setSubmitErr] = useState();
   const handleDistanceChange = ({ x }) => setSearchDistanceValue(x);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const dispatch = useDispatch();
   const handleSubmit = (e) => {
@@ -50,31 +52,29 @@ const FilterContent = ({
       return;
     }
 
-    if (openTime && closeTime && VALIDATE.category(dayType)) {
+    if (openTime && closeTime && !dayType) {
       setDayTypeErr(VALIDATE.category(dayType));
       setSubmitErr("Please select day type!");
       return;
-    } 
-
-    if (dayType && !openTime && !closeTime){
-        setOpenTimeErr(VALIDATE.time(openTime));
-        setCloseTimeErr(VALIDATE.time(closeTime));
-        setSubmitErr('Please fill both "Open from" and "Close to" fields!');
-        return;
     }
 
-    if (categoryValue) {
-      dispatch(changeCategory(categoryValue));
+    if (dayType && !openTime && !closeTime) {
+      setOpenTimeErr(VALIDATE.time(openTime));
+      setCloseTimeErr(VALIDATE.time(closeTime));
+      setSubmitErr('Please fill both "Open from" and "Close to" fields!');
+      return;
     }
 
-    dispatch(
-      changeTime({
-        openFrom: openTime.replace(":", ""),
-        closeTo: closeTime.replace(":", ""),
-        dayType: dayType,
-      })
-    );
-    dispatch(changeSearchDistance(searchDistanceValue));
+    setSearchParams({
+      searchInput: searchParams.get("searchInput") || "",
+      locationCategory:
+        categoryValue !== "" ? categoryValue?.title || categoryValue : "",
+      openFrom: openTime.replace(":", ""),
+      closeTo: closeTime.replace(":", ""),
+      dayType: dayType !== "" ? dayType?.title || dayType : "",
+      searchDistance: searchDistanceValue || "",
+    });
+
     setSubmitErr();
     setIsFiltered(true);
     setIsClicked(false);
@@ -85,28 +85,25 @@ const FilterContent = ({
     setCloseTime("");
     setDayType("");
     setCategoryValue("");
-    setSearchDistanceValue(DISTANCE.min); // replace with the default value
+    setSearchDistanceValue(JSON.parse(localStorage.getItem("user")).searchDistance); // replace with the default value
     setOpenTimeErr(null);
     setCloseTimeErr(null);
     setDayTypeErr(null);
     setSubmitErr(null);
 
-    dispatch(changeCategory(""));
+    // searchParams.delete('searchInput')
+    searchParams.delete("locationCategory");
+    searchParams.delete("openFrom");
+    searchParams.delete("closeTo");
+    searchParams.delete("dayType");
+    searchParams.delete("searchDistance");
 
-    dispatch(
-      changeTime({
-        openFrom: "",
-        closeTo: "",
-        dayType: "",
-      })
-    );
-    dispatch(changeSearchDistance());
-
+    setSearchParams(searchParams);
     setIsFiltered(false);
-    // setIsClicked(false);
+    setIsClicked(false);
   };
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full relative">
       <Dropdown
         label="Category"
         defaultTitle="SELECT THE CATEGORY"
@@ -115,6 +112,7 @@ const FilterContent = ({
         onChange={(option) => {
           setCategoryValue(option);
         }}
+        openClassName="!ring-black ring-1 focus:ring-black !border-black"
         className={`ring-black ${categoryValue && `ring-1 `}`}
       />
       <Wrapper col="true" className="gap-2">
@@ -152,6 +150,7 @@ const FilterContent = ({
                 onChange={(option) => {
                   setDayType(option);
                 }}
+                openClassName="!ring-black ring-1 focus:ring-black !border-black"
                 className={`${
                   dayType?.title || dayType
                     ? "ring-1 ring-black border-black"
@@ -169,7 +168,10 @@ const FilterContent = ({
         max={DISTANCE.max}
         onChange={handleDistanceChange}
         x={searchDistanceValue}
-        label={`Distance: ${searchDistanceValue}km`}
+        label={`Distance: ${searchDistanceValue} km`}
+        labelClassName="relative"
+        isHint
+        src={question}
       />
 
       <Wrapper col="true" className="">
@@ -182,12 +184,12 @@ const FilterContent = ({
             type="button"
             onClick={handleResetFilter}
             primary
-            className="!my-0 !bg-danger"
+            className="!my-0 !bg-white border-primary-400 !border !text-primary-400 hover:!border-danger hover:!bg-danger hover:!text-white"
           >
             Reset
           </Button>
           <Button primary active className="!my-0">
-            Filter
+            Apply
           </Button>
         </Wrapper>
       </Wrapper>

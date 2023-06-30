@@ -18,13 +18,13 @@ import locationImg from "@/assets/location.svg";
 import Heading from "@/components/typography/Heading";
 import User from "@/components/user/User";
 import SearchBar from "@/components/search/SearchBar";
-import {FaSearch} from "react-icons/fa"
+import { FaSearch } from "react-icons/fa";
 import Button from "@/components/button/Button";
 import { useNavigate } from "react-router-dom";
 import useViewport from "@/hooks/useScreenWidth";
 import ROUTE from "@/constants/routes";
 
-const SubNavbar = ({ user, canSearching }) => {
+const SubNavbar = ({ user, homeFilter, searchFilter }) => {
   const dispatch = useDispatch();
   const { isAdded, isShowFilter, currentLocation } = useSelector(
     ({ navbar, currentLocation }) => {
@@ -41,7 +41,6 @@ const SubNavbar = ({ user, canSearching }) => {
   const [address, setAddress] = useState();
   const [showAutoComplete, setShowAutoComplete] = useState(false);
 
-  const { isGetCurrentLocation, isTurnOnGPS } = useCurrentLocation();
 
   const onChangeCurrentLocation = (location, latitude, longitude) => {
     localStorage.setItem("currentLocation", JSON.stringify(location));
@@ -50,7 +49,6 @@ const SubNavbar = ({ user, canSearching }) => {
     dispatch(changeLongitude(longitude));
     setShowAutoComplete(false);
   };
-
 
   useEffect(() => {
     dispatch(validatePathname(window.location.pathname));
@@ -74,10 +72,8 @@ const SubNavbar = ({ user, canSearching }) => {
               imageClassName="md:w-[28px] md:h-[28px]"
             />
             <Heading className="!text-[14px] w-fit truncate ">
-              {isTurnOnGPS
-                ? isGetCurrentLocation
-                  ? "...Loading"
-                  : currentLocation.formatted_address
+              {currentLocation
+                  ? currentLocation.formatted_address
                 : !localStorage.getItem("currentLocation")
                 ? "Enter a location"
                 : JSON.parse(localStorage.getItem("currentLocation"))
@@ -104,10 +100,17 @@ const SubNavbar = ({ user, canSearching }) => {
               Register new location
             </Button>
           )}
-          {canSearching ? <SearchBar className="w-full" /> : <Button primary active className="h-[60px] !rounded-2xl gap-2" onClick={() => navigate(ROUTE.SEARCH_LOCATION)}> <FaSearch /> Search locations</Button>}
-          <Wrapper className="items-center w-fit justify-end gap-4">
-            {isShowFilter && <Filter wrapperClassName="" className="m-0" />}
-          </Wrapper>
+          <SearchBar className="w-full" />
+          {isShowFilter && (
+            <Wrapper className="items-center w-fit justify-end gap-4">
+              <Filter
+                homeFilter={homeFilter}
+                searchFilter={searchFilter}
+                wrapperClassName=""
+                className="m-0"
+              />
+            </Wrapper>
+          )}
         </Wrapper>
 
         <Popup
@@ -121,13 +124,13 @@ const SubNavbar = ({ user, canSearching }) => {
               )}
               <Wrapper>
                 <AiOutlineArrowLeft
-                  className="h-full w-[40px]"
+                  className="h-full w-[60px] cursor-pointer "
                   onClick={() => setShowAutoComplete(false)}
                 />
 
                 <AutoCompleteScreen
                   // label="Location"
-                  className={`h-[50px] !py-2`}
+                  className={`!h-[60px] !py-2`}
                   // address={currentLocation && currentLocation.formatted_address}
                   onChange={onChangeCurrentLocation}
                   setAddress={setAddress}

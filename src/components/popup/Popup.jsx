@@ -22,15 +22,18 @@ const Popup = ({
     {
       title: "delete",
       danger: true,
+      buttonClassName: "",
       action: () => {},
     },
-    { title: "cancel", danger: false, action: () => {} },
+    { title: "cancel", danger: false, 
+    buttonClassName: "",
+    action: () => {} },
   ],
   children,
   titleClassName,
   formClassName,
   childrenClassName,
-  onClick,
+  onClick
 }) => {
   const popupRef = useRef();
   useOnClickOutside(popupRef, onClose);
@@ -60,7 +63,7 @@ const Popup = ({
                     item.danger
                       ? "!bg-danger"
                       : "!bg-white !border !border-primary-400 !text-primary-400 hover:!text-white hover:!bg-primary-400 hover:!opacity-100"
-                  }`}
+                  } ${item.buttonClassName}`}
                   active={!item.danger}
                 >
                   {item.title}
