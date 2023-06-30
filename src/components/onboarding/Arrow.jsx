@@ -10,7 +10,7 @@ const Arrow = ({ disabled, left, onClick }) => {
     <Button
       onClick={() => {
         localStorage.setItem(localStorageKey.alreadyShownOnboarding, true);
-        navigate(ROUTE.HOME);
+        navigate("/login");
       }}
       active
       className={`!m-0 flex-center !absolute bottom-8 cursor-pointer right-12 !border-0 !py-2`}

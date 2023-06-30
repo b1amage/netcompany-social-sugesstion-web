@@ -49,7 +49,7 @@ const Navbar = () => {
 
   const viewport = useViewport();
 
-  const { isLogin } = useAuthentication();
+  const { isLogin, isShowOnBoarding } = useAuthentication();
   const navbarRef = useRef();
   useOnClickOutside(navbarRef, () => {
     // dispatch(handleCloseSideBarClick())
@@ -71,6 +71,7 @@ const Navbar = () => {
     {
       title: "cancel",
       danger: false,
+      buttonClassName: "bg-white border-primary-400 border !text-primary-400 hover:bg-primary-400 hover:opacity-100 hover:!text-white",
       action: closePopup,
     },
     { title: "logout", danger: true, action: confirmLogout },
@@ -85,7 +86,6 @@ const Navbar = () => {
       document.body.style.overflow = "auto";
     }
   }, [showPopup]);
-
 
   const {
     isAdded,
@@ -104,11 +104,10 @@ const Navbar = () => {
   // console.log(places[0].geometry.location.lng());
   useEffect(() => {
     dispatch(validatePathname(window.location.pathname));
-    setCurrentLocation(window.location.pathname)
     // console.log(location)
     // console.log([latitude, longitude])
     // console.log(location)
-  }, [window.location.pathname, currentLocation]);
+  }, [window.location.pathname, isLogin, isShowOnBoarding]);
 
   return createPortal(
     <nav className="w-full bg-white border-b border-gray-200">
@@ -132,20 +131,20 @@ const Navbar = () => {
               onClick={() => isLogin && navigate("/")}
             />
 
-            {isLogin && (
+            {isLogin && !isShowOnBoarding && (
               <Button
                 onClick={() => setShowPopup(true)}
                 className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
                 danger
               >
-                Logout
+                Log out
               </Button>
             )}
           </div>
         )}
 
         {/* CTA Button */}
-        {isLogin && (
+        {(isLogin && !isShowOnBoarding) && (
           <div className="flex items-center gap-4">
             {viewport.width <= BREAK_POINT_NAVBAR && (
               <>
@@ -201,7 +200,7 @@ const Navbar = () => {
 
         {/* Navigation */}
 
-        {viewport.width > BREAK_POINT_NAVBAR && isLogin ? (
+        {viewport.width > BREAK_POINT_NAVBAR && isLogin && !isShowOnBoarding ? (
           <Wrapper col="true" className="gap-4 bg-white">
             <div className="flex justify-center gap-4 mt-0 text-sm font-medium bg-transparent border-0 rounded-lg">
               {navlinks.length > 0 &&

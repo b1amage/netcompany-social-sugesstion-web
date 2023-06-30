@@ -35,6 +35,7 @@ import Label from "@/components/form/Label";
 import Button from "@/components/button/Button";
 import Time from "./Time";
 import Price from "./Price";
+import { toast } from "react-hot-toast";
 
 const LocationForm = ({
   locationId,
@@ -52,9 +53,12 @@ const LocationForm = ({
   defaultPriceRange,
   onGetAPI,
 }) => {
+  const notifyCreate = () => toast.success("Successfully register!");
+  const notifyUpdate = () => toast.success("Successfully update!");
+
+
   const [uploading, setUploading] = useState(false);
   const [isShowImage, setIsShowImage] = useState(false);
-
   const [imgList, setImgList] = useState(defaultImgList);
   const [image, setImage] = useState(currentImg);
   const [placeId, setPlaceId] = useState(defaultPlaceId);
@@ -332,7 +336,7 @@ const LocationForm = ({
     console.log(data);
     // // console.log(imgList)
     if (window.location.pathname === "/create-location") {
-      locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup);
+      locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyCreate);
       console.log(data);
       setIsLoading(false);
 
@@ -370,7 +374,7 @@ const LocationForm = ({
               }
             : null,
       };
-      locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup);
+      locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
       console.log(data);
       setIsLoading(false);
 
@@ -407,11 +411,11 @@ const LocationForm = ({
               className={`bg-white h-[60px] !py-2 ${
                 addressErr &&
                 (address.trim() !== ""
-                  ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                  ? "focus:border-green-500 focus:ring-2 ring-1 focus:ring-green-500"
                   : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
               } ${
                 address &&
-                "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                "focus:!border-green-500 focus:ring-1 focus:!ring-green-500 ring-1 ring-black"
               }`}
               address={address}
               setAddress={setAddress}
@@ -439,13 +443,13 @@ const LocationForm = ({
               placeholder="Enter the place's name"
               className={`rounded-lg h-[60px] ${
                 title &&
-                "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                "focus:!border-green-500 focus:ring-1 focus:!ring-green-500 ring-1 ring-black"
               }
                 ${
                   titleErr &&
                   (title.trim() !== ""
-                    ? "!border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
-                    : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
+                  ? "focus:border-green-500 focus:ring-2 ring-1 focus:ring-green-500"
+                  : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
                 }`}
               value={title}
               // err={titleErr}
@@ -466,6 +470,11 @@ const LocationForm = ({
               setCategory(option);
             }}
             err={categoryErr}
+            className={` 
+              ${
+                (category?.title || category) ? "focus:ring-2 ring-1 ring-black border-black"
+                  : categoryErr && "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 border-secondary-400 "
+              }`}
           />
 
           <Wrapper className="my-4" col="true">
@@ -474,8 +483,8 @@ const LocationForm = ({
             </Label>
             <textarea
               className={`w-full bg-white h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg border border-black ${
-                description &&
-                " !border-green-500 focus:ring-2 ring-1 focus:!ring-green-500 ring-green-500"
+                description.trim() !== "" &&
+                "focus:border-green-500 ring-1 ring-black focus:!ring-green-500 "
               } md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none`}
               placeholder="Enter the description"
               value={description}
@@ -528,7 +537,6 @@ const LocationForm = ({
 
                   <Wrapper className="gap-4 w-full">
                     <Time
-                      required
                       label="Open time:"
                       onChange={(e) => {
                         setWeekendOpenTime(e.target.value);
@@ -537,7 +545,6 @@ const LocationForm = ({
                       err={weekendTimeErr}
                     />
                     <Time
-                      required
                       label="Close time:"
                       onChange={(e) => {
                         setWeekendCloseTime(e.target.value);
@@ -565,6 +572,7 @@ const LocationForm = ({
                       setMinPrice(e.target.value);
                       setPriceErr(VALIDATE.price(e.target.value, maxPrice));
                     }}
+                    className={`${priceErr ? "focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 ring-1 !ring-secondary-400": ""}`}
                     err={priceErr}
                   />
 
@@ -575,13 +583,17 @@ const LocationForm = ({
                       setMaxPrice(e.target.value);
                       setPriceErr(VALIDATE.price(minPrice, e.target.value));
                     }}
+                    className={`${priceErr ? "focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 ring-1 !ring-secondary-400": ""}`}
                     err={priceErr}
                   />
                 </Wrapper>
 
                 <Dropdown
                   label="Currency:"
-                  className=" rounded-lg"
+                  className={`${
+                    (currency?.title || currency) ? "focus:ring-2 ring-1 ring-black border-black"
+                      : currencyErr && "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 border-secondary-400 "
+                  } rounded-lg`}
                   wrapperClassName="xl:max-w-[240px] !w-full"
                   options={currencyList}
                   value={currency}
@@ -699,7 +711,7 @@ const LocationForm = ({
             </Error>
 
             <Button
-              className="!my-0 h-16 disabled:opacity-70"
+              className="!my-0 h-[60px] disabled:opacity-70"
               loadingClassName="!h-8 !w-8 !border-r-white !border-l-white"
               primary
               active
@@ -726,7 +738,7 @@ const LocationForm = ({
       {isShowPopup && (
         <Popup
           actions={[]}
-          title={`${window.location.pathname === '/create-location' ? "Create successful" : "Update successful"}. Wait for a few seconds to be directed to the previous page`}
+          title={`${window.location.pathname === '/create-location' ? "Registering location" : "Updating loacation"}. Wait for a few seconds to be directed to the previous page`}
           children={<Loading />}
           className="!fixed"
           formClassName="items-center"

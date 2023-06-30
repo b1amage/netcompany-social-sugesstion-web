@@ -3,7 +3,7 @@ import ROUTE from "@/constants/routes";
 
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Wrapper from "@/components/wrapper/Wrapper";
 
 import Heading from "@/components/typography/Heading";
@@ -14,9 +14,9 @@ import Loading from "@/components/loading/Loading";
 
 import OnBoardingSlider from "@/components/slider/OnBoardingSlider";
 import Screen from "@/components/container/Screen";
-import { changeCategory, changeSearchInput } from "@/features/filterSlice";
 
 import SubNavbar from "@/components/navbar/SubNavbar";
+import useCurrentLocation from "@/hooks/useCurrentLocation";
 
 // const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
@@ -31,46 +31,28 @@ const HomeScreen = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const { isGetCurrentLocation } = useCurrentLocation();
   const dispatch = useDispatch();
 
   const [lastFetch, setLastFetch] = useState(Date.now());
 
-  const {
-    category,
-    searchInput,
-    weekdayTime,
-    weekendTime,
-    searchDistance,
-    currentLocation,
-    latitude,
-    longitude,
-  } = useSelector(({ filter, currentLocation }) => {
-    return {
-      currentLocation: currentLocation.currentLocation,
-      latitude: currentLocation.latitude,
-      longitude: currentLocation.longitude,
-      category: filter.category,
-      searchInput: filter.searchInput,
-      searchDistance: filter.searchDistance,
-      weekdayTime: filter.weekdayTime,
-      weekendTime: filter.weekendTime,
-    };
-  });
+  const { latitude, longitude, currentLocation } = useSelector(
+    ({ filter, currentLocation }) => {
+      return {
+        currentLocation: currentLocation.currentLocation,
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
+        category: filter.category,
+      };
+    }
+  );
 
   const onSelectLocation = (id) => {
     navigate(id);
   };
 
-  // ONBOARDING CHECK
-  useEffect(() => {
-    const onBoardingAlreadyShown = JSON.parse(
-      localStorage.getItem(localStorageKey.alreadyShownOnboarding)
-    );
+  const [searchParams, setSearchParams] = useSearchParams();
 
-    !onBoardingAlreadyShown && navigate(ROUTE.ONBOARDING);
-  }, []);
-
-  // LOGIN CHECK
   useEffect(() => {
     if (localStorage.getItem("loginReload") === "true") {
       localStorage.setItem("loginReload", "false");
@@ -86,24 +68,34 @@ const HomeScreen = () => {
   const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
+    console.log(isGetCurrentLocation);
+    console.log(currentLocation);
+  }, [isGetCurrentLocation, currentLocation]);
+  useEffect(() => {
     if (latitude && longitude) {
       // if (currentLocation) {
       setIsLoading(true);
       const fetchFeaturedLocations = async () => {
         const response = await locationApi.getFeaturedLocation({
-          locationCategory: category,
-          searchInput: searchInput,
+          locationCategory: searchParams.get("locationCategory"),
+          searchInput: searchParams.get("searchInput"),
           lat: latitude,
           lng: longitude,
-          searchDistance: searchDistance,
-          weekday: {
-            openTime: weekdayTime.openTime,
-            closeTime: weekdayTime.closeTime,
-          },
-          weekend: {
-            openTime: weekendTime.openTime,
-            closeTime: weekendTime.closeTime,
-          },
+          searchDistance: searchParams.get("searchDistance"),
+          weekday:
+            searchParams.get("dayType") === "Weekday"
+              ? {
+                  openTime: searchParams.get("openFrom"),
+                  closeTime: searchParams.get("closeTo"),
+                }
+              : null,
+          weekend:
+            searchParams.get("dayType") === "Weekend"
+              ? {
+                  openTime: searchParams.get("openFrom"),
+                  closeTime: searchParams.get("closeTo"),
+                }
+              : null,
         });
         setFeaturedLocations(response.data.results);
         localStorage.setItem("featuredNextCursor", response.data.next_cursor);
@@ -112,34 +104,35 @@ const HomeScreen = () => {
       };
       fetchFeaturedLocations();
     }
-  }, [
-    // currentLocation,
-    latitude,
-    longitude,
-    category,
-    searchInput,
-    weekdayTime,
-    weekendTime,
-    searchDistance,
-  ]);
+  }, [latitude, longitude, searchParams]);
 
   useEffect(() => {
+    // console.log(searchParams.get("locationCategory"));
+    // console.log(searchParams.get("openFrom"));
+    // console.log(searchParams.get("closeTo"));
+    // console.log(searchParams.get("dayType"));
     if (latitude && longitude) {
       const fetchLatestLocations = async () => {
         const response = await locationApi.getLatestLocation({
-          locationCategory: category,
-          searchInput: searchInput,
+          locationCategory: searchParams.get("locationCategory"),
+          searchInput: searchParams.get("searchInput"),
           lat: latitude,
           lng: longitude,
-          searchDistance: searchDistance,
-          weekday: {
-            openTime: weekdayTime.openTime,
-            closeTime: weekdayTime.closeTime,
-          },
-          weekend: {
-            openTime: weekendTime.openTime,
-            closeTime: weekendTime.closeTime,
-          },
+          searchDistance: searchParams.get("searchDistance"),
+          weekday:
+            searchParams.get("dayType") === "Weekday"
+              ? {
+                  openTime: searchParams.get("openFrom"),
+                  closeTime: searchParams.get("closeTo"),
+                }
+              : null,
+          weekend:
+            searchParams.get("dayType") === "Weekend"
+              ? {
+                  openTime: searchParams.get("openFrom"),
+                  closeTime: searchParams.get("closeTo"),
+                }
+              : null,
         });
         setLatestLocations(response.data.results);
         localStorage.setItem("latestNextCursor", response.data.next_cursor);
@@ -154,11 +147,12 @@ const HomeScreen = () => {
     // currentLocation,
     latitude,
     longitude,
-    category,
-    searchInput,
-    weekdayTime,
-    weekendTime,
-    searchDistance,
+    searchParams,
+    // category,
+    // searchInput,
+    // time,
+    // searchDistance,
+    // latestNextCursor
   ]);
 
   const handleLoadMoreFeaturedData = (nextCursor) => {
@@ -173,19 +167,25 @@ const HomeScreen = () => {
     const fetchFeaturedLocations = async () => {
       const response = await locationApi.getFeaturedLocation(
         {
-          locationCategory: category,
-          searchInput: searchInput,
+          locationCategory: searchParams.get("locationCategory"),
+          searchInput: searchParams.get("searchInput"),
           lat: latitude,
           lng: longitude,
-          searchDistance: searchDistance,
-          weekday: {
-            openTime: weekdayTime.openTime,
-            closeTime: weekdayTime.closeTime,
-          },
-          weekend: {
-            openTime: weekendTime.openTime,
-            closeTime: weekendTime.closeTime,
-          },
+          searchDistance: searchParams.get("searchDistance"),
+          weekday:
+            searchParams.get("dayType") === "Weekday"
+              ? {
+                  openTime: searchParams.get("openFrom"),
+                  closeTime: searchParams.get("closeTo"),
+                }
+              : null,
+          weekend:
+            searchParams.get("dayType") === "Weekend"
+              ? {
+                  openTime: searchParams.get("openFrom"),
+                  closeTime: searchParams.get("closeTo"),
+                }
+              : null,
         },
         nextCursor
       );
@@ -209,19 +209,25 @@ const HomeScreen = () => {
     const fetchLatestLocations = async () => {
       const response = await locationApi.getLatestLocation(
         {
-          locationCategory: category,
-          searchInput: searchInput,
+          locationCategory: searchParams.get("locationCategory"),
+          searchInput: searchParams.get("searchInput"),
           lat: latitude,
           lng: longitude,
-          searchDistance: searchDistance,
-          weekday: {
-            openTime: weekdayTime.openTime,
-            closeTime: weekdayTime.closeTime,
-          },
-          weekend: {
-            openTime: weekendTime.openTime,
-            closeTime: weekendTime.closeTime,
-          },
+          searchDistance: searchParams.get("searchDistance"),
+          weekday:
+            searchParams.get("dayType") === "Weekday"
+              ? {
+                  openTime: searchParams.get("openFrom"),
+                  closeTime: searchParams.get("closeTo"),
+                }
+              : null,
+          weekend:
+            searchParams.get("dayType") === "Weekend"
+              ? {
+                  openTime: searchParams.get("openFrom"),
+                  closeTime: searchParams.get("closeTo"),
+                }
+              : null,
         },
         nextCursor
       );
@@ -234,92 +240,108 @@ const HomeScreen = () => {
     fetchLatestLocations();
   };
 
+  useEffect(() => {
+    const handlePopState = () => {
+      window.location.reload();
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
+  // useEffect(() => {
+  //   window.location.reload();
+  // }, [searchParams])
+  const renderPopularLocations = (
+    <Wrapper col="true" className="gap-4 my-4">
+      <Wrapper className="justify-between items-end">
+        <Label className="!text-[32px]">Popular</Label>
+      </Wrapper>
+      {!isLoading ? (
+        featuredLocations.length > 0 ? (
+          <Slider
+            items={featuredLocations}
+            className="!bg-transparent sm:text-left !p-0"
+            cardClassName="text-center hover:opacity-70 cursor-pointer"
+            perView={4}
+            onClick={onSelectLocation}
+            loadMore={handleLoadMoreFeaturedData}
+            // nextCursor={localStorage.getItem("featuredNextCursor") || null}
+            type="featuredLocations"
+          />
+        ) : (
+          <Wrapper className="justify-center">
+            <Heading>No results found!</Heading>
+          </Wrapper>
+        )
+      ) : (
+        <Wrapper className="justify-center">
+          <Loading />
+        </Wrapper>
+      )}
+    </Wrapper>
+  );
+
+  const renderLatestLocations = (
+    <Wrapper col="true" className="gap-4">
+      <Wrapper className="justify-between items-end">
+        <Label className="!text-[32px]">Latest</Label>
+      </Wrapper>
+      {!isLoading ? (
+        latestLocations.length > 0 ? (
+          <Slider
+            items={latestLocations}
+            className="!bg-transparent sm:text-left !p-0"
+            cardClassName="bg-neutral-100 text-center"
+            perView={4}
+            onClick={onSelectLocation}
+            loadMore={handleLoadMoreLatestData}
+            type="latestLocations"
+          />
+        ) : (
+          <Wrapper className="justify-center">
+            <Heading>No results found!</Heading>
+          </Wrapper>
+        )
+      ) : (
+        <Wrapper className="justify-center">
+          <Loading />
+        </Wrapper>
+      )}
+    </Wrapper>
+  );
   return (
-    <Screen className="my-4 lg:my-12 px-10 flex flex-col gap-4 lg:px-16 py-8 md:py-16 lg:py-0">
-      <Wrapper col="true" className="gap-4 md:items-center">
-        <SubNavbar user={user} />
-      </Wrapper>
-
-      <OnBoardingSlider />
-
-      <Wrapper col="true" className="gap-4">
-        <Wrapper className="justify-between items-end">
-          <Label>Features</Label>
-          {/* {featuredNextCursor &&
-            (!isFeaturedUpdating ? (
-              <Heading
-                onClick={() => handleLoadMoreFeaturedData(featuredNextCursor)}
-                className="cursor-pointer hover:animate-bounce text-primary-400"
-              >
-                + Load more
-              </Heading>
-            ) : (
-              <Loading className="!h-10 !w-10" />
-            ))} */}
-        </Wrapper>
-        {!isLoading ? (
-          featuredLocations.length > 0 ? (
-            <Slider
-              items={featuredLocations}
-              className="!bg-transparent sm:text-left !p-0"
-              cardClassName="text-center hover:opacity-70 cursor-pointer"
-              perView={4}
-              onClick={onSelectLocation}
-              loadMore={handleLoadMoreFeaturedData}
-              // nextCursor={localStorage.getItem("featuredNextCursor") || null}
-              type="featuredLocations"
-            />
-          ) : (
-            <Wrapper className="justify-center">
-              <Heading>No results found!</Heading>
+    <>
+      {!isGetCurrentLocation ? (
+        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
+          <>
+            <Wrapper col="true" className="gap-4 md:items-center">
+              <SubNavbar user={user} />
             </Wrapper>
-          )
-        ) : (
-          <Wrapper className="justify-center">
-            <Loading />
-          </Wrapper>
-        )}
-      </Wrapper>
 
-      <Wrapper col="true" className="gap-4">
-        <Wrapper className="justify-between items-end">
-          <Label>Latest</Label>
-          {/* {latestNextCursor &&
-            (!isLatestUpdating ? (
-              <Heading
-                onClick={() => handleLoadMoreLatestData(latestNextCursor)}
-                className="cursor-pointer hover:animate-bounce text-primary-400"
-              >
-                + Load more
-              </Heading>
+            <OnBoardingSlider />
+
+            {searchParams.get("listType") === "POPULAR" ? (
+              renderPopularLocations
+            ) : searchParams.get("listType") === "LATEST" ? (
+              renderLatestLocations
             ) : (
-              // className="h-10 w-10"
-              <Loading className="!h-10 !w-10" />
-            ))} */}
-        </Wrapper>
-        {!isLoading ? (
-          latestLocations.length > 0 ? (
-            <Slider
-              items={latestLocations}
-              className="!bg-transparent sm:text-left !p-0"
-              cardClassName="bg-neutral-100 text-center"
-              perView={4}
-              onClick={onSelectLocation}
-              loadMore={handleLoadMoreLatestData}
-              type="latestLocations"
-            />
-          ) : (
-            <Wrapper className="justify-center">
-              <Heading>No results found!</Heading>
-            </Wrapper>
-          )
-        ) : (
-          <Wrapper className="justify-center">
-            <Loading />
-          </Wrapper>
-        )}
-      </Wrapper>
-    </Screen>
+              <>
+                {renderPopularLocations}
+                {renderLatestLocations}
+              </>
+            )}
+          </>
+        </Screen>
+      ) : (
+        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
+          <Loading />
+        </Screen>
+      )}
+    </>
   );
 };
 

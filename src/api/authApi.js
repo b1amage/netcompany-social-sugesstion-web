@@ -80,6 +80,7 @@ const authApi = {
       });
       console.log(response);
       setMessage("You are all set!");
+      localStorage.setItem("user", JSON.stringify(response.data.verifiedUser));
       navigate("/");
     } catch (error) {
       console.log(error);

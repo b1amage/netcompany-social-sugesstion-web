@@ -169,16 +169,6 @@ const EditProfileScreen = () => {
               )}
 
               <Wrapper className="items-center !w-full justify-center !flex-col md:!flex-row !mt-auto lg:!mt-10 !mb-0">
-                <Button
-                  className="!border-2 !border-primary-400 !m-0"
-                  primary
-                  active
-                  onClick={handleSaveChanges}
-                  isLoading={loading}
-                >
-                  Save Changes
-                </Button>
-
                 <Link className="w-full" to={ROUTE.PROFILE}>
                   <Button
                     className="bg-transparent !m-0 !border-2 !border-primary-400 !text-primary-400 !py-[10px]"
@@ -188,6 +178,15 @@ const EditProfileScreen = () => {
                     Cancel
                   </Button>
                 </Link>
+                <Button
+                  className="!border-2 !border-primary-400 !m-0"
+                  primary
+                  active
+                  onClick={handleSaveChanges}
+                  isLoading={loading}
+                >
+                  Save Changes
+                </Button>
               </Wrapper>
             </Wrapper>
           </Wrapper>

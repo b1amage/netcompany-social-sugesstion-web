@@ -2,13 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "@/components/image/Image";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import { useDispatch } from "react-redux";
 import close from "@/assets/close.svg";
 import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import Wrapper from "@/components/wrapper/Wrapper";
-import Heading from "@/components/typography/Heading";
-import SubHeading from "@/components/typography/SubHeading";
-import PlaceCard from "@/components/card/PlaceCard";
 import ProfileCard from "@/components/card/ProfileCard";
 
 const Slider = ({
@@ -202,7 +198,7 @@ const Slider = ({
         }}
         className={`${
           isShowButtonLeft ? "visible" : "invisible"
-        } bg-primary-400 hover:opacity-70 cursor-pointer text-white h-[40px] w-[28px] rounded-l-lg p-1 absolute top-1/2 left-0 -translate-y-1/2 -translate-x-full`}
+        } md:bg-primary-400 cursor-pointer md:text-white h-[40px] w-[40px] rounded-full absolute top-1/2 left-0 -translate-y-1/2 active:scale-150 md:hover:scale-150 duration-300 md:-translate-x-1/2 translate-x-0`}
       />
       <GoChevronRight
         onClick={(e) => {
@@ -210,7 +206,7 @@ const Slider = ({
         }}
         className={`${
           isShowButtonRight ? "visible" : "invisible"
-        } bg-primary-400 hover:opacity-70 cursor-pointer text-white h-[40px] w-[28px] rounded-r-lg absolute top-1/2 right-0 -translate-y-1/2 translate-x-full`}
+        } md:bg-primary-400 cursor-pointer md:text-white h-[40px] w-[40px] rounded-full absolute top-1/2 right-0 -translate-y-1/2 active:scale-150 md:hover:scale-150 duration-300 md:translate-x-1/2 -translate-x-0`}
       />
     </Wrapper>
   );
