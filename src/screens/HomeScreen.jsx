@@ -36,17 +36,16 @@ const HomeScreen = () => {
 
   const [lastFetch, setLastFetch] = useState(Date.now());
 
-  const {
-    latitude,
-    longitude,
-  } = useSelector(({ filter, currentLocation }) => {
-    return {
-      currentLocation: currentLocation.currentLocation,
-      latitude: currentLocation.latitude,
-      longitude: currentLocation.longitude,
-      category: filter.category
-    };
-  });
+  const { latitude, longitude, currentLocation } = useSelector(
+    ({ filter, currentLocation }) => {
+      return {
+        currentLocation: currentLocation.currentLocation,
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
+        category: filter.category,
+      };
+    }
+  );
 
   const onSelectLocation = (id) => {
     navigate(id);
@@ -68,6 +67,10 @@ const HomeScreen = () => {
   }, []);
   const { user } = useSelector((state) => state.user);
 
+  useEffect(() => {
+    console.log(isGetCurrentLocation);
+    console.log(currentLocation);
+  }, [isGetCurrentLocation, currentLocation]);
   useEffect(() => {
     if (latitude && longitude) {
       // if (currentLocation) {
@@ -101,11 +104,7 @@ const HomeScreen = () => {
       };
       fetchFeaturedLocations();
     }
-  }, [
-    latitude,
-    longitude,
-    searchParams,
-  ]);
+  }, [latitude, longitude, searchParams]);
 
   useEffect(() => {
     // console.log(searchParams.get("locationCategory"));
@@ -316,7 +315,7 @@ const HomeScreen = () => {
   );
   return (
     <>
-      {!isGetCurrentLocation && (
+      {!isGetCurrentLocation ? (
         <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
           <>
             <Wrapper col="true" className="gap-4 md:items-center">
@@ -336,6 +335,10 @@ const HomeScreen = () => {
               </>
             )}
           </>
+        </Screen>
+      ) : (
+        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
+          <Loading />
         </Screen>
       )}
     </>

@@ -5,12 +5,24 @@ import Image from "@/components/image/Image";
 
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ROUTE from "@/constants/routes";
+import { useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 const SearchBar = ({ className, wrapperClassName }) => {
   const [value, setValue] = useState();
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   
+  const { currentLocation } = useSelector(
+    ({ filter, currentLocation }) => {
+      return {
+        currentLocation: currentLocation.currentLocation,
+        // latitude: currentLocation.latitude,
+        // longitude: currentLocation.longitude,
+        // category: filter.category,
+      };
+    }
+  );
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       const now = Date.now();
@@ -19,6 +31,11 @@ const SearchBar = ({ className, wrapperClassName }) => {
       setLastFetch(now);
       // if (value.trim() === "") return;
       // dispatch(changeFiltering(true));
+
+      if (!currentLocation){
+        toast.error("Please enter your current location!")
+        return
+      }
       navigate({
         pathname: ROUTE.SEARCH_LOCATION,
         search: `?searchInput=${value || ""}`,
@@ -53,6 +70,10 @@ const SearchBar = ({ className, wrapperClassName }) => {
           // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
           if (now - lastFetch < 1000) return;
           setLastFetch(now);
+          if (!currentLocation){
+            toast.error("Please enter your current location!")
+            return
+          }
           navigate({
             pathname: ROUTE.SEARCH_LOCATION,
             search: `?searchInput=${value || ""}`,

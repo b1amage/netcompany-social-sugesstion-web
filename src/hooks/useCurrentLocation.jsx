@@ -45,7 +45,9 @@ const useCurrentLocation = () => {
         dispatch(changeLongitude(data.results[0]?.geometry?.location?.lng))
         console.log(data.results[0]);
         localStorage.setItem("currentLocation", JSON.stringify(data.results[0]))
-        setIsGetCurrentLocation(false)
+        setTimeout(() => {
+          setIsGetCurrentLocation(false)
+        }, 4000)
       };
       fetchAddress();
     } else{
@@ -53,7 +55,9 @@ const useCurrentLocation = () => {
         dispatch(changeCurrentLocation(JSON.parse(localStorage.getItem("currentLocation"))) || null);
         dispatch(changeLatitude(JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lat) || null)
         dispatch(changeLongitude(JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lng) || null)
-        setIsGetCurrentLocation(false)
+        setTimeout(() => {
+          setIsGetCurrentLocation(false)
+        }, 4000)
     }
   }, [isGeolocationAvailable, isGeolocationEnabled, coords]);
   return {isGetCurrentLocation, isTurnOnGPS};

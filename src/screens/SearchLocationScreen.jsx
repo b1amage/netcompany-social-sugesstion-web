@@ -40,8 +40,8 @@ const SearchLocationScreen = () => {
               ? null
               : searchParams.get("locationCategory"),
           searchInput: searchParams.get("searchInput"),
-          lat: latitude,
-          lng: longitude,
+          lat: latitude ? latitude : JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lat,
+          lng: longitude ? longitude : JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lng,
           searchDistance: searchParams.get("searchDistance") !== "" ?  searchParams.get("searchDistance") : null,
           weekday:
             searchParams.get("dayType") === "Weekday" &&
@@ -70,6 +70,8 @@ const SearchLocationScreen = () => {
         setIsLoading(false);
       };
       fetchLocations();
+    } else{
+      setIsLoading(false)
     }
   }, [latitude, longitude, searchParams]);
 
@@ -103,8 +105,8 @@ const SearchLocationScreen = () => {
             ? null
             : searchParams.get("locationCategory"),
         searchInput: searchParams.get("searchInput"),
-        lat: latitude,
-        lng: longitude,
+        lat: latitude ? latitude : JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lat,
+          lng: longitude ? longitude : JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lng,
         searchDistance: searchParams.get("searchDistance") !== "" ? searchParams.get("searchDistance") : null,
         weekday:
           searchParams.get("dayType") === "Weekday" &&
@@ -135,12 +137,6 @@ const SearchLocationScreen = () => {
     setLocations((prev) => [...prev, ...response.data.results]);
     localStorage.setItem("nextCursor", response.data.next_cursor);
     setNextCursor(response.data.next_cursor);
-    // setTimeout(() => {
-    //   setIsFeaturedUpdating(false)
-    // }, 2000)
-    //   setIsFeaturedUpdating(false)
-    // };
-    // fetchLocations();
   };
 
   useEffect(() => {
@@ -203,9 +199,12 @@ const SearchLocationScreen = () => {
             </span>
           </Heading>
         )
-      ) : (
+      ) : ( latitude && longitude ?
         <Heading className="text-primary-400 !text-[24px] md:!text-[32px]">
           Show all results
+        </Heading> :
+        <Heading className="text-primary-400 !text-[24px] md:!text-[32px]">
+          No results found
         </Heading>
       )}
       {isLoading ? (
@@ -213,7 +212,7 @@ const SearchLocationScreen = () => {
           <Loading className="w-[60px] h-[60px]" />
         </Wrapper>
       ) : (
-        locations.length > 0 && (
+        locations.length > 0 ? (
           <Wrapper
             _ref={tabRef}
             className="grid sm:grid-cols-3 grid-cols-2 gap-4 overflow-y-scroll"
@@ -234,6 +233,10 @@ const SearchLocationScreen = () => {
               );
             })}
           </Wrapper>
+        ) : (
+          (!latitude && !longitude) && <Heading>
+            Please enter your current location!
+          </Heading> 
         )
       )}
       {/* w-[220px] sm:w-[300px] md:w-[350px] lg:w-[420px] xl:w-[360px] !h-[400px] !max-w-none */}

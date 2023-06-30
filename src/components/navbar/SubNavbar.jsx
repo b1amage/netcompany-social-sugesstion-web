@@ -41,7 +41,6 @@ const SubNavbar = ({ user, homeFilter, searchFilter }) => {
   const [address, setAddress] = useState();
   const [showAutoComplete, setShowAutoComplete] = useState(false);
 
-  const { isGetCurrentLocation, isTurnOnGPS } = useCurrentLocation();
 
   const onChangeCurrentLocation = (location, latitude, longitude) => {
     localStorage.setItem("currentLocation", JSON.stringify(location));
@@ -73,10 +72,8 @@ const SubNavbar = ({ user, homeFilter, searchFilter }) => {
               imageClassName="md:w-[28px] md:h-[28px]"
             />
             <Heading className="!text-[14px] w-fit truncate ">
-              {isTurnOnGPS
-                ? isGetCurrentLocation
-                  ? "...Loading"
-                  : currentLocation.formatted_address
+              {currentLocation
+                  ? currentLocation.formatted_address
                 : !localStorage.getItem("currentLocation")
                 ? "Enter a location"
                 : JSON.parse(localStorage.getItem("currentLocation"))
