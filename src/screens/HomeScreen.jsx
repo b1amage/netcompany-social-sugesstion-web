@@ -55,46 +55,47 @@ const HomeScreen = (props) => {
         setPermissionStatus(permissionStatus.state);
         permissionStatus.onchange = () => {
           setPermissionStatus(permissionStatus.state);
+          localStorage.setItem("gpsPermission", permissionStatus.state)
           // setIsTurnOnGPS(permissionStatus.state=="granted")
         };
       });
   }, [permissionsStatus]);
 
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-    useGeolocated({
-      positionOptions: {
-        enableHighAccuracy: false,
-      },
-      userDecisionTimeout: Infinity,
-      isOptimisticGeolocationEnabled: permissionsStatus == "granted",
-    });
-
   useEffect(() => {
-    // setIsLoading(true)
-    // if (isTurnOnGPS) {
-    console.log(isGeolocationAvailable);
-    console.log(permissionsStatus);
-    console.log(isLoading);
-    // console.log(isGeolocationAvailable)
-    setIsLoading(true);
-    if (isGeolocationAvailable && isGeolocationEnabled && coords) {
-      const fetchAddress = async () => {
-        const { data } = await axios.get(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.latitude},${coords.longitude}&key=${key}`
-        );
-        dispatch(changeCurrentLocation(data.results[0]));
-        dispatch(changeLatitude(data.results[0]?.geometry?.location?.lat));
-        dispatch(changeLongitude(data.results[0]?.geometry?.location?.lng));
-        console.log(data.results[0]);
-        localStorage.setItem(
-          "currentLocation",
-          JSON.stringify(data.results[0])
-        );
-        setIsLoading(false);
-      };
-      fetchAddress();
+    if (permissionsStatus === "granted") {
+      navigator.geolocation.getCurrentPosition(({ coords }) => {
+        // dispatch(changeCurrentLocation(data.results[0]));
+        dispatch(changeLatitude(coords.latitude));
+        dispatch(changeLongitude(coords.longitude));
+      });
     }
-  }, [isGeolocationAvailable, isGeolocationEnabled, coords]);
+    if (
+      permissionsStatus === "denied" &&
+      localStorage.getItem("currentLocation")
+    ) {
+      dispatch(
+        changeLatitude(
+          JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+            ?.location?.lat
+        )
+      );
+      dispatch(
+        changeLongitude(
+          JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+            ?.location?.lng
+        )
+      );
+    }
+  }, [permissionsStatus]);
+  // const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+  //   useGeolocated({
+  //     positionOptions: {
+  //       enableHighAccuracy: false,
+  //     },
+  //     userDecisionTimeout: Infinity,
+  //     isOptimisticGeolocationEnabled: permissionsStatus == "granted",
+  //   });
+
 
   const { latitude, longitude, currentLocation } = useSelector(
     ({ filter, currentLocation }) => {
@@ -153,18 +154,14 @@ const HomeScreen = (props) => {
 
   useEffect(() => {
     // if (latitude && longitude) {
-      if (currentLocation || localStorage.getItem("currentLocation")) {
+    if (latitude && longitude) {
       // setIsLoading(true);
       const fetchFeaturedLocations = async () => {
         const response = await locationApi.getFeaturedLocation({
-          lat: permissionsStatus === "granted"
-            ? latitude
-            : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-                ?.location?.lat,
-          lng: permissionsStatus === "granted"
-            ? longitude
-            : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-                ?.location?.lng,
+          lat:
+            latitude,
+          lng:
+            longitude
         });
         setFeaturedLocations(response.data.results);
         localStorage.setItem("featuredNextCursor", response.data.next_cursor);
@@ -176,17 +173,14 @@ const HomeScreen = (props) => {
   }, [permissionsStatus, latitude, longitude]);
 
   useEffect(() => {
-    if (currentLocation || localStorage.getItem("currentLocation")) {
+    // if (currentLocation || localStorage.getItem("currentLocation")) {
+    if (latitude && longitude) {
       const fetchLatestLocations = async () => {
         const response = await locationApi.getLatestLocation({
-          lat: permissionsStatus === "granted"
-            ? latitude
-            : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-                ?.location?.lat,
-          lng: permissionsStatus === "granted"
-            ? longitude
-            : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-                ?.location?.lng,
+          lat:
+            latitude,
+          lng:
+            longitude
         });
         setLatestLocations(response.data.results);
         localStorage.setItem("latestNextCursor", response.data.next_cursor);
@@ -195,9 +189,38 @@ const HomeScreen = (props) => {
       };
       fetchLatestLocations();
     }
+
+    // }
     // console.log(featuredNextCursor);
     // console.log(latestNextCursor);
   }, [permissionsStatus, latitude, longitude]);
+
+  useEffect(() => {
+    // setIsLoading(true)
+    // if (isTurnOnGPS) {
+    // console.log(isGeolocationAvailable);
+    console.log(permissionsStatus);
+    console.log(isLoading);
+    // console.log(isGeolocationAvailable)
+    // setIsLoading(true);
+    if (latitude && longitude) {
+      const fetchAddress = async () => {
+        const { data } = await axios.get(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${key}`
+        );
+        dispatch(changeCurrentLocation(data.results[0]));
+        // dispatch(changeLatitude(data.results[0]?.geometry?.location?.lat));
+        // dispatch(changeLongitude(data.results[0]?.geometry?.location?.lng));
+        console.log(data.results[0]);
+        localStorage.setItem(
+          "currentLocation",
+          JSON.stringify(data.results[0])
+        );
+        // setIsLoading(false);
+      };
+      fetchAddress();
+    }
+  }, [latitude, longitude]);
 
   const handleLoadMoreFeaturedData = (nextCursor) => {
     const now = Date.now();
@@ -205,20 +228,16 @@ const HomeScreen = (props) => {
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
     if (now - lastFetch < 1000) return;
     if (nextCursor === null) return;
-    setIsFeaturedUpdating(true);
+    // setIsFeaturedUpdating(true);
     setLastFetch(now);
 
     const fetchFeaturedLocations = async () => {
       const response = await locationApi.getFeaturedLocation(
         {
-          lat: permissionsStatus === "granted"
-            ? latitude
-            : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-                ?.location?.lat,
-          lng: permissionsStatus === "granted"
-            ? longitude
-            : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-                ?.location?.lng,
+          lat:
+            latitude,
+          lng:
+            longitude
         },
         nextCursor
       );
@@ -236,20 +255,16 @@ const HomeScreen = (props) => {
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
     if (now - lastFetch < 1000) return;
     if (nextCursor === null) return;
-    setIsLatestUpdating(true);
+    // setIsLatestUpdating(true);
     setLastFetch(now);
 
     const fetchLatestLocations = async () => {
       const response = await locationApi.getLatestLocation(
         {
-          lat: permissionsStatus === "granted"
-            ? latitude
-            : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-                ?.location?.lat,
-          lng: permissionsStatus === "granted"
-            ? longitude
-            : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-                ?.location?.lng,
+          lat:
+            latitude,
+          lng:
+            longitude
         },
         nextCursor
       );
@@ -317,9 +332,14 @@ const HomeScreen = (props) => {
   );
   return (
     <>
-      { permissionsStatus === undefined?<Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
-          <Heading>Please denied or allow to give the permission to access your current location!</Heading>
-        </Screen> :permissionsStatus === "prompt" ? (
+      {permissionsStatus === undefined ? (
+        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
+          <Heading>
+            Please denied or allow to give the permission to access your current
+            location!
+          </Heading>
+        </Screen>
+      ) : permissionsStatus === "prompt" ? (
         <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
           <Loading />
         </Screen>
@@ -344,7 +364,7 @@ const HomeScreen = (props) => {
             {/* )} */}
           </>
         </Screen>
-      ) : isLoading ? (
+      ) : (!latitude && !longitude) ? (
         <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
           <Loading />
         </Screen>
