@@ -52,7 +52,7 @@ const HomeScreen = (props) => {
     navigator.permissions
       .query({ name: "geolocation" })
       .then((permissionStatus) => {
-        // setPermissionStatus(permissionStatus.state);
+        setPermissionStatus(permissionStatus.state);
         permissionStatus.onchange = () => {
           setPermissionStatus(permissionStatus.state);
           // setIsTurnOnGPS(permissionStatus.state=="granted")
@@ -107,18 +107,18 @@ const HomeScreen = (props) => {
     }
   );
 
-  useEffect(() => {
-    if (localStorage.getItem("loginReload") === "true") {
-      localStorage.setItem("loginReload", "false");
-      location.reload();
-    }
+  // useEffect(() => {
+  //   if (localStorage.getItem("loginReload") === "true") {
+  //     localStorage.setItem("loginReload", "false");
+  //     location.reload();
+  //   }
 
-    const user =
-      localStorage.getItem(localStorageKey.user) || JSON.stringify({});
-    if (user === JSON.stringify({})) {
-      navigate(ROUTE.LOGIN);
-    }
-  }, []);
+  //   const user =
+  //     localStorage.getItem(localStorageKey.user) || JSON.stringify({});
+  //   if (user === JSON.stringify({})) {
+  //     navigate(ROUTE.LOGIN);
+  //   }
+  // }, []);
   const { user } = useSelector((state) => state.user);
 
   // ONBOARDING CHECK
@@ -327,7 +327,7 @@ const HomeScreen = (props) => {
         <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
           <>
             <Wrapper col="true" className="gap-4 md:items-center">
-              <SubNavbar user={user} />
+              <SubNavbar user={user} searchBar />
             </Wrapper>
 
             <OnBoardingSlider />
@@ -352,7 +352,7 @@ const HomeScreen = (props) => {
         <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
           <>
             <Wrapper col="true" className="gap-4 md:items-center">
-              <SubNavbar user={user} />
+              <SubNavbar user={user} searchBar />
             </Wrapper>
 
             <OnBoardingSlider />

@@ -24,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 import useViewport from "@/hooks/useScreenWidth";
 import ROUTE from "@/constants/routes";
 
-const SubNavbar = ({ user, homeFilter, searchFilter }) => {
+const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName }) => {
   const dispatch = useDispatch();
   const { isAdded, isShowFilter, currentLocation } = useSelector(
     ({ navbar, currentLocation }) => {
@@ -55,14 +55,14 @@ const SubNavbar = ({ user, homeFilter, searchFilter }) => {
   }, [window.location.pathname]);
   return (
     <>
-      <Wrapper col="true" className="w-full gap-4">
+      <Wrapper col="true" className={`w-full gap-4 ${wrapperClassName}`}>
         <Wrapper
           col="true"
-          className="md:flex-row justify-between gap-4 truncate"
+          className="md:flex-row justify-between md:items-center gap-4 truncate"
         >
           <User user={user} src={user.imageUrl} />
           <Wrapper
-            className="flex items-center cursor-pointer hover:bg-gray-200/60 px-3 duration-300 rounded-lg"
+            className="flex items-center h-[60px] cursor-pointer hover:bg-gray-200/60 px-3 duration-300 rounded-lg"
             onClick={() => setShowAutoComplete(true)}
           >
             <Image
@@ -100,7 +100,7 @@ const SubNavbar = ({ user, homeFilter, searchFilter }) => {
               Register new location
             </Button>
           )}
-          <SearchBar className="w-full" />
+          {searchBar && <SearchBar className="w-full" />}
           {isShowFilter && (
             <Wrapper className="items-center w-fit justify-end gap-4">
               <Filter
@@ -113,7 +113,9 @@ const SubNavbar = ({ user, homeFilter, searchFilter }) => {
           )}
         </Wrapper>
 
-        <Popup
+        
+      </Wrapper>
+      {showAutoComplete && <Popup
           onClose={() => {}}
           actions={[]}
           // title="Search location"
@@ -146,8 +148,7 @@ const SubNavbar = ({ user, homeFilter, searchFilter }) => {
           titleClassName="text-[20px]"
           childrenClassName="!mt-0 w-full flex-col"
           // setShowPopup={setShowAutoComplete}
-        />
-      </Wrapper>
+        />}
     </>
   );
 };
