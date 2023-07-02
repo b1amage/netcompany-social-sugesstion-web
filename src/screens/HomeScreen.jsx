@@ -27,7 +27,7 @@ import axios from "axios";
 
 const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
 
-const HomeScreen = (props) => {
+const HomeScreen = () => {
   const navigate = useNavigate();
   const [featuredLocations, setFeaturedLocations] = useState([]);
   const [latestLocations, setLatestLocations] = useState([]);
@@ -36,7 +36,9 @@ const HomeScreen = (props) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isTurnOnGPS, setIsTurnOnGPS] = useState(false);
-  const [permissionsStatus, setPermissionStatus] = useState();
+  const [permissionsStatus, setPermissionStatus] = useState(
+    localStorage.getItem("gpsPermission") || undefined
+  );
 
   // const { isTurnOnGPS } = useCurrentLocation();
   const dispatch = useDispatch();
@@ -46,56 +48,6 @@ const HomeScreen = (props) => {
   const onSelectLocation = (id) => {
     navigate(id);
   };
-
-  useEffect(() => {
-    // setIsLoading(true)
-    navigator.permissions
-      .query({ name: "geolocation" })
-      .then((permissionStatus) => {
-        setPermissionStatus(permissionStatus.state);
-        permissionStatus.onchange = () => {
-          setPermissionStatus(permissionStatus.state);
-          localStorage.setItem("gpsPermission", permissionStatus.state)
-          // setIsTurnOnGPS(permissionStatus.state=="granted")
-        };
-      });
-  }, [permissionsStatus]);
-
-  useEffect(() => {
-    if (permissionsStatus === "granted") {
-      navigator.geolocation.getCurrentPosition(({ coords }) => {
-        // dispatch(changeCurrentLocation(data.results[0]));
-        dispatch(changeLatitude(coords.latitude));
-        dispatch(changeLongitude(coords.longitude));
-      });
-    }
-    if (
-      permissionsStatus === "denied" &&
-      localStorage.getItem("currentLocation")
-    ) {
-      dispatch(
-        changeLatitude(
-          JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-            ?.location?.lat
-        )
-      );
-      dispatch(
-        changeLongitude(
-          JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-            ?.location?.lng
-        )
-      );
-    }
-  }, [permissionsStatus]);
-  // const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-  //   useGeolocated({
-  //     positionOptions: {
-  //       enableHighAccuracy: false,
-  //     },
-  //     userDecisionTimeout: Infinity,
-  //     isOptimisticGeolocationEnabled: permissionsStatus == "granted",
-  //   });
-
 
   const { latitude, longitude, currentLocation } = useSelector(
     ({ filter, currentLocation }) => {
@@ -107,6 +59,91 @@ const HomeScreen = (props) => {
       };
     }
   );
+
+  // useEffect(() => {
+  //   if (window.performance) {
+  //     if (performance.navigation.type == 1) {
+  //       localStorage.removeItem("gpsPermission");
+  //     }
+  //   }
+  // }, []);
+  // useEffect(() => {
+  //   // setIsLoading(true)
+  //   if (permissionsStatus === undefined || permissionsStatus === "prompt"){
+  //     navigator.permissions
+  //     .query({ name: "geolocation" })
+  //     .then((permissionStatus) => {
+  //       setPermissionStatus(permissionStatus.state);
+  //       permissionStatus.onchange = () => {
+  //         setPermissionStatus(permissionStatus.state);
+  //         localStorage.setItem("gpsPermission", permissionStatus.state);
+  //         // setIsTurnOnGPS(permissionStatus.state=="granted")
+  //       };
+  //     });
+  //   }
+
+  // }, [permissionsStatus, latitude, longitude]);
+
+  useEffect(() => {
+    // if (permissionsStatus === "granted") {
+    navigator.geolocation.getCurrentPosition(({ coords }) => {
+      // dispatch(changeCurrentLocation(data.results[0]));
+      dispatch(changeLatitude(coords.latitude));
+      dispatch(changeLongitude(coords.longitude));
+    });
+    navigator.geolocation.watchPosition(
+      () => {
+        console.log("i'm tracking you!");
+      },
+      function (error) {
+        if (error.code == error.PERMISSION_DENIED)
+          dispatch(
+            changeLatitude(
+              JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+                ?.location?.lat
+            )
+          );
+        dispatch(
+          changeLongitude(
+            JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+              ?.location?.lng
+          )
+        );
+      }
+    );
+    // }
+    // if (
+    //   permissionsStatus === "denied" &&
+    //   localStorage.getItem("currentLocation")
+    // ) {
+    //   dispatch(
+    //     changeLatitude(
+    //       JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+    //         ?.location?.lat
+    //     )
+    //   );
+    //   dispatch(
+    //     changeLongitude(
+    //       JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+    //         ?.location?.lng
+    //     )
+    //   );
+    // }
+    console.log(latitude);
+    console.log(longitude);
+  }, [
+    // permissionsStatus,
+    latitude,
+    longitude,
+  ]);
+  // const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+  //   useGeolocated({
+  //     positionOptions: {
+  //       enableHighAccuracy: false,
+  //     },
+  //     userDecisionTimeout: Infinity,
+  //     isOptimisticGeolocationEnabled: permissionsStatus == "granted",
+  //   });
 
   // useEffect(() => {
   //   if (localStorage.getItem("loginReload") === "true") {
@@ -155,37 +192,34 @@ const HomeScreen = (props) => {
   useEffect(() => {
     // if (latitude && longitude) {
     if (latitude && longitude) {
-      // setIsLoading(true);
+      setIsLoading(true);
       const fetchFeaturedLocations = async () => {
         const response = await locationApi.getFeaturedLocation({
-          lat:
-            latitude,
-          lng:
-            longitude
+          lat: latitude,
+          lng: longitude,
         });
         setFeaturedLocations(response.data.results);
         localStorage.setItem("featuredNextCursor", response.data.next_cursor);
         setFeaturedNextCursor(response.data.next_cursor);
-        // setIsLoading(false);
+        setIsLoading(false);
       };
       fetchFeaturedLocations();
     }
-  }, [permissionsStatus, latitude, longitude]);
+  }, [currentLocation, latitude, longitude]);
 
   useEffect(() => {
     // if (currentLocation || localStorage.getItem("currentLocation")) {
     if (latitude && longitude) {
+      setIsLoading(true);
       const fetchLatestLocations = async () => {
         const response = await locationApi.getLatestLocation({
-          lat:
-            latitude,
-          lng:
-            longitude
+          lat: latitude,
+          lng: longitude,
         });
         setLatestLocations(response.data.results);
         localStorage.setItem("latestNextCursor", response.data.next_cursor);
         setLatestNextCursor(response.data.next_cursor);
-        // setIsLoading(false);
+        setIsLoading(false);
       };
       fetchLatestLocations();
     }
@@ -193,7 +227,7 @@ const HomeScreen = (props) => {
     // }
     // console.log(featuredNextCursor);
     // console.log(latestNextCursor);
-  }, [permissionsStatus, latitude, longitude]);
+  }, [currentLocation, latitude, longitude]);
 
   useEffect(() => {
     // setIsLoading(true)
@@ -226,6 +260,8 @@ const HomeScreen = (props) => {
     const now = Date.now();
 
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    console.log(latitude);
+    console.log(longitude);
     if (now - lastFetch < 1000) return;
     if (nextCursor === null) return;
     // setIsFeaturedUpdating(true);
@@ -235,9 +271,11 @@ const HomeScreen = (props) => {
       const response = await locationApi.getFeaturedLocation(
         {
           lat:
+            // JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lat,
             latitude,
           lng:
-            longitude
+            // JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lng,
+            longitude,
         },
         nextCursor
       );
@@ -259,12 +297,16 @@ const HomeScreen = (props) => {
     setLastFetch(now);
 
     const fetchLatestLocations = async () => {
+      console.log(latitude);
+      console.log(longitude);
       const response = await locationApi.getLatestLocation(
         {
           lat:
+            // JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lat,
             latitude,
           lng:
-            longitude
+            // JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lng,
+            longitude,
         },
         nextCursor
       );
@@ -282,22 +324,27 @@ const HomeScreen = (props) => {
       <Wrapper className="justify-between items-end">
         <Label className="!text-[32px]">Popular</Label>
       </Wrapper>
-      {/* {!isLoading ? ( */}
-      {featuredLocations.length > 0 ? (
-        <Slider
-          items={featuredLocations}
-          className="!bg-transparent sm:text-left !p-0"
-          cardClassName="text-center hover:opacity-70 cursor-pointer"
-          perView={4}
-          onClick={onSelectLocation}
-          loadMore={handleLoadMoreFeaturedData}
-          // nextCursor={localStorage.getItem("featuredNextCursor") || null}
-          type="featuredLocations"
-        />
+      {!isLoading ? (
+        featuredLocations.length > 0 ? (
+          <Slider
+            items={featuredLocations}
+            className="!bg-transparent sm:text-left !p-0"
+            cardClassName="text-center hover:opacity-70 cursor-pointer"
+            perView={4}
+            onClick={onSelectLocation}
+            loadMore={handleLoadMoreFeaturedData}
+            // nextCursor={localStorage.getItem("featuredNextCursor") || null}
+            type="featuredLocations"
+          />
+        ) : (
+          <Wrapper className="justify-center">
+            <Heading>No results found!</Heading>
+          </Wrapper>
+        )
       ) : (
-        <Wrapper className="justify-center">
-          <Heading>No results found!</Heading>
-        </Wrapper>
+        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
+          <Loading />
+        </Screen>
       )}
     </Wrapper>
   );
@@ -312,59 +359,32 @@ const HomeScreen = (props) => {
       <Wrapper className="justify-between items-end">
         <Label className="!text-[32px]">Latest</Label>
       </Wrapper>
-      {/* {!isLoading ? ( */}
-      {latestLocations.length > 0 ? (
-        <Slider
-          items={latestLocations}
-          className="!bg-transparent sm:text-left !p-0"
-          cardClassName="bg-neutral-100 text-center"
-          perView={4}
-          onClick={onSelectLocation}
-          loadMore={handleLoadMoreLatestData}
-          type="latestLocations"
-        />
+      {!isLoading ? (
+        latestLocations.length > 0 ? (
+          <Slider
+            items={latestLocations}
+            className="!bg-transparent sm:text-left !p-0"
+            cardClassName="bg-neutral-100 text-center"
+            perView={4}
+            onClick={onSelectLocation}
+            loadMore={handleLoadMoreLatestData}
+            type="latestLocations"
+          />
+        ) : (
+          <Wrapper className="justify-center">
+            <Heading>No results found!</Heading>
+          </Wrapper>
+        )
       ) : (
-        <Wrapper className="justify-center">
-          <Heading>No results found!</Heading>
-        </Wrapper>
+        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
+          <Loading />
+        </Screen>
       )}
     </Wrapper>
   );
   return (
     <>
-      {permissionsStatus === undefined ? (
-        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
-          <Heading>
-            Please denied or allow to give the permission to access your current
-            location!
-          </Heading>
-        </Screen>
-      ) : permissionsStatus === "prompt" ? (
-        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
-          <Loading />
-        </Screen>
-      ) : permissionsStatus === "denied" ? (
-        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
-          <>
-            <Wrapper col="true" className="gap-4 md:items-center">
-              <SubNavbar user={user} searchBar />
-            </Wrapper>
-
-            <OnBoardingSlider />
-
-            {/* {searchParams.get("listType") === "POPULAR" ? (
-                renderPopularLocations
-              ) : searchParams.get("listType") === "LATEST" ? (
-                renderLatestLocations
-              ) : ( */}
-            <>
-              {renderPopularLocations}
-              {renderLatestLocations}
-            </>
-            {/* )} */}
-          </>
-        </Screen>
-      ) : (!latitude && !longitude) ? (
+      {!latitude && !longitude ? (
         <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
           <Loading />
         </Screen>

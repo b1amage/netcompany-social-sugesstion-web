@@ -44,6 +44,7 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
 
   const onChangeCurrentLocation = (location, latitude, longitude) => {
     localStorage.setItem("currentLocation", JSON.stringify(location));
+    localStorage.setItem("gpsPermission", "denied");
     dispatch(changeCurrentLocation(location));
     dispatch(changeLatitude(latitude));
     dispatch(changeLongitude(longitude));
