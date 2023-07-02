@@ -35,6 +35,12 @@
     @apply flex justify-center items-center;
   }
 
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
   .text-overflow-ellipsis {
     @apply overflow-hidden text-ellipsis;
     display: -webkit-box;
