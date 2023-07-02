@@ -58,6 +58,35 @@ const eventApi = {
       console.log(error);
     }
   },
+
+  async getEvents(searchInput, type, nextCursor) {
+    try {
+      const url = nextCursor
+        ? `/event/filter/${type}?searchInput=${searchInput}&next_cursor=${nextCursor}`
+        : `/event/filter/${type}?searchInput=${searchInput}`;
+
+      const response = await axiosClient.get(url, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  async deleteEvent(id) {
+    try {
+      const url = `/event/${id}`;
+      const response = await axiosClient.delete(url, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 
 export default eventApi;
