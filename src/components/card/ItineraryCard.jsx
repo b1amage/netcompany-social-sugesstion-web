@@ -27,7 +27,7 @@ const ItineraryCard = ({ name, numberOfLocations, createdAt }) => {
   };
   return (
     <>
-      <Wrapper className=" cursor-pointer hover:-translate-y-2 md:hover:-translate-y-4 duration-300 border hover:ring-1 hover:ring-primary-300 border-primary-400 bg-neutral-300 rounded-2xl justify-around items-center px-4 py-6 gap-8">
+      <Wrapper className=" cursor-pointer duration-300 border md:hover:border-b-4 md:hover:border-r-4 md:hover:border-b-neutral-600 md:hover:border-r-neutral-600 md:hover:drop-shadow  bg-neutral-300 rounded-2xl justify-around items-center px-4 py-6 gap-8">
         <Wrapper col="true" className="w-full truncate">
           <Heading className="truncate text-[16px] md:!text-[20px]">{name}</Heading>
           <Heading className="!text-[14px] md:!text-[16px]">Locations: {numberOfLocations}</Heading>

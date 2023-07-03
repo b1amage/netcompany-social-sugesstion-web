@@ -92,7 +92,7 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
                 navigate("/create-location");
               }}
               // active
-              className="md:!w-[400px] md:!rounded-2xl flex justify-evenly gap-2 h-[60px] !rounded-full !fixed md:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 md:!bg-primary-400 md:!border-primary-400 border-secondary-400"
+              className="md:!w-[500px] md:!rounded-2xl flex justify-evenly gap-2 h-[60px] !rounded-full !fixed md:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 md:!bg-primary-400 md:!border-primary-400 border-secondary-400"
             >
               <Image
                 imageClassName=""
