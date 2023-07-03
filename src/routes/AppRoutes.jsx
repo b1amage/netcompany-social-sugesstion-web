@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import ROUTE from "@/constants/routes";
 import { Routes, Route } from "react-router-dom";
 
+const AllEventsScreen = React.lazy(() => import("@/screens/AllEventsScreen"));
 const ItinerariesScreen = React.lazy(() =>
   import("@/screens/ItinerariesScreen")
 );
@@ -62,7 +63,7 @@ const AppRoutes = () => {
 
           <Route path="/atc" element={<AutoCompleteScreen />} />
           <Route path={ROUTE.TEST} element={<TestScreen />} />
-          <Route path={ROUTE.EVENTS} element={<EventsScreen />} />
+          <Route path={ROUTE.EVENTS} element={<AllEventsScreen />} />
           <Route
             path={ROUTE.DETAILS_EVENT}
             element={<DetailsScreen event="true" />}
@@ -84,10 +85,7 @@ const AppRoutes = () => {
             path={ROUTE.SEARCH_LOCATION}
             element={<SearchLocationScreen />}
           />
-          <Route
-            path={ROUTE.ITINERARIES}
-            element={<ItinerariesScreen />}
-          />
+          <Route path={ROUTE.ITINERARIES} element={<ItinerariesScreen />} />
         </Routes>
       </Suspense>
     </>

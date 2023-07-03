@@ -22,7 +22,7 @@ import { DEFAULT } from "@/constants/defaultData";
 import Guess from "@/components/guess/Guess";
 import { AiFillCalendar, AiFillClockCircle } from "react-icons/ai";
 import { HiLocationMarker } from "react-icons/hi";
-import parse from "html-react-parser";
+import toast, { Toaster } from "react-hot-toast";
 
 function convertDateTime(dateTimeString) {
   var date = new Date(dateTimeString);
@@ -36,10 +36,11 @@ function convertDateTime(dateTimeString) {
 
   return `${day}/${month}/${year}, ${hours}:${minutes}`;
 }
-
+const notify = () => toast.success("Successfully deleted");
 const EventDetailsScreen = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
   const [event, setEvent] = useState({});
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -73,7 +74,12 @@ const EventDetailsScreen = () => {
 
   const handleDelete = () => {
     const handleApi = async () => {
-      console.log("delete");
+      setDeleting(true);
+      const response = await eventApi.deleteEvent(id);
+      console.log(response);
+      setDeleting(false);
+      notify();
+      navigate("/events");
     };
 
     handleApi();
@@ -86,6 +92,13 @@ const EventDetailsScreen = () => {
   }
   return (
     <Screen className="py-2 pb-4 xl:gap-10 xl:pb-10">
+      {deleting && (
+        <Portal>
+          <Wrapper className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
+            <Deleting />
+          </Wrapper>
+        </Portal>
+      )}
       {loading ? (
         <LoadingScreen />
       ) : (

@@ -9,6 +9,7 @@ import Text from "@/components/typography/Text";
 import { GoLocation } from "react-icons/go";
 import Image from "@/components/image/Image";
 import { DEFAULT } from "@/constants/defaultData";
+import { DateTime } from "luxon";
 
 const InputWithDropdown = ({
   placeholder,
@@ -22,6 +23,8 @@ const InputWithDropdown = ({
   subFieldToDisplay,
   icon,
   clearInputAfterSelect,
+  isForEventSearch,
+  hideError,
 }) => {
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -84,13 +87,21 @@ const InputWithDropdown = ({
     onSelect(suggestion);
   };
 
+  function parseDate(isoString) {
+    const [datePart, timePart] = isoString.split("T");
+    const [yyyy, mm, dd] = datePart.split("-");
+    const [hh, mi] = timePart.split(":");
+
+    return `${dd}/${mm}/${yyyy}, ${hh}:${mi}`;
+  }
+
   return (
     <div className="relative flex flex-col w-full !gap-1 md:!gap-2 lg:!gap-3">
       <Label id={id} required={required}>
         {label}
       </Label>
 
-      {err && err !== "" && <Error fluid>{err}</Error>}
+      {!hideError && err && err !== "" && <Error fluid>{err}</Error>}
 
       <div className="relative">
         <input
@@ -105,7 +116,7 @@ const InputWithDropdown = ({
             setInput(e.target.value);
             // if (suggestions.length === 0)
             //   setErr(`No place with name ${input} found in database`);
-            if (!selected) setErr("Please select!");
+            if (!selected && !hideError) setErr("Please select!");
           }}
         />
 
@@ -137,7 +148,9 @@ const InputWithDropdown = ({
                       {suggestion[fieldToDisplay]}
                     </Text>
                     <Text className="!text-xs !text-neutral-500 text-overflow-ellipsis">
-                      {suggestion[subFieldToDisplay]}
+                      {subFieldToDisplay === "startDateTime"
+                        ? parseDate(suggestion[subFieldToDisplay])
+                        : suggestion[subFieldToDisplay]}
                     </Text>
                   </Wrapper>
                 </Wrapper>
