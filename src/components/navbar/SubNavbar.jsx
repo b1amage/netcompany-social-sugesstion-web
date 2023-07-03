@@ -26,12 +26,14 @@ import ROUTE from "@/constants/routes";
 
 const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName }) => {
   const dispatch = useDispatch();
-  const { isAdded, isShowFilter, currentLocation } = useSelector(
+  const { isAdded, isShowFilter, currentLocation, latitude, longitude } = useSelector(
     ({ navbar, currentLocation }) => {
       return {
         isAdded: navbar.isAdded,
         isShowFilter: navbar.isShowFilter,
         currentLocation: currentLocation.currentLocation,
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
       };
     }
   );
@@ -73,8 +75,8 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
               imageClassName="md:w-[28px] md:h-[28px]"
             />
             <Heading className="!text-[14px] w-fit truncate ">
-              {currentLocation
-                  ? currentLocation.formatted_address
+              {localStorage.getItem("gpsPermission") === "granted"
+                  ? ((latitude && longitude && currentLocation) ? currentLocation.formatted_address : "...Loading")
                 : !localStorage.getItem("currentLocation")
                 ? "Enter a location"
                 : JSON.parse(localStorage.getItem("currentLocation"))
@@ -89,8 +91,8 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
               onClick={() => {
                 navigate("/create-location");
               }}
-              active
-              className="md:!w-[400px] flex justify-evenly gap-2 h-[60px] !rounded-2xl !fixed md:!static z-[4000] right-4 !w-[250px] bottom-4 border-primary-400"
+              // active
+              className="md:!w-[400px] md:!rounded-2xl flex justify-evenly gap-2 h-[60px] !rounded-full !fixed md:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 md:!bg-primary-400 md:!border-primary-400 border-secondary-400"
             >
               <Image
                 imageClassName=""
@@ -98,7 +100,9 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
                 alt="add"
                 className="w-[28px] h-[28px]"
               />
-              Register new location
+              <Heading className="md:block text-white hidden !text-[20px]">
+                Register new location
+              </Heading>
             </Button>
           )}
           {searchBar && <SearchBar className="w-full" />}
