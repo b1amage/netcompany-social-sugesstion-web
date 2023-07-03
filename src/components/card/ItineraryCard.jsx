@@ -31,7 +31,7 @@ const ItineraryCard = ({ name, numberOfLocations, createdAt }) => {
         <Wrapper col="true" className="w-full truncate">
           <Heading className="truncate text-[16px] md:!text-[20px]">{name}</Heading>
           <Heading className="!text-[14px] md:!text-[16px]">Locations: {numberOfLocations}</Heading>
-          <SubHeading className="!text-[12px] !text-neutral-600 md:!text-[14px]">Created at: {createdAt}</SubHeading>
+          {/* <SubHeading className="!text-[12px] !text-neutral-600 md:!text-[14px]">Created at: {createdAt}</SubHeading> */}
         </Wrapper>
         {/* <Wrapper> */}
         <Wrapper className="!w-fit">
