@@ -22,7 +22,7 @@ import {
   changeLatitude,
   changeLongitude,
 } from "@/features/currentLocationSlice";
-import { useGeolocated } from "react-geolocated";
+
 import axios from "axios";
 
 const key = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY;
@@ -63,13 +63,17 @@ const HomeScreen = () => {
     }
   );
 
-  // useEffect(() => {
-  //   if (window.performance) {
-  //     if (performance.navigation.type == 1) {
-  //       localStorage.removeItem("gpsPermission");
-  //     }
-  //   }
-  // }, []);
+  useEffect(() => {
+    const handler = (e) => 
+    {  
+      e.preventDefault();
+      localStorage.removeItem("gpsPermission")
+    }
+    window.addEventListener("beforeunload", handler);
+    return () => {
+        window.removeEventListener("scroll", handler);
+    };
+  }, []);
   // useEffect(() => {
   //   // setIsLoading(true)
   //   if (permissionsStatus === undefined || permissionsStatus === "prompt"){
@@ -93,10 +97,10 @@ const HomeScreen = () => {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         // dispatch(changeCurrentLocation(data.results[0]));
-        // if (localStorage.getItem("gpsPermission") === "denied") return
+        if (localStorage.getItem("gpsPermission") === "denied") return
         // if (localStorage.setItem("defaultGpsPermission") === "denied") return
         setIsLoading(true);
-        // localStorage.setItem("defaultGpsPermission", "granted");
+        localStorage.setItem("defaultGpsPermission", "granted");
         dispatch(changeLatitude(coords.latitude));
         dispatch(changeLongitude(coords.longitude));
         // localStorage.setItem("gpsPermission", "granted");
@@ -105,7 +109,7 @@ const HomeScreen = () => {
         return;
       },
       (error) => {
-        // localStorage.setItem("defaultGpsPermission", "denied");
+        localStorage.setItem("defaultGpsPermission", "denied");
         if (
           error.code == error.PERMISSION_DENIED
         ) {
@@ -150,8 +154,8 @@ const HomeScreen = () => {
     console.log(longitude);
   }, [
     // permissionsStatus,
-    latitude,
-    longitude,
+    // latitude,
+    // longitude,
   ]);
   // const { coords, isGeolocationAvailable, isGeolocationEnabled } =
   //   useGeolocated({

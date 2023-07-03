@@ -25,6 +25,9 @@ const InputWithDropdown = ({
   clearInputAfterSelect,
   isForEventSearch,
   hideError,
+  onKeyPress,
+  inputClassName,
+  wrapperClassName
 }) => {
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -96,7 +99,7 @@ const InputWithDropdown = ({
   }
 
   return (
-    <div className="relative flex flex-col w-full !gap-1 md:!gap-2 lg:!gap-3">
+    <div className={`relative flex flex-col w-full !gap-1 md:!gap-2 lg:!gap-3 ${wrapperClassName}`}>
       <Label id={id} required={required}>
         {label}
       </Label>
@@ -107,7 +110,7 @@ const InputWithDropdown = ({
         <input
           className={`!w-full px-4 py-3 text-sm duration-300 border rounded-lg outline-none border-primary-400 focus:ring-1 focus:ring-primary-400 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 text-overflow-ellipsis ${
             selected && inputState.success
-          } ${(err !== null) & (err !== "") && inputState.err}`}
+          } ${(err !== null) & (err !== "") && inputState.err} ${inputClassName}`}
           type="text"
           placeholder={placeholder}
           value={input}
@@ -118,6 +121,7 @@ const InputWithDropdown = ({
             //   setErr(`No place with name ${input} found in database`);
             if (!selected && !hideError) setErr("Please select!");
           }}
+          onKeyPress={(e) => onKeyPress(e, input)}
         />
 
         {!selected && suggestions.length > 0 && (

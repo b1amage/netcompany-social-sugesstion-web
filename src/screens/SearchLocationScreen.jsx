@@ -31,8 +31,9 @@ const SearchLocationScreen = () => {
   });
 
   useEffect(() => {
-    if (latitude && longitude) {
+    // if (latitude && longitude) {
       // if (currentLocation) {
+      setIsLoading(false)
       const fetchLocations = async () => {
         const response = await locationApi.getFeaturedLocation({
           locationCategory:
@@ -70,9 +71,7 @@ const SearchLocationScreen = () => {
         setIsLoading(false);
       };
       fetchLocations();
-    } else{
-      setIsLoading(false)
-    }
+    
   }, [latitude, longitude, searchParams]);
 
   useEffect(() => {
@@ -199,7 +198,7 @@ const SearchLocationScreen = () => {
             </span>
           </Heading>
         )
-      ) : ( latitude && longitude ?
+      ) : ( ((latitude && longitude) && (localStorage.getItem("currentLocation")))?
         <Heading className="text-primary-400 !text-[24px] md:!text-[32px]">
           Show all results
         </Heading> :
@@ -234,7 +233,7 @@ const SearchLocationScreen = () => {
             })}
           </Wrapper>
         ) : (
-          (!latitude && !longitude) && <Heading>
+          ((!latitude && !longitude) && (!localStorage.getItem("currentLocation"))) && <Heading>
             Please enter your current location!
           </Heading> 
         )
