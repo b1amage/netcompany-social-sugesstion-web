@@ -120,35 +120,38 @@ const HomeScreen = () => {
   
   const { user } = useSelector((state) => state.user);
 
-  // ONBOARDING CHECK
+  // // ONBOARDING CHECK
+  // useEffect(() => {
+  //   const onBoardingAlreadyShown = JSON.parse(
+  //     localStorage.getItem(localStorageKey.alreadyShownOnboarding)
+  //   );
+
+  //   if (!onBoardingAlreadyShown) {
+  //     navigate(ROUTE.ONBOARDING);
+  //     return;
+  //   }
+
   useEffect(() => {
-    const onBoardingAlreadyShown = JSON.parse(
-      localStorage.getItem(localStorageKey.alreadyShownOnboarding)
-    );
-
-    if (!onBoardingAlreadyShown) {
-      navigate(ROUTE.ONBOARDING);
-      return;
-    }
-
     // LOGIN CHECK
     if (localStorage.getItem("loginReload") === "true") {
       localStorage.setItem("loginReload", "false");
       location.reload();
     }
+  }, [user])
+    
 
-    const user =
-      localStorage.getItem(localStorageKey.user) || JSON.stringify({});
-    console.log("user", user);
+  //   const user =
+  //     localStorage.getItem(localStorageKey.user) || JSON.stringify({});
+  //   console.log("user", user);
 
-    // check verify
-    // if (user.isVerified === false) {
-    //   navigate("/onboarding");
-    // }
-    if (user === JSON.stringify({})) {
-      navigate(ROUTE.LOGIN);
-    }
-  }, []);
+  //   // check verify
+  //   // if (user.isVerified === false) {
+  //   //   navigate("/onboarding");
+  //   // }
+  //   if (user === JSON.stringify({})) {
+  //     navigate(ROUTE.LOGIN);
+  //   }
+  // }, []);
 
   useEffect(() => {
     // if (latitude && longitude) {

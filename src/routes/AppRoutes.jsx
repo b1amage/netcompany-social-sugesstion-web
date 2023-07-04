@@ -1,6 +1,7 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import ROUTE from "@/constants/routes";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const AllEventsScreen = React.lazy(() => import("@/screens/AllEventsScreen"));
 const ItinerariesScreen = React.lazy(() =>
@@ -45,6 +46,20 @@ const EditProfileScreen = React.lazy(() =>
 );
 
 const AppRoutes = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = localStorage.getItem("user") || null;
+    const idToken = localStorage.getItem("idToken") || null;
+    if (!idToken || user === JSON.stringify({}) || !user) {
+      navigate(ROUTE.LOGIN);
+    } else {
+      if (JSON.parse(localStorage.getItem("user")) !== JSON.stringify({})) {
+        navigate(ROUTE.HOME);
+      }
+    }
+  }, []);
+  
   return (
     <>
       <Navbar />
