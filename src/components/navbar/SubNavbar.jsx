@@ -129,7 +129,7 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
               {width >= 768 && (
                 <Heading className="text-center">Set current location</Heading>
               )}
-              <Wrapper>
+              <Wrapper className="!w-full">
                 <AiOutlineArrowLeft
                   className="h-full w-[60px] cursor-pointer "
                   onClick={() => setShowAutoComplete(false)}

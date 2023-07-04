@@ -9,7 +9,8 @@ import Text from "@/components/typography/Text";
 import { GoLocation } from "react-icons/go";
 import Image from "@/components/image/Image";
 import { DEFAULT } from "@/constants/defaultData";
-import { DateTime } from "luxon";
+
+import { MdClear } from "react-icons/md";
 
 const InputWithDropdown = ({
   placeholder,
@@ -29,6 +30,10 @@ const InputWithDropdown = ({
   inputClassName,
   wrapperClassName,
   // searchQuery
+  withClearButton,
+  hideLabel,
+  onEnter,
+  onChange
 }) => {
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -101,31 +106,47 @@ const InputWithDropdown = ({
 
   return (
     <div className={`relative flex flex-col w-full !gap-1 md:!gap-2 lg:!gap-3 ${wrapperClassName}`}>
-      <Label id={id} required={required}>
-        {label}
-      </Label>
+      {!hideLabel && (
+        <Label id={id} required={required}>
+          {label}
+        </Label>
+      )}
 
       {!hideError && err && err !== "" && <Error fluid>{err}</Error>}
 
       <div className="relative">
-        <input
-          className={`!w-full px-4 py-3 text-sm duration-300 border rounded-lg outline-none border-primary-400 focus:ring-1 focus:ring-primary-400 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 text-overflow-ellipsis ${
-            selected && inputState.success
-          } ${(err !== null) & (err !== "") && inputState.err} ${inputClassName}`}
-          type="text"
-          placeholder={placeholder}
-          value={input}
-          onChange={(e) => {
-            setSelected(false);
-            setInput(e.target.value);
-            // if (suggestions.length === 0)
-            //   setErr(`No place with name ${input} found in database`);
-            if (!selected && !hideError) setErr("Please select!");
-          }}
-          onKeyPress={(e) => onKeyPress(e, input)}
-        />
+        <div className="relative">
+          <input
+            className={`!w-full px-4 py-3 text-sm duration-300 border rounded-lg outline-none border-primary-400 focus:ring-1 focus:ring-primary-400 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 text-overflow-ellipsis ${
+              selected && inputState.success
+            } ${(err !== null) & (err !== "") && inputState.err} ${inputClassName}`}
+            type="text"
+            placeholder={placeholder}
+            value={input}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                onEnter(input);
+                setSuggestions([]);
+              }
+            }}
+            onChange={(e) => {
+              setSelected(false);
+              setInput(e.target.value);
+              // onChange(e.target.value)
+              // if (suggestions.length === 0)
+              //   setErr(`No place with name ${input} found in database`);
+              if (!selected && !hideError) setErr("Please select!");
+            }}
+          />
+          {withClearButton && input !== "" && (
+            <MdClear
+              className="absolute p-1 text-xl font-bold text-black -translate-y-1/2 rounded-full cursor-pointer bg-neutral-400 top-1/2 right-4 hover:opacity-75"
+              onClick={() => setInput("")}
+            />
+          )}
+        </div>
 
-        {!selected && suggestions.length > 0 && (
+        {input !== "" && !selected && suggestions.length > 0 && (
           <Wrapper
             _ref={listRef}
             col="true"

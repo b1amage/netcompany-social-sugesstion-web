@@ -64,7 +64,7 @@ const eventApi = {
       const url = nextCursor
         ? `/event/filter/${type}?searchInput=${searchInput}&next_cursor=${nextCursor}`
         : `/event/filter/${type}?searchInput=${searchInput}`;
-
+      console.log(url);
       const response = await axiosClient.get(url, {
         withCredentials: true,
       });
