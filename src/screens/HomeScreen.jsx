@@ -71,7 +71,7 @@ const HomeScreen = () => {
     }
     window.addEventListener("beforeunload", handler);
     return () => {
-        window.removeEventListener("scroll", handler);
+        window.removeEventListener("beforeunload", handler);
     };
   }, []);
   // useEffect(() => {

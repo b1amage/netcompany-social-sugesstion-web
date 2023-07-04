@@ -57,6 +57,12 @@ const ItinerariesScreen = () => {
 
     handleDelete();
   };
+
+  // const handleKeyPress = (e) => {
+  //   e.preventDefault()
+  //   showCreatePopup ? handleCreateItinerary : handleEditItinerary
+  // }
+
   const handleCreateItinerary = (e) => {
     e.preventDefault();
     if (value.trim() === "") {
@@ -91,11 +97,13 @@ const ItinerariesScreen = () => {
         setShowEditPopup
       );
       console.log(response);
-      setItineraries((prev) => {
+      setItineraries((prev) => 
+      {
         return prev.map((item) =>
-          item._id === response.data._id ? response.data : item
+          item._id === response.data._id ? { ...item, ...response.data } : item
         );
-      });
+      }
+      );
       notifyUpdate();
       setValue("");
       setErr();
@@ -282,6 +290,7 @@ const ItinerariesScreen = () => {
                     // errClassName=""
                     // onWheel=""
                     wrapperInputClassName="!w-full"
+                    // onKeyPress={handleKeyPress}
                   />
                   <SubHeading className="absolute right-0 px-4 !text-[20px] !text-black">
                     {value.length}/40

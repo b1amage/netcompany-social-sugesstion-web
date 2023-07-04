@@ -51,7 +51,6 @@ const Input = ({
           onChange={onChange}
           min={min}
           onWheel={onWheel}
-          onKeyPress={onKeyPress}
         />
 
         {icon && (

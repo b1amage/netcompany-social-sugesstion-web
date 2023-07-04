@@ -11,7 +11,7 @@ import { toast } from "react-hot-toast";
 import Note from "@/components/note/Note";
 import warning from "@/assets/warning.svg"
 const ItineraryCard = ({ itinerary, setSelectedItinerary, setShowDeletePopup,editItinerary}) => {
-  const { name, numOfLocations } = itinerary
+  const { name, numOfLocations, hasDeletedLocation } = itinerary
   
   return (
     <>
@@ -19,8 +19,7 @@ const ItineraryCard = ({ itinerary, setSelectedItinerary, setShowDeletePopup,edi
         <Wrapper col="true" className="w-full">
           <Heading className="truncate text-[16px] md:!text-[20px]">{name}</Heading>
           {/* <Wrapper className=""> */}
-            <Heading className="!text-[14px] md:!text-[16px] relative flex gap-4"> {numOfLocations} Locations <Note wrapperClassName="relative" buttonClassName="!relative" noteClassName="left-0 !h-fit !w-[300px] md:!w-[400px]" iconClassName="!w-[40px] md:!w-[20px]" src={warning} description="If you do not filter by distance, the list will be filtered depending
-          on your default search distance" /></Heading>
+            <Heading className="!text-[14px] md:!text-[16px] relative flex gap-4"> {numOfLocations} Locations {hasDeletedLocation && <Note wrapperClassName="relative" buttonClassName="!relative" noteClassName="left-0 !h-fit !w-[300px] md:!w-[400px]" iconClassName="!w-[40px] md:!w-[20px]" src={warning} description="This itinerary contains a deleted location!" />}</Heading>
             
           {/* </Wrapper> */}
           {/* <SubHeading className="!text-[12px] !text-neutral-600 md:!text-[14px]">Created at: {createdAt}</SubHeading> */}
