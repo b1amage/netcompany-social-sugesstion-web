@@ -27,7 +27,8 @@ const InputWithDropdown = ({
   hideError,
   onKeyPress,
   inputClassName,
-  wrapperClassName
+  wrapperClassName,
+  // searchQuery
 }) => {
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);

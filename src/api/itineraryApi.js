@@ -15,7 +15,45 @@ const itineraryApi = {
       return error.response.data.message;
     }
   },
+  async createItinerary(data, setShowPopup){
+    try{
+      const url = "/itinerary"
+      const response = await axiosClient.post(url, data,{
+        withCredentials: true,
+      });
+      setShowPopup(false)
 
+      return response
+    } catch (error){
+      console.log(error);
+    }
+  },
+  async deleteItinerary(id, notifyDelete){
+    try{
+      const url = `/itinerary/${id}`
+      const response = await axiosClient.delete(url, {
+        withCredentials: true,
+      });
+      notifyDelete()
+
+      return response
+    } catch (error){
+      console.log(error);
+    }
+  },
+  async editItinerary(data, setShowEditPopup){
+    try{
+      const url = `/itinerary`
+      const response = await axiosClient.patch(url, data, {
+        withCredentials: true,
+      });
+      setShowEditPopup(false)
+
+      return response
+    } catch (error){
+      console.log(error);
+    }
+  },
 };
 
 export default itineraryApi;
