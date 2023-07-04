@@ -51,6 +51,7 @@ const Popup = ({
           className={`w-[300px] h-[200px] md:w-[400px] md:h-[220px] bg-white  drop-shadow-lg rounded-xl p-5 md:p-10 lg:w-[450px] lg:h-[250px] ${formClassName}`}
         >
           <Heading className={`text-center ${titleClassName}`}>{title}</Heading>
+          {children}
           <Wrapper
             className={`justify-between mt-auto !py-0 ${childrenClassName}`}
           >
@@ -69,7 +70,6 @@ const Popup = ({
                   {item.title}
                 </Button>
               ))}
-            {children}
           </Wrapper>
         </Wrapper>
       </Wrapper>

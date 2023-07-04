@@ -28,8 +28,8 @@ const SearchBar = ({ className, wrapperClassName }) => {
       // category: filter.category,
     };
   });
-  const handleKeyPress = (event, value) => {
-    if (event.key === "Enter") {
+  const handleKeyPress = (value) => {
+    // if (event.key === "Enter") {
       const now = Date.now();
       // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
       if (now - lastFetch < 1000) return;
@@ -46,7 +46,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
         search: `?searchInput=${value || ""}`,
       });
       // dispatch(changeFiltering(false));
-    }
+    // }
   };
 
   useEffect(() => {
@@ -107,15 +107,17 @@ const SearchBar = ({ className, wrapperClassName }) => {
         inputClassName="!h-[60px] !rounded-2xl"
         wrapperClassName="md:!gap-0 lg:!gap-0 !gap-0"
         hideError
-        onKeyPress={handleKeyPress}
+        onEnter={handleKeyPress}
+        // onChange={e => setValue(e.target.value)}
       />
-      <Image
+      {/* <Image
         src={search}
         alt="search"
         className={`absolute w-[24px] h-[24px] top-1/2 right-4 -translate-y-1/2 `}
-        onClick={() => {
+        onClick={(e) => {
           // dispatch(changeFiltering(true));
           // dispatch(changeSearchInput(value));
+          e.preventDefault()
           const now = Date.now();
           // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
           if (now - lastFetch < 1000) return;
@@ -130,8 +132,8 @@ const SearchBar = ({ className, wrapperClassName }) => {
           });
           // dispatch(changeFiltering(false));
         }}
-        onKeyPress={handleKeyPress}
-      />
+        // onKeyPress={handleKeyPress}
+      /> */}
     </div>
   );
 };

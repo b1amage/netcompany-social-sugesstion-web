@@ -71,25 +71,9 @@ const HomeScreen = () => {
     }
     window.addEventListener("beforeunload", handler);
     return () => {
-        window.removeEventListener("scroll", handler);
+        window.removeEventListener("beforeunload", handler);
     };
   }, []);
-  // useEffect(() => {
-  //   // setIsLoading(true)
-  //   if (permissionsStatus === undefined || permissionsStatus === "prompt"){
-  //     navigator.permissions
-  //     .query({ name: "geolocation" })
-  //     .then((permissionStatus) => {
-  //       setPermissionStatus(permissionStatus.state);
-  //       permissionStatus.onchange = () => {
-  //         setPermissionStatus(permissionStatus.state);
-  //         localStorage.setItem("gpsPermission", permissionStatus.state);
-  //         // setIsTurnOnGPS(permissionStatus.state=="granted")
-  //       };
-  //     });
-  //   }
-
-  // }, [permissionsStatus, latitude, longitude]);
 
   useEffect(() => {
     // if (permissionsStatus === "granted") {
@@ -130,54 +114,10 @@ const HomeScreen = () => {
       }
     );
 
-    // setIsLoading(false);
-
-    // }
-    // if (
-    //   permissionsStatus === "denied" &&
-    //   localStorage.getItem("currentLocation")
-    // ) {
-    //   dispatch(
-    //     changeLatitude(
-    //       JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-    //         ?.location?.lat
-    //     )
-    //   );
-    //   dispatch(
-    //     changeLongitude(
-    //       JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-    //         ?.location?.lng
-    //     )
-    //   );
-    // }
     console.log(latitude);
     console.log(longitude);
-  }, [
-    // permissionsStatus,
-    // latitude,
-    // longitude,
-  ]);
-  // const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-  //   useGeolocated({
-  //     positionOptions: {
-  //       enableHighAccuracy: false,
-  //     },
-  //     userDecisionTimeout: Infinity,
-  //     isOptimisticGeolocationEnabled: permissionsStatus == "granted",
-  //   });
-
-  // useEffect(() => {
-  //   if (localStorage.getItem("loginReload") === "true") {
-  //     localStorage.setItem("loginReload", "false");
-  //     location.reload();
-  //   }
-
-  //   const user =
-  //     localStorage.getItem(localStorageKey.user) || JSON.stringify({});
-  //   if (user === JSON.stringify({})) {
-  //     navigate(ROUTE.LOGIN);
-  //   }
-  // }, []);
+  }, []);
+  
   const { user } = useSelector((state) => state.user);
 
   // ONBOARDING CHECK
@@ -256,33 +196,21 @@ const HomeScreen = () => {
   }, [latitude, longitude]);
 
   useEffect(() => {
-    // setIsLoading(true)
-    // if (isTurnOnGPS) {
-    // console.log(isGeolocationAvailable);
-    // console.log(permissionsStatus);
     console.log(isLoading);
-    // console.log(isGeolocationAvailable)
-    // setIsLoading(true);
     if (latitude && longitude) {
       const fetchAddress = async () => {
         const { data } = await axios.get(
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${key}`
         );
         dispatch(changeCurrentLocation(data.results[0]));
-        // dispatch(changeLatitude(data.results[0]?.geometry?.location?.lat));
-        // dispatch(changeLongitude(data.results[0]?.geometry?.location?.lng));
         console.log(data.results[0]);
         localStorage.setItem(
           "currentLocation",
           JSON.stringify(data.results[0])
         );
-        // setIsLoading(false);
       };
       fetchAddress();
     }
-    // else{
-    //   setIsLoading(false);
-    // }
   }, [latitude, longitude]);
 
   const handleLoadMoreFeaturedData = (nextCursor) => {
@@ -342,8 +270,6 @@ const HomeScreen = () => {
       setLatestLocations((prev) => [...prev, ...response.data.results]);
       localStorage.setItem("latestNextCursor", response.data.next_cursor);
       setLatestNextCursor(response.data.next_cursor);
-      // console.log(response)
-      // setIsLatestUpdating(false);
     };
     fetchLatestLocations();
   };
@@ -378,11 +304,6 @@ const HomeScreen = () => {
     </Wrapper>
   );
 
-  // : (
-  //   <Wrapper className="justify-center">
-  //     <Loading />
-  //   </Wrapper>
-  // )}
   const renderLatestLocations = (
     <Wrapper col="true" className="gap-4">
       <Wrapper className="justify-between items-end">
@@ -423,7 +344,7 @@ const HomeScreen = () => {
         <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
           <>
             <Wrapper col="true" className="gap-4 md:items-center">
-              <SubNavbar user={user} searchBar />
+              <SubNavbar user={user} searchBar displayAddress/>
             </Wrapper>
 
             <OnBoardingSlider />

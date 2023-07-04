@@ -24,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 import useViewport from "@/hooks/useScreenWidth";
 import ROUTE from "@/constants/routes";
 
-const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName }) => {
+const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName, displayAddress }) => {
   const dispatch = useDispatch();
   const { isAdded, isShowFilter, currentLocation, latitude, longitude } = useSelector(
     ({ navbar, currentLocation }) => {
@@ -64,7 +64,7 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
           className="md:flex-row justify-between md:items-center gap-4 truncate"
         >
           <User user={user} src={user.imageUrl} />
-          <Wrapper
+          {displayAddress && <Wrapper
             className="flex items-center h-[60px] cursor-pointer hover:bg-gray-200/60 px-3 duration-300 rounded-lg"
             onClick={() => setShowAutoComplete(true)}
           >
@@ -82,7 +82,7 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
                 : JSON.parse(localStorage.getItem("currentLocation"))
                     .formatted_address}
             </Heading>
-          </Wrapper>
+          </Wrapper>}
         </Wrapper>
 
         <Wrapper className="gap-4 items-center">
@@ -129,7 +129,7 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
               {width >= 768 && (
                 <Heading className="text-center">Set current location</Heading>
               )}
-              <Wrapper>
+              <Wrapper className="!w-full">
                 <AiOutlineArrowLeft
                   className="h-full w-[60px] cursor-pointer "
                   onClick={() => setShowAutoComplete(false)}
