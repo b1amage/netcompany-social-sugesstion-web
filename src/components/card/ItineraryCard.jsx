@@ -19,7 +19,7 @@ const ItineraryCard = ({ itinerary, setSelectedItinerary, setShowDeletePopup,edi
         <Wrapper col="true" className="w-full">
           <Heading className="truncate text-[16px] md:!text-[20px]">{name}</Heading>
           {/* <Wrapper className=""> */}
-            <Heading className="!text-[14px] md:!text-[16px] relative flex gap-4"> {numOfLocations} Locations {hasDeletedLocation && <Note wrapperClassName="relative" buttonClassName="!relative" noteClassName="left-0 !h-fit !w-[300px] md:!w-[400px]" iconClassName="!w-[40px] md:!w-[20px]" src={warning} description="This itinerary contains a deleted location!" />}</Heading>
+            <Heading className="!text-[14px] md:!text-[16px] relative flex gap-4"> {numOfLocations} Locations {hasDeletedLocation && <Note wrapperClassName="relative" buttonClassName="!relative" noteClassName="left-0 !h-auto !w-fit" iconClassName="!w-[60px] md:!w-[60px]" src={warning} description="This itinerary contains a deleted location!" />}</Heading>
             
           {/* </Wrapper> */}
           {/* <SubHeading className="!text-[12px] !text-neutral-600 md:!text-[14px]">Created at: {createdAt}</SubHeading> */}

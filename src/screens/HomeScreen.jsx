@@ -81,10 +81,11 @@ const HomeScreen = () => {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         // dispatch(changeCurrentLocation(data.results[0]));
-        if (localStorage.getItem("gpsPermission") === "denied") return
         // if (localStorage.setItem("defaultGpsPermission") === "denied") return
+        if (localStorage.getItem("gpsPermission") === "denied") return
+
         setIsLoading(true);
-        localStorage.setItem("defaultGpsPermission", "granted");
+        localStorage.setItem("gpsPermission", "denied");
         dispatch(changeLatitude(coords.latitude));
         dispatch(changeLongitude(coords.longitude));
         // localStorage.setItem("gpsPermission", "granted");
@@ -200,8 +201,12 @@ const HomeScreen = () => {
 
   useEffect(() => {
     console.log(isLoading);
-    if (latitude && longitude) {
+
+    if (latitude && longitude && !currentLocation) {
+      // if (localStorage.getItem("gpsPermission") === "denied") return
+
       const fetchAddress = async () => {
+
         const { data } = await axios.get(
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${key}`
         );
