@@ -140,6 +140,15 @@ const DetailsScreen = () => {
     return `${str.slice(0, 2)}:${str.slice(2)}`;
   }
 
+  function formatCurrency(num) {
+    return (
+      "$" +
+      Number(num)
+        .toFixed(2)
+        .replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
+    );
+  }
+
   return (
     <Screen className="py-2 pb-4 xl:gap-10 xl:pb-10">
       {loading ? (
@@ -300,8 +309,8 @@ const DetailsScreen = () => {
 
                 {locationDetails?.pricePerPerson && (
                   <SubHeading>
-                    {locationDetails?.pricePerPerson?.min} -{" "}
-                    {locationDetails?.pricePerPerson?.max} (
+                    {formatCurrency(locationDetails?.pricePerPerson?.min)} -{" "}
+                    {formatCurrency(locationDetails?.pricePerPerson?.max)} (
                     {locationDetails?.pricePerPerson?.currency})
                   </SubHeading>
                 )}
