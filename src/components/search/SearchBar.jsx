@@ -105,7 +105,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
         subFieldToDisplay="address"
         icon={<GoLocation />}
         inputClassName="!h-[60px] !rounded-2xl"
-        wrapperClassName=" md:!gap-0 lg:!gap-0 !gap-0   "
+        wrapperClassName=""
         hideError
         onEnter={handleKeyPress}
         searchQuery={searchParams.get("searchInput")}

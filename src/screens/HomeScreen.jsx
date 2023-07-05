@@ -77,21 +77,38 @@ const HomeScreen = () => {
 
   useEffect(() => {
     // if (permissionsStatus === "granted") {
+    // if (localStorage.getItem("gpsPermission") === "denied") return
 
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         // dispatch(changeCurrentLocation(data.results[0]));
         // if (localStorage.setItem("defaultGpsPermission") === "denied") return
-        if (localStorage.getItem("gpsPermission") === "denied") return
 
         setIsLoading(true);
-        localStorage.setItem("gpsPermission", "denied");
-        dispatch(changeLatitude(coords.latitude));
-        dispatch(changeLongitude(coords.longitude));
-        // localStorage.setItem("gpsPermission", "granted");
-        setIsLoading(false);
+        if (localStorage.getItem("gpsPermission") !== "denied"){
+          localStorage.setItem("gpsPermission", "denied");
+          dispatch(changeLatitude(coords.latitude));
+          dispatch(changeLongitude(coords.longitude));
+          // localStorage.setItem("gpsPermission", "granted");
+          setIsLoading(false);
+        } else{
+          dispatch(
+            changeLatitude(
+              JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+                ?.location?.lat
+            )
+          );
+          dispatch(
+            changeLongitude(
+              JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+                ?.location?.lng
+            )
+          );
+          setIsLoading(false);
+        }
+        
         // }
-        return;
+        // return;
       },
       (error) => {
         localStorage.setItem("defaultGpsPermission", "denied");

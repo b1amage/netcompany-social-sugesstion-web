@@ -171,27 +171,6 @@ const Navbar = () => {
                       {/* <Counter count={10} /> */}
                     </div>
                   )}
-                  {isShowEdit && (
-                    <Wrapper className="flex-center">
-                      <Button
-                        onClick={() => navigate(ROUTE.EDIT_PROFILE)}
-                        className="!text-primary-800 !relative !gap-2"
-                      >
-                        <BsPencilFill />
-                        <span className="hidden capitalize lg:block">
-                          Edit info
-                        </span>
-                      </Button>
-                      {/* <Button
-                    className="!bg-danger"
-                    onClick={() => {
-                      setShowPopup(true);
-                    }}
-                  >
-                    Logout
-                  </Button> */}
-                    </Wrapper>
-                  )}
                 </Wrapper>
               </>
             )}

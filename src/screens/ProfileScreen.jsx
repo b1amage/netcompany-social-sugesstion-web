@@ -55,6 +55,16 @@ const ProfileScreen = () => {
     navigate(ROUTE.LOGIN);
   };
 
+  const { isAdded, isShowNotification, isShowFilter, isShowEdit } = useSelector(
+    ({ navbar }) => {
+      return {
+        isAdded: navbar.isAdded,
+        isShowNotification: navbar.isShowNotification,
+        isShowFilter: navbar.isShowFilter,
+        isShowEdit: navbar.isShowEdit,
+      };
+    }
+  );
   const popupActions = [
     { title: "logout", danger: true, action: confirmLogout },
     {
@@ -181,6 +191,25 @@ const ProfileScreen = () => {
             </>
           )}
         </>
+      )}
+      {isShowEdit && (
+        <Wrapper className="flex-center absolute right-4 md:hidden ">
+          <Button
+            onClick={() => navigate(ROUTE.EDIT_PROFILE)}
+            className="!text-primary-800 !relative !gap-2 !my-0"
+          >
+            <BsPencilFill />
+            <span className="hidden capitalize lg:block">Edit info</span>
+          </Button>
+          {/* <Button
+                    className="!bg-danger"
+                    onClick={() => {
+                      setShowPopup(true);
+                    }}
+                  >
+                    Logout
+                  </Button> */}
+        </Wrapper>
       )}
     </Screen>
   );

@@ -20,13 +20,13 @@ const navbarSlice = createSlice({
     },
     validatePathname(state, action) {
       switch (action.payload) {
-        case "/profile":
+        case ROUTE.PROFILE:
           state.isAdded = false;
           state.isShowNotification = false;
           state.isShowFilter = false;
           state.isShowEdit = true;
           return;
-        case "/my-event":
+        case ROUTE.EVENTS:
         // case "/":
         case ROUTE.SEARCH_LOCATION:
           state.isAdded = true;
@@ -35,7 +35,7 @@ const navbarSlice = createSlice({
           state.isShowEdit = false;
           return;
         case "/":
-        case "/my-route":
+        case ROUTE.ITINERARIES:
           state.isAdded = true;
           state.isShowNotification = false;
           state.isShowFilter = false;
