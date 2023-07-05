@@ -137,7 +137,7 @@ const HomeScreen = () => {
       localStorage.setItem("loginReload", "false");
       location.reload();
     }
-  }, [user])
+  }, [])
     
 
   //   const user =
