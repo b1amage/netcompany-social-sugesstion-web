@@ -22,7 +22,7 @@ const navbarSlice = createSlice({
       switch (action.payload) {
         case ROUTE.PROFILE:
           state.isAdded = false;
-          state.isShowNotification = false;
+          state.isShowNotification = true;
           state.isShowFilter = false;
           state.isShowEdit = true;
           return;
