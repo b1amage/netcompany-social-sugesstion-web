@@ -48,17 +48,15 @@ const EditProfileScreen = React.lazy(() =>
 const AppRoutes = () => {
   const navigate = useNavigate();
 
+  const {user} = useSelector((state) => state.user)
+
   useEffect(() => {
     const user = localStorage.getItem("user") || null;
     const idToken = localStorage.getItem("idToken") || null;
     if (!idToken || user === JSON.stringify({}) || !user) {
       navigate(ROUTE.LOGIN);
-    } else {
-      if (JSON.parse(localStorage.getItem("user")) !== JSON.stringify({})) {
-        navigate(ROUTE.HOME);
-      }
     }
-  }, []);
+  }, [user]);
   
   return (
     <>
