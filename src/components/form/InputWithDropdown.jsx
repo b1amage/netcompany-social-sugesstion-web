@@ -40,7 +40,9 @@ const InputWithDropdown = ({
   const [selected, setSelected] = useState(false);
   const [err, setErr] = useState(null);
   const [listLoading, setListLoading] = useState(false);
+  const [focused, setFocused] = useState(false);
   const listRef = useRef();
+  const inputRef = useRef(null);
 
   const getSuggestions = debounce(async (input) => {
     if (input) {
@@ -119,9 +121,10 @@ const InputWithDropdown = ({
       <div className="relative">
         <div className="relative">
           <input
-            className={`!w-full px-4 py-3 text-sm duration-300 border rounded-lg outline-none border-primary-400 focus:ring-1 focus:ring-primary-400 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 !text-overflow-ellipsis !overflow-hidden ${
-              selected && inputState.success
-            } ${
+            ref={inputRef}
+            className={`!w-full px-4 py-3 text-sm duration-300 border rounded-lg outline-none border-primary-400 focus:ring-1 focus:ring-primary-400 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${
+              focused ? "" : "!overflow-hidden !text-overflow-ellipsis"
+            }  ${selected && inputState.success} ${
               (err !== null) & (err !== "") && inputState.err
             } ${inputClassName}`}
             type="text"
@@ -133,6 +136,8 @@ const InputWithDropdown = ({
                 setSuggestions([]);
               }
             }}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
             onChange={(e) => {
               setSelected(false);
               setInput(e.target.value);
