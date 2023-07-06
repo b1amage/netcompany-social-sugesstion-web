@@ -75,7 +75,7 @@ const ItinerariesScreen = () => {
         setShowCreatePopup
       );
       console.log(response);
-      setItineraries((prev) => [...prev, response.data]);
+      setItineraries((prev) => [response.data, ...prev]);
       notifyCreate();
       setValue("");
       setErr();

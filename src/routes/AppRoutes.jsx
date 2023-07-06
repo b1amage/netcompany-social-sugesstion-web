@@ -1,9 +1,11 @@
 import React, { Suspense, useEffect } from "react";
 import ROUTE from "@/constants/routes";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 
 const AllEventsScreen = React.lazy(() => import("@/screens/AllEventsScreen"));
+const ItineraryDetailsScreen = React.lazy(() => import("@/screens/ItineraryDetailsScreen"));
+
 const ItinerariesScreen = React.lazy(() =>
   import("@/screens/ItinerariesScreen")
 );
@@ -99,6 +101,8 @@ const AppRoutes = () => {
             element={<SearchLocationScreen />}
           />
           <Route path={ROUTE.ITINERARIES} element={<ItinerariesScreen />} />
+          <Route path={ROUTE.ITINERARY_DETAILS} element={<ItineraryDetailsScreen />} />
+
         </Routes>
       </Suspense>
     </>

@@ -35,7 +35,6 @@ const navbarSlice = createSlice({
           state.isShowEdit = false;
           return;
         case "/":
-        case ROUTE.ITINERARIES:
           state.isAdded = true;
           state.isShowNotification = false;
           state.isShowFilter = false;

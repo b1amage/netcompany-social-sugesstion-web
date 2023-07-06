@@ -1,0 +1,62 @@
+import Screen from '@/components/container/Screen'
+import SubNavbar from '@/components/navbar/SubNavbar'
+import Button from '@/components/button/Button'
+import PlaceCard from '@/components/card/PlaceCard'
+import Image from '@/components/image/Image'
+import Heading from '@/components/typography/Heading'
+import Wrapper from '@/components/wrapper/Wrapper'
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
+
+const ItineraryDetailsScreen = () => {
+  const {user} = useSelector(state => state.user)
+  const [itinerary, setItinerary] = useState()
+  return (
+    <Screen className="flex flex-col  px-3 py-4 gap-6 md:gap-4 md:px-6 md:py-5 !rounded-none lg:px-20 !min-h-0">
+      <SubNavbar user={user} wrapperClassName="!gap-0" />
+      <Wrapper className="md:justify-between md:items-center items-start">
+        <Heading className="!text-[28px]">Favorite list</Heading>
+        <Button
+          onClick={() => {
+            // navigate("/create-location");
+            console.log("Create!");
+            // setShowCreatePopup(true);
+          }}
+          active
+          className="md:!w-[280px] md:hover:opacity-70 md:!rounded-2xl flex justify-evenly gap-2 h-[60px] !rounded-full !fixed md:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 md:!bg-primary-400 md:!border-primary-400 border-secondary-400"
+        >
+          <Heading className=" text-white !text-[20px]">
+            Save a new location
+          </Heading>
+        </Button>
+      </Wrapper>
+      {/* {itineraries.length > 0 && (
+        <Wrapper
+          _ref={tabRef}
+          col="true"
+          className="md:gap-8 gap-6 overflow-y-scroll pr-3 py-12 !h-[600px]"
+        >
+          {itineraries.map((itinerary) => {
+            return ( */}
+              {/* <PlaceCard
+                // place={null}
+                // key={itinerary._id}
+                // itinerary={itinerary}
+                // showDeletePopup={showDeletePopup}
+                // setShowDeletePopup={setShowDeletePopup}
+                // deleteItinerary={deleteItinerary}
+                // editItinerary={handleEditOnClick}
+                // setSelectedItinerary={setSelectedItinerary}
+                // name={itinerary.name}
+                // numberOfLocations={itinerary.numOfLocations}
+                // createdAt={itinerary.createdAt}
+              /> */}
+            {/* );
+          })}
+        </Wrapper>
+      )} */}
+    </Screen>
+  )
+}
+
+export default ItineraryDetailsScreen
