@@ -23,7 +23,7 @@ const OnboardingScreen = () => {
   });
 
   return (
-    <Screen className={`!w-screen h-screen max-w-none !mt-0`}>
+    <Screen className={`!w-screen h-screen max-w-none !my-0`}>
       <>
         <div className="relative h-full navigation-wrapper">
           {/* SLIDES */}

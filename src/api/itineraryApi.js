@@ -54,6 +54,17 @@ const itineraryApi = {
       console.log(error);
     }
   },
+  async getItineraryDetails(id){
+    try{
+      const url = `/itinerary/${id}`
+      const response = await axiosClient.get(url, {
+        withCredentials: true,
+      });
+      return response
+    } catch (error){
+      console.log(error);
+    }
+  }
 };
 
 export default itineraryApi;

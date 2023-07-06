@@ -34,8 +34,9 @@ const InputWithDropdown = ({
   hideLabel,
   onEnter,
   onChange,
+  searchQuery
 }) => {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState("" || searchQuery);
   const [suggestions, setSuggestions] = useState([]);
   const [selected, setSelected] = useState(false);
   const [err, setErr] = useState(null);

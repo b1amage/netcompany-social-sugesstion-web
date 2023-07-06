@@ -10,16 +10,17 @@ import itineraryApi from "@/api/itineraryApi";
 import { toast } from "react-hot-toast";
 import Note from "@/components/note/Note";
 import warning from "@/assets/warning.svg"
+import { useNavigate } from "react-router-dom";
 const ItineraryCard = ({ itinerary, setSelectedItinerary, setShowDeletePopup,editItinerary}) => {
-  const { name, numOfLocations, hasDeletedLocation } = itinerary
-  
+  const { _id, name, numOfLocations, hasDeletedLocation } = itinerary
+  const navigate = useNavigate()
   return (
     <>
-      <Wrapper className=" cursor-pointer duration-300 border md:hover:border-b-4 md:hover:border-r-4 md:hover:border-b-neutral-600 md:hover:border-r-neutral-600 md:hover:drop-shadow  bg-neutral-300 rounded-2xl justify-around items-center px-4 py-6 gap-8">
+      <Wrapper onClick={() => navigate(`/itinerary/details/${_id}`)} className=" cursor-pointer duration-300 border md:hover:border-b-4 md:hover:border-r-4 md:hover:border-b-neutral-600 md:hover:border-r-neutral-600 md:hover:drop-shadow  bg-neutral-300 rounded-2xl justify-around items-center px-4 py-6 gap-8">
         <Wrapper col="true" className="w-full">
           <Heading className="truncate text-[16px] md:!text-[20px]">{name}</Heading>
           {/* <Wrapper className=""> */}
-            <Heading className="!text-[14px] md:!text-[16px] relative flex gap-4"> {numOfLocations} Locations {hasDeletedLocation && <Note wrapperClassName="relative" buttonClassName="!relative" noteClassName="left-0 !h-fit !w-[300px] md:!w-[400px]" iconClassName="!w-[40px] md:!w-[20px]" src={warning} description="This itinerary contains a deleted location!" />}</Heading>
+            <Heading className="!text-[14px] md:!text-[16px] relative flex gap-4"> {numOfLocations} Locations {hasDeletedLocation && <Note wrapperClassName="relative" buttonClassName="!relative" noteClassName="left-0 !h-auto !w-[160px] sm:!w-[200px] md:!w-[250px] !z-[7900]" iconClassName="!w-[40px] md:!w-[30px]" src={warning} description="This itinerary contains a deleted location!" />}</Heading>
             
           {/* </Wrapper> */}
           {/* <SubHeading className="!text-[12px] !text-neutral-600 md:!text-[14px]">Created at: {createdAt}</SubHeading> */}

@@ -48,7 +48,7 @@ const authApi = {
       const statusCode = error.response.status;
       const unverifiedStatusCode = 406;
       if (statusCode === unverifiedStatusCode) {
-        navigate(ROUTE.VERIFY);
+        navigate(ROUTE.ONBOARDING);
       }
     }
   },

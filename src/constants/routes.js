@@ -12,7 +12,8 @@ const ROUTE = {
   EDIT_PROFILE: "/profile/edit",
   CREATE_LOCATION: "/create-location",
   SEARCH_LOCATION: "/locations",
-  ITINERARIES: "/itineraries"
+  ITINERARIES: "/itineraries",
+  ITINERARY_DETAILS: "/itinerary/details/:id"
 };
 
 export default ROUTE;

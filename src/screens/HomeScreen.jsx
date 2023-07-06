@@ -77,20 +77,38 @@ const HomeScreen = () => {
 
   useEffect(() => {
     // if (permissionsStatus === "granted") {
+    // if (localStorage.getItem("gpsPermission") === "denied") return
 
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         // dispatch(changeCurrentLocation(data.results[0]));
-        if (localStorage.getItem("gpsPermission") === "denied") return
         // if (localStorage.setItem("defaultGpsPermission") === "denied") return
+
         setIsLoading(true);
-        localStorage.setItem("defaultGpsPermission", "granted");
-        dispatch(changeLatitude(coords.latitude));
-        dispatch(changeLongitude(coords.longitude));
-        // localStorage.setItem("gpsPermission", "granted");
-        setIsLoading(false);
+        if (localStorage.getItem("gpsPermission") !== "denied"){
+          localStorage.setItem("gpsPermission", "denied");
+          dispatch(changeLatitude(coords.latitude));
+          dispatch(changeLongitude(coords.longitude));
+          // localStorage.setItem("gpsPermission", "granted");
+          setIsLoading(false);
+        } else{
+          dispatch(
+            changeLatitude(
+              JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+                ?.location?.lat
+            )
+          );
+          dispatch(
+            changeLongitude(
+              JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+                ?.location?.lng
+            )
+          );
+          setIsLoading(false);
+        }
+        
         // }
-        return;
+        // return;
       },
       (error) => {
         localStorage.setItem("defaultGpsPermission", "denied");
@@ -120,35 +138,38 @@ const HomeScreen = () => {
   
   const { user } = useSelector((state) => state.user);
 
-  // ONBOARDING CHECK
+  // // ONBOARDING CHECK
+  // useEffect(() => {
+  //   const onBoardingAlreadyShown = JSON.parse(
+  //     localStorage.getItem(localStorageKey.alreadyShownOnboarding)
+  //   );
+
+  //   if (!onBoardingAlreadyShown) {
+  //     navigate(ROUTE.ONBOARDING);
+  //     return;
+  //   }
+
   useEffect(() => {
-    const onBoardingAlreadyShown = JSON.parse(
-      localStorage.getItem(localStorageKey.alreadyShownOnboarding)
-    );
-
-    if (!onBoardingAlreadyShown) {
-      navigate(ROUTE.ONBOARDING);
-      return;
-    }
-
     // LOGIN CHECK
     if (localStorage.getItem("loginReload") === "true") {
       localStorage.setItem("loginReload", "false");
       location.reload();
     }
+  }, [])
+    
 
-    const user =
-      localStorage.getItem(localStorageKey.user) || JSON.stringify({});
-    console.log("user", user);
+  //   const user =
+  //     localStorage.getItem(localStorageKey.user) || JSON.stringify({});
+  //   console.log("user", user);
 
-    // check verify
-    // if (user.isVerified === false) {
-    //   navigate("/onboarding");
-    // }
-    if (user === JSON.stringify({})) {
-      navigate(ROUTE.LOGIN);
-    }
-  }, []);
+  //   // check verify
+  //   // if (user.isVerified === false) {
+  //   //   navigate("/onboarding");
+  //   // }
+  //   if (user === JSON.stringify({})) {
+  //     navigate(ROUTE.LOGIN);
+  //   }
+  // }, []);
 
   useEffect(() => {
     // if (latitude && longitude) {
@@ -197,8 +218,12 @@ const HomeScreen = () => {
 
   useEffect(() => {
     console.log(isLoading);
-    if (latitude && longitude) {
+
+    if (latitude && longitude && !currentLocation) {
+      // if (localStorage.getItem("gpsPermission") === "denied") return
+
       const fetchAddress = async () => {
+
         const { data } = await axios.get(
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${key}`
         );
