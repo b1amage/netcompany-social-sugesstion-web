@@ -5,21 +5,36 @@ import PlaceCard from '@/components/card/PlaceCard'
 import Image from '@/components/image/Image'
 import Heading from '@/components/typography/Heading'
 import Wrapper from '@/components/wrapper/Wrapper'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import itineraryApi from '@/api/itineraryApi'
+import { useParams } from 'react-router-dom'
 
 const ItineraryDetailsScreen = () => {
   const {user} = useSelector(state => state.user)
   const [itinerary, setItinerary] = useState()
+  const [locations, setLocations] = useState([])
+  const {id} = useParams()
+
+  useEffect(() => {
+    const getDetails = async() =>{
+      const response = await itineraryApi.getItineraryDetails(id)
+      setItinerary(response.data)
+      setLocations([...response.data.savedLocations])
+      console.log(response)
+    }
+    getDetails()
+  }, [id])
+
   return (
     <Screen className="flex flex-col  px-3 py-4 gap-6 md:gap-4 md:px-6 md:py-5 !rounded-none lg:px-20 !min-h-0">
       <SubNavbar user={user} wrapperClassName="!gap-0" />
       <Wrapper className="md:justify-between md:items-center items-start">
-        <Heading className="!text-[28px]">Favorite list</Heading>
+        <Heading className="!text-[28px]">{itinerary?.name}</Heading>
         <Button
           onClick={() => {
             // navigate("/create-location");
-            console.log("Create!");
+            console.log(locations);
             // setShowCreatePopup(true);
           }}
           active
@@ -30,16 +45,19 @@ const ItineraryDetailsScreen = () => {
           </Heading>
         </Button>
       </Wrapper>
-      {/* {itineraries.length > 0 && (
+      {locations?.length > 0 ? (
         <Wrapper
-          _ref={tabRef}
+          // _ref={tabRef}
           col="true"
-          className="md:gap-8 gap-6 overflow-y-scroll pr-3 py-12 !h-[600px]"
+          className="md:gap-8 gap-6 pr-3 py-12"
         >
-          {itineraries.map((itinerary) => {
-            return ( */}
-              {/* <PlaceCard
-                // place={null}
+          {locations.map((location) => {
+            return (
+              <PlaceCard
+                key={location._id}
+                place={location?.location}
+                description={location?.note}
+                className="!w-full !flex-row"
                 // key={itinerary._id}
                 // itinerary={itinerary}
                 // showDeletePopup={showDeletePopup}
@@ -50,11 +68,15 @@ const ItineraryDetailsScreen = () => {
                 // name={itinerary.name}
                 // numberOfLocations={itinerary.numOfLocations}
                 // createdAt={itinerary.createdAt}
-              /> */}
-            {/* );
+              />
+           );
           })}
         </Wrapper>
-      )} */}
+      ) : (
+        <Wrapper>
+          <Heading>No locations</Heading>
+        </Wrapper>
+      )} 
     </Screen>
   )
 }
