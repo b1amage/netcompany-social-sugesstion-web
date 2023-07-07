@@ -22,29 +22,32 @@ const ItineraryCard = ({ itinerary, setSelectedItinerary, setShowDeletePopup, ed
   }
 
   return (
-    <Wrapper  className="duration-300 border md:hover:border-b-4 md:hover:border-r-4 md:hover:border-b-neutral-600 md:hover:border-r-neutral-600 md:hover:drop-shadow relative bg-neutral-300 rounded-2xl justify-around items-center px-4 ">
-        <Wrapper onClick={handleWrapperClick} col="true" className="py-6 w-full truncate cursor-pointer pr-32">
-          <Heading className="truncate text-[16px] md:!text-[20px]">{name}</Heading>
-          <Heading className="!text-[14px] md:!text-[16px] relative flex gap-4"> {numOfLocations} Locations {hasDeletedLocation && <Note wrapperClassName="relative" buttonClassName="!relative" noteClassName="left-0 !h-auto !w-[160px] sm:!w-[200px] md:!w-[250px] !z-[7900]" iconClassName="!w-[40px] md:!w-[30px]" src={warning} description="This itinerary contains a deleted location!" />}</Heading>
+    <Wrapper  className="duration-300 border md:hover:border-b-4 md:hover:border-r-4 md:hover:border-b-neutral-600 md:hover:border-r-neutral-600 md:hover:drop-shadow relative bg-neutral-300 rounded-2xl justify-around items-center px-4 w-full">
+        <Wrapper onClick={handleWrapperClick} col="true" className="py-6 w-full break-all cursor-pointer">
+          <Heading className="break-words text-[16px] md:!text-[20px]">{name}</Heading>
+          <Heading className="!text-[14px] md:!text-[16px] relative flex gap-4"> {numOfLocations} Locations {hasDeletedLocation && <Note wrapperClassName="relative" buttonClassName="!relative !z-[1000]" noteClassName="left-0 !h-auto !w-[160px] sm:!w-[200px] md:!w-[320px] !z-[7900]" iconClassName="!w-[40px] md:!w-[20px]" src={warning} description="This itinerary contains a deleted location!" />}</Heading>
         </Wrapper>
 
-        <Wrapper className="!w-fit absolute right-4 md:">
+        <Wrapper className="!w-fit">
           <Button
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation()
               editItinerary(itinerary)
             }}
             className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl !h-fit !my-0"
           >
-            <BsFillPencilFill />
+            <BsFillPencilFill className="text-sm" />
           </Button>
           <Button
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation()
+
               setSelectedItinerary(itinerary)
               setShowDeletePopup(true)}
             }
             className="!bg-danger !bg-opacity-40 !text-danger !text-xl !h-fit !my-0"
           >
-            <MdDelete />
+            <MdDelete className="text-sm" />
           </Button>
         </Wrapper>
     </Wrapper>

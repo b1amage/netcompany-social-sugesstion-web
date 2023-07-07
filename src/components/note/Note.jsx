@@ -19,7 +19,11 @@ const Note = ({
     <Wrapper className={`${wrapperClassName}`}>
       <Image
         className={`absolute right-0 top-1/2 -translate-y-1/2 cursor-pointer w-[20px] h-[20px] ${buttonClassName}`}
-        onClick={() => setIsHovered(!isHovered)}
+        onClick={(e) => {
+          e.stopPropagation()
+          setIsHovered(!isHovered)
+
+        }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         src={src}

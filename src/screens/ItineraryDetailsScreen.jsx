@@ -29,8 +29,8 @@ const ItineraryDetailsScreen = () => {
   return (
     <Screen className="flex flex-col  px-3 py-4 gap-6 md:gap-4 md:px-6 md:py-5 !rounded-none lg:px-20 !min-h-0">
       <SubNavbar user={user} wrapperClassName="!gap-0" />
-      <Wrapper className="md:justify-between md:items-center items-start">
-        <Heading className="!text-[28px]">{itinerary?.name}</Heading>
+      <Wrapper className="md:justify-between md:items-center items-start gap-4">
+        <Heading className="!text-[28px] truncate">{itinerary?.name}</Heading>
         <Button
           onClick={() => {
             // navigate("/create-location");
@@ -49,7 +49,7 @@ const ItineraryDetailsScreen = () => {
         <Wrapper
           // _ref={tabRef}
           col="true"
-          className=""
+          className="md:gap-8 gap-6 pr-3"
         >
           {locations.map((location) => {
             return (
@@ -57,7 +57,7 @@ const ItineraryDetailsScreen = () => {
                 key={location._id}
                 place={location?.location}
                 description={location?.note}
-                className="!w-full sm:!flex-row"
+                className="!w-full  sm:min-h-[180px] sm:max-h-[420px]"
                 // key={itinerary._id}
                 // itinerary={itinerary}
                 // showDeletePopup={showDeletePopup}
