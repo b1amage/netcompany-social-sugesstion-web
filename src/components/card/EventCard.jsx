@@ -39,7 +39,7 @@ const EventCard = (props) => {
           <Wrapper className="items-center gap-2">
             <GoLocation />
             <SubHeading className="text-overflow-ellipsis">
-              {location.name}
+              {location?.name}
             </SubHeading>
           </Wrapper>
 
