@@ -49,7 +49,7 @@ const ItineraryDetailsScreen = () => {
         <Wrapper
           // _ref={tabRef}
           col="true"
-          className="md:gap-8 gap-6 pr-3 py-12"
+          className=""
         >
           {locations.map((location) => {
             return (
@@ -57,7 +57,7 @@ const ItineraryDetailsScreen = () => {
                 key={location._id}
                 place={location?.location}
                 description={location?.note}
-                className="!w-full !flex-row"
+                className="!w-full sm:!flex-row"
                 // key={itinerary._id}
                 // itinerary={itinerary}
                 // showDeletePopup={showDeletePopup}
@@ -74,7 +74,7 @@ const ItineraryDetailsScreen = () => {
         </Wrapper>
       ) : (
         <Wrapper>
-          <Heading>No locations</Heading>
+          <Heading>No locations yet!</Heading>
         </Wrapper>
       )} 
     </Screen>
