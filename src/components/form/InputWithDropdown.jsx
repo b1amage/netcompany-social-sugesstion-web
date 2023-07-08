@@ -34,7 +34,9 @@ const InputWithDropdown = ({
   hideLabel,
   onEnter,
   dropdownClassName,
-  searchQuery
+  searchQuery,
+  onChange,
+  showSuggestions,
 }) => {
   const [input, setInput] = useState("" || searchQuery);
   const [suggestions, setSuggestions] = useState([]);
@@ -156,52 +158,55 @@ const InputWithDropdown = ({
           )}
         </div>
 
-        {input !== "" && !selected && suggestions.length > 0 && (
-          <Wrapper
-            _ref={listRef}
-            col="true"
-            className={`absolute !z-[9999] bottom-0 left-0 w-full translate-y-full bg-white border pb-8 h-[200px] overflow-y-scroll border-gray-200 rounded shadow-xl cursor-pointer ${dropdownClassName}`}
-          >
-            {suggestions.map((suggestion, index) => (
-              <Wrapper
-                key={index}
-                className="items-center justify-between gap-3 px-3 py-2 cursor-pointer hover:bg-gray-200"
-                onClick={() => handleSuggestionClick(suggestion)}
-              >
-                <Wrapper className="items-center">
-                  <Image
-                    className="!w-10 !h-10 !shrink-0 !rounded-full"
-                    src={
-                      fieldToDisplay === "name"
-                        ? suggestion.imageUrls.length > 0
-                          ? suggestion.imageUrls[0]
-                          : DEFAULT.location
-                        : suggestion.imageUrl || DEFAULT.avatar
-                    }
-                  />
-                  <Wrapper col="true" className="!gap-0">
-                    <Text className="!font-bold text-overflow-ellipsis">
-                      {suggestion[fieldToDisplay]}
-                    </Text>
-                    <Text className="!text-xs !text-neutral-500 text-overflow-ellipsis">
-                      {subFieldToDisplay === "startDateTime"
-                        ? parseDate(suggestion[subFieldToDisplay])
-                        : suggestion[subFieldToDisplay]}
-                    </Text>
+        {showSuggestions &&
+          input !== "" &&
+          !selected &&
+          suggestions.length > 0 && (
+            <Wrapper
+              _ref={listRef}
+              col="true"
+              className={`absolute !z-[9999] bottom-0 left-0 w-full translate-y-full bg-white border pb-8 h-[200px] overflow-y-scroll border-gray-200 rounded shadow-xl cursor-pointer ${dropdownClassName}`}
+            >
+              {suggestions.map((suggestion, index) => (
+                <Wrapper
+                  key={index}
+                  className="items-center justify-between gap-3 px-3 py-2 cursor-pointer hover:bg-gray-200"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  <Wrapper className="items-center">
+                    <Image
+                      className="!w-10 !h-10 !shrink-0 !rounded-full"
+                      src={
+                        fieldToDisplay === "name"
+                          ? suggestion.imageUrls.length > 0
+                            ? suggestion.imageUrls[0]
+                            : DEFAULT.location
+                          : suggestion.imageUrl || DEFAULT.avatar
+                      }
+                    />
+                    <Wrapper col="true" className="!gap-0">
+                      <Text className="!font-bold text-overflow-ellipsis">
+                        {suggestion[fieldToDisplay]}
+                      </Text>
+                      <Text className="!text-xs !text-neutral-500 text-overflow-ellipsis">
+                        {subFieldToDisplay === "startDateTime"
+                          ? parseDate(suggestion[subFieldToDisplay])
+                          : suggestion[subFieldToDisplay]}
+                      </Text>
+                    </Wrapper>
                   </Wrapper>
+
+                  {icon}
                 </Wrapper>
+              ))}
 
-                {icon}
-              </Wrapper>
-            ))}
-
-            {listLoading && (
-              <Wrapper className="w-full flex-center">
-                <Loading />
-              </Wrapper>
-            )}
-          </Wrapper>
-        )}
+              {listLoading && (
+                <Wrapper className="w-full flex-center">
+                  <Loading />
+                </Wrapper>
+              )}
+            </Wrapper>
+          )}
       </div>
     </div>
   );
