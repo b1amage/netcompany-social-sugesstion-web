@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import itineraryApi from '@/api/itineraryApi'
 import { useParams } from 'react-router-dom'
+import add from "@/assets/add.svg";
 
 const ItineraryDetailsScreen = () => {
   const {user} = useSelector(state => state.user)
@@ -40,7 +41,13 @@ const ItineraryDetailsScreen = () => {
           active
           className="md:!w-[280px] md:hover:opacity-70 md:!rounded-2xl flex justify-evenly gap-2 h-[60px] !rounded-full !fixed md:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 md:!bg-primary-400 md:!border-primary-400 border-secondary-400"
         >
-          <Heading className=" text-white !text-[20px]">
+          <Image
+            imageClassName=""
+            src={add}
+            alt="add"
+            className="w-[28px] h-[28px]"
+          />
+          <Heading className="md:block text-white hidden !text-[20px]">
             Save a new location
           </Heading>
         </Button>

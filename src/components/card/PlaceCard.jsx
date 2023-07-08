@@ -46,7 +46,10 @@ const PlaceCard = ({ place, description, className }) => {
           {/* TITLE & ADDRESS */}
           <div className="flex flex-col !gap-4 ">
             <Wrapper className="!justify-between items-center">
-              <h1 onClick={() => navigate(`${place?.isDeleted ? `/error/This location is no longer exists` :`/location/details/${place?._id}`}`)} className="  cursor-pointer text-lg font-semibold w-fit flex gap-4">
+              <h1 onClick={() => {
+                if(place?.isDeleted) return
+                navigate(`/location/details/${place?._id}`)
+              }} className="  cursor-pointer text-lg font-semibold w-fit flex gap-4">
                 {place?.name}
               </h1>
               <Wrapper className="!w-fit">
