@@ -35,7 +35,7 @@ const InputWithDropdown = ({
   onEnter,
   onChange,
   searchQuery,
-  showSuggestions,
+  hideSuggestions,
 }) => {
   const [input, setInput] = useState("" || searchQuery);
   const [suggestions, setSuggestions] = useState([]);
@@ -157,7 +157,7 @@ const InputWithDropdown = ({
           )}
         </div>
 
-        {showSuggestions &&
+        {!hideSuggestions &&
           input !== "" &&
           !selected &&
           suggestions.length > 0 && (
