@@ -109,6 +109,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
         hideError
         onEnter={handleKeyPress}
         searchQuery={searchParams.get("searchInput")}
+        dropdownClassName="!z-[9980]"
         // onChange={e => setValue(e.target.value)}
       />
       {/* <Image

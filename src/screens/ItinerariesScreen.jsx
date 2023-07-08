@@ -239,7 +239,7 @@ const ItinerariesScreen = () => {
         <Wrapper
           _ref={tabRef}
           col="true"
-          className="md:gap-8 gap-6 overflow-y-scroll pr-3 py-12 !h-[600px]"
+          className="md:gap-8 gap-6 overflow-y-scroll pr-3 py-12 !h-[600px] items-center"
         >
           {itineraries.map((itinerary) => {
             return (

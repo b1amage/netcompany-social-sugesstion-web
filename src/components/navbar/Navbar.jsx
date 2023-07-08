@@ -71,7 +71,8 @@ const Navbar = () => {
     {
       title: "cancel",
       danger: false,
-      buttonClassName: "bg-white border-primary-400 border !text-primary-400 hover:bg-primary-400 hover:opacity-100 hover:!text-white",
+      buttonClassName:
+        "bg-white border-primary-400 border !text-primary-400 hover:bg-primary-400 hover:opacity-100 hover:!text-white",
       action: closePopup,
     },
     { title: "logout", danger: true, action: confirmLogout },
@@ -87,27 +88,27 @@ const Navbar = () => {
     }
   }, [showPopup]);
 
-  const {
-    isAdded,
-    isShowNotification,
-    isShowFilter,
-    isShowEdit,
-  } = useSelector(({ navbar }) => {
-    return {
-      isAdded: navbar.isAdded,
-      isShowNotification: navbar.isShowNotification,
-      isShowFilter: navbar.isShowFilter,
-      isShowEdit: navbar.isShowEdit,
-    };
-  });
-  // console.log(places[0].geometry.location.lat());
-  // console.log(places[0].geometry.location.lng());
-  useEffect(() => {
-    dispatch(validatePathname(window.location.pathname));
-    // console.log(location)
-    // console.log([latitude, longitude])
-    // console.log(location)
-  }, [window.location.pathname, isLogin, isShowOnBoarding]);
+  // const {
+  //   isAdded,
+  //   isShowNotification,
+  //   isShowFilter,
+  //   isShowEdit,
+  // } = useSelector(({ navbar }) => {
+  //   return {
+  //     isAdded: navbar.isAdded,
+  //     isShowNotification: navbar.isShowNotification,
+  //     isShowFilter: navbar.isShowFilter,
+  //     isShowEdit: navbar.isShowEdit,
+  //   };
+  // });
+  // // console.log(places[0].geometry.location.lat());
+  // // console.log(places[0].geometry.location.lng());
+  // useEffect(() => {
+  //   dispatch(validatePathname(window.location.pathname));
+  //   // console.log(location)
+  //   // console.log([latitude, longitude])
+  //   // console.log(location)
+  // }, [window.location.pathname, isLogin, isShowOnBoarding]);
 
   return createPortal(
     <nav className="w-full bg-white border-b border-gray-200">
@@ -144,7 +145,7 @@ const Navbar = () => {
         )}
 
         {/* CTA Button */}
-        {(isLogin && !isShowOnBoarding) && (
+        {isLogin && !isShowOnBoarding && (
           <div className="flex items-center gap-4">
             {viewport.width <= BREAK_POINT_NAVBAR && (
               <>
@@ -160,17 +161,17 @@ const Navbar = () => {
                 />
 
                 <Wrapper className="mr-4 items-center w-full justify-end">
-                  {isShowNotification && (
-                    <div className="relative">
-                      <Image
-                        imageClassName=""
-                        src={notification}
-                        alt="notification"
-                        className="w-[28px] h-[28px] m-2"
-                      />
-                      {/* <Counter count={10} /> */}
-                    </div>
-                  )}
+                  {/* {isShowNotification && ( */}
+                  <div className="relative">
+                    <Image
+                      imageClassName=""
+                      src={notification}
+                      alt="notification"
+                      className="w-[28px] h-[28px] m-2"
+                    />
+                    {/* <Counter count={10} /> */}
+                  </div>
+                  {/* )} */}
                 </Wrapper>
               </>
             )}
