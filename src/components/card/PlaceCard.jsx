@@ -9,7 +9,7 @@ import { BsFillPencilFill } from "react-icons/bs";
 import Wrapper from "@/components/wrapper/Wrapper";
 import { useNavigate } from "react-router-dom";
 
-const PlaceCard = ({ place, description, className }) => {
+const PlaceCard = ({ place, description, className, setShowDeletePopup, setShowEditPopup }) => {
   // const { imageUrls, name, address } = place;
   const cardSizeStyles = useMemo(() =>
     // "w-[200px] h-[230px] md:w-[250px] md:h-[300px] xl:w-[400px] xl:h-[180px]",
@@ -55,8 +55,9 @@ const PlaceCard = ({ place, description, className }) => {
               <Wrapper className="!w-fit">
                 <Button
                   onClick={() => {
-                    navigate(`/location/edit/${id}`);
-                    editItinerary(itinerary)
+                    // navigate(`/location/edit/${id}`);
+                    // editItinerary(itinerary)
+                    setShowEditPopup(true)
                     console.log("Edit!");
                   }}
                   className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl !h-fit !my-0 !p-2"
@@ -65,7 +66,7 @@ const PlaceCard = ({ place, description, className }) => {
                 </Button>
                 <Button
                   onClick={() => {
-                    setSelectedItinerary(itinerary)
+                    // setSelectedItinerary(itinerary)
                     setShowDeletePopup(true)
                     console.log("Deleted!");
                   }}

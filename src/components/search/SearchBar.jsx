@@ -23,19 +23,13 @@ const SearchBar = ({ className, wrapperClassName }) => {
   const { currentLocation } = useSelector(({ filter, currentLocation }) => {
     return {
       currentLocation: currentLocation.currentLocation,
-      // latitude: currentLocation.latitude,
-      // longitude: currentLocation.longitude,
-      // category: filter.category,
     };
   });
   const handleKeyPress = (value) => {
-    // if (event.key === "Enter") {
       const now = Date.now();
       // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
       if (now - lastFetch < 1000) return;
       setLastFetch(now);
-      // if (value.trim() === "") return;
-      // dispatch(changeFiltering(true));
 
       if (!currentLocation && !localStorage.getItem("currentLocation")) {
         toast.error("Please enter your current location!");
@@ -45,8 +39,6 @@ const SearchBar = ({ className, wrapperClassName }) => {
         pathname: ROUTE.SEARCH_LOCATION,
         search: `?searchInput=${value || ""}`,
       });
-      // dispatch(changeFiltering(false));
-    // }
   };
 
   useEffect(() => {
@@ -66,8 +58,6 @@ const SearchBar = ({ className, wrapperClassName }) => {
   };
 
   const handlePlaceSelect = (location) => {
-    // const newEvent = { ...event, locationId: location._id };
-    // setEvent(newEvent);
     navigate(`/location/details/${location._id}`)
   };
 
@@ -85,17 +75,8 @@ const SearchBar = ({ className, wrapperClassName }) => {
     return apiHandler();
   };
 
-
   return (
     <div className={`w-full relative ${wrapperClassName}`}>
-      {/* <Input
-        placeholder="Search"
-        className={`bg-white h-[60px] focus:ring-primary-400 focus:ring-1 border-primary-400 !pr-12 ${className}`}
-        // icon={search}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyPress={handleKeyPress}
-      /> */}
       <InputWithDropdown
         handleGet={handleGetLocationSuggestList}
         placeholder="Select location"
@@ -109,33 +90,8 @@ const SearchBar = ({ className, wrapperClassName }) => {
         hideError
         onEnter={handleKeyPress}
         searchQuery={searchParams.get("searchInput")}
-        dropdownClassName="!z-[9980]"
-        // onChange={e => setValue(e.target.value)}
+        dropdownClassName="!z-[8500]"
       />
-      {/* <Image
-        src={search}
-        alt="search"
-        className={`absolute w-[24px] h-[24px] top-1/2 right-4 -translate-y-1/2 `}
-        onClick={(e) => {
-          // dispatch(changeFiltering(true));
-          // dispatch(changeSearchInput(value));
-          e.preventDefault()
-          const now = Date.now();
-          // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
-          if (now - lastFetch < 1000) return;
-          setLastFetch(now);
-          if (!currentLocation) {
-            toast.error("Please enter your current location!");
-            return;
-          }
-          navigate({
-            pathname: ROUTE.SEARCH_LOCATION,
-            search: `?searchInput=${value || ""}`,
-          });
-          // dispatch(changeFiltering(false));
-        }}
-        // onKeyPress={handleKeyPress}
-      /> */}
     </div>
   );
 };

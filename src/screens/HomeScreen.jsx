@@ -186,8 +186,6 @@ const HomeScreen = () => {
         setIsFeaturedLoading(false);
       };
       fetchFeaturedLocations();
-    } else {
-      setIsFeaturedLoading(false);
     }
   }, [latitude, longitude]);
 
@@ -208,8 +206,6 @@ const HomeScreen = () => {
         setIsLatestLoading(false);
       };
       fetchLatestLocations();
-    } else {
-      setIsLatestLoading(false);
     }
     // }
     // console.log(featuredNextCursor);
@@ -218,7 +214,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     console.log(isLoading);
-
+    localStorage.setItem("isGetCurrentLocation", true)
     if (latitude && longitude && !currentLocation) {
       // if (localStorage.getItem("gpsPermission") === "denied") return
 
@@ -233,6 +229,8 @@ const HomeScreen = () => {
           "currentLocation",
           JSON.stringify(data.results[0])
         );
+        localStorage.setItem("isGetCurrentLocation", false)
+
       };
       fetchAddress();
     }
@@ -322,9 +320,9 @@ const HomeScreen = () => {
           </Wrapper>
         )
       ) : (
-        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
+        <Wrapper className="!h-fit justify-center items-center">
           <Loading />
-        </Screen>
+        </Wrapper>
       )}
     </Wrapper>
   );
@@ -351,9 +349,9 @@ const HomeScreen = () => {
           </Wrapper>
         )
       ) : (
-        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
+        <Wrapper className="!h-fit justify-center items-center">
           <Loading />
-        </Screen>
+        </Wrapper>
       )}
     </Wrapper>
   );
@@ -361,11 +359,11 @@ const HomeScreen = () => {
     <>
       {/* { latitude && longitude ? */}
 
-      {(isLoading && !latitude && !longitude ) ? (
+      {/* {(isLoading && !latitude && !longitude ) ? (
         <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
           <Loading />
         </Screen>
-      ) : (
+      ) : ( */}
         <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
           <>
             <Wrapper col="true" className="gap-4 md:items-center">
@@ -380,7 +378,7 @@ const HomeScreen = () => {
             {/* )} */}
           </>
         </Screen>
-      )}
+      {/* )} */}
     </>
   );
 };

@@ -64,7 +64,40 @@ const itineraryApi = {
     } catch (error){
       console.log(error);
     }
-  }
+  },
+  async saveLocation(data){
+    try{
+      const url = `/itinerary/location/save`
+      const response = await axiosClient.post(url, data,{
+        withCredentials: true,
+      });
+      return response
+    } catch (error){
+      console.log(error);
+    }
+  },
+  async deleteSavedLocation(id){
+    try{
+      const url = `/itinerary/location/delete/${id}`
+      const response = await axiosClient.delete(url, {
+        withCredentials: true,
+      });
+      return response
+    } catch (error){
+      console.log(error);
+    }
+  }, 
+  async updateSavedLocation(data){
+    try{
+      const url = `/itinerary/location/update`
+      const response = await axiosClient.patch(url, data,{
+        withCredentials: true,
+      });
+      return response
+    } catch (error){
+      console.log(error);
+    }
+  }, 
 };
 
 export default itineraryApi;

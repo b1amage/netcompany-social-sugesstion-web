@@ -41,7 +41,6 @@ const ItineraryCard = ({ itinerary, setSelectedItinerary, setShowDeletePopup, ed
           <Button
             onClick={(e) => {
               e.stopPropagation()
-
               setSelectedItinerary(itinerary)
               setShowDeletePopup(true)}
             }

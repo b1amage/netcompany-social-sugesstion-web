@@ -64,19 +64,20 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
           className="md:flex-row justify-between md:items-center gap-4 truncate"
         >
           <User user={user} src={user.imageUrl} />
-          {displayAddress && <Wrapper
-            className="flex items-center h-[60px] cursor-pointer hover:bg-gray-200/60 px-3 duration-300 rounded-lg"
+          {displayAddress && 
+          <Wrapper
+            className="flex items-center h-[60px] cursor-pointer hover:bg-gray-200/60 px-3 duration-300 rounded-lg truncate"
             onClick={() => setShowAutoComplete(true)}
           >
             <Image
               src={locationImg}
               alt="location"
-              className=""
+              className="md:w-[35px]"
               imageClassName="md:w-[28px] md:h-[28px]"
             />
             <Heading className="!text-[14px] w-fit truncate ">
-              {localStorage.getItem("gpsPermission") === "granted"
-                  ? ((latitude && longitude && currentLocation) ? currentLocation.formatted_address : "...Loading")
+              {!localStorage.getItem("gpsPermission") ? "...Loading"
+                  : (currentLocation) ? currentLocation.formatted_address 
                 : !localStorage.getItem("currentLocation")
                 ? "Enter a location"
                 : JSON.parse(localStorage.getItem("currentLocation"))

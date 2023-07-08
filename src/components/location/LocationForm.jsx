@@ -36,6 +36,7 @@ import Button from "@/components/button/Button";
 import Time from "./Time";
 import Price from "./Price";
 import { toast } from "react-hot-toast";
+import Description from "@/components/form/Description";
 
 const LocationForm = ({
   locationId,
@@ -477,7 +478,7 @@ const LocationForm = ({
               }`}
           />
 
-          <Wrapper className="my-4" col="true">
+          {/* <Wrapper className="my-4" col="true">
             <Label>
               Description <i>(optional)</i>
             </Label>
@@ -492,8 +493,21 @@ const LocationForm = ({
                 setDescription(e.target.value);
               }}
             />
-          </Wrapper>
+          </Wrapper> */}
 
+          <Description 
+            label="Description"
+            optional
+            textareaClassName={
+              description.trim() !== "" &&
+              "focus:border-green-500 ring-1 ring-black focus:!ring-green-500 "
+            }
+            placeholder="Enter the description"
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value);
+            }}
+          />
           <Wrapper col="true" className="gap-8 xl:flex-row">
             <Wrapper col="true" className="gap-4">
               <Label>
