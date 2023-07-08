@@ -136,6 +136,7 @@ const InputWithDropdown = ({
               if (e.key === "Enter") {
                 onEnter(input);
                 setSuggestions([]);
+                setFocused(false)
               }
             }}
             onFocus={() => setFocused(true)}
@@ -157,7 +158,9 @@ const InputWithDropdown = ({
           )}
         </div>
 
-        {!hideSuggestions &&
+        {
+        // !hideSuggestions &&
+          focused &&
           input !== "" &&
           !selected &&
           suggestions.length > 0 && (

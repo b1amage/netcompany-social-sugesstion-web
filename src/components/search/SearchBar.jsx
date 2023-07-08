@@ -15,8 +15,6 @@ const SearchBar = ({ className, wrapperClassName }) => {
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [searchParams, setSearchParams] = useSearchParams();
   const [suggestNextCursor, setSuggestNextCursor] = useState();
-  const [event, setEvent] = useState();
-
 
   const navigate = useNavigate();
 
@@ -30,7 +28,6 @@ const SearchBar = ({ className, wrapperClassName }) => {
       // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
       if (now - lastFetch < 1000) return;
       setLastFetch(now);
-
       if (!currentLocation && !localStorage.getItem("currentLocation")) {
         toast.error("Please enter your current location!");
         return;
