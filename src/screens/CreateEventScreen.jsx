@@ -29,6 +29,40 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 import ImageUpload from "@/components/form/ImageUpload";
 import Label from "@/components/form/Label";
 
+function isEndTimeAfterStartTime(startTime, endTime) {
+  const [startHours, startMinutes] = startTime.split(":").map(Number);
+  const [endHours, endMinutes] = endTime.split(":").map(Number);
+
+  if (endHours > startHours) {
+    return true;
+  } else if (endHours === startHours && endMinutes > startMinutes) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function calculateDuration(startTime, endTime) {
+  const [startHours, startMinutes] = startTime.split(":").map(Number);
+  const [endHours, endMinutes] = endTime.split(":").map(Number);
+
+  let durationHours = endHours - startHours;
+  let durationMinutes = endMinutes - startMinutes;
+
+  // Handle negative minutes
+  if (durationMinutes < 0) {
+    durationHours -= 1;
+    durationMinutes += 60;
+  }
+
+  const duration = {
+    hours: durationHours,
+    minutes: durationMinutes,
+  };
+
+  return duration;
+}
+
 const CreateEventScreen = () => {
   const defaultEvent = useMemo(
     () => ({
@@ -37,6 +71,10 @@ const CreateEventScreen = () => {
       description: "",
       startDate: null,
       startTime: {
+        hours: null,
+        minutes: null,
+      },
+      endTime: {
         hours: null,
         minutes: null,
       },
@@ -58,6 +96,7 @@ const CreateEventScreen = () => {
       description: "",
       startDate: null,
       startTime: null,
+      endTime: null,
       duration: null,
       imageUrls: "",
       guests: "",
@@ -206,7 +245,6 @@ const CreateEventScreen = () => {
   const handleTimeChange = (e) => {
     if (!event.startDate) {
       setError({ ...error, startTime: "Choose a date first" });
-
       return;
     }
 
@@ -225,12 +263,48 @@ const CreateEventScreen = () => {
     setError({ ...error, startTime: "" });
   };
 
-  const handleDurationChange = (e) => {
+  const handleEndTimeChange = (e) => {
+    if (!event.startDate) {
+      setError({ ...error, startTime: "Choose a date first" });
+      return;
+    }
+
+    if (!event.startTime) {
+      setError({ ...error, startTime: "Choose a start time first" });
+      return;
+    }
+
+    if (isDateToday(event.startDate) && isInvalidTime(e.target.value)) {
+      setError({ ...error, startTime: "Cannot choose time from past!" });
+      return;
+    }
+
+    if (
+      !isEndTimeAfterStartTime(
+        `${event.startTime.hours}:${event.startTime.minutes}`,
+        e.target.value
+      )
+    ) {
+      setError({
+        ...error,
+        startTime: "Invalid time",
+      });
+      return;
+    }
+
     const [hours, minutes] = e.target.value.split(":");
+    const duration = calculateDuration(
+      `${event.startTime.hours}:${event.startTime.minutes}`,
+      e.target.value
+    );
+
     setEvent({
       ...event,
-      duration: { hours: hours * 1, minutes: minutes * 1 },
+      endTime: { hours: hours * 1, minutes: minutes * 1 },
+      duration,
     });
+
+    setError({ ...error, endTime: "", startTime: "" });
   };
 
   const popupRef = useRef();
@@ -480,11 +554,11 @@ const CreateEventScreen = () => {
 
                 {/* duration */}
                 <TimePicker
-                  err={error.duration}
+                  err={error.endTime}
                   className="!w-[120px]"
-                  label="Duration"
+                  label="End time"
                   required
-                  onChange={handleDurationChange}
+                  onChange={handleEndTimeChange}
                 />
               </Wrapper>
             )}
