@@ -542,24 +542,32 @@ const CreateEventScreen = () => {
               }`}
             />
             {!event.allDay && (
-              <Wrapper className="justify-start w-full">
+              <Wrapper col="true" className="justify-start w-full">
                 {/* startTime */}
-                <TimePicker
-                  err={error.startTime}
-                  className="!w-[120px]"
-                  label="Start time"
-                  required
-                  onChange={handleTimeChange}
-                />
+                <Wrapper className="items-center">
+                  <TimePicker
+                    err={error.startTime}
+                    className="!w-[120px]"
+                    label="Start time"
+                    required
+                    onChange={handleTimeChange}
+                  />
 
-                {/* duration */}
-                <TimePicker
-                  err={error.endTime}
-                  className="!w-[120px]"
-                  label="End time"
-                  required
-                  onChange={handleEndTimeChange}
-                />
+                  {/* duration */}
+                  <TimePicker
+                    err={error.endTime}
+                    className="!w-[120px]"
+                    label="End time"
+                    required
+                    onChange={handleEndTimeChange}
+                  />
+                </Wrapper>
+                {(event.duration.hours || event.duration.minutes) && (
+                  <SubHeading>
+                    {event.duration.hours} hours {event.duration.minutes}{" "}
+                    minutes
+                  </SubHeading>
+                )}
               </Wrapper>
             )}
           </Wrapper>
