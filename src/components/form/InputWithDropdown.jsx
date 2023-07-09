@@ -35,8 +35,9 @@ const InputWithDropdown = ({
   searchQuery,
   hideSuggestions,
   onClear,
+  value,
 }) => {
-  const [input, setInput] = useState("" || searchQuery);
+  const [input, setInput] = useState(value || "" || searchQuery);
   const [suggestions, setSuggestions] = useState([]);
   const [selected, setSelected] = useState(false);
   const [err, setErr] = useState(null);
@@ -45,6 +46,8 @@ const InputWithDropdown = ({
   const listRef = useRef();
   const inputRef = useRef(null);
 
+  console.log("Value", value);
+  console.log("input", input);
   const getSuggestions = debounce(async (input) => {
     if (input) {
       const data = await handleGet(input);

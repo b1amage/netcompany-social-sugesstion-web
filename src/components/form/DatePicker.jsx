@@ -3,7 +3,15 @@ import Label from "./Label";
 import Error from "./Error";
 import inputState from "@/constants/inputState";
 
-const DatePicker = ({ onChange, label, err, required, id, className }) => {
+const DatePicker = ({
+  onChange,
+  label,
+  err,
+  required,
+  id,
+  className,
+  value,
+}) => {
   console.log("date picker", err);
   return (
     <div>
@@ -31,6 +39,7 @@ const DatePicker = ({ onChange, label, err, required, id, className }) => {
           </svg>
         </div> */}
         <input
+          value={value}
           onChange={onChange}
           datepicker="true"
           datepicker-autohide="true"
