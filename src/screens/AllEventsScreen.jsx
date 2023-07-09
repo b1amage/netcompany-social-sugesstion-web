@@ -64,7 +64,7 @@ const AllEventsScreen = () => {
   const handleSearchClear = () => {
     const handleApi = async () => {
       setLoading(true);
-      const response = await eventApi.getEvents("", type, eventsNextCursor);
+      const response = await eventApi.getEvents("", type, undefined);
       setEventsNextCursor(response.data.next_cursor);
       localStorage.setItem("eventsNextCursor", response.data.next_cursor);
       setEvents(response.data.results);
