@@ -61,6 +61,20 @@ const AllEventsScreen = () => {
     return handleApi();
   };
 
+  const handleSearchClear = () => {
+    const handleApi = async () => {
+      setLoading(true);
+      const response = await eventApi.getEvents("", type, eventsNextCursor);
+      setEventsNextCursor(response.data.next_cursor);
+      localStorage.setItem("eventsNextCursor", response.data.next_cursor);
+      setEvents(response.data.results);
+      console.log(response);
+      setLoading(false);
+    };
+
+    handleApi();
+  };
+
   const handleSuggestionsSelect = (suggest) =>
     navigate(`/event/${suggest._id}`);
 
@@ -89,6 +103,7 @@ const AllEventsScreen = () => {
           <Text className="hidden lg:block">New Event</Text>
         </Button>
         <InputWithDropdown
+          onClear={handleSearchClear}
           onEnter={(input) => {
             setInput(input);
             console.log("input", input);
