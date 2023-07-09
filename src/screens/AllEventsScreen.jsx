@@ -159,15 +159,13 @@ const AllEventsScreen = () => {
               handleApi();
             }
           }}
-          className="flex flex-col p-5 lg:h-[500px] overflow-y-scroll"
+          className="flex flex-col p-5 lg:h-[500px] flex-wrap overflow-y-scroll"
         >
-          <div className="grid grid-cols-3 gap-4 place-items-center">
-            <>
-              {events.length > 0 &&
-                events.map((item) => <EventCard event={item} key={item._id} />)}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 place-items-center lg:gap-y-6">
+            {events.length > 0 &&
+              events.map((item) => <EventCard event={item} key={item._id} />)}
 
-              {nextLoading && <Loading />}
-            </>
+            {nextLoading && <Loading />}
           </div>
         </div>
       )}

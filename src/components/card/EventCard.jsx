@@ -24,7 +24,7 @@ const EventCard = (props) => {
       onClick={() => navigate(`/event/${_id}`)}
       {...props}
       col="true"
-      className={`px-3 py-2 rounded-lg shadow-lg md:max-w-[400px] lg:max-w-[420px] cursor-pointer ${className}`}
+      className={`px-3 py-2 rounded-lg shadow-lg w-[320px] md:w-[350px] lg:w-[380px] flex-shrink-0 cursor-pointer ${className}`}
     >
       {/* TOP */}
       <Wrapper className="gap-5 pb-3 border-b border-b-neutral-400">
