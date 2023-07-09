@@ -9,21 +9,32 @@ import { BsFillPencilFill } from "react-icons/bs";
 import Wrapper from "@/components/wrapper/Wrapper";
 import { useNavigate } from "react-router-dom";
 
-const PlaceCard = ({ place, description, className, setShowDeletePopup, setShowEditPopup }) => {
+import locationImg from "@/assets/location.svg";
+
+const PlaceCard = ({
+  place,
+  description,
+  className,
+  setShowDeletePopup,
+  setShowEditPopup,
+  setSelectedLocation,
+}) => {
   // const { imageUrls, name, address } = place;
   const cardSizeStyles = useMemo(() =>
     // "w-[200px] h-[230px] md:w-[250px] md:h-[300px] xl:w-[400px] xl:h-[180px]",
     []
   );
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [readMore, setReadMore] = useState(false);
 
   return (
     <div
-      className={`${cardSizeStyles} ${place?.isDeleted && "border-2 !border-secondary-400"} flex-col gap-3 !p-2 transition-all shadow-lg cursor-pointer  md:py-4 xl:pt-6 bg-neutral-400 rounded-xl lg:hover:-translate-y-2 ${className}`}
+      className={`${cardSizeStyles} w-full h-auto ${
+        place?.location?.isDeleted && "border-2 !border-secondary-400"
+      } flex-col gap-3 !p-2 transition-all shadow-lg cursor-pointer md:py-4 xl:pt-6 bg-neutral-400 rounded-xl lg:hover:-translate-y-2 ${className}`}
     >
-      {place?.isDeleted && (
+      {place?.location?.isDeleted && (
         <Note
           wrapperClassName="relative flex justify-end w-full"
           buttonClassName="!relative translate-y-0"
@@ -33,31 +44,38 @@ const PlaceCard = ({ place, description, className, setShowDeletePopup, setShowE
           description="This location is already removed from the system!"
         />
       )}
-      <Wrapper col="true" className="sm:flex-row py-2">
+      <Wrapper col="true" className="sm:flex-row py-2 ">
         <Image
-          src={place?.imageUrls[0]}
-          alt={place?.name}
-          className="w-full !rounded-xl xl:w-2/5"
+          src={place?.location?.imageUrls[0]}
+          alt={place?.location?.name}
+          className={`!rounded-xl w-full ${readMore ? "!h-[280px]" : "sm:h-[150px] h-[250px]"}`}
+          imageClassName=""
           animate
         />
 
         {/* CONTENT */}
-        <div className="w-full  flex flex-col justify-between ">
+        <div className={`flex flex-col justify-between  sm:max-w-md !gap-4 ${!readMore && "truncate"}`}>
           {/* TITLE & ADDRESS */}
-          <div className="flex flex-col !gap-4 ">
-            <Wrapper className="!justify-between items-center">
-              <h1 onClick={() => {
-                if(place?.isDeleted) return
-                navigate(`/location/details/${place?._id}`)
-              }} className="  cursor-pointer text-lg font-semibold w-fit flex gap-4">
-                {place?.name}
+          <div className="flex flex-col !gap-4">
+            <Wrapper className="!justify-between items-center ">
+              <h1
+                onClick={() => {
+                  if (place?.location?.isDeleted) return;
+                  navigate(`/location/details/${place?.location?._id}`);
+                }}
+                className="cursor-pointer text-lg font-semibold w-fit flex gap-4 break-words max-w-full whitespace-normal"
+              >
+                {place?.location?.name}
               </h1>
-              <Wrapper className="!w-fit">
+              <Wrapper className="!w-fit justify-end">
                 <Button
-                  onClick={() => {
+                  onClick={(e) => {
                     // navigate(`/location/edit/${id}`);
                     // editItinerary(itinerary)
-                    setShowEditPopup(true)
+                    e.stopPropagation()
+                    setSelectedLocation(place);
+
+                    setShowEditPopup(true);
                     console.log("Edit!");
                   }}
                   className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl !h-fit !my-0 !p-2"
@@ -65,9 +83,12 @@ const PlaceCard = ({ place, description, className, setShowDeletePopup, setShowE
                   <BsFillPencilFill className="text-sm" />
                 </Button>
                 <Button
-                  onClick={() => {
-                    // setSelectedItinerary(itinerary)
-                    setShowDeletePopup(true)
+                  onClick={(e) => {
+                    e.stopPropagation()
+
+                    setSelectedLocation(place);
+
+                    setShowDeletePopup(true);
                     console.log("Deleted!");
                   }}
                   className="!bg-danger !bg-opacity-40 !text-danger !text-xl !h-fit !my-0 !p-2"
@@ -76,18 +97,30 @@ const PlaceCard = ({ place, description, className, setShowDeletePopup, setShowE
                 </Button>
               </Wrapper>
             </Wrapper>
-
-            <h3 className="text-sm italic  text-neutral-500">
-              {place?.address}
+            
+            
+          <Wrapper
+            className="flex items-center cursor-pointer hover:bg-gray-200/60 duration-300 rounded-lg truncate"
+          >
+            <Image
+              src={locationImg}
+              alt="location"
+              className=" !mx-0"
+              imageClassName=""
+            />
+            <h3 className="text-sm truncate">
+              {place?.location?.address}
             </h3>
+            </Wrapper>
+            
           </div>
 
           {/* DESCRIPTION */}
           <div
             onClick={() => setReadMore(!readMore)}
-            className="mt-2 text-sm italic text-left xl:block text-neutral-700"
+            className="mt-2 text-sm text-left"
           >
-            <p className={`${!readMore && "text-overflow-ellipsis-3-clamp"}`}>
+            <p className={` ${!readMore && "truncate"}`}>
               {description}
             </p>
           </div>

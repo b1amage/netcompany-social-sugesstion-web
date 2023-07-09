@@ -15,6 +15,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [searchParams, setSearchParams] = useSearchParams();
   const [suggestNextCursor, setSuggestNextCursor] = useState();
+  // const [hideSuggestions, setHideSuggestions] = useState(true);
 
   const navigate = useNavigate();
 
@@ -84,10 +85,11 @@ const SearchBar = ({ className, wrapperClassName }) => {
         icon={<GoLocation />}
         inputClassName="!h-[60px] !rounded-2xl"
         wrapperClassName=""
-        hideError
+        hideError="true"
         onEnter={handleKeyPress}
         searchQuery={searchParams.get("searchInput")}
         dropdownClassName="!z-[8500]"
+        withClearButton="true"
       />
     </div>
   );

@@ -26,7 +26,7 @@ const InputWithDropdown = ({
   clearInputAfterSelect,
   isForEventSearch,
   hideError,
-  onKeyPress,
+  // onChange,
   inputClassName,
   wrapperClassName,
   // searchQuery
@@ -35,8 +35,9 @@ const InputWithDropdown = ({
   onEnter,
   dropdownClassName,
   searchQuery,
-  hideSuggestions,
+  // hideSuggestions,
 }) => {
+  const [hideSuggestions, setHideSuggestions] = useState(true)
   const [input, setInput] = useState("" || searchQuery);
   const [suggestions, setSuggestions] = useState([]);
   const [selected, setSelected] = useState(false);
@@ -96,6 +97,7 @@ const InputWithDropdown = ({
     setSelected(true);
     setInput(clearInputAfterSelect ? "" : suggestion[fieldToDisplay]);
     setSuggestions([]);
+    setHideSuggestions(true)
     setErr(null);
     onSelect(suggestion);
   };
@@ -144,6 +146,7 @@ const InputWithDropdown = ({
             onChange={(e) => {
               setSelected(false);
               setInput(e.target.value);
+              setHideSuggestions(false)
               // onChange(e.target.value)
               // if (suggestions.length === 0)
               //   setErr(`No place with name ${input} found in database`);
@@ -159,8 +162,7 @@ const InputWithDropdown = ({
         </div>
 
         {
-        // !hideSuggestions &&
-          focused &&
+          !hideSuggestions &&
           input !== "" &&
           !selected &&
           suggestions.length > 0 && (

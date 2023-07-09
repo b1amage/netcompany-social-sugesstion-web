@@ -19,6 +19,8 @@ import { GoLocation } from "react-icons/go";
 import InputWithDropdown from "@/components/form/InputWithDropdown";
 import eventApi from "@/api/eventApi";
 import Error from "@/components/form/Error";
+import { toast } from "react-hot-toast";
+import Loading from "@/components/loading/Loading";
 
 const ItineraryDetailsScreen = () => {
   const { user } = useSelector((state) => state.user);
@@ -27,22 +29,49 @@ const ItineraryDetailsScreen = () => {
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
+
   const [selectedLocation, setSelectedLocation] = useState();
+  const [selectedSuggestLocation, setSelectedSuggestLocation] = useState();
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // const [hideSuggestions, setHideSuggestions] = useState(true)
   const [note, setNote] = useState("");
   const [suggestNextCursor, setSuggestNextCursor] = useState();
   const [submitErr, setSubmitErr] = useState()
   const { id } = useParams();
 
+  const notifyCreate = () => toast.success("Successfully create!");
+
+  const notifyDelete = () => toast.success("Successfully delete!");
+
+  const notifyUpdate= () => toast.success("Successfully update!");
+
   const handleSaveLocation = () => {
-    if (!selectedLocation) {
+    if (!selectedSuggestLocation) {
       setSubmitErr("Please enter a location!")
       return;
     }
     console.log({
       itineraryId: id,
-      locationId: selectedLocation._id,
+      locationId: selectedSuggestLocation._id,
       note: note
     })
+    setIsUpdating(true)
+    const handleCreate = async() => {
+      const response = await itineraryApi.saveLocation({
+        itineraryId: id,
+        locationId: selectedSuggestLocation._id,
+        note: note
+      })
+      console.log(response)
+      notifyCreate()
+      setLocations((prev) => [...prev, response.data])
+      setSelectedSuggestLocation()
+      setNote("")
+      setIsUpdating(false)
+      setShowCreatePopup(false)
+    }
+    handleCreate()
   };
   const handleEditItinerary = () => {};
 
@@ -61,7 +90,7 @@ const ItineraryDetailsScreen = () => {
       console.log(response);
     };
     getDetails();
-  }, [id]);
+  }, [id, isUpdating]);
 
   const handleGetLocationSuggestList = (text) => {
     const apiHandler = async () => {
@@ -75,8 +104,8 @@ const ItineraryDetailsScreen = () => {
 
   const handlePlaceSelect = (location) => {
     // navigate(`/location/details/${location._id}`)
-    setSelectedLocation(location);
-
+    // setHideSuggestions(true)
+    setSelectedSuggestLocation(location);
   };
 
   const handleLoadmoreSuggestList = (text) => {
@@ -94,7 +123,22 @@ const ItineraryDetailsScreen = () => {
   };
 
   const handleDeleteLocation = () => {
+    const handleDelete = async () => {
+      const response = await itineraryApi.deleteSavedLocation(
+        selectedLocation._id,
+        notifyDelete
+      );
+      console.log(response);
+      const newList = locations.filter(item => item._id !== selectedLocation._id )
+      localStorage.setItem("itineraryLocation", JSON.stringify(newList))
+      setLocations(newList);
+      
+      setShowDeletePopup(false);
+      
+      // navigate("/profile");
+    };
 
+    handleDelete();
   }
   return (
     <Screen className="flex flex-col  px-3 py-4 gap-6 md:gap-4 md:px-6 md:py-5 !rounded-none lg:px-20 !min-h-0">
@@ -121,21 +165,23 @@ const ItineraryDetailsScreen = () => {
           </Heading>
         </Button>
       </Wrapper>
-      {locations?.length > 0 ? (
+      {!isUpdating ?
+      locations?.length > 0 ? (
         <Wrapper
           // _ref={tabRef}
           col="true"
-          className="md:gap-8 gap-6 pr-3"
+          className="md:gap-8 gap-6"
         >
           {locations.map((location) => {
             return (
               <PlaceCard
                 key={location._id}
-                place={location?.location}
+                place={location}
                 description={location?.note}
-                className="!w-full  sm:min-h-[180px] sm:max-h-[420px]"
+                className=""
                 setShowDeletePopup={setShowDeletePopup}
                 setShowEditPopup={setShowEditPopup}
+                setSelectedLocation={setSelectedLocation}
               />
             );
           })}
@@ -144,11 +190,15 @@ const ItineraryDetailsScreen = () => {
         <Wrapper>
           <Heading>No locations yet!</Heading>
         </Wrapper>
+      ) : (
+        <Wrapper className="justify-center items-center">
+          <Loading />
+        </Wrapper>
       )}
       {(showCreatePopup || showEditPopup) && (
         <Popup
           onClose={() => {
-            setShowCreatePopup(false);
+            closePopup()
           }}
           actions={[
             {
@@ -181,6 +231,8 @@ const ItineraryDetailsScreen = () => {
                   placeholder="Select location"
                   onSelect={handlePlaceSelect}
                   loadMore={handleLoadmoreSuggestList}
+                  // hideSuggestions={hideSuggestions}
+                  // onChange={() => setHideSuggestions(false)}
                   fieldToDisplay="name"
                   subFieldToDisplay="address"
                   icon={<GoLocation />}
@@ -201,16 +253,14 @@ const ItineraryDetailsScreen = () => {
               <Button
                 className="!absolute top-0 right-0 !bg-transparent !rounded-none !border-none !my-0"
                 onClick={() => {
-                  setShowCreatePopup(false);
+                  closePopup()
                 }}
               >
                 <AiOutlineClose className="text-[32px]  text-black " />
               </Button>
             </>
           }
-          className={`${
-            showCreatePopup ? "translate-x-0" : "translate-x-full"
-          } duration-500 px-4 sm:px-12 `}
+          className={` px-4 sm:px-12 `}
           formClassName="items-center !h-auto w-full !rounded-none md:!py-2 md:!px-4 md:!rounded-lg relative"
           titleClassName="text-[20px]"
           childrenClassName="!mt-0 w-full"
@@ -219,7 +269,7 @@ const ItineraryDetailsScreen = () => {
       )}
       {showDeletePopup && (
         <Popup
-          title="Are you sure to delete this itinerary?"
+          title="Are you sure to remove this location?"
           onClose={() => setShowDeletePopup(false)}
           actions={[
             {

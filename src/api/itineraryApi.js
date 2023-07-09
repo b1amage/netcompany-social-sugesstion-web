@@ -76,12 +76,13 @@ const itineraryApi = {
       console.log(error);
     }
   },
-  async deleteSavedLocation(id){
+  async deleteSavedLocation(id, notifyDelete){
     try{
       const url = `/itinerary/location/delete/${id}`
       const response = await axiosClient.delete(url, {
         withCredentials: true,
       });
+      notifyDelete()
       return response
     } catch (error){
       console.log(error);
