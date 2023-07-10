@@ -26,16 +26,16 @@ const InputWithDropdown = ({
   clearInputAfterSelect,
   isForEventSearch,
   hideError,
-  // onChange,
   inputClassName,
   wrapperClassName,
-  // searchQuery
   withClearButton,
   hideLabel,
   onEnter,
   dropdownClassName,
   searchQuery,
   // hideSuggestions,
+  onClear,
+  value,
 }) => {
   const [hideSuggestions, setHideSuggestions] = useState(true)
   const [input, setInput] = useState("" || searchQuery);
@@ -47,6 +47,8 @@ const InputWithDropdown = ({
   const listRef = useRef();
   const inputRef = useRef(null);
 
+  console.log("Value", value);
+  console.log("input", input);
   const getSuggestions = debounce(async (input) => {
     if (input) {
       const data = await handleGet(input);
@@ -156,7 +158,10 @@ const InputWithDropdown = ({
           {withClearButton && input !== "" && (
             <MdClear
               className="absolute p-1 text-xl font-bold text-black -translate-y-1/2 rounded-full cursor-pointer bg-neutral-400 top-1/2 right-4 hover:opacity-75"
-              onClick={() => setInput("")}
+              onClick={() => {
+                setInput("");
+                onClear();
+              }}
             />
           )}
         </div>

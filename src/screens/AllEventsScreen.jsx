@@ -61,6 +61,20 @@ const AllEventsScreen = () => {
     return handleApi();
   };
 
+  const handleSearchClear = () => {
+    const handleApi = async () => {
+      setLoading(true);
+      const response = await eventApi.getEvents("", type, undefined);
+      setEventsNextCursor(response.data.next_cursor);
+      localStorage.setItem("eventsNextCursor", response.data.next_cursor);
+      setEvents(response.data.results);
+      console.log(response);
+      setLoading(false);
+    };
+
+    handleApi();
+  };
+
   const handleSuggestionsSelect = (suggest) =>
     navigate(`/event/${suggest._id}`);
 
@@ -89,6 +103,7 @@ const AllEventsScreen = () => {
           <Text className="hidden lg:block">New Event</Text>
         </Button>
         <InputWithDropdown
+          onClear={handleSearchClear}
           onEnter={(input) => {
             setInput(input);
             console.log("input", input);
@@ -159,15 +174,13 @@ const AllEventsScreen = () => {
               handleApi();
             }
           }}
-          className="flex flex-col p-5 lg:h-[500px] overflow-y-scroll"
+          className="flex flex-col p-5 lg:h-[500px] flex-wrap overflow-y-scroll"
         >
-          <div className="grid grid-cols-3 gap-4 place-items-center">
-            <>
-              {events.length > 0 &&
-                events.map((item) => <EventCard event={item} key={item._id} />)}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 place-items-center lg:gap-y-6">
+            {events.length > 0 &&
+              events.map((item) => <EventCard event={item} key={item._id} />)}
 
-              {nextLoading && <Loading />}
-            </>
+            {nextLoading && <Loading />}
           </div>
         </div>
       )}

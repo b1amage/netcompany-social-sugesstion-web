@@ -23,6 +23,8 @@ import Guess from "@/components/guess/Guess";
 import { AiFillCalendar, AiFillClockCircle } from "react-icons/ai";
 import { HiLocationMarker } from "react-icons/hi";
 import toast, { Toaster } from "react-hot-toast";
+import Note from "@/components/note/Note";
+import warning from "@/assets/warning.svg";
 
 function convertDateTime(dateTimeString) {
   var date = new Date(dateTimeString);
@@ -272,11 +274,21 @@ const EventDetailsScreen = () => {
                 >
                   <HiLocationMarker />
                   {event.location.name}{" "}
-                  {event.location.isDeleted &&
-                    "(This location is no longer exist)"}
+                  {event.location.isDeleted && (
+                    <Wrapper className="ml-1 flex-center">
+                      <Note
+                        wrapperClassName="relative"
+                        buttonClassName="!relative !z-[1000] !translate-y-0"
+                        noteClassName="left-0 !h-auto !w-[160px] sm:!w-[200px] md:!w-[320px] !z-[7900]"
+                        iconClassName="!w-[40px] md:!w-[20px]"
+                        src={warning}
+                        description="This itinerary contains a deleted location!"
+                      />
+                    </Wrapper>
+                  )}
                 </SubHeading>
 
-                <Text className="flex items-center gap-1 underline">
+                <Text className="flex items-center gap-1">
                   <HiLocationMarker />
                   {event.location.address}
                 </Text>

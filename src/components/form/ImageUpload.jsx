@@ -7,18 +7,30 @@ import Image from "@/components/image/Image";
 import Portal from "@/components/HOC/Portal";
 import Uploading from "@/components/loading/Uploading";
 
-const ImageUpload = () => {
+const ImageUpload = ({ defaultImg }) => {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [ava, setAva] = useState();
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState("");
   const [images, setImages] = useState(
-    localStorage.getItem("eventCreateImages")
+    defaultImg.length > 0
+      ? [
+          ...defaultImg,
+          localStorage.getItem("eventCreateImages") && [
+            ...JSON.parse(localStorage.getItem("eventCreateImages")),
+          ],
+        ].filter((item) => item)
+      : localStorage.getItem("eventCreateImages")
       ? JSON.parse(localStorage.getItem("eventCreateImages"))
       : []
   );
 
+  console.log("upload", images);
+
+  useEffect(() => {
+    localStorage.setItem("eventCreateImages", JSON.stringify(defaultImg));
+  }, []);
   useEffect(() => {
     err !== "" && toast.error(err);
   }, [err]);
