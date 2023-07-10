@@ -62,10 +62,16 @@ const ItineraryDetailsScreen = () => {
         itineraryId: id,
         locationId: selectedSuggestLocation._id,
         note: note
-      })
+      }, setSubmitErr)
+      // if (submitErr) return
       console.log(response)
+      if(response.response.status === 400){
+        setSubmitErr(response.response.data.message)
+        setIsUpdating(false)
+        return
+      }
       notifyCreate()
-      setLocations((prev) => [...prev, response.data])
+      // setLocations((prev) => [...prev, response.data])
       setSelectedSuggestLocation()
       setNote("")
       setIsUpdating(false)
@@ -73,12 +79,40 @@ const ItineraryDetailsScreen = () => {
     }
     handleCreate()
   };
-  const handleEditItinerary = () => {};
+  
+  const handleEditItinerary = () => {
+    if (!selectedSuggestLocation) {
+      setSubmitErr("Please enter a location!")
+      return;
+    }
+    console.log({
+      itineraryId: id,
+      // locationId: selectedSuggestLocation._id,
+      note: note
+    })
+    setIsUpdating(true)
+
+    const handleUpdate = async() => {
+      const response = await itineraryApi.updateSavedLocation({
+        // itineraryId: id,
+        itineraryLocationId: selectedSuggestLocation._id,
+        note: note
+      }, setSubmitErr)
+      notifyUpdate()
+      setSelectedSuggestLocation()
+      setNote("")
+      setIsUpdating(false)
+      setShowEditPopup(false)
+    }
+    handleUpdate()
+  };
 
   const closePopup = () => {
     setShowCreatePopup(false);
     setShowEditPopup(false)
     setShowDeletePopup(false)
+    setSelectedSuggestLocation()
+    setNote("")
     setSubmitErr()
   };
 
@@ -125,11 +159,11 @@ const ItineraryDetailsScreen = () => {
   const handleDeleteLocation = () => {
     const handleDelete = async () => {
       const response = await itineraryApi.deleteSavedLocation(
-        selectedLocation._id,
+        selectedSuggestLocation._id,
         notifyDelete
       );
       console.log(response);
-      const newList = locations.filter(item => item._id !== selectedLocation._id )
+      const newList = locations.filter(item => item._id !== selectedSuggestLocation._id )
       localStorage.setItem("itineraryLocation", JSON.stringify(newList))
       setLocations(newList);
       
@@ -181,7 +215,8 @@ const ItineraryDetailsScreen = () => {
                 className=""
                 setShowDeletePopup={setShowDeletePopup}
                 setShowEditPopup={setShowEditPopup}
-                setSelectedLocation={setSelectedLocation}
+                setSelectedLocation={setSelectedSuggestLocation}
+                setNote={setNote}
               />
             );
           })}
@@ -222,7 +257,7 @@ const ItineraryDetailsScreen = () => {
           children={
             <>
               <Heading className="text-center !text-[28px]">
-                Save location
+                {showCreatePopup ? "Save location" : "Edit location"}
               </Heading>
               <Wrapper col="true" className="!w-full">
                 <InputWithDropdown
@@ -233,6 +268,7 @@ const ItineraryDetailsScreen = () => {
                   loadMore={handleLoadmoreSuggestList}
                   // hideSuggestions={hideSuggestions}
                   // onChange={() => setHideSuggestions(false)}
+                  searchQuery={selectedSuggestLocation?.location?.name}
                   fieldToDisplay="name"
                   subFieldToDisplay="address"
                   icon={<GoLocation />}
@@ -244,8 +280,10 @@ const ItineraryDetailsScreen = () => {
                 <Description
                   label="Note:"
                   onChange={(e) => setNote(e.target.value)}
+                  value={note}
                   placeholder="Enter the description..."
-                  wrapperClassName="!my-0"
+                  wrapperClassName="!my-0 "
+                  textareaClassName="!rounded-2xl"
                 />
               </Wrapper>
 

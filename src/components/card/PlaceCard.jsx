@@ -18,6 +18,7 @@ const PlaceCard = ({
   setShowDeletePopup,
   setShowEditPopup,
   setSelectedLocation,
+  setNote
 }) => {
   // const { imageUrls, name, address } = place;
   const cardSizeStyles = useMemo(() =>
@@ -74,7 +75,7 @@ const PlaceCard = ({
                     // editItinerary(itinerary)
                     e.stopPropagation()
                     setSelectedLocation(place);
-
+                    setNote(place?.note)
                     setShowEditPopup(true);
                     console.log("Edit!");
                   }}

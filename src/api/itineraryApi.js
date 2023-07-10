@@ -71,9 +71,11 @@ const itineraryApi = {
       const response = await axiosClient.post(url, data,{
         withCredentials: true,
       });
+      
       return response
     } catch (error){
       console.log(error);
+      return error
     }
   },
   async deleteSavedLocation(id, notifyDelete){
@@ -88,7 +90,7 @@ const itineraryApi = {
       console.log(error);
     }
   }, 
-  async updateSavedLocation(data){
+  async updateSavedLocation(data, setSubmitErr){
     try{
       const url = `/itinerary/location/update`
       const response = await axiosClient.patch(url, data,{
@@ -97,6 +99,7 @@ const itineraryApi = {
       return response
     } catch (error){
       console.log(error);
+      setSubmitErr(error.response.data.message)
     }
   }, 
 };
