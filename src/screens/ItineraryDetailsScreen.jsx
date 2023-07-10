@@ -278,6 +278,8 @@ const ItineraryDetailsScreen = () => {
                   dropdownClassName="!z-[8500]"
                 />
                 <Description
+                  counter
+                  maxWordCount={500}
                   label="Note:"
                   onChange={(e) => setNote(e.target.value)}
                   value={note}

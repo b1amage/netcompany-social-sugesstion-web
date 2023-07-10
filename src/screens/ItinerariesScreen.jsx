@@ -113,6 +113,7 @@ const ItinerariesScreen = () => {
   const closePopup = () => {
     setShowCreatePopup(false)
     setShowEditPopup(false)
+    setValue("")
   };
 
   const popupActions = [
@@ -262,8 +263,7 @@ const ItinerariesScreen = () => {
       {(showCreatePopup || showEditPopup) && (
         <Popup
           onClose={() => {
-            setShowCreatePopup(false);
-            setShowEditPopup(false)
+            closePopup()
           }}
           title={`${showCreatePopup ? "Create new itinerary": "Edit itinerary"}`}
           actions={popupActions}
@@ -276,21 +276,11 @@ const ItinerariesScreen = () => {
                     label="Name"
                     labelClassName=""
                     placeholder={`Enter name of the itinerary...`}
-                    // required=""
-                    // icon=""
-                    // type=""
-                    // onIconClick=""
                     value={value}
                     onChange={handleNameChange}
-                    // err=""
                     fluid
                     className="!rounded-lg !px-4"
-                    // disabled=""
-                    // min=""
-                    // errClassName=""
-                    // onWheel=""
                     wrapperInputClassName="!w-full"
-                    // onKeyPress={handleKeyPress}
                   />
                   <SubHeading className="absolute right-0 px-4 !text-[20px] !text-black">
                     {value.length}/40
@@ -303,8 +293,7 @@ const ItinerariesScreen = () => {
               <Button
                 className="!absolute top-0 right-0 !bg-transparent !rounded-none !border-none !my-0"
                 onClick={() => {
-                  setShowCreatePopup(false);
-                  setShowEditPopup(false)
+                  closePopup()
                 }}
               >
                 <AiOutlineClose className="text-[32px]  text-black " />
