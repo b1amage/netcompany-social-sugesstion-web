@@ -33,11 +33,9 @@ const InputWithDropdown = ({
   onEnter,
   dropdownClassName,
   searchQuery,
-  // hideSuggestions,
+  hideSuggestions,
   onClear,
-  value,
 }) => {
-  const [hideSuggestions, setHideSuggestions] = useState(true)
   const [input, setInput] = useState("" || searchQuery);
   const [suggestions, setSuggestions] = useState([]);
   const [selected, setSelected] = useState(false);
@@ -47,8 +45,6 @@ const InputWithDropdown = ({
   const listRef = useRef();
   const inputRef = useRef(null);
 
-  console.log("Value", value);
-  console.log("input", input);
   const getSuggestions = debounce(async (input) => {
     if (input) {
       const data = await handleGet(input);
@@ -99,7 +95,7 @@ const InputWithDropdown = ({
     setSelected(true);
     setInput(clearInputAfterSelect ? "" : suggestion[fieldToDisplay]);
     setSuggestions([]);
-    setHideSuggestions(true)
+    // setHideSuggestions(true)
     setErr(null);
     onSelect(suggestion);
   };
@@ -140,7 +136,7 @@ const InputWithDropdown = ({
               if (e.key === "Enter") {
                 onEnter(input);
                 setSuggestions([]);
-                setFocused(false)
+                setFocused(false);
               }
             }}
             onFocus={() => setFocused(true)}
@@ -148,7 +144,7 @@ const InputWithDropdown = ({
             onChange={(e) => {
               setSelected(false);
               setInput(e.target.value);
-              setHideSuggestions(false)
+              setHideSuggestions(false);
               // onChange(e.target.value)
               // if (suggestions.length === 0)
               //   setErr(`No place with name ${input} found in database`);
@@ -166,8 +162,7 @@ const InputWithDropdown = ({
           )}
         </div>
 
-        {
-          !hideSuggestions &&
+        {!hideSuggestions &&
           input !== "" &&
           !selected &&
           suggestions.length > 0 && (
