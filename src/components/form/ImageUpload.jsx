@@ -30,6 +30,8 @@ const ImageUpload = ({ defaultImg }) => {
 
   useEffect(() => {
     localStorage.setItem("eventCreateImages", JSON.stringify(defaultImg));
+
+    return () => localStorage.removeItem("eventCreateImages");
   }, []);
   useEffect(() => {
     err !== "" && toast.error(err);
