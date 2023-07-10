@@ -14,14 +14,7 @@ const ImageUpload = ({ defaultImg }) => {
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState("");
   const [images, setImages] = useState(
-    defaultImg.length > 0
-      ? [
-          ...defaultImg,
-          localStorage.getItem("eventCreateImages") && [
-            ...JSON.parse(localStorage.getItem("eventCreateImages")),
-          ],
-        ].filter((item) => item)
-      : localStorage.getItem("eventCreateImages")
+    localStorage.getItem("eventCreateImages")
       ? JSON.parse(localStorage.getItem("eventCreateImages"))
       : []
   );
@@ -30,10 +23,13 @@ const ImageUpload = ({ defaultImg }) => {
 
   useEffect(() => {
     localStorage.setItem("eventCreateImages", JSON.stringify(defaultImg));
+
+    return () => localStorage.removeItem("eventCreateImages");
   }, []);
-  useEffect(() => {
-    err !== "" && toast.error(err);
-  }, [err]);
+
+  // useEffect(() => {
+  //   err !== "" && toast.error(err);
+  // }, [err]);
   return (
     <Wrapper className="overflow-x-scroll">
       {uploading && (
