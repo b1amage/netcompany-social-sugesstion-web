@@ -46,6 +46,16 @@ const ItineraryDetailsScreen = () => {
 
   const notifyUpdate= () => toast.success("Successfully update!");
 
+  useEffect(() => {
+    const getDetails = async () => {
+      const response = await itineraryApi.getItineraryDetails(id);
+      setItinerary(response.data);
+      setLocations([...response.data.savedLocations]);
+      console.log(response);
+    };
+    getDetails();
+  }, [id, isUpdating]);
+
   const handleSaveLocation = () => {
     if (!selectedSuggestLocation) {
       setSubmitErr("Please enter a location!")
@@ -65,8 +75,8 @@ const ItineraryDetailsScreen = () => {
       }, setSubmitErr)
       // if (submitErr) return
       console.log(response)
-      if(response.response.status === 400){
-        setSubmitErr(response.response.data.message)
+      if(response.status === 400){
+        setSubmitErr(response.data.message)
         setIsUpdating(false)
         return
       }
@@ -116,15 +126,7 @@ const ItineraryDetailsScreen = () => {
     setSubmitErr()
   };
 
-  useEffect(() => {
-    const getDetails = async () => {
-      const response = await itineraryApi.getItineraryDetails(id);
-      setItinerary(response.data);
-      setLocations([...response.data.savedLocations]);
-      console.log(response);
-    };
-    getDetails();
-  }, [id, isUpdating]);
+  
 
   const handleGetLocationSuggestList = (text) => {
     const apiHandler = async () => {
@@ -281,7 +283,11 @@ const ItineraryDetailsScreen = () => {
                   counter
                   maxWordCount={500}
                   label="Note:"
-                  onChange={(e) => setNote(e.target.value)}
+                  onChange={(e) => {
+                    if (e.target.value.length > 500) return 
+                    setNote(e.target.value)
+
+                  }}
                   value={note}
                   placeholder="Enter the description..."
                   wrapperClassName="!my-0 "

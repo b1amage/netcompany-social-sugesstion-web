@@ -75,7 +75,7 @@ const itineraryApi = {
       return response
     } catch (error){
       console.log(error);
-      return error
+      return error.response
     }
   },
   async deleteSavedLocation(id, notifyDelete){

@@ -28,6 +28,7 @@ const ItinerariesScreen = () => {
   const tabRef = useRef();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [selectedItinerary, setSelectedItinerary] = useState()
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const notifyCreate = () => toast.success("Successfully create!!");
 
@@ -35,7 +36,23 @@ const ItinerariesScreen = () => {
 
   const notifyUpdate= () => toast.success("Successfully update!");
 
-
+  useEffect(() => {
+    const getItineraryList = async () => {
+      const response = await itineraryApi.getItineraries();
+      // console.log(response)
+      setItineraries(response.data.results);
+      localStorage.setItem(
+        "itineraries",
+        JSON.stringify(response.data.results)
+      );
+      localStorage.setItem(
+        "itinerariesNextCursor",
+        JSON.stringify(response.data.next_cursor)
+      );
+    };
+    getItineraryList();
+  }, [isUpdating]);
+  
   const deleteItinerary = () => {
     const handleDelete = async () => {
       console.log("Delete!");
@@ -58,17 +75,14 @@ const ItinerariesScreen = () => {
     handleDelete();
   };
 
-  // const handleKeyPress = (e) => {
-  //   e.preventDefault()
-  //   showCreatePopup ? handleCreateItinerary : handleEditItinerary
-  // }
-
   const handleCreateItinerary = (e) => {
     e.preventDefault();
     if (value.trim() === "") {
       setErr("Please enter the name for itinerary!");
       return;
     }
+
+    setIsUpdating(true)
     const createItinerary = async () => {
       const response = await itineraryApi.createItinerary(
         { name: value },
@@ -79,6 +93,7 @@ const ItinerariesScreen = () => {
       notifyCreate();
       setValue("");
       setErr();
+      setIsUpdating(false)
     };
     createItinerary();
   };
@@ -143,22 +158,6 @@ const ItinerariesScreen = () => {
     setValue(itinerary.name)
     setSelectedItinerary(itinerary)
   }
-  useEffect(() => {
-    const getItineraryList = async () => {
-      const response = await itineraryApi.getItineraries();
-      // console.log(response)
-      setItineraries(response.data.results);
-      localStorage.setItem(
-        "itineraries",
-        JSON.stringify(response.data.results)
-      );
-      localStorage.setItem(
-        "itinerariesNextCursor",
-        JSON.stringify(response.data.next_cursor)
-      );
-    };
-    getItineraryList();
-  }, []);
 
   const loadMoreData = async (nextCursor) => {
     const now = Date.now();
