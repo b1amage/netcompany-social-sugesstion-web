@@ -508,8 +508,8 @@ const LocationForm = ({
               setDescription(e.target.value);
             }}
           />
-          <Wrapper col="true" className="gap-8 xl:flex-row">
-            <Wrapper col="true" className="gap-4">
+          <Wrapper col="true" className="gap-4 xl:flex-row ">
+            <Wrapper col="true" className="gap-4 !w-full">
               <Label>
                 Time <span className="text-secondary-400">*</span>
               </Label>
@@ -573,7 +573,7 @@ const LocationForm = ({
 
             <div className=" w-[1px] bg-black lg:block hidden"></div>
 
-            <Wrapper col="true" className="justify-between">
+            <Wrapper col="true" className="justify-between !w-full">
               <Label>
                 Price Range per person <i>(optional)</i>{" "}
               </Label>
@@ -608,7 +608,7 @@ const LocationForm = ({
                     (currency?.title || currency) ? "focus:ring-2 ring-1 ring-black border-black"
                       : currencyErr && "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 border-secondary-400 "
                   } rounded-lg`}
-                  wrapperClassName="xl:max-w-[240px] !w-full"
+                  wrapperClassName=" sm:w-[150px]"
                   options={currencyList}
                   value={currency}
                   defaultTitle={"SELECT CURRENCY"}
