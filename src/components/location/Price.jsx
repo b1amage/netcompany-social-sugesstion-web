@@ -11,7 +11,7 @@ import CurrencyFormat from "react-currency-format";
         
 const Price = ({label, value, err, onChange, wrapperClassName, className}) => {
   return (
-    <Wrapper col="true" className={`justify-between ${wrapperClassName}`}>
+    <Wrapper col="true" className={`justify-between w-full ${wrapperClassName}`}>
       <Label>{label}</Label>
 
       <CurrencyFormat

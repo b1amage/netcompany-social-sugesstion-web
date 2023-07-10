@@ -15,12 +15,12 @@ const Time = ({
 }) => {
   return (
     <Wrapper col="true" className={`w-full ${wrapperClassName}`}>
-      <Label className={`!text-[14px] ${labelClassName}`}>
+      <Label className={`text-[12px] sm:text-[14px] ${labelClassName}`}>
         {label} {required && <span className="text-secondary-400">*</span>}
       </Label>
       <Input
         type="time"
-        className={`h-[60px] appearance-none flex justify-between !w-full bg-white 
+        className={`h-[60px] appearance-none flex justify-between !w-full bg-white items-center
         ${value 
           ? "ring-1 ring-black focus:!ring-green-500 focus:!border-green-500 "
           : err ? "focus:!ring-secondary-400 !border-secondary-400 ring-1 ring-secondary-400"

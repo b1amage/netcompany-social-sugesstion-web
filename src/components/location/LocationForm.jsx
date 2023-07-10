@@ -36,6 +36,7 @@ import Button from "@/components/button/Button";
 import Time from "./Time";
 import Price from "./Price";
 import { toast } from "react-hot-toast";
+import Description from "@/components/form/Description";
 
 const LocationForm = ({
   locationId,
@@ -477,7 +478,7 @@ const LocationForm = ({
               }`}
           />
 
-          <Wrapper className="my-4" col="true">
+          {/* <Wrapper className="my-4" col="true">
             <Label>
               Description <i>(optional)</i>
             </Label>
@@ -492,10 +493,23 @@ const LocationForm = ({
                 setDescription(e.target.value);
               }}
             />
-          </Wrapper>
+          </Wrapper> */}
 
-          <Wrapper col="true" className="gap-8 xl:flex-row">
-            <Wrapper col="true" className="gap-4">
+          <Description 
+            label="Description"
+            optional
+            textareaClassName={
+              description.trim() !== "" &&
+              "focus:border-green-500 ring-1 ring-black focus:!ring-green-500 "
+            }
+            placeholder="Enter the description"
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value);
+            }}
+          />
+          <Wrapper col="true" className="gap-4 xl:flex-row ">
+            <Wrapper col="true" className="gap-4 !w-full">
               <Label>
                 Time <span className="text-secondary-400">*</span>
               </Label>
@@ -559,7 +573,7 @@ const LocationForm = ({
 
             <div className=" w-[1px] bg-black lg:block hidden"></div>
 
-            <Wrapper col="true" className="justify-between">
+            <Wrapper col="true" className="justify-between !w-full">
               <Label>
                 Price Range per person <i>(optional)</i>{" "}
               </Label>
@@ -594,7 +608,7 @@ const LocationForm = ({
                     (currency?.title || currency) ? "focus:ring-2 ring-1 ring-black border-black"
                       : currencyErr && "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 border-secondary-400 "
                   } rounded-lg`}
-                  wrapperClassName="xl:max-w-[240px] !w-full"
+                  wrapperClassName=" sm:w-[150px]"
                   options={currencyList}
                   value={currency}
                   defaultTitle={"SELECT CURRENCY"}
