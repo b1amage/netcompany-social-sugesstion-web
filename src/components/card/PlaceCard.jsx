@@ -30,7 +30,7 @@ const PlaceCard = ({
 
   return (
     <div
-      className={`${cardSizeStyles} w-full h-auto ${
+      className={`${cardSizeStyles} w-full ${
         place?.location?.isDeleted && "border-2 !border-secondary-400"
       } flex-col gap-3 !p-2 transition-all shadow-lg cursor-pointer md:py-4 xl:pt-6 bg-neutral-400 rounded-xl lg:hover:-translate-y-2 ${className}`}
     >
@@ -48,13 +48,13 @@ const PlaceCard = ({
         <Image
           src={place?.location?.imageUrls[0]}
           alt={place?.location?.name}
-          className={`!rounded-xl w-full ${readMore ? "!h-[280px]" : "sm:h-[150px] h-[250px]"}`}
+          className={`!rounded-xl ${!readMore ? "sm:w-[200px] h-[150px]" : "sm:w-[400px] h-[250px]"}`}
           imageClassName=""
           animate
         />
 
         {/* CONTENT */}
-        <div className={`flex flex-col justify-between  sm:max-w-md !gap-4 ${!readMore && "truncate"}`}>
+        <div className={`flex flex-col justify-between w-full max-w-4xl !gap-4 ${!readMore && "truncate"}`}>
           {/* TITLE & ADDRESS */}
           <div className="flex flex-col !gap-4">
             <Wrapper className="!justify-between items-center ">

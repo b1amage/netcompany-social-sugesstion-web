@@ -170,7 +170,7 @@ const ItineraryDetailsScreen = () => {
         <Wrapper
           // _ref={tabRef}
           col="true"
-          className="md:gap-8 gap-6"
+          className="md:gap-8 gap-6 h-auto"
         >
           {locations.map((location) => {
             return (
