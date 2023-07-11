@@ -5,7 +5,6 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 
 const AllEventsScreen = React.lazy(() => import("@/screens/AllEventsScreen"));
 const ItineraryDetailsScreen = React.lazy(() => import("@/screens/ItineraryDetailsScreen"));
-const ItineraryLocationDetailsScreen = React.lazy(() => import("@/screens/ItineraryLocationDetailsScreen"));
 
 const ItinerariesScreen = React.lazy(() =>
   import("@/screens/ItinerariesScreen")
@@ -103,7 +102,7 @@ const AppRoutes = () => {
           />
           <Route path={ROUTE.ITINERARIES} element={<ItinerariesScreen />} />
           <Route path={ROUTE.ITINERARY_DETAILS} element={<ItineraryDetailsScreen />} />
-          <Route path={ROUTE.ITINERARY_LOCATION_DETAILS} element={<ItineraryLocationDetailsScreen />} />
+
         </Routes>
       </Suspense>
     </>
