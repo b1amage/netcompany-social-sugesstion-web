@@ -71,11 +71,10 @@ const itineraryApi = {
       const response = await axiosClient.post(url, data,{
         withCredentials: true,
       });
-      
       return response
     } catch (error){
       console.log(error);
-      return error
+      return error.response
     }
   },
   async deleteSavedLocation(id, notifyDelete){

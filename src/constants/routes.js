@@ -13,7 +13,8 @@ const ROUTE = {
   CREATE_LOCATION: "/create-location",
   SEARCH_LOCATION: "/locations",
   ITINERARIES: "/itineraries",
-  ITINERARY_DETAILS: "/itinerary/details/:id"
+  ITINERARY_DETAILS: "/itinerary/details/:id",
+  ITINERARY_LOCATION_DETAILS: "/itinerary/location/details/:id",
 };
 
 export default ROUTE;
