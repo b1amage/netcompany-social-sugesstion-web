@@ -29,7 +29,6 @@ const ItineraryDetailsScreen = () => {
   const [locations, setLocations] = useState([]);
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [showEditPopup, setShowEditPopup] = useState(false);
 
   const [availableErr, setAvailableErr] = useState();
   const [selectedSuggestLocation, setSelectedSuggestLocation] = useState();
@@ -44,8 +43,6 @@ const ItineraryDetailsScreen = () => {
   const notifyCreate = () => toast.success("Successfully create!");
 
   const notifyDelete = () => toast.success("Successfully delete!");
-
-  const notifyUpdate = () => toast.success("Successfully update!");
 
   useEffect(() => {
     const getDetails = async () => {
@@ -101,36 +98,6 @@ const ItineraryDetailsScreen = () => {
     handleCreate();
   };
 
-  const handleEditItinerary = () => {
-    if (!selectedSuggestLocation) {
-      setSubmitErr("Please enter a location!");
-      return;
-    }
-    console.log({
-      itineraryId: id,
-      // locationId: selectedSuggestLocation._id,
-      note: note,
-    });
-
-    const handleUpdate = async () => {
-      setIsUpdating(true);
-      await itineraryApi.updateSavedLocation(
-        {
-          // itineraryId: id,
-          itineraryLocationId: selectedSuggestLocation._id,
-          note: note,
-        },
-        setSubmitErr
-      );
-      notifyUpdate();
-      setSelectedSuggestLocation();
-      setNote("");
-      setIsUpdating(false);
-      setShowEditPopup(false);
-    };
-    handleUpdate();
-  };
-
   const handleDeleteLocation = () => {
     const handleDelete = async () => {
       const response = await itineraryApi.deleteSavedLocation(
@@ -155,7 +122,6 @@ const ItineraryDetailsScreen = () => {
 
   const closePopup = () => {
     setShowCreatePopup(false);
-    setShowEditPopup(false);
     setShowDeletePopup(false);
     setSelectedSuggestLocation();
     setNote("");
