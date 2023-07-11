@@ -71,7 +71,6 @@ const itineraryApi = {
       const response = await axiosClient.post(url, data,{
         withCredentials: true,
       });
-      
       return response
     } catch (error){
       console.log(error);
