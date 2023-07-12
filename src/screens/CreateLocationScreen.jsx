@@ -20,7 +20,10 @@ const CreateLocationScreen = () => {
         defaultCategory=""
         defaultWeekdayTime={{ openTime: "", closeTime: "" }}
         defaultWeekendTime={{ openTime: "", closeTime: "" }}
-        defaultPriceRange={{ min: undefined, max: undefined, currency: localStorage.getItem("currentLocation") && JSON.parse(localStorage.getItem("currentLocation")).address_components[4].long_name === "Vietnam"  ? {title: "VND"} : {title: "USD"}}}
+        defaultPriceRange={{ min: undefined, max: undefined, 
+          currency: undefined
+          // localStorage.getItem("currentLocation") && JSON.parse(localStorage.getItem("currentLocation")).address_components[4].long_name === "Vietnam"  ? {title: "VND"} : {title: "USD"}
+        }}
       />
     </Screen>
   );
