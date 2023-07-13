@@ -5,7 +5,7 @@ import SubHeading from "@/components/typography/SubHeading";
 import Image from "@/components/image/Image";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Label from "@/components/form/Label";
 import Button from "@/components/button/Button";
@@ -26,39 +26,37 @@ const ItineraryLocationDetailsScreen = () => {
   const { user } = useSelector((state) => state.user);
   const [note, setNote] = useState(place.state.location.note);
   const [submitErr, setSubmitErr] = useState();
-
+  const {id} = useParams()
   const [showEditPopup, setShowEditPopup] = useState(false);
+  const navigate = useNavigate()
+
   const closePopup = () => {
     setShowEditPopup(false);
-    setNote("");
     setSubmitErr();
   };
-  const handleEditLocationNote = () => {
-    if (!selectedSuggestLocation) {
-      setSubmitErr("Please enter a location!");
-      return;
-    }
-    console.log({
-      itineraryId: id,
-      // locationId: selectedSuggestLocation._id,
-      note: note,
-    });
 
+  const handleCancelEdit = () => {
+    setNote(place.state.location.note)
+    setShowEditPopup(false);
+    setSubmitErr();
+  };
+
+  const handleEditLocationNote = () => {
     const handleUpdate = async () => {
-      setIsUpdating(true);
+      // setIsUpdating(true);
       await itineraryApi.updateSavedLocation(
         {
           // itineraryId: id,
-          itineraryLocationId: selectedSuggestLocation._id,
+          itineraryLocationId: id,
           note: note,
         },
-        setSubmitErr
+        setSubmitErr,
+        navigate,
+        notifyUpdate
       );
-      notifyUpdate();
-      setSelectedSuggestLocation();
-      setNote("");
-      setIsUpdating(false);
-      setShowEditPopup(false);
+      // setNote("");
+      // setIsUpdating(false);
+      // setShowEditPopup(false);
     };
     handleUpdate();
   };
@@ -84,7 +82,7 @@ const ItineraryLocationDetailsScreen = () => {
             <BsFillPencilFill className="text-sm" />
           </Button>
         </Heading>
-        <SubHeading className="">{place.state.location.note}</SubHeading>
+        <SubHeading className="break-words">{place.state.location.note}</SubHeading>
       </Wrapper>
       {showEditPopup && <Popup
           onClose={() => {
@@ -96,7 +94,7 @@ const ItineraryLocationDetailsScreen = () => {
               danger: true,
               buttonClassName:
                 "!bg-white border-primary-400 border !text-primary-400 hover:!bg-danger hover:!border-danger hover:opacity-100 hover:!text-white",
-              action: closePopup,
+              action: handleCancelEdit,
             },
             {
               title: "Save",
@@ -112,8 +110,6 @@ const ItineraryLocationDetailsScreen = () => {
               <Heading className="text-center !text-[28px]">
                 {"Edit note"}
               </Heading>
-     
-              
                 <Description
                   counter
                   maxWordCount={500}

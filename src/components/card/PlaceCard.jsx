@@ -18,7 +18,6 @@ const PlaceCard = ({
   description,
   className,
   setShowDeletePopup,
-  setShowEditPopup,
   setSelectedLocation,
   setNote,
 }) => {
@@ -77,7 +76,7 @@ const PlaceCard = ({
 
               {/* )} */}
               <Wrapper className="!w-fit justify-end">
-                <Button
+                {/* <Button
                   onClick={(e) => {
                     // navigate(`/location/edit/${id}`);
                     // editItinerary(itinerary)
@@ -90,7 +89,7 @@ const PlaceCard = ({
                   className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl !h-fit !my-0 !p-2"
                 >
                   <BsFillPencilFill className="text-sm" />
-                </Button>
+                </Button> */}
                 <Button
                   onClick={(e) => {
                     e.stopPropagation();

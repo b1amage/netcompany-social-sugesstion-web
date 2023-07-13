@@ -89,12 +89,14 @@ const itineraryApi = {
       console.log(error);
     }
   }, 
-  async updateSavedLocation(data, setSubmitErr){
+  async updateSavedLocation(data, setSubmitErr, navigate, notifyUpdate){
     try{
       const url = `/itinerary/location/update`
       const response = await axiosClient.patch(url, data,{
         withCredentials: true,
       });
+      notifyUpdate()
+      navigate(-1)
       return response
     } catch (error){
       console.log(error);

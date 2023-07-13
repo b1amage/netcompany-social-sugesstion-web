@@ -163,7 +163,7 @@ const ItinerariesScreen = () => {
     const now = Date.now();
 
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
-    if (now - lastFetch < 1000) return;
+    if (now - lastFetch < 500) return;
     if (nextCursor === null) return;
     // setIsLatestUpdating(true);
     setLastFetch(now);
@@ -181,7 +181,11 @@ const ItinerariesScreen = () => {
     if (!tabRef.current) return;
     const handleScroll = async () => {
       const { scrollTop, scrollHeight, clientHeight } = tabRef.current;
-      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight;
+      // console.log(scrollTop)
+      // console.log(clientHeight)
+
+      // console.log(scrollHeight)
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 100;
 
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
@@ -189,9 +193,6 @@ const ItinerariesScreen = () => {
         if (nextCursor.length > 10) {
           await loadMoreData(nextCursor);
         }
-
-        // if (!isFeaturedUpdating){
-        // }
       }
     };
 

@@ -200,7 +200,6 @@ const ItineraryDetailsScreen = () => {
                   description={location?.note}
                   className=""
                   setShowDeletePopup={setShowDeletePopup}
-                  setShowEditPopup={setShowEditPopup}
                   setSelectedLocation={setSelectedSuggestLocation}
                   setNote={setNote}
                 />
@@ -217,7 +216,7 @@ const ItineraryDetailsScreen = () => {
           <Loading />
         </Wrapper>
       )}
-      {(showCreatePopup || showEditPopup) && (
+      {(showCreatePopup) && (
         <Popup
           onClose={() => {
             closePopup();
