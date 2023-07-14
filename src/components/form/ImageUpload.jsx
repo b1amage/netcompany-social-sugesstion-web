@@ -13,18 +13,17 @@ const ImageUpload = ({ defaultImg }) => {
   const [ava, setAva] = useState();
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState("");
-  const [images, setImages] = useState(
-    localStorage.getItem("eventCreateImages")
-      ? JSON.parse(localStorage.getItem("eventCreateImages"))
-      : []
-  );
+  const [images, setImages] = useState();
+  // localStorage.getItem("eventCreateImages")
+  //   ? JSON.parse(localStorage.getItem("eventCreateImages"))
+  //   : []
+  // ""
 
   console.log("upload", images);
 
   useEffect(() => {
-    localStorage.setItem("eventCreateImages", JSON.stringify(defaultImg));
-
-    return () => localStorage.removeItem("eventCreateImages");
+    // localStorage.setItem("eventCreateImages", JSON.stringify(defaultImg));
+    // return () => localStorage.removeItem("eventCreateImages");
   }, []);
 
   // useEffect(() => {
@@ -98,7 +97,8 @@ const ImageUpload = ({ defaultImg }) => {
         />
       </Wrapper>
 
-      {images.length > 0 &&
+      {images &&
+        images.length > 0 &&
         images.map((item) => (
           <Wrapper className="relative" key={item}>
             <Wrapper

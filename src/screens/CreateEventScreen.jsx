@@ -315,9 +315,11 @@ const CreateEventScreen = () => {
     const apiHandle = async () => {
       const newGuests = event.guests.map((guest) => guest._id);
       const newEvent = { ...event, guests: newGuests };
-      const imageUrls = localStorage.getItem("eventCreateImages")
-        ? JSON.parse(localStorage.getItem("eventCreateImages"))
-        : [];
+      const imageUrls =
+        localStorage.getItem("eventCreateImages") !== "undefined" &&
+        localStorage.getItem("eventCreateImages") !== "null"
+          ? JSON.parse(localStorage.getItem("eventCreateImages"))
+          : [];
 
       newEvent.imageUrls = imageUrls;
       setEvent(newEvent);
