@@ -21,6 +21,7 @@ import eventApi from "@/api/eventApi";
 import Error from "@/components/form/Error";
 import { toast } from "react-hot-toast";
 import Loading from "@/components/loading/Loading";
+import useItineraryDragAndDrop from "@/hooks/useItineraryDragAndDrop";
 
 const ItineraryDetailsScreen = () => {
   const { user } = useSelector((state) => state.user);
@@ -45,17 +46,35 @@ const ItineraryDetailsScreen = () => {
   const notifyDelete = () => toast.success("Successfully delete!");
 
   useEffect(() => {
+    // localStorage.removeItem("itineraryLocations")
     const getDetails = async () => {
       const response = await itineraryApi.getItineraryDetails(id);
       setItinerary(response.data);
       setLocations([...response.data.savedLocations]);
+      localStorage.setItem(
+        "itineraryLocations",
+        JSON.stringify(response.data.savedLocations)
+      );
+
       console.log(response);
     };
     getDetails();
   }, [id, isUpdating]);
 
+  const { handleDragEnd, handleDragOver, handleDragStart, handleDrop } =
+    useItineraryDragAndDrop(async (updateList) => {
+      console.log({
+        itineraryId: id,
+        savedLocations: updateList,
+      });
+      await itineraryApi.updateLocationsOrder({
+        itineraryId: id,
+        savedLocations: updateList,
+      });
+    });
+
   const handleSaveLocation = () => {
-    setSubmitErr()
+    setSubmitErr();
     if (!selectedSuggestLocation) {
       setSubmitErr("Please enter a location!");
       return;
@@ -75,13 +94,11 @@ const ItineraryDetailsScreen = () => {
     });
     const handleCreate = async () => {
       setIsUpdating(true);
-      const response = await itineraryApi.saveLocation(
-        {
-          itineraryId: id,
-          locationId: selectedSuggestLocation._id,
-          note: note,
-        }
-      );
+      const response = await itineraryApi.saveLocation({
+        itineraryId: id,
+        locationId: selectedSuggestLocation._id,
+        note: note,
+      });
       console.log(response);
       // if (submitErr) return
       // setLocations((prev) => [...prev, response.data])
@@ -128,8 +145,6 @@ const ItineraryDetailsScreen = () => {
     setSubmitErr();
   };
 
-  
-
   const handleGetLocationSuggestList = (text) => {
     const apiHandler = async () => {
       const response = await eventApi.getSuggestLocation(text);
@@ -142,7 +157,7 @@ const ItineraryDetailsScreen = () => {
 
   const handlePlaceSelect = (location) => {
     // navigate(`/location/details/${location._id}`)
-    setHideSuggestions(true)
+    setHideSuggestions(true);
     setSelectedSuggestLocation(location);
   };
 
@@ -192,7 +207,7 @@ const ItineraryDetailsScreen = () => {
             col="true"
             className="md:gap-8 gap-6 h-auto !relative"
           >
-            {locations.map((location) => {
+            {locations.map((location, index) => {
               return (
                 <PlaceCard
                   key={location._id}
@@ -202,6 +217,11 @@ const ItineraryDetailsScreen = () => {
                   setShowDeletePopup={setShowDeletePopup}
                   setSelectedLocation={setSelectedSuggestLocation}
                   setNote={setNote}
+                  draggable={true}
+                  onDragStart={(event) => handleDragStart(event, index)}
+                  onDragEnd={handleDragEnd}
+                  onDragOver={(event) => handleDragOver(event, index)}
+                  onDrop={() => handleDrop(locations, setLocations)}
                 />
               );
             })}
@@ -216,7 +236,7 @@ const ItineraryDetailsScreen = () => {
           <Loading />
         </Wrapper>
       )}
-      {(showCreatePopup) && (
+      {showCreatePopup && (
         <Popup
           onClose={() => {
             closePopup();
@@ -269,9 +289,8 @@ const ItineraryDetailsScreen = () => {
                   maxWordCount={500}
                   label="Note:"
                   onChange={(e) => {
-                    if (e.target.value.length > 500) return 
-                    setNote(e.target.value)
-
+                    if (e.target.value.length > 500) return;
+                    setNote(e.target.value);
                   }}
                   value={note}
                   placeholder="Enter the description..."

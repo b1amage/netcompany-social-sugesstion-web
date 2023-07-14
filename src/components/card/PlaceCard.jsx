@@ -13,18 +13,18 @@ import locationImg from "@/assets/location.svg";
 import Heading from "@/components/typography/Heading";
 import SubHeading from "@/components/typography/SubHeading";
 
-const PlaceCard = ({
-  place,
-  description,
-  className,
-  setShowDeletePopup,
-  setSelectedLocation,
-  setNote,
-}) => {
+const PlaceCard = (
+  props
+) => {
   const navigate = useNavigate();
-
+  const {place,
+    description,
+    className,
+    setShowDeletePopup,
+    setSelectedLocation,} = props
   return (
     <Wrapper
+      {...props}
       onClick={() => {
         navigate(`/itinerary/location/details/${place._id}`, {
           state: {

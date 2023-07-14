@@ -103,6 +103,20 @@ const itineraryApi = {
       setSubmitErr(error.response.data.message)
     }
   }, 
+  async updateLocationsOrder(data){
+    try{
+      const url = `/itinerary/location/order`
+      const response = await axiosClient.patch(url, data,{
+        withCredentials: true,
+      });
+      console.log(response)
+      return response
+    } catch (error){
+      console.log(error);
+      // setSubmitErr(error.response.data.message)
+      return error.response
+    }
+  }, 
 };
 
 export default itineraryApi;

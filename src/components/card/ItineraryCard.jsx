@@ -12,7 +12,8 @@ import Note from "@/components/note/Note";
 import warning from "@/assets/warning.svg"
 import { useNavigate } from "react-router-dom";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
-const ItineraryCard = ({ itinerary, setSelectedItinerary, setShowDeletePopup, editItinerary}) => {
+const ItineraryCard = (props) => {
+  const {itinerary, setSelectedItinerary, setShowDeletePopup, editItinerary,} =  props
   const { _id, name, numOfLocations, hasDeletedLocation } = itinerary
   const navigate = useNavigate()
 
@@ -22,7 +23,7 @@ const ItineraryCard = ({ itinerary, setSelectedItinerary, setShowDeletePopup, ed
   }
 
   return (
-    <Wrapper  className="duration-300 border md:hover:border-b-4 md:hover:border-r-4 md:hover:border-b-neutral-600 md:hover:border-r-neutral-600 md:hover:drop-shadow relative bg-neutral-300 rounded-2xl justify-around items-center px-4 w-full">
+    <Wrapper {...props} className="duration-300 border md:hover:border-b-4 md:hover:border-r-4 md:hover:border-b-neutral-600 md:hover:border-r-neutral-600 md:hover:drop-shadow relative bg-neutral-300 rounded-2xl justify-around items-center px-4 w-full">
         <Wrapper onClick={handleWrapperClick} col="true" className="py-6 w-full break-all cursor-pointer">
           <Heading className="break-words text-[16px] md:!text-[20px]">{name}</Heading>
           <Heading className="!text-[14px] md:!text-[16px] relative flex gap-4"> {numOfLocations} Locations {hasDeletedLocation && <Note wrapperClassName="relative" buttonClassName="!relative !z-[1000]" noteClassName="left-0 !h-auto !w-[160px] sm:!w-[200px] md:!w-[320px] !z-[7900]" iconClassName="!w-[40px] md:!w-[20px]" src={warning} description="This itinerary contains a deleted location!" />}</Heading>

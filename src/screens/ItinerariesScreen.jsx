@@ -28,7 +28,6 @@ const ItinerariesScreen = () => {
   const tabRef = useRef();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [selectedItinerary, setSelectedItinerary] = useState()
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const notifyCreate = () => toast.success("Successfully create!!");
 
@@ -36,23 +35,7 @@ const ItinerariesScreen = () => {
 
   const notifyUpdate= () => toast.success("Successfully update!");
 
-  useEffect(() => {
-    const getItineraryList = async () => {
-      const response = await itineraryApi.getItineraries();
-      // console.log(response)
-      setItineraries(response.data.results);
-      localStorage.setItem(
-        "itineraries",
-        JSON.stringify(response.data.results)
-      );
-      localStorage.setItem(
-        "itinerariesNextCursor",
-        JSON.stringify(response.data.next_cursor)
-      );
-    };
-    getItineraryList();
-  }, [isUpdating]);
-  
+
   const deleteItinerary = () => {
     const handleDelete = async () => {
       console.log("Delete!");
@@ -81,8 +64,6 @@ const ItinerariesScreen = () => {
       setErr("Please enter the name for itinerary!");
       return;
     }
-
-    setIsUpdating(true)
     const createItinerary = async () => {
       const response = await itineraryApi.createItinerary(
         { name: value },
@@ -93,7 +74,6 @@ const ItinerariesScreen = () => {
       notifyCreate();
       setValue("");
       setErr();
-      setIsUpdating(false)
     };
     createItinerary();
   };
@@ -158,12 +138,28 @@ const ItinerariesScreen = () => {
     setValue(itinerary.name)
     setSelectedItinerary(itinerary)
   }
+  useEffect(() => {
+    const getItineraryList = async () => {
+      const response = await itineraryApi.getItineraries();
+      // console.log(response)
+      setItineraries(response.data.results);
+      localStorage.setItem(
+        "itineraries",
+        JSON.stringify(response.data.results)
+      );
+      localStorage.setItem(
+        "itinerariesNextCursor",
+        JSON.stringify(response.data.next_cursor)
+      );
+    };
+    getItineraryList();
+  }, []);
 
   const loadMoreData = async (nextCursor) => {
     const now = Date.now();
 
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
-    if (now - lastFetch < 500) return;
+    if (now - lastFetch < 1000) return;
     if (nextCursor === null) return;
     // setIsLatestUpdating(true);
     setLastFetch(now);
@@ -181,10 +177,6 @@ const ItinerariesScreen = () => {
     if (!tabRef.current) return;
     const handleScroll = async () => {
       const { scrollTop, scrollHeight, clientHeight } = tabRef.current;
-      // console.log(scrollTop)
-      // console.log(clientHeight)
-
-      // console.log(scrollHeight)
       const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 100;
 
       if (isScrolledToBottom) {
@@ -193,6 +185,9 @@ const ItinerariesScreen = () => {
         if (nextCursor.length > 10) {
           await loadMoreData(nextCursor);
         }
+
+        // if (!isFeaturedUpdating){
+        // }
       }
     };
 
@@ -211,6 +206,7 @@ const ItinerariesScreen = () => {
       setErr()
     }
   }, [showCreatePopup, showEditPopup])
+
   return (
     <Screen className="flex flex-col  px-3 py-4 gap-6 md:gap-4 md:px-6 md:py-5 !rounded-none lg:px-20 !min-h-0  ">
       <SubNavbar user={user} wrapperClassName="!gap-0" />
@@ -242,7 +238,7 @@ const ItinerariesScreen = () => {
           col="true"
           className="md:gap-8 gap-6 overflow-y-scroll pr-3 py-12 !h-[600px] items-center"
         >
-          {itineraries.map((itinerary) => {
+          {itineraries.map((itinerary, index) => {
             return (
               <ItineraryCard
                 key={itinerary._id}
@@ -252,9 +248,7 @@ const ItinerariesScreen = () => {
                 deleteItinerary={deleteItinerary}
                 editItinerary={handleEditOnClick}
                 setSelectedItinerary={setSelectedItinerary}
-                // name={itinerary.name}
-                // numberOfLocations={itinerary.numOfLocations}
-                // createdAt={itinerary.createdAt}
+                // className={className}
               />
             );
           })}
