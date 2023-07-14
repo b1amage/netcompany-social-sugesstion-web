@@ -24,7 +24,6 @@ const InputWithDropdown = ({
   subFieldToDisplay,
   icon,
   clearInputAfterSelect,
-  isForEventSearch,
   hideError,
   inputClassName,
   wrapperClassName,
@@ -151,7 +150,7 @@ const InputWithDropdown = ({
               if (!selected && !hideError) setErr("Please select!");
             }}
           />
-          {withClearButton && input !== "" && (
+          {withClearButton && input !== "" && input && (
             <MdClear
               className="absolute p-1 text-xl font-bold text-black -translate-y-1/2 rounded-full cursor-pointer bg-neutral-400 top-1/2 right-4 hover:opacity-75"
               onClick={() => {
