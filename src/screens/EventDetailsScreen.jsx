@@ -279,10 +279,10 @@ const EventDetailsScreen = () => {
                       <Note
                         wrapperClassName="relative"
                         buttonClassName="!relative !z-[1000] !translate-y-0"
-                        noteClassName="left-0 !h-auto !w-[160px] sm:!w-[200px] md:!w-[320px] !z-[7900]"
+                        noteClassName="left-0 !h-auto !w-[160px] sm:!w-[200px] md:!w-[320px] !z-[7900] -translate-x-1/2"
                         iconClassName="!w-[40px] md:!w-[20px]"
                         src={warning}
-                        description="This itinerary contains a deleted location!"
+                        description="This event contains a deleted location!"
                       />
                     </Wrapper>
                   )}
