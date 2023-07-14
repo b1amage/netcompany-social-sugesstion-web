@@ -439,7 +439,7 @@ const CreateEventScreen = () => {
             {/* name */}
             <Input
               required
-              label="Title"
+              label="Name"
               placeholder="Enter the event's name"
               className={`rounded-lg h-[60px] !transition-none ${
                 error.name === null

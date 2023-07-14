@@ -245,12 +245,12 @@ const EventDetailsScreen = () => {
 
             <Wrapper className="justify-between !flex-col lg:!flex-row lg:items-center">
               <Wrapper col="true" className="!gap-0">
-                <SubHeading className="flex items-center gap-1">
+                <SubHeading className="flex items-center gap-1 !text-black">
                   <AiFillCalendar />
                   Start at {convertDateTime(event.startDateTime)}
                 </SubHeading>
 
-                <Text className="flex items-center gap-1">
+                <SubHeading className="flex items-center gap-1">
                   <AiFillClockCircle />
                   {event.allDay
                     ? "All Day"
@@ -259,7 +259,7 @@ const EventDetailsScreen = () => {
                       } ${event.duration.minutes} ${
                         event.duration.minutes === 1 ? "minute" : "minutes"
                       }`}
-                </Text>
+                </SubHeading>
               </Wrapper>
               <Wrapper col="true" className="!gap-0">
                 <SubHeading
@@ -270,7 +270,7 @@ const EventDetailsScreen = () => {
                         : `/location/details/${event.location._id}`
                     );
                   }}
-                  className="flex items-center gap-1 font-bold cursor-pointer"
+                  className="flex items-center gap-1 font-bold underline cursor-pointer !text-black"
                 >
                   <HiLocationMarker />
                   {event.location.name}{" "}
@@ -288,10 +288,10 @@ const EventDetailsScreen = () => {
                   )}
                 </SubHeading>
 
-                <Text className="flex items-center gap-1">
+                <SubHeading className="flex items-center gap-1">
                   <HiLocationMarker />
                   {event.location.address}
-                </Text>
+                </SubHeading>
               </Wrapper>
             </Wrapper>
 
