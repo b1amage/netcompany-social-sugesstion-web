@@ -140,13 +140,27 @@ const DetailsScreen = () => {
     return `${str.slice(0, 2)}:${str.slice(2)}`;
   }
 
-  function formatCurrency(num) {
-    return (
-      "$" +
-      Number(num)
-        .toFixed(2)
-        .replace(/(\d)(?=(\d{3})+\.)/g, "$1,")
-    );
+  function formatCurrency(num, currency) {
+    let formattedNum;
+    switch (currency) {
+      case "USD":
+        formattedNum =
+          "$" +
+          Number(num)
+            .toFixed(2)
+            .replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+        break;
+      case "VND":
+        formattedNum = parseInt(num)
+          .toString()
+          .replace(/(\d)(?=(\d{3})+\b)/g, "$1,");
+        break;
+      default:
+        formattedNum = Number(num)
+          .toFixed(2)
+          .replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+    }
+    return formattedNum;
   }
 
   return (
@@ -309,9 +323,16 @@ const DetailsScreen = () => {
 
                 {locationDetails?.pricePerPerson && (
                   <SubHeading>
-                    {formatCurrency(locationDetails?.pricePerPerson?.min)} -{" "}
-                    {formatCurrency(locationDetails?.pricePerPerson?.max)} (
-                    {locationDetails?.pricePerPerson?.currency})
+                    {formatCurrency(
+                      locationDetails?.pricePerPerson?.min,
+                      locationDetails?.pricePerPerson?.currency
+                    )}{" "}
+                    -{" "}
+                    {formatCurrency(
+                      locationDetails?.pricePerPerson?.max,
+                      locationDetails?.pricePerPerson?.currency
+                    )}{" "}
+                    ({locationDetails?.pricePerPerson?.currency})
                   </SubHeading>
                 )}
               </Wrapper>
