@@ -164,7 +164,7 @@ const DetailsScreen = () => {
   }
 
   return (
-    <Screen className="py-2 pb-4 xl:gap-10 xl:pb-10">
+    <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       {loading ? (
         <LoadingScreen />
       ) : (
