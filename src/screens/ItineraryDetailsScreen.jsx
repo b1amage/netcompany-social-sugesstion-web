@@ -33,9 +33,10 @@ const ItineraryDetailsScreen = () => {
 
   const [availableErr, setAvailableErr] = useState();
   const [selectedSuggestLocation, setSelectedSuggestLocation] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // const [hideSuggestions, setHideSuggestions] = useState(true)
+  // const [hideSuggestions, setHideSuggestions] =   useState(true)
   const [note, setNote] = useState("");
   const [suggestNextCursor, setSuggestNextCursor] = useState();
   const [submitErr, setSubmitErr] = useState("");
@@ -55,7 +56,7 @@ const ItineraryDetailsScreen = () => {
         "itineraryLocations",
         JSON.stringify(response.data.savedLocations)
       );
-
+      setIsLoading(false)
       console.log(response);
     };
     getDetails();
@@ -182,8 +183,6 @@ const ItineraryDetailsScreen = () => {
         <Heading className="!text-[28px] truncate">{itinerary?.name}</Heading>
         <Button
           onClick={() => {
-            // navigate("/create-location");
-            // console.log(locations);
             setShowCreatePopup(true);
           }}
           active
@@ -200,7 +199,7 @@ const ItineraryDetailsScreen = () => {
           </Heading>
         </Button>
       </Wrapper>
-      {!isUpdating ? (
+      {!isLoading ? (
         locations?.length > 0 ? (
           <Wrapper
             // _ref={tabRef}
@@ -216,7 +215,6 @@ const ItineraryDetailsScreen = () => {
                   className=""
                   setShowDeletePopup={setShowDeletePopup}
                   setSelectedLocation={setSelectedSuggestLocation}
-                  setNote={setNote}
                   draggable={true}
                   onDragStart={(event) => handleDragStart(event, index)}
                   onDragEnd={handleDragEnd}
@@ -259,7 +257,7 @@ const ItineraryDetailsScreen = () => {
                 : handleEditItinerary,
             },
           ]}
-          // title="Search location"
+          
           children={
             <>
               <Heading className="text-center !text-[28px]">
@@ -273,7 +271,6 @@ const ItineraryDetailsScreen = () => {
                   onSelect={handlePlaceSelect}
                   loadMore={handleLoadmoreSuggestList}
                   hideSuggestions={hideSuggestions}
-                  // onChange={() => setHideSuggestions(false)}
                   searchQuery={selectedSuggestLocation?.location?.name}
                   fieldToDisplay="name"
                   subFieldToDisplay="address"

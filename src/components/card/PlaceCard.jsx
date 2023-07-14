@@ -13,15 +13,15 @@ import locationImg from "@/assets/location.svg";
 import Heading from "@/components/typography/Heading";
 import SubHeading from "@/components/typography/SubHeading";
 
-const PlaceCard = (
-  props
+const PlaceCard = ({
+  place,
+  className,
+  setShowDeletePopup,
+  setSelectedLocation,
+  ...props
+}
 ) => {
   const navigate = useNavigate();
-  const {place,
-    description,
-    className,
-    setShowDeletePopup,
-    setSelectedLocation,} = props
   return (
     <Wrapper
       {...props}
@@ -72,24 +72,7 @@ const PlaceCard = (
             </Wrapper>
 
             <Wrapper className="items-center w-fit ">
-              {/* {place?.location?.isDeleted && ( */}
-
-              {/* )} */}
               <Wrapper className="!w-fit justify-end">
-                {/* <Button
-                  onClick={(e) => {
-                    // navigate(`/location/edit/${id}`);
-                    // editItinerary(itinerary)
-                    e.stopPropagation();
-                    setSelectedLocation(place);
-                    setNote(place?.note);
-                    setShowEditPopup(true);
-                    console.log("Edit!");
-                  }}
-                  className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl !h-fit !my-0 !p-2"
-                >
-                  <BsFillPencilFill className="text-sm" />
-                </Button> */}
                 <Button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -123,7 +106,7 @@ const PlaceCard = (
         <SubHeading
           className={`!text-[12px] sm:!text-[14px] !text-black text-overflow-ellipsis break-all`}
         >
-          {description}
+          {place?.note}
         </SubHeading>
       </Wrapper>
     </Wrapper>

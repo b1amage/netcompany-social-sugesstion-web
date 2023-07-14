@@ -15,10 +15,12 @@ import SubHeading from "@/components/typography/SubHeading";
 import { AiOutlineClose } from "react-icons/ai";
 import Error from "@/components/form/Error";
 import { toast } from "react-hot-toast";
+import Loading from "@/components/loading/Loading";
 
 const ItinerariesScreen = () => {
   const { user } = useSelector((state) => state.user);
   const [itineraries, setItineraries] = useState([]);
+  const [itinerariesNextCursor, setItinerariesNextCursor] = useState();
   const [lastFetch, setLastFetch] = useState();
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
@@ -28,6 +30,7 @@ const ItinerariesScreen = () => {
   const tabRef = useRef();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [selectedItinerary, setSelectedItinerary] = useState()
+  const [isLoading, setIsLoading] = useState(true)
 
   const notifyCreate = () => toast.success("Successfully create!!");
 
@@ -38,9 +41,6 @@ const ItinerariesScreen = () => {
 
   const deleteItinerary = () => {
     const handleDelete = async () => {
-      console.log("Delete!");
-      // setShowDeletePopup(false);
-      // setDeleting(true);
       const response = await itineraryApi.deleteItinerary(
         selectedItinerary._id,
         notifyDelete
@@ -51,8 +51,6 @@ const ItinerariesScreen = () => {
       setItineraries(newList);
       
       setShowDeletePopup(false);
-      
-      // navigate("/profile");
     };
 
     handleDelete();
@@ -145,23 +143,23 @@ const ItinerariesScreen = () => {
       setItineraries(response.data.results);
       localStorage.setItem(
         "itineraries",
-        JSON.stringify(response.data.results)
-      );
-      localStorage.setItem(
-        "itinerariesNextCursor",
         JSON.stringify(response.data.next_cursor)
       );
+      setItinerariesNextCursor()
+      localStorage.setItem(
+        "itinerariesNextCursor",
+        response.data.next_cursor
+      );
+      setIsLoading(false)
     };
     getItineraryList();
   }, []);
 
   const loadMoreData = async (nextCursor) => {
     const now = Date.now();
-
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
-    if (now - lastFetch < 1000) return;
+    if (now - lastFetch < 500) return;
     if (nextCursor === null) return;
-    // setIsLatestUpdating(true);
     setLastFetch(now);
 
     const response = await itineraryApi.getItineraries(nextCursor);
@@ -169,15 +167,17 @@ const ItinerariesScreen = () => {
       ...JSON.parse(localStorage.getItem("itineraries")),
       ...response.data.results,
     ];
-    setItineraries(newList);
+    setItineraries(prev => [...prev, ...response.data.results,]);
     localStorage.setItem("itineraries", JSON.stringify(newList));
-    localStorage.setItem("itinerariesNextCursor", JSON.stringify(response.data.next_cursor));
+    setItinerariesNextCursor(response.data.next_cursor)
+    localStorage.setItem("itinerariesNextCursor", response.data.next_cursor);
   };
+
   useEffect(() => {
     if (!tabRef.current) return;
     const handleScroll = async () => {
       const { scrollTop, scrollHeight, clientHeight } = tabRef.current;
-      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 100;
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight;
 
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
@@ -185,14 +185,10 @@ const ItinerariesScreen = () => {
         if (nextCursor.length > 10) {
           await loadMoreData(nextCursor);
         }
-
-        // if (!isFeaturedUpdating){
-        // }
       }
     };
 
     tabRef.current.addEventListener("scroll", handleScroll);
-    // console.log(tabRef.current)
     return () => {
       if (tabRef.current) {
         // Remember to remove event listener when the component is unmounted
@@ -232,7 +228,8 @@ const ItinerariesScreen = () => {
           </Heading>
         </Button>
       </Wrapper>
-      {itineraries.length > 0 && (
+      {!isLoading ?
+        (itineraries.length > 0 ? (
         <Wrapper
           _ref={tabRef}
           col="true"
@@ -248,12 +245,18 @@ const ItinerariesScreen = () => {
                 deleteItinerary={deleteItinerary}
                 editItinerary={handleEditOnClick}
                 setSelectedItinerary={setSelectedItinerary}
-                // className={className}
               />
             );
           })}
         </Wrapper>
-      )}
+      ) : <Wrapper>
+        <Heading>There is no itinerary yet!</Heading>
+      </Wrapper>) : (
+        <Wrapper>
+          <Loading />
+        </Wrapper>
+      )
+    }
       {(showCreatePopup || showEditPopup) && (
         <Popup
           onClose={() => {
@@ -264,7 +267,6 @@ const ItinerariesScreen = () => {
           children={
             <>
               <Wrapper col="true" className="w-full h-full gap-4 items-center">
-                {/* <Heading className="text-center !text-[36px]">Create new itinerary</Heading> */}
                 <Wrapper className="!w-full relative">
                   <Input
                     label="Name"
@@ -296,11 +298,8 @@ const ItinerariesScreen = () => {
           }
           className={` items-center !z-[9100] `}
           formClassName=" justify-center !py-6 !px-4 !h-auto"
-          // overflow-hidden justify-center items-end md:items-center 2xl:!py-16
-          // overflow-y-scroll !h-auto w-full justify-center md:p-0 md:px-2 !rounded-b-none rounded-t-xl md:!rounded-2xl md:py-0
           titleClassName="!text-[30px]"
           childrenClassName="!mt-0 w-full "
-          // setShowCreatePopup={setShowAutoComplete}
         />
       )}
       {showDeletePopup && (

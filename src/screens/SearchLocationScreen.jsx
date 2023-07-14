@@ -17,7 +17,6 @@ const SearchLocationScreen = () => {
   const [nextCursor, setNextCursor] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [lastFetch, setLastFetch] = useState(Date.now());
-  const [isFeaturedUpdating, setIsFeaturedUpdating] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [resettingScroll, setResettingScroll] = useState(false);
@@ -33,7 +32,7 @@ const SearchLocationScreen = () => {
   useEffect(() => {
     // if (latitude && longitude) {
       // if (currentLocation) {
-      setIsLoading(false)
+      // setIsLoading(false)
       const fetchLocations = async () => {
         const response = await locationApi.getFeaturedLocation({
           locationCategory:
@@ -94,9 +93,6 @@ const SearchLocationScreen = () => {
     if (nextCursor === null) return;
     
     setLastFetch(now);
-    // setIsFeaturedUpdating(true)
-    // const fetchLocations = async () => {
-      // setIsFeaturedUpdating(true)
     const response = await locationApi.getFeaturedLocation(
       {
         locationCategory:
@@ -152,13 +148,9 @@ const SearchLocationScreen = () => {
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
         const nextCursor = localStorage.getItem("nextCursor");
-        // if (nextCursor.length > 10) {
-        // }
-       
-        await loadMoreData(nextCursor);
-
-        // if (!isFeaturedUpdating){
-        // } 
+        if (nextCursor.length > 10) {
+          await loadMoreData(nextCursor);
+        }
       }
     };
 
@@ -225,7 +217,6 @@ const SearchLocationScreen = () => {
                     imageUrls: location.imageUrls,
                     name: location.name,
                     address: location.address,
-                    // description: location.description,
                   }}
                   className="!w-full !h-[350px]"
                 />
@@ -238,7 +229,6 @@ const SearchLocationScreen = () => {
           </Heading> 
         )
       )}
-      {/* w-[220px] sm:w-[300px] md:w-[350px] lg:w-[420px] xl:w-[360px] !h-[400px] !max-w-none */}
     </Screen>
   );
 };
