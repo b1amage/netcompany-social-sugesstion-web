@@ -13,7 +13,7 @@ const ImageUpload = ({ defaultImg }) => {
   const [ava, setAva] = useState();
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState("");
-  const [images, setImages] = useState();
+  const [images, setImages] = useState([]);
   // localStorage.getItem("eventCreateImages")
   //   ? JSON.parse(localStorage.getItem("eventCreateImages"))
   //   : []
@@ -21,10 +21,10 @@ const ImageUpload = ({ defaultImg }) => {
 
   console.log("upload", images);
 
-  useEffect(() => {
-    // localStorage.setItem("eventCreateImages", JSON.stringify(defaultImg));
-    // return () => localStorage.removeItem("eventCreateImages");
-  }, []);
+  // useEffect(() => {
+  //   // localStorage.setItem("eventCreateImages", JSON.stringify(defaultImg));
+  //   // return () => localStorage.removeItem("eventCreateImages");
+  // }, []);
 
   // useEffect(() => {
   //   err !== "" && toast.error(err);
@@ -48,7 +48,6 @@ const ImageUpload = ({ defaultImg }) => {
 
         <input
           onChange={(e) => {
-            console.log("change");
             setSelectedFile(e.target.files[0]);
             setIsFilePicked(true);
             (async function () {
@@ -73,6 +72,8 @@ const ImageUpload = ({ defaultImg }) => {
                   )
                     ? JSON.parse(localStorage.getItem("eventCreateImages"))
                     : [];
+
+                  console.log(eventCreateImages);
 
                   eventCreateImages.push(response.data.image);
                   setImages(eventCreateImages);

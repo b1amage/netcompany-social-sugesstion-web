@@ -19,7 +19,6 @@ import { useNavigate } from "react-router-dom";
 import { AiFillDelete } from "react-icons/ai";
 import toast from "react-hot-toast";
 import TextArea from "@/components/form/TextArea";
-
 import DatePicker from "@/components/form/DatePicker";
 import { DateTime } from "luxon";
 import Switch from "@/components/form/Switch";
@@ -28,83 +27,20 @@ import Button from "@/components/button/Button";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import ImageUpload from "@/components/form/ImageUpload";
 import Label from "@/components/form/Label";
-
-function isEndTimeAfterStartTime(startTime, endTime) {
-  const [startHours, startMinutes] = startTime.split(":").map(Number);
-  const [endHours, endMinutes] = endTime.split(":").map(Number);
-
-  if (endHours > startHours) {
-    return true;
-  } else if (endHours === startHours && endMinutes > startMinutes) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function calculateDuration(startTime, endTime) {
-  const [startHours, startMinutes] = startTime.split(":").map(Number);
-  const [endHours, endMinutes] = endTime.split(":").map(Number);
-
-  let durationHours = endHours - startHours;
-  let durationMinutes = endMinutes - startMinutes;
-
-  // Handle negative minutes
-  if (durationMinutes < 0) {
-    durationHours -= 1;
-    durationMinutes += 60;
-  }
-
-  const duration = {
-    hours: durationHours,
-    minutes: durationMinutes,
-  };
-
-  return duration;
-}
+import {
+  isEndTimeAfterStartTime,
+  calculateDuration,
+  isDateToday,
+  isInvalidTime,
+} from "@/helpers/dateTimeHelpers.js";
+import {
+  defaultCreateEventError,
+  defaultCreateEventForm,
+} from "@/constants/event";
 
 const CreateEventScreen = () => {
-  const defaultEvent = useMemo(
-    () => ({
-      name: "",
-      locationId: null,
-      description: "",
-      startDate: null,
-      startTime: {
-        hours: null,
-        minutes: null,
-      },
-      endTime: {
-        hours: null,
-        minutes: null,
-      },
-      duration: {
-        hours: null,
-        minutes: null,
-      },
-      imageUrls: [],
-      allDay: false,
-      guests: [],
-    }),
-    []
-  );
-
-  const defaultEventError = useMemo(
-    () => ({
-      name: null,
-      locationId: "",
-      description: "",
-      startDate: null,
-      startTime: null,
-      endTime: null,
-      duration: null,
-      imageUrls: "",
-      guests: "",
-    }),
-    []
-  );
-
-  const navigate = useNavigate();
+  const defaultEvent = useMemo(() => defaultCreateEventForm, []);
+  const defaultEventError = useMemo(() => defaultCreateEventError, []);
 
   const [submitErr, setSubmitErr] = useState([]);
   const [event, setEvent] = useState(defaultEvent);
@@ -112,6 +48,10 @@ const CreateEventScreen = () => {
   const [suggestNextCursor, setSuggestNextCursor] = useState(undefined);
   const [guestNextCursor, setGuestNextCursor] = useState(undefined);
   const [showGuestPortal, setShowGuestPortal] = useState(false);
+
+  const navigate = useNavigate();
+  const popupRef = useRef();
+  useOnClickOutside(popupRef, () => setShowGuestPortal(false));
 
   // check every change of event
   useEffect(() => {
@@ -218,30 +158,6 @@ const CreateEventScreen = () => {
     setError({ ...error, startDate: "" });
   };
 
-  function isDateToday(dateString) {
-    if (!dateString) return false;
-    const currentDate = new Date(); // Current date
-    const inputDate = new Date(dateString);
-
-    // Set time to 00:00:00 to compare only dates
-    currentDate.setHours(0, 0, 0, 0);
-    inputDate.setHours(0, 0, 0, 0);
-
-    return currentDate.getTime() === inputDate.getTime();
-  }
-
-  function isInvalidTime(timeString) {
-    const currentTime = new Date(); // Current time
-
-    const [hours, minutes] = timeString.split(":");
-    const startTime = new Date();
-
-    startTime.setHours(hours);
-    startTime.setMinutes(minutes);
-
-    return startTime < currentTime;
-  }
-
   const handleTimeChange = (e) => {
     if (!event.startDate) {
       setError({ ...error, startTime: "Choose a date first" });
@@ -306,9 +222,6 @@ const CreateEventScreen = () => {
 
     setError({ ...error, endTime: "", startTime: "" });
   };
-
-  const popupRef = useRef();
-  useOnClickOutside(popupRef, () => setShowGuestPortal(false));
 
   const handleSubmit = () => {
     console.log(event);
