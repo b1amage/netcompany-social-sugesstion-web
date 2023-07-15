@@ -1,34 +1,71 @@
+import React, { useState, useEffect, useCallback } from "react";
 import Wrapper from "@/components/wrapper/Wrapper";
-import { useEffect, useState } from "react";
 import { AiOutlinePlusCircle, AiFillDelete } from "react-icons/ai";
 import axios from "axios";
-import { toast } from "react-hot-toast";
 import Image from "@/components/image/Image";
 import Portal from "@/components/HOC/Portal";
 import Uploading from "@/components/loading/Uploading";
 
-const ImageUpload = ({ defaultImg }) => {
+const ImageUpload = () => {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
-  const [ava, setAva] = useState();
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState("");
   const [images, setImages] = useState([]);
-  // localStorage.getItem("eventCreateImages")
-  //   ? JSON.parse(localStorage.getItem("eventCreateImages"))
-  //   : []
-  // ""
 
-  console.log("upload", images);
+  const uploadImage = useCallback(
+    async (file) => {
+      setErr("");
+      setUploading(true);
+      var bodyFormData = new FormData();
+      bodyFormData.append("image", file);
 
-  // useEffect(() => {
-  //   // localStorage.setItem("eventCreateImages", JSON.stringify(defaultImg));
-  //   // return () => localStorage.removeItem("eventCreateImages");
-  // }, []);
+      try {
+        const response = await axios({
+          method: "post",
+          url:
+            process.env.NODE_ENV === "development"
+              ? "http://localhost:8080/image/upload-image"
+              : "https://netcompany-social-suggestion-backend.vercel.app/image/upload-image",
+          data: bodyFormData,
+          headers: { "Content-Type": "multipart/form-data" },
+        });
 
-  // useEffect(() => {
-  //   err !== "" && toast.error(err);
-  // }, [err]);
+        const newImages = [...images, response.data.image];
+        setImages(newImages);
+        localStorage.setItem("eventCreateImages", JSON.stringify(newImages));
+      } catch (error) {
+        console.log(error);
+        setErr("File must be image and smaller than 3mb");
+      } finally {
+        setUploading(false);
+      }
+    },
+    [images]
+  );
+
+  const handleFileChange = useCallback((e) => {
+    setSelectedFile(e.target.files[0]);
+    setIsFilePicked(true);
+    e.target.value = null;
+  }, []);
+
+  useEffect(() => {
+    if (isFilePicked) {
+      uploadImage(selectedFile);
+      setIsFilePicked(false);
+    }
+  }, [isFilePicked, selectedFile, uploadImage]);
+
+  const deleteImage = useCallback(
+    (item) => {
+      const newImages = images.filter((it) => item !== it);
+      setImages(newImages);
+      localStorage.setItem("eventCreateImages", JSON.stringify(newImages));
+    },
+    [images]
+  );
+
   return (
     <Wrapper className="overflow-x-scroll">
       {uploading && (
@@ -47,49 +84,7 @@ const ImageUpload = ({ defaultImg }) => {
         </label>
 
         <input
-          onChange={(e) => {
-            setSelectedFile(e.target.files[0]);
-            setIsFilePicked(true);
-            (async function () {
-              setErr("");
-              setUploading(true);
-              var bodyFormData = new FormData();
-              bodyFormData.append("image", e.target.files[0]);
-              axios({
-                method: "post",
-                url:
-                  process.env.NODE_ENV === "dev"
-                    ? "http://localhost:8080/image/upload-image"
-                    : "https://netcompany-social-suggestion-backend.vercel.app/image/upload-image",
-                data: bodyFormData,
-                headers: { "Content-Type": "multipart/form-data" },
-              })
-                .then(function (response) {
-                  console.log(response);
-                  setAva(response.data.image);
-                  const eventCreateImages = localStorage.getItem(
-                    "eventCreateImages"
-                  )
-                    ? JSON.parse(localStorage.getItem("eventCreateImages"))
-                    : [];
-
-                  console.log(eventCreateImages);
-
-                  eventCreateImages.push(response.data.image);
-                  setImages(eventCreateImages);
-                  localStorage.setItem(
-                    "eventCreateImages",
-                    JSON.stringify(eventCreateImages)
-                  );
-                  setUploading(false);
-                })
-                .catch(function (err) {
-                  console.log(err);
-                  setErr("File must be image and smaller than 3mb");
-                  setUploading(false);
-                });
-            })();
-          }}
+          onChange={handleFileChange}
           type="file"
           name="event-imgs-upload"
           id="upload"
@@ -103,14 +98,7 @@ const ImageUpload = ({ defaultImg }) => {
         images.map((item) => (
           <Wrapper className="relative" key={item}>
             <Wrapper
-              onClick={() => {
-                const newImages = images.filter((it) => item !== it);
-                setImages(newImages);
-                localStorage.setItem(
-                  "eventCreateImages",
-                  JSON.stringify(newImages)
-                );
-              }}
+              onClick={() => deleteImage(item)}
               className="absolute text-red-500 cursor-pointer top-1 right-1"
             >
               <AiFillDelete />
@@ -118,6 +106,7 @@ const ImageUpload = ({ defaultImg }) => {
             <Image src={item} className="!w-[220px] !h-[140px] !shrink-0" />
           </Wrapper>
         ))}
+      {err && <p>{err}</p>}
     </Wrapper>
   );
 };

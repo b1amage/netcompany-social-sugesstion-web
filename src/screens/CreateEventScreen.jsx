@@ -230,7 +230,8 @@ const CreateEventScreen = () => {
       const newEvent = { ...event, guests: newGuests };
       const imageUrls =
         localStorage.getItem("eventCreateImages") !== "undefined" &&
-        localStorage.getItem("eventCreateImages") !== "null"
+        localStorage.getItem("eventCreateImages") !== "null" &&
+        localStorage.getItem("eventCreateImages")
           ? JSON.parse(localStorage.getItem("eventCreateImages"))
           : [];
 
@@ -479,7 +480,7 @@ const CreateEventScreen = () => {
                     onChange={handleEndTimeChange}
                   />
 
-                  {(event.duration.hours || event.duration.minutes) && (
+                  {(event.duration?.hours || event.duration?.minutes) && (
                     <Wrapper
                       col="true"
                       className="gap-1 ml-4 md:gap-2 lg:gap-3"
@@ -507,7 +508,13 @@ const CreateEventScreen = () => {
             checked={event.allDay}
             onClick={() => {
               const oldAllDay = event.allDay;
-              setEvent({ ...event, allDay: !oldAllDay });
+              setEvent({
+                ...event,
+                allDay: !oldAllDay,
+                startTime: null,
+                endTime: null,
+                duration: null,
+              });
             }}
           />
 

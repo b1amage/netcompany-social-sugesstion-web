@@ -5,6 +5,9 @@ import inputState from "@/constants/inputState";
 
 const DatePicker = ({ onChange, label, err, required, id, className }) => {
   console.log("date picker", err);
+  const handleKeyDown = (e) => {
+    e.preventDefault();
+  };
   return (
     <div>
       <div
@@ -17,7 +20,7 @@ const DatePicker = ({ onChange, label, err, required, id, className }) => {
         </Label>
 
         <input
-          readonly
+          onKeyDown={handleKeyDown}
           onChange={onChange}
           datepicker="true"
           datepicker-autohide="true"
