@@ -432,15 +432,15 @@ const CreateEventScreen = () => {
                 subFieldToDisplay="address"
                 icon={<GoLocation />}
               />
-
-              <Text
-                className="font-bold underline cursor-pointer !text-xs md:w-[200px] gap-1 flex md:items-center md:self-center md:justify-center md:translate-y-full"
-                onClick={() => navigate("/create-location")}
-              >
-                <AiOutlinePlusCircle />
-                <span> Create new location</span>
-              </Text>
             </Wrapper>
+
+            <Text
+              className="font-bold underline cursor-pointer !text-xs md:w-[200px] gap-1 flex items-center mt-2"
+              onClick={() => navigate("/create-location")}
+            >
+              <AiOutlinePlusCircle />
+              <span> Create new location</span>
+            </Text>
           </Wrapper>
 
           <Wrapper className="!flex-col lg:flex-row">
