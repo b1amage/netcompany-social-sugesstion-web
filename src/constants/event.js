@@ -1,6 +1,6 @@
 export const defaultCreateEventForm = {
   name: "",
-  locationId: null,
+  locationId: [],
   description: "",
   startDate: null,
   startTime: {

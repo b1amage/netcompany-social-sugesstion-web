@@ -86,6 +86,7 @@ const CreateEventScreen = () => {
   const handlePlaceSelect = (location) => {
     const newEvent = { ...event, locationId: location._id };
     setEvent(newEvent);
+    setError({ ...error, locationId: null });
   };
 
   const handleLoadmoreSuggestList = (text) => {
@@ -123,6 +124,7 @@ const CreateEventScreen = () => {
     const newGuests = [...event.guests, guest];
     const newEvent = { ...event, guests: newGuests };
     setEvent(newEvent);
+    setError({ ...error, guests: null });
   };
 
   const handleLoadmoreGuestList = (text) => {
@@ -227,6 +229,32 @@ const CreateEventScreen = () => {
   const handleSubmit = () => {
     console.log(event);
     const apiHandle = async () => {
+      // check
+      if (event.name.length === 0 || !event.name) {
+        setError({ ...error, name: "Cannot be null" });
+        return;
+      }
+
+      if (event.guests.length === 0) {
+        setError({ ...error, guests: "Must be at least 1 guest" });
+        return;
+      }
+
+      if (event.locationId.length === 0 || !event.locationId) {
+        setError({ ...error, locationId: "Cannot be null" });
+        return;
+      }
+
+      if (!event.startDate) {
+        setError({ ...error, startDate: "Cannot be null" });
+        return;
+      }
+
+      if (!event.allDay && (!event.startTime.hours || !event.endTime.hours)) {
+        setError({ ...error, startTime: "Cannot be null" });
+        return;
+      }
+
       const newGuests = event.guests.map((guest) => guest._id);
       const newEvent = { ...event, guests: newGuests };
       const imageUrls =
@@ -238,17 +266,6 @@ const CreateEventScreen = () => {
 
       newEvent.imageUrls = imageUrls;
       setEvent(newEvent);
-
-      // check
-      if (event.name.length === 0 || !event.name) {
-        setError({ ...error, name: "Cannot be null" });
-        return;
-      }
-
-      if (event.locationId.length === 0 || !event.locationId) {
-        setError({ ...error, locationId: "Cannot be null" });
-        return;
-      }
 
       const response = await eventApi.createEvent(newEvent);
 
@@ -383,6 +400,7 @@ const CreateEventScreen = () => {
                 subFieldToDisplay="email"
                 setHideSuggestions
               />
+              {error.guests && <Error fluid>{error.guests}</Error>}
               {event.guests.length > 0 && (
                 <Wrapper
                   onClick={() => setShowGuestPortal(true)}
@@ -396,7 +414,7 @@ const CreateEventScreen = () => {
                         className={`w-10 h-10 !rounded-full shadow-2xl transition-all border border-primary-400 group-hover:brightness-75 ${
                           index === 1 && "-translate-x-[80%] z-10 "
                         } ${index === 2 && "-translate-x-[160%]"} z-20`}
-                        src={guest.imageUrl}
+                        src={guest?.imageUrl}
                       />
                     );
                   })}
@@ -435,7 +453,7 @@ const CreateEventScreen = () => {
                 icon={<GoLocation />}
               />
             </Wrapper>
-
+            {error.locationId && <Error fluid>{error.locationId}</Error>}
             <Text
               className="font-bold underline cursor-pointer !text-xs md:w-[200px] gap-1 flex items-center mt-2"
               onClick={() => navigate("/create-location")}
