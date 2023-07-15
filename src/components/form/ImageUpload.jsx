@@ -11,7 +11,9 @@ const ImageUpload = () => {
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState("");
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState(
+    JSON.parse(localStorage.getItem("eventCreateImages")) || []
+  );
 
   const uploadImage = useCallback(
     async (file) => {
