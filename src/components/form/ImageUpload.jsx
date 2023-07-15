@@ -6,12 +6,18 @@ import Image from "@/components/image/Image";
 import Portal from "@/components/HOC/Portal";
 import Uploading from "@/components/loading/Uploading";
 
-const ImageUpload = ({ defaultImages = [] }) => {
+const ImageUpload = () => {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState("");
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState(
+    JSON.parse(
+      localStorage.getItem("eventCreateImages") !== "undefined"
+        ? localStorage.getItem("eventCreateImages")
+        : "[]"
+    ) || []
+  );
 
   const uploadImage = useCallback(
     async (file) => {
@@ -65,14 +71,6 @@ const ImageUpload = ({ defaultImages = [] }) => {
     },
     [images]
   );
-
-  useEffect(() => {
-    const localImages = localStorage.getItem("eventCreateImages")
-      ? JSON.parse(localStorage.getItem("eventCreateImages"))
-      : [];
-    const mergedImages = [...new Set([...defaultImages, ...localImages])];
-    setImages(mergedImages);
-  }, [JSON.stringify(defaultImages)]);
 
   return (
     <Wrapper className="overflow-x-scroll">
