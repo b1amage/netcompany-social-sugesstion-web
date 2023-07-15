@@ -54,7 +54,7 @@ const itineraryApi = {
       console.log(error);
     }
   },
-  async getItineraryDetails(id){
+  async getItineraryDetails(id, setAvailableErr){
     try{
       const url = `/itinerary/${id}`
       const response = await axiosClient.get(url, {
@@ -63,6 +63,8 @@ const itineraryApi = {
       return response
     } catch (error){
       console.log(error);
+      setAvailableErr(error.response.data.message)
+      return error.response
     }
   },
   async saveLocation(data){
@@ -101,6 +103,7 @@ const itineraryApi = {
     } catch (error){
       console.log(error);
       setSubmitErr(error.response.data.message)
+      return error.response
     }
   }, 
   async updateLocationsOrder(data){

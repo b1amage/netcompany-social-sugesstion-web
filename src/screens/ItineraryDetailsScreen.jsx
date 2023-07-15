@@ -49,14 +49,17 @@ const ItineraryDetailsScreen = () => {
   useEffect(() => {
     // localStorage.removeItem("itineraryLocations")
     const getDetails = async () => {
-      const response = await itineraryApi.getItineraryDetails(id);
+      const response = await itineraryApi.getItineraryDetails(
+        id,
+        setAvailableErr
+      );
       setItinerary(response.data);
       setLocations([...response.data.savedLocations]);
       localStorage.setItem(
         "itineraryLocations",
         JSON.stringify(response.data.savedLocations)
       );
-      setIsLoading(false)
+      setIsLoading(false);
       console.log(response);
     };
     getDetails();
@@ -178,161 +181,168 @@ const ItineraryDetailsScreen = () => {
 
   return (
     <Screen className="flex flex-col  px-3 py-4 gap-6 md:gap-4 md:px-6 md:py-5 !rounded-none lg:px-20 !min-h-0">
-      <SubNavbar user={user} wrapperClassName="!gap-0" />
-      <Wrapper className="md:justify-between md:items-center items-start gap-4">
-        <Heading className="!text-[28px] truncate">{itinerary?.name}</Heading>
-        <Button
-          onClick={() => {
-            setShowCreatePopup(true);
-          }}
-          active
-          className="md:!w-[280px] md:hover:opacity-70 md:!rounded-2xl flex justify-evenly gap-2 h-[60px] !rounded-full !fixed md:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 md:!bg-primary-400 md:!border-primary-400 border-secondary-400"
-        >
-          <Image
-            imageClassName=""
-            src={add}
-            alt="add"
-            className="w-[28px] h-[28px]"
-          />
-          <Heading className="md:block text-white hidden !text-[20px]">
-            Save a new location
-          </Heading>
-        </Button>
-      </Wrapper>
-      {!isLoading ? (
-        locations?.length > 0 ? (
-          <Wrapper
-            // _ref={tabRef}
-            col="true"
-            className="md:gap-8 gap-6 h-auto !relative"
-          >
-            {locations.map((location, index) => {
-              return (
-                <PlaceCard
-                  key={location._id}
-                  place={location}
-                  description={location?.note}
-                  className=""
-                  setShowDeletePopup={setShowDeletePopup}
-                  setSelectedLocation={setSelectedSuggestLocation}
-                  draggable={true}
-                  onDragStart={(event) => handleDragStart(event, index)}
-                  onDragEnd={handleDragEnd}
-                  onDragOver={(event) => handleDragOver(event, index)}
-                  onDrop={() => handleDrop(locations, setLocations)}
-                />
-              );
-            })}
-          </Wrapper>
-        ) : (
-          <Wrapper>
-            <Heading>No locations yet!</Heading>
-          </Wrapper>
-        )
-      ) : (
-        <Wrapper className="justify-center items-center">
-          <Loading />
-        </Wrapper>
-      )}
-      {showCreatePopup && (
-        <Popup
-          onClose={() => {
-            closePopup();
-          }}
-          actions={[
-            {
-              title: "cancel",
-              danger: true,
-              buttonClassName:
-                "!bg-white border-primary-400 border !text-primary-400 hover:!bg-danger hover:!border-danger hover:opacity-100 hover:!text-white",
-              action: closePopup,
-            },
-            {
-              title: "Save",
-              danger: true,
-              buttonClassName:
-                "!bg-primary-400 !border-primary-400 border hover:opacity-70",
-              action: showCreatePopup
-                ? handleSaveLocation
-                : handleEditItinerary,
-            },
-          ]}
-          
-          children={
-            <>
-              <Heading className="text-center !text-[28px]">
-                {showCreatePopup ? "Save location" : "Edit location"}
+      {!availableErr ? (
+        <>
+          <SubNavbar user={user} wrapperClassName="!gap-0" />
+          <Wrapper className="md:justify-between md:items-center items-start gap-4">
+            <Heading className="!text-[28px] truncate">
+              {itinerary?.name}
+            </Heading>
+            <Button
+              onClick={() => {
+                setShowCreatePopup(true);
+              }}
+              active
+              className="md:!w-[280px] md:hover:opacity-70 md:!rounded-2xl flex justify-evenly gap-2 h-[60px] !rounded-full !fixed md:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 md:!bg-primary-400 md:!border-primary-400 border-secondary-400"
+            >
+              <Image
+                imageClassName=""
+                src={add}
+                alt="add"
+                className="w-[28px] h-[28px]"
+              />
+              <Heading className="md:block text-white hidden !text-[20px]">
+                Save a new location
               </Heading>
-              <Wrapper col="true" className="!w-full">
-                <InputWithDropdown
-                  label="Location:"
-                  handleGet={handleGetLocationSuggestList}
-                  placeholder="Select location"
-                  onSelect={handlePlaceSelect}
-                  loadMore={handleLoadmoreSuggestList}
-                  hideSuggestions={hideSuggestions}
-                  searchQuery={selectedSuggestLocation?.location?.name}
-                  fieldToDisplay="name"
-                  subFieldToDisplay="address"
-                  icon={<GoLocation />}
-                  inputClassName="!h-[60px] !rounded-2xl !ring-black"
-                  wrapperClassName=""
-                  hideError
-                  dropdownClassName="!z-[8500]"
-                  onChange={() => setHideSuggestions(false)}
-                />
-                <Description
-                  counter
-                  maxWordCount={500}
-                  label="Note:"
-                  onChange={(e) => {
-                    if (e.target.value.length > 500) return;
-                    setNote(e.target.value);
-                  }}
-                  value={note}
-                  placeholder="Enter the description..."
-                  wrapperClassName="!my-0 "
-                  textareaClassName="!rounded-2xl"
-                />
-              </Wrapper>
-
-              <Error fluid className={`${!submitErr && "invisible"}`}>
-                {submitErr}
-              </Error>
-              <Button
-                className="!absolute top-0 right-0 !bg-transparent !rounded-none !border-none !my-0"
-                onClick={() => {
-                  closePopup();
-                }}
+            </Button>
+          </Wrapper>
+          {!isLoading ? (
+            locations?.length > 0 ? (
+              <Wrapper
+                // _ref={tabRef}
+                col="true"
+                className="md:gap-8 gap-6 h-auto !relative"
               >
-                <AiOutlineClose className="text-[32px]  text-black " />
-              </Button>
-            </>
-          }
-          className={` px-4 sm:px-12 `}
-          formClassName="items-center !h-auto w-full !rounded-none md:!py-2 md:!px-4 md:!rounded-lg relative"
-          titleClassName="text-[20px]"
-          childrenClassName="!mt-0 w-full"
-          // setShowPopup={setShowAutoComplete}
-        />
-      )}
-      {showDeletePopup && (
-        <Popup
-          title="Are you sure to remove this location?"
-          onClose={() => setShowDeletePopup(false)}
-          actions={[
-            {
-              title: "cancel",
-              danger: false,
-              action: () => setShowDeletePopup(false),
-            },
-            {
-              title: "delete",
-              danger: true,
-              action: handleDeleteLocation,
-            },
-          ]}
-        />
+                {locations.map((location, index) => {
+                  return (
+                    <PlaceCard
+                      key={location._id}
+                      place={location}
+                      description={location?.note}
+                      className=""
+                      setShowDeletePopup={setShowDeletePopup}
+                      setSelectedLocation={setSelectedSuggestLocation}
+                      draggable={true}
+                      onDragStart={(event) => handleDragStart(event, index)}
+                      onDragEnd={handleDragEnd}
+                      onDragOver={(event) => handleDragOver(event, index)}
+                      onDrop={() => handleDrop(locations, setLocations)}
+                    />
+                  );
+                })}
+              </Wrapper>
+            ) : (
+              <Wrapper>
+                <Heading>No locations yet!</Heading>
+              </Wrapper>
+            )
+          ) : (
+            <Wrapper className="justify-center items-center">
+              <Loading />
+            </Wrapper>
+          )}
+          {showCreatePopup && (
+            <Popup
+              onClose={() => {
+                closePopup();
+              }}
+              actions={[
+                {
+                  title: "cancel",
+                  danger: true,
+                  buttonClassName:
+                    "!bg-white border-primary-400 border !text-primary-400 hover:!bg-danger hover:!border-danger hover:opacity-100 hover:!text-white",
+                  action: closePopup,
+                },
+                {
+                  title: "Save",
+                  danger: true,
+                  buttonClassName:
+                    "!bg-primary-400 !border-primary-400 border hover:opacity-70",
+                  action: showCreatePopup
+                    ? handleSaveLocation
+                    : handleEditItinerary,
+                },
+              ]}
+              children={
+                <>
+                  <Heading className="text-center !text-[28px]">
+                    {showCreatePopup ? "Save location" : "Edit location"}
+                  </Heading>
+                  <Wrapper col="true" className="!w-full">
+                    <InputWithDropdown
+                      label="Location:"
+                      handleGet={handleGetLocationSuggestList}
+                      placeholder="Select location"
+                      onSelect={handlePlaceSelect}
+                      loadMore={handleLoadmoreSuggestList}
+                      hideSuggestions={hideSuggestions}
+                      searchQuery={selectedSuggestLocation?.location?.name}
+                      fieldToDisplay="name"
+                      subFieldToDisplay="address"
+                      icon={<GoLocation />}
+                      inputClassName="!h-[60px] !rounded-2xl !ring-black"
+                      wrapperClassName=""
+                      hideError
+                      dropdownClassName="!z-[8500]"
+                      onChange={() => setHideSuggestions(false)}
+                    />
+                    <Description
+                      counter
+                      maxWordCount={500}
+                      label="Note:"
+                      onChange={(e) => {
+                        if (e.target.value.length > 500) return;
+                        setNote(e.target.value);
+                      }}
+                      value={note}
+                      placeholder="Enter the description..."
+                      wrapperClassName="!my-0 "
+                      textareaClassName="!rounded-2xl"
+                    />
+                  </Wrapper>
+
+                  <Error fluid className={`${!submitErr && "invisible"}`}>
+                    {submitErr}
+                  </Error>
+                  <Button
+                    className="!absolute top-0 right-0 !bg-transparent !rounded-none !border-none !my-0"
+                    onClick={() => {
+                      closePopup();
+                    }}
+                  >
+                    <AiOutlineClose className="text-[32px]  text-black " />
+                  </Button>
+                </>
+              }
+              className={` px-4 sm:px-12 `}
+              formClassName="items-center !h-auto w-full !rounded-none md:!py-2 md:!px-4 md:!rounded-lg relative"
+              titleClassName="text-[20px]"
+              childrenClassName="!mt-0 w-full"
+              // setShowPopup={setShowAutoComplete}
+            />
+          )}
+          {showDeletePopup && (
+            <Popup
+              title="Are you sure to remove this location?"
+              onClose={() => setShowDeletePopup(false)}
+              actions={[
+                {
+                  title: "cancel",
+                  danger: false,
+                  action: () => setShowDeletePopup(false),
+                },
+                {
+                  title: "delete",
+                  danger: true,
+                  action: handleDeleteLocation,
+                },
+              ]}
+            />
+          )}
+        </>
+      ) : (
+        <Heading>{availableErr}</Heading>
       )}
     </Screen>
   );
