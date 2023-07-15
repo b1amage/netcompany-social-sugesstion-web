@@ -19,7 +19,6 @@ import { useNavigate } from "react-router-dom";
 import { AiFillDelete } from "react-icons/ai";
 import toast from "react-hot-toast";
 import TextArea from "@/components/form/TextArea";
-
 import DatePicker from "@/components/form/DatePicker";
 import { DateTime } from "luxon";
 import Switch from "@/components/form/Switch";
@@ -29,82 +28,20 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 import ImageUpload from "@/components/form/ImageUpload";
 import Label from "@/components/form/Label";
 
-function isEndTimeAfterStartTime(startTime, endTime) {
-  const [startHours, startMinutes] = startTime.split(":").map(Number);
-  const [endHours, endMinutes] = endTime.split(":").map(Number);
-
-  if (endHours > startHours) {
-    return true;
-  } else if (endHours === startHours && endMinutes > startMinutes) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function calculateDuration(startTime, endTime) {
-  const [startHours, startMinutes] = startTime.split(":").map(Number);
-  const [endHours, endMinutes] = endTime.split(":").map(Number);
-
-  let durationHours = endHours - startHours;
-  let durationMinutes = endMinutes - startMinutes;
-
-  // Handle negative minutes
-  if (durationMinutes < 0) {
-    durationHours -= 1;
-    durationMinutes += 60;
-  }
-
-  const duration = {
-    hours: durationHours,
-    minutes: durationMinutes,
-  };
-
-  return duration;
-}
+import {
+  isEndTimeAfterStartTime,
+  calculateDuration,
+  isDateToday,
+  isInvalidTime,
+} from "@/helpers/dateTimeHelpers.js";
+import {
+  defaultCreateEventError,
+  defaultCreateEventForm,
+} from "@/constants/event";
 
 const CreateEventScreen = () => {
-  const defaultEvent = useMemo(
-    () => ({
-      name: "",
-      locationId: null,
-      description: "",
-      startDate: null,
-      startTime: {
-        hours: null,
-        minutes: null,
-      },
-      endTime: {
-        hours: null,
-        minutes: null,
-      },
-      duration: {
-        hours: null,
-        minutes: null,
-      },
-      imageUrls: [],
-      allDay: false,
-      guests: [],
-    }),
-    []
-  );
-
-  const defaultEventError = useMemo(
-    () => ({
-      name: null,
-      locationId: "",
-      description: "",
-      startDate: null,
-      startTime: null,
-      endTime: null,
-      duration: null,
-      imageUrls: "",
-      guests: "",
-    }),
-    []
-  );
-
-  const navigate = useNavigate();
+  const defaultEvent = useMemo(() => defaultCreateEventForm, []);
+  const defaultEventError = useMemo(() => defaultCreateEventError, []);
 
   const [submitErr, setSubmitErr] = useState([]);
   const [event, setEvent] = useState(defaultEvent);
@@ -112,6 +49,10 @@ const CreateEventScreen = () => {
   const [suggestNextCursor, setSuggestNextCursor] = useState(undefined);
   const [guestNextCursor, setGuestNextCursor] = useState(undefined);
   const [showGuestPortal, setShowGuestPortal] = useState(false);
+
+  const navigate = useNavigate();
+  const popupRef = useRef();
+  useOnClickOutside(popupRef, () => setShowGuestPortal(false));
 
   // check every change of event
   useEffect(() => {
@@ -145,6 +86,7 @@ const CreateEventScreen = () => {
   const handlePlaceSelect = (location) => {
     const newEvent = { ...event, locationId: location._id };
     setEvent(newEvent);
+    setError({ ...error, locationId: null });
   };
 
   const handleLoadmoreSuggestList = (text) => {
@@ -182,6 +124,7 @@ const CreateEventScreen = () => {
     const newGuests = [...event.guests, guest];
     const newEvent = { ...event, guests: newGuests };
     setEvent(newEvent);
+    setError({ ...error, guests: null });
   };
 
   const handleLoadmoreGuestList = (text) => {
@@ -217,30 +160,6 @@ const CreateEventScreen = () => {
     setEvent({ ...event, startDate: newStartDate });
     setError({ ...error, startDate: "" });
   };
-
-  function isDateToday(dateString) {
-    if (!dateString) return false;
-    const currentDate = new Date(); // Current date
-    const inputDate = new Date(dateString);
-
-    // Set time to 00:00:00 to compare only dates
-    currentDate.setHours(0, 0, 0, 0);
-    inputDate.setHours(0, 0, 0, 0);
-
-    return currentDate.getTime() === inputDate.getTime();
-  }
-
-  function isInvalidTime(timeString) {
-    const currentTime = new Date(); // Current time
-
-    const [hours, minutes] = timeString.split(":");
-    const startTime = new Date();
-
-    startTime.setHours(hours);
-    startTime.setMinutes(minutes);
-
-    return startTime < currentTime;
-  }
 
   const handleTimeChange = (e) => {
     if (!event.startDate) {
@@ -307,24 +226,17 @@ const CreateEventScreen = () => {
     setError({ ...error, endTime: "", startTime: "" });
   };
 
-  const popupRef = useRef();
-  useOnClickOutside(popupRef, () => setShowGuestPortal(false));
-
   const handleSubmit = () => {
     console.log(event);
     const apiHandle = async () => {
-      const newGuests = event.guests.map((guest) => guest._id);
-      const newEvent = { ...event, guests: newGuests };
-      const imageUrls = localStorage.getItem("eventCreateImages")
-        ? JSON.parse(localStorage.getItem("eventCreateImages"))
-        : [];
-
-      newEvent.imageUrls = imageUrls;
-      setEvent(newEvent);
-
       // check
       if (event.name.length === 0 || !event.name) {
         setError({ ...error, name: "Cannot be null" });
+        return;
+      }
+
+      if (event.guests.length === 0) {
+        setError({ ...error, guests: "Must be at least 1 guest" });
         return;
       }
 
@@ -332,6 +244,28 @@ const CreateEventScreen = () => {
         setError({ ...error, locationId: "Cannot be null" });
         return;
       }
+
+      if (!event.startDate) {
+        setError({ ...error, startDate: "Cannot be null" });
+        return;
+      }
+
+      if (!event.allDay && (!event.startTime.hours || !event.endTime.hours)) {
+        setError({ ...error, startTime: "Cannot be null" });
+        return;
+      }
+
+      const newGuests = event.guests.map((guest) => guest._id);
+      const newEvent = { ...event, guests: newGuests };
+      const imageUrls =
+        localStorage.getItem("eventCreateImages") !== "undefined" &&
+        localStorage.getItem("eventCreateImages") !== "null" &&
+        localStorage.getItem("eventCreateImages")
+          ? JSON.parse(localStorage.getItem("eventCreateImages"))
+          : [];
+
+      newEvent.imageUrls = imageUrls;
+      setEvent(newEvent);
 
       const response = await eventApi.createEvent(newEvent);
 
@@ -437,7 +371,7 @@ const CreateEventScreen = () => {
             {/* name */}
             <Input
               required
-              label="Title"
+              label="Name"
               placeholder="Enter the event's name"
               className={`rounded-lg h-[60px] !transition-none ${
                 error.name === null
@@ -464,7 +398,9 @@ const CreateEventScreen = () => {
                 icon={<BiUser />}
                 clearInputAfterSelect="true"
                 subFieldToDisplay="email"
+                setHideSuggestions
               />
+              {error.guests && <Error fluid>{error.guests}</Error>}
               {event.guests.length > 0 && (
                 <Wrapper
                   onClick={() => setShowGuestPortal(true)}
@@ -474,10 +410,11 @@ const CreateEventScreen = () => {
                     if (index > 2) return;
                     return (
                       <Image
+                        key={index}
                         className={`w-10 h-10 !rounded-full shadow-2xl transition-all border border-primary-400 group-hover:brightness-75 ${
                           index === 1 && "-translate-x-[80%] z-10 "
                         } ${index === 2 && "-translate-x-[160%]"} z-20`}
-                        src={guest.imageUrl}
+                        src={guest?.imageUrl}
                       />
                     );
                   })}
@@ -515,15 +452,15 @@ const CreateEventScreen = () => {
                 subFieldToDisplay="address"
                 icon={<GoLocation />}
               />
-
-              <Text
-                className="font-bold underline cursor-pointer !text-xs md:w-[200px] gap-1 flex md:items-center md:self-center md:justify-center md:translate-y-full"
-                onClick={() => navigate("/create-location")}
-              >
-                <AiOutlinePlusCircle />
-                <span> Create new location</span>
-              </Text>
             </Wrapper>
+            {error.locationId && <Error fluid>{error.locationId}</Error>}
+            <Text
+              className="font-bold underline cursor-pointer !text-xs md:w-[200px] gap-1 flex items-center mt-2"
+              onClick={() => navigate("/create-location")}
+            >
+              <AiOutlinePlusCircle />
+              <span> Create new location</span>
+            </Text>
           </Wrapper>
 
           <Wrapper className="!flex-col lg:flex-row">
@@ -545,29 +482,50 @@ const CreateEventScreen = () => {
               <Wrapper col="true" className="justify-start w-full">
                 {/* startTime */}
                 <Wrapper className="items-center">
-                  <TimePicker
-                    err={error.startTime}
-                    className="!w-[120px]"
-                    label="Start time"
-                    required
-                    onChange={handleTimeChange}
-                  />
+                  <Wrapper col="true">
+                    <Wrapper>
+                      <TimePicker
+                        err={null}
+                        className="!w-[120px]"
+                        label="Start time"
+                        required
+                        onChange={handleTimeChange}
+                      />
+                      {/* duration */}
+                      <TimePicker
+                        err={null}
+                        className="!w-[120px]"
+                        label="End time"
+                        required
+                        onChange={handleEndTimeChange}
+                      />
+                    </Wrapper>
 
-                  {/* duration */}
-                  <TimePicker
-                    err={error.endTime}
-                    className="!w-[120px]"
-                    label="End time"
-                    required
-                    onChange={handleEndTimeChange}
-                  />
+                    {(error.startTime || error.endTime) && (
+                      <Error fluid="true">
+                        {error.startTime || error.endTime}
+                      </Error>
+                    )}
+                  </Wrapper>
+
+                  {(event.duration?.hours || event.duration?.minutes) && (
+                    <Wrapper
+                      col="true"
+                      className="gap-1 ml-4 md:gap-2 lg:gap-3"
+                    >
+                      <Label className="">Duration</Label>
+                      <Wrapper className="inline-flex px-4 py-3 text-sm transition-all duration-300 bg-white border rounded-lg outline-none resize-none w-fit border-primary-400 focus:ring-1 focus:ring-primary-400 md:text-base md:px-6 md:py-4">
+                        <Text className="text-black">
+                          {event.duration.hours}h
+                        </Text>
+                        <Text className="text-black">:</Text>
+                        <Text className="text-black">
+                          {event.duration.minutes}m
+                        </Text>
+                      </Wrapper>
+                    </Wrapper>
+                  )}
                 </Wrapper>
-                {(event.duration.hours || event.duration.minutes) && (
-                  <SubHeading>
-                    {event.duration.hours} hours {event.duration.minutes}{" "}
-                    minutes
-                  </SubHeading>
-                )}
               </Wrapper>
             )}
           </Wrapper>
@@ -578,7 +536,13 @@ const CreateEventScreen = () => {
             checked={event.allDay}
             onClick={() => {
               const oldAllDay = event.allDay;
-              setEvent({ ...event, allDay: !oldAllDay });
+              setEvent({
+                ...event,
+                allDay: !oldAllDay,
+                startTime: null,
+                endTime: null,
+                duration: null,
+              });
             }}
           />
 

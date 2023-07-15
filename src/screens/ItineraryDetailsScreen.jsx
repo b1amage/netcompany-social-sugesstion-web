@@ -279,6 +279,7 @@ const ItineraryDetailsScreen = () => {
                       hideSuggestions={hideSuggestions}
                       searchQuery={selectedSuggestLocation?.location?.name}
                       fieldToDisplay="name"
+                      onClear={() => {}}
                       subFieldToDisplay="address"
                       icon={<GoLocation />}
                       inputClassName="!h-[60px] !rounded-2xl !ring-black"

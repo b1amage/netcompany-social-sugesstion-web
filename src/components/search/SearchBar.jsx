@@ -86,6 +86,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
         inputClassName="!h-[60px] !rounded-2xl"
         wrapperClassName=""
         hideError="true"
+        onClear={() => {}}
         onEnter={handleKeyPress}
         searchQuery={searchParams.get("searchInput")}
         dropdownClassName="!z-[8500]"

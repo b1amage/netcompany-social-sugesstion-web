@@ -93,7 +93,7 @@ const EventDetailsScreen = () => {
     return txt.documentElement.textContent;
   }
   return (
-    <Screen className="py-2 pb-4 xl:gap-10 xl:pb-10">
+    <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       {deleting && (
         <Portal>
           <Wrapper className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
@@ -245,12 +245,12 @@ const EventDetailsScreen = () => {
 
             <Wrapper className="justify-between !flex-col lg:!flex-row lg:items-center">
               <Wrapper col="true" className="!gap-0">
-                <SubHeading className="flex items-center gap-1">
+                <SubHeading className="flex items-center gap-1 !text-black">
                   <AiFillCalendar />
                   Start at {convertDateTime(event.startDateTime)}
                 </SubHeading>
 
-                <Text className="flex items-center gap-1">
+                <SubHeading className="flex items-center gap-1">
                   <AiFillClockCircle />
                   {event.allDay
                     ? "All Day"
@@ -259,7 +259,7 @@ const EventDetailsScreen = () => {
                       } ${event.duration.minutes} ${
                         event.duration.minutes === 1 ? "minute" : "minutes"
                       }`}
-                </Text>
+                </SubHeading>
               </Wrapper>
               <Wrapper col="true" className="!gap-0">
                 <SubHeading
@@ -270,7 +270,7 @@ const EventDetailsScreen = () => {
                         : `/location/details/${event.location._id}`
                     );
                   }}
-                  className="flex items-center gap-1 font-bold cursor-pointer"
+                  className="flex items-center gap-1 font-bold underline cursor-pointer !text-black"
                 >
                   <HiLocationMarker />
                   {event.location.name}{" "}
@@ -279,19 +279,19 @@ const EventDetailsScreen = () => {
                       <Note
                         wrapperClassName="relative"
                         buttonClassName="!relative !z-[1000] !translate-y-0"
-                        noteClassName="left-0 !h-auto !w-[160px] sm:!w-[200px] md:!w-[320px] !z-[7900]"
+                        noteClassName="left-0 !h-auto !w-[160px] sm:!w-[200px] md:!w-[320px] !z-[7900] -translate-x-1/2"
                         iconClassName="!w-[40px] md:!w-[20px]"
                         src={warning}
-                        description="This itinerary contains a deleted location!"
+                        description="This event contains a deleted location!"
                       />
                     </Wrapper>
                   )}
                 </SubHeading>
 
-                <Text className="flex items-center gap-1">
+                <SubHeading className="flex items-center gap-1">
                   <HiLocationMarker />
                   {event.location.address}
-                </Text>
+                </SubHeading>
               </Wrapper>
             </Wrapper>
 
