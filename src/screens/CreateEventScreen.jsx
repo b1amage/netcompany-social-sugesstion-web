@@ -379,6 +379,7 @@ const CreateEventScreen = () => {
                 icon={<BiUser />}
                 clearInputAfterSelect="true"
                 subFieldToDisplay="email"
+                setHideSuggestions
               />
               {event.guests.length > 0 && (
                 <Wrapper
@@ -389,6 +390,7 @@ const CreateEventScreen = () => {
                     if (index > 2) return;
                     return (
                       <Image
+                        key={index}
                         className={`w-10 h-10 !rounded-full shadow-2xl transition-all border border-primary-400 group-hover:brightness-75 ${
                           index === 1 && "-translate-x-[80%] z-10 "
                         } ${index === 2 && "-translate-x-[160%]"} z-20`}

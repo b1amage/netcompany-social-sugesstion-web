@@ -9,6 +9,7 @@ const TimePicker = ({ onChange, label, id, required, err }) => {
         {label}
       </Label>
       <input
+        readonly
         className={`${
           err === null
             ? "!border-primary-400 focus:ring-primary-400"

@@ -143,7 +143,7 @@ const InputWithDropdown = ({
             onChange={(e) => {
               setSelected(false);
               setInput(e.target.value);
-              setHideSuggestions(false);
+              // setHideSuggestions(false);
               // onChange(e.target.value)
               // if (suggestions.length === 0)
               //   setErr(`No place with name ${input} found in database`);
