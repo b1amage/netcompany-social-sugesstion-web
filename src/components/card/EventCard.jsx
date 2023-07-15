@@ -6,6 +6,7 @@ import Text from "@/components/typography/Text";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Heading from "@/components/typography/Heading";
 import { useNavigate } from "react-router-dom";
+import { DEFAULT } from "@/constants/defaultData";
 
 const EventCard = (props) => {
   function parseDate(isoString) {
@@ -31,7 +32,7 @@ const EventCard = (props) => {
         <Image
           animate
           className="!w-[80px] !h-[80px] !min-w-[80px] lg:!w-[90px] lg:!h-[90px]"
-          src={imageUrls[0]}
+          src={imageUrls.length > 0 ? imageUrls[0] : DEFAULT.event}
         />
 
         <Wrapper col="true" className="!gap-0 max-w-1/2">

@@ -3,12 +3,16 @@ import Label from "./Label";
 import Error from "./Error";
 
 const TimePicker = ({ onChange, label, id, required, err }) => {
+  const handleKeyDown = (e) => {
+    e.preventDefault();
+  };
   return (
     <div className={`flex flex-col  ${label && "gap-1 md:gap-2 lg:gap-3"}`}>
       <Label required={required} htmlFor={id}>
         {label}
       </Label>
       <input
+        onKeyDown={handleKeyDown}
         className={`${
           err === null
             ? "!border-primary-400 focus:ring-primary-400"

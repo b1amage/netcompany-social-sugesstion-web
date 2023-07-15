@@ -39,6 +39,7 @@ const EditProfileScreen = () => {
 
   const [message, setMessage] = useState();
   const [error, setError] = useState(false);
+  const [nameError, setNameError] = useState();
 
   const [loading, setLoading] = useState(true);
 
@@ -71,23 +72,6 @@ const EditProfileScreen = () => {
     // localStorage.setItem("user", JSON.stringify(data));
     navigate(ROUTE.PROFILE);
   };
-
-  // Get Location
-  // useEffect(() => {
-  //   (async function () {
-  //     try {
-  //       const user = JSON.parse(localStorage.getItem("user"));
-  //       const userId = user?._id;
-  //       if (userId) {
-  //         const response = await userApi.getUserProfile(userId);
-  //         setUser(response?.data);
-  //         setLoading(false);
-  //       }
-  //     } catch (error) {
-  //       console.error(error.message);
-  //     }
-  //   })();
-  // }, []);
 
   useEffect(() => {
     const getUserProfile = async () => {
@@ -126,13 +110,22 @@ const EditProfileScreen = () => {
 
               <AvatarUpload img={fetchUser.imageUrl} />
               <Input
-                onChange={(e) => setUsernameInput(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value.trim() === "") {
+                    setUsernameInput(e.target.value);
+                    setNameError("Name cannot be empty or space");
+                    return;
+                  }
+                  setNameError();
+                  setUsernameInput(e.target.value);
+                }}
                 value={usernameInput}
                 required
                 label="Display name"
                 type="text"
                 name="username"
                 id="username"
+                err={nameError}
               />
 
               <Input
