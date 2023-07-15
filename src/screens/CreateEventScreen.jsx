@@ -27,6 +27,7 @@ import Button from "@/components/button/Button";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import ImageUpload from "@/components/form/ImageUpload";
 import Label from "@/components/form/Label";
+
 import {
   isEndTimeAfterStartTime,
   calculateDuration,
@@ -463,22 +464,31 @@ const CreateEventScreen = () => {
               <Wrapper col="true" className="justify-start w-full">
                 {/* startTime */}
                 <Wrapper className="items-center">
-                  <TimePicker
-                    err={error.startTime}
-                    className="!w-[120px]"
-                    label="Start time"
-                    required
-                    onChange={handleTimeChange}
-                  />
+                  <Wrapper col="true">
+                    <Wrapper>
+                      <TimePicker
+                        err={null}
+                        className="!w-[120px]"
+                        label="Start time"
+                        required
+                        onChange={handleTimeChange}
+                      />
+                      {/* duration */}
+                      <TimePicker
+                        err={null}
+                        className="!w-[120px]"
+                        label="End time"
+                        required
+                        onChange={handleEndTimeChange}
+                      />
+                    </Wrapper>
 
-                  {/* duration */}
-                  <TimePicker
-                    err={error.endTime}
-                    className="!w-[120px]"
-                    label="End time"
-                    required
-                    onChange={handleEndTimeChange}
-                  />
+                    {(error.startTime || error.endTime) && (
+                      <Error fluid="true">
+                        {error.startTime || error.endTime}
+                      </Error>
+                    )}
+                  </Wrapper>
 
                   {(event.duration?.hours || event.duration?.minutes) && (
                     <Wrapper
