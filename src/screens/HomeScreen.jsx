@@ -1,9 +1,6 @@
-import localStorageKey from "@/constants/localStorageKeys";
-import ROUTE from "@/constants/routes";
-
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Wrapper from "@/components/wrapper/Wrapper";
 
 import Heading from "@/components/typography/Heading";
@@ -16,7 +13,7 @@ import OnBoardingSlider from "@/components/slider/OnBoardingSlider";
 import Screen from "@/components/container/Screen";
 
 import SubNavbar from "@/components/navbar/SubNavbar";
-// import useCurrentLocation from "@/hooks/useCurrentLocation";
+
 import {
   changeCurrentLocation,
   changeLatitude,
@@ -34,16 +31,9 @@ const HomeScreen = () => {
   const [featuredNextCursor, setFeaturedNextCursor] = useState();
   const [latestNextCursor, setLatestNextCursor] = useState();
 
-  const [isLoading, setIsLoading] = useState(true);
-
   const [isFeaturedLoading, setIsFeaturedLoading] = useState(true);
   const [isLatestLoading, setIsLatestLoading] = useState(true);
 
-  // const [permissionsStatus, setPermissionStatus] = useState(
-  //   localStorage.getItem("gpsPermission") || undefined
-  // );
-
-  // const { isTurnOnGPS } = useCurrentLocation();
   const dispatch = useDispatch();
 
   const [lastFetch, setLastFetch] = useState(Date.now());
@@ -76,21 +66,13 @@ const HomeScreen = () => {
   }, []);
 
   useEffect(() => {
-    // if (permissionsStatus === "granted") {
-    // if (localStorage.getItem("gpsPermission") === "denied") return
-
+    localStorage.removeItem("isGetCurrentLocation")
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-        // dispatch(changeCurrentLocation(data.results[0]));
-        // if (localStorage.setItem("defaultGpsPermission") === "denied") return
-
-        setIsLoading(true);
         if (localStorage.getItem("gpsPermission") !== "denied"){
           localStorage.setItem("gpsPermission", "denied");
           dispatch(changeLatitude(coords.latitude));
           dispatch(changeLongitude(coords.longitude));
-          // localStorage.setItem("gpsPermission", "granted");
-          setIsLoading(false);
         } else{
           dispatch(
             changeLatitude(
@@ -104,16 +86,12 @@ const HomeScreen = () => {
                 ?.location?.lng
             )
           );
-          setIsLoading(false);
         }
-        
-        // }
-        // return;
       },
       (error) => {
-        localStorage.setItem("defaultGpsPermission", "denied");
+        localStorage.setItem("isGetCurrentLocation", false)
         if (
-          error.code == error.PERMISSION_DENIED
+          error.code == error.PERMISSION_DENIED && localStorage.getItem("currentLocation")
         ) {
           dispatch(
             changeLatitude(
@@ -127,8 +105,9 @@ const HomeScreen = () => {
                 ?.location?.lng
             )
           );
-          setIsLoading(false);
         }
+        setIsFeaturedLoading(false)
+        setIsLatestLoading(false)
       }
     );
 
@@ -138,17 +117,6 @@ const HomeScreen = () => {
   
   const { user } = useSelector((state) => state.user);
 
-  // // ONBOARDING CHECK
-  // useEffect(() => {
-  //   const onBoardingAlreadyShown = JSON.parse(
-  //     localStorage.getItem(localStorageKey.alreadyShownOnboarding)
-  //   );
-
-  //   if (!onBoardingAlreadyShown) {
-  //     navigate(ROUTE.ONBOARDING);
-  //     return;
-  //   }
-
   useEffect(() => {
     // LOGIN CHECK
     if (localStorage.getItem("loginReload") === "true") {
@@ -156,23 +124,8 @@ const HomeScreen = () => {
       location.reload();
     }
   }, [])
-    
-
-  //   const user =
-  //     localStorage.getItem(localStorageKey.user) || JSON.stringify({});
-  //   console.log("user", user);
-
-  //   // check verify
-  //   // if (user.isVerified === false) {
-  //   //   navigate("/onboarding");
-  //   // }
-  //   if (user === JSON.stringify({})) {
-  //     navigate(ROUTE.LOGIN);
-  //   }
-  // }, []);
 
   useEffect(() => {
-    // if (latitude && longitude) {
     setIsFeaturedLoading(true);
     if (latitude && longitude) {
       const fetchFeaturedLocations = async () => {
@@ -183,17 +136,17 @@ const HomeScreen = () => {
         setFeaturedLocations(response.data.results);
         localStorage.setItem("featuredNextCursor", response.data.next_cursor);
         setFeaturedNextCursor(response.data.next_cursor);
-        setIsFeaturedLoading(false);
+      setIsFeaturedLoading(false);
+
       };
       fetchFeaturedLocations();
     }
+
   }, [latitude, longitude]);
 
   useEffect(() => {
-    // if (currentLocation || localStorage.getItem("currentLocation")) {
     setIsLatestLoading(true);
     if (latitude && longitude) {
-      // setIsLoading(true);
       const fetchLatestLocations = async () => {
         const response = await locationApi.getLatestLocation({
           lat: latitude,
@@ -202,22 +155,17 @@ const HomeScreen = () => {
         setLatestLocations(response.data.results);
         localStorage.setItem("latestNextCursor", response.data.next_cursor);
         setLatestNextCursor(response.data.next_cursor);
-        // setIsLoading(false);
-        setIsLatestLoading(false);
+      setIsLatestLoading(false);
+
       };
       fetchLatestLocations();
-    }
-    // }
-    // console.log(featuredNextCursor);
-    // console.log(latestNextCursor);
+    } 
+
   }, [latitude, longitude]);
 
   useEffect(() => {
-    console.log(isLoading);
-    localStorage.setItem("isGetCurrentLocation", true)
+    // console.log(isLoading);
     if (latitude && longitude && !currentLocation) {
-      // if (localStorage.getItem("gpsPermission") === "denied") return
-
       const fetchAddress = async () => {
 
         const { data } = await axios.get(
@@ -230,7 +178,6 @@ const HomeScreen = () => {
           JSON.stringify(data.results[0])
         );
         localStorage.setItem("isGetCurrentLocation", false)
-
       };
       fetchAddress();
     }
@@ -244,17 +191,14 @@ const HomeScreen = () => {
     console.log(longitude);
     if (now - lastFetch < 1000) return;
     if (nextCursor === null) return;
-    // setIsFeaturedUpdating(true);
     setLastFetch(now);
 
     const fetchFeaturedLocations = async () => {
       const response = await locationApi.getFeaturedLocation(
         {
           lat:
-            // JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lat,
             latitude,
           lng:
-            // JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lng,
             longitude,
         },
         nextCursor
@@ -262,7 +206,6 @@ const HomeScreen = () => {
       setFeaturedLocations((prev) => [...prev, ...response.data.results]);
       localStorage.setItem("featuredNextCursor", response.data.next_cursor);
       setFeaturedNextCursor(response.data.next_cursor);
-      // setIsFeaturedUpdating(false);
     };
     fetchFeaturedLocations();
   };
@@ -282,10 +225,8 @@ const HomeScreen = () => {
       const response = await locationApi.getLatestLocation(
         {
           lat:
-            // JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lat,
             latitude,
           lng:
-            // JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lng,
             longitude,
         },
         nextCursor
@@ -311,7 +252,6 @@ const HomeScreen = () => {
             perView={4}
             onClick={onSelectLocation}
             loadMore={handleLoadMoreFeaturedData}
-            // nextCursor={localStorage.getItem("featuredNextCursor") || null}
             type="featuredLocations"
           />
         ) : (
@@ -357,13 +297,6 @@ const HomeScreen = () => {
   );
   return (
     <>
-      {/* { latitude && longitude ? */}
-
-      {/* {(isLoading && !latitude && !longitude ) ? (
-        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20 justify-center items-center">
-          <Loading />
-        </Screen>
-      ) : ( */}
         <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
           <>
             <Wrapper col="true" className="gap-4 md:items-center">

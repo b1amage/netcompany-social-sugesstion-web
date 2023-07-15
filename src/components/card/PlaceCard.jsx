@@ -54,7 +54,7 @@ const PlaceCard = ({
                 onClick={(e) => {
                   e.stopPropagation();
 
-                  navigate(!place?.location?.isDeleted ?(`/location/details/${place?.location?._id})`) : "/error/This location no longer exists" );
+                  navigate(!place?.location?.isDeleted ?(`/location/details/${place?.location?._id}`) : "/error/This location no longer exists" );
                 }}
               >
                 {place?.location?.name}
