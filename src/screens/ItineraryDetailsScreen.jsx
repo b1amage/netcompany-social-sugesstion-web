@@ -11,10 +11,8 @@ import itineraryApi from "@/api/itineraryApi";
 import { useParams } from "react-router-dom";
 import add from "@/assets/add.svg";
 import Popup from "@/components/popup/Popup";
-import AutoCompleteScreen from "@/test/AutoComplete";
 import { AiOutlineClose } from "react-icons/ai";
 import Description from "@/components/form/Description";
-import SearchBar from "@/components/search/SearchBar";
 import { GoLocation } from "react-icons/go";
 import InputWithDropdown from "@/components/form/InputWithDropdown";
 import eventApi from "@/api/eventApi";
@@ -36,7 +34,6 @@ const ItineraryDetailsScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // const [hideSuggestions, setHideSuggestions] =   useState(true)
   const [note, setNote] = useState("");
   const [suggestNextCursor, setSuggestNextCursor] = useState();
   const [submitErr, setSubmitErr] = useState("");
@@ -47,7 +44,6 @@ const ItineraryDetailsScreen = () => {
   const notifyDelete = () => toast.success("Successfully delete!");
 
   useEffect(() => {
-    // localStorage.removeItem("itineraryLocations")
     const getDetails = async () => {
       const response = await itineraryApi.getItineraryDetails(
         id,
@@ -65,7 +61,7 @@ const ItineraryDetailsScreen = () => {
     getDetails();
   }, [id, isUpdating]);
 
-  const { handleDragEnd, handleDragOver, handleDragStart, handleDrop } =
+  const { handleDragEnd, handleDragOver, handleDragStart, handleDrop, handleDrag } =
     useItineraryDragAndDrop(async (updateList) => {
       console.log({
         itineraryId: id,
@@ -104,8 +100,6 @@ const ItineraryDetailsScreen = () => {
         note: note,
       });
       console.log(response);
-      // if (submitErr) return
-      // setLocations((prev) => [...prev, response.data])
       if (response.status !== 200) {
         setSubmitErr(response.data.message);
         return;
@@ -134,8 +128,6 @@ const ItineraryDetailsScreen = () => {
       setSelectedSuggestLocation();
       setNote("");
       setShowDeletePopup(false);
-
-      // navigate("/profile");
     };
 
     handleDelete();
@@ -160,7 +152,6 @@ const ItineraryDetailsScreen = () => {
   };
 
   const handlePlaceSelect = (location) => {
-    // navigate(`/location/details/${location._id}`)
     setHideSuggestions(true);
     setSelectedSuggestLocation(location);
   };

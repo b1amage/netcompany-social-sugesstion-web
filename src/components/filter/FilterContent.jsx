@@ -113,7 +113,7 @@ const FilterContent = ({
           setCategoryValue(option);
         }}
         openClassName="!ring-black ring-1 focus:ring-black !border-black"
-        className={`ring-black ${categoryValue && `ring-1 `}`}
+        className={`!rounded-2xl ring-black ${categoryValue && `ring-1 `}`}
       />
       <Wrapper col="true" className="gap-2">
         <Label>Time</Label>
@@ -156,7 +156,7 @@ const FilterContent = ({
                     ? "ring-1 ring-black border-black"
                     : dayTypeErr &&
                       "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 "
-                }`}
+                } !rounded-2xl`}
                 // err={dayTypeErr}
               />
             </Wrapper>

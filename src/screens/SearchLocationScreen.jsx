@@ -9,6 +9,8 @@ import locationApi from "@/api/locationApi";
 import ProfileCard from "@/components/card/ProfileCard";
 import Loading from "@/components/loading/Loading";
 import { useSearchParams } from "react-router-dom";
+import Note from "@/components/note/Note";
+import question from "@/assets/question.svg"
 
 const SearchLocationScreen = () => {
   // useCurrentLocation()
@@ -155,7 +157,6 @@ const SearchLocationScreen = () => {
     };
 
     tabRef.current.addEventListener("scroll", handleScroll);
-    // console.log(tabRef.current)
     return () => {
       if (tabRef.current) {
         // Remember to remove event listener when the component is unmounted
@@ -174,6 +175,7 @@ const SearchLocationScreen = () => {
   return (
     <Screen className="flex flex-col gap-4 px-3 py-4 lg:gap-8 md:px-6 md:py-5 lg:px-20 !h-screen !overflow-hidden !min-h-0">
       <SubNavbar user={user} searchFilter searchBar displayAddress/>
+      <Wrapper className="items-center">
       {searchParams.get("searchInput") !== "" ? (
         locations.length > 0 ? (
           <Heading className="text-black/40 !text-[24px] md:!text-[32px]">
@@ -198,6 +200,14 @@ const SearchLocationScreen = () => {
           No results found
         </Heading>
       )}
+        <Note 
+        wrapperClassName="relative"
+        buttonClassName="!relative !top-0 translate-y-0 "
+        noteClassName="!-top-1.5  !h-auto !w-[160px] sm:!w-[200px] md:!w-[250px] translate-x-1/2 sm:translate-x-0 sm:left-0"
+        // iconClassName="!w-[40px] md:!w-[30px]"
+        src={question} description="The result is based on your preference and search distance in your profile" />
+      </Wrapper>
+
       {isLoading ? (
         <Wrapper className="h-full items-center !justify-center">
           <Loading className="w-[60px] h-[60px]" />

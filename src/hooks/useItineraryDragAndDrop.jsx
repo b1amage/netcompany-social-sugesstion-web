@@ -1,15 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const useItineraryDragAndDrop = (callback) => {
-  // const [items, setItems] = useState(initialItems);
   const [draggedIndex, setDraggedIndex] = useState(null);
   const [draggedOverIndex, setDraggedOverIndex] = useState(null);
-  
-  // useEffect( () => {
-  //   items.forEach((item) => console.log(item));
-  //   // api handle
-  //   callback();
-  // }, [items]);
   
   const handleDragStart = (event, index) => {
     event.dataTransfer.setData("text/plain", index);
@@ -33,13 +26,12 @@ const useItineraryDragAndDrop = (callback) => {
     newItems.splice(draggedOverIndex, 0, draggedItem);
     setItems(newItems);
     console.log(newItems)
-    // console.log(newItems.map(item => item._id))
     const updateList = newItems.map(item => item._id)
     callback(updateList)
     setDraggedIndex(null);
     setDraggedOverIndex(null);
   };
-  return { handleDragEnd, handleDragOver, handleDragStart, handleDrop, };
+  return { handleDragEnd, handleDragOver, handleDragStart, handleDrop};
 };
 
 export default useItineraryDragAndDrop;
