@@ -2,7 +2,7 @@ import React from "react";
 import Label from "./Label";
 import Error from "./Error";
 
-const TimePicker = ({ onChange, label, id, required, err }) => {
+const TimePicker = ({ onChange, label, id, required, err, defaultValue }) => {
   const handleKeyDown = (e) => {
     e.preventDefault();
   };
@@ -12,6 +12,7 @@ const TimePicker = ({ onChange, label, id, required, err }) => {
         {label}
       </Label>
       <input
+        value={defaultValue}
         onKeyDown={handleKeyDown}
         className={`${
           err === null

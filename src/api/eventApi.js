@@ -46,6 +46,19 @@ const eventApi = {
     }
   },
 
+  async updateEvent(data) {
+    try {
+      const url = "/event";
+      const response = await axiosClient.patch(url, data, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   async getEvent(id) {
     try {
       const url = `/event/${id}`;

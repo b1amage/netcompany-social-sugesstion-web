@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 export function isEndTimeAfterStartTime(startTime, endTime) {
   const [startHours, startMinutes] = startTime.split(":").map(Number);
   const [endHours, endMinutes] = endTime.split(":").map(Number);
@@ -54,4 +56,24 @@ export function isInvalidTime(timeString) {
   startTime.setMinutes(minutes);
 
   return startTime < currentTime;
+}
+
+export function convertDateTime(dateTimeStr) {
+  const dateTime = DateTime.fromISO(dateTimeStr);
+  const datePart = dateTime.toFormat("yyyy-MM-dd");
+  const timePart = { hours: dateTime.hour, minutes: dateTime.minute };
+  return [datePart, timePart];
+}
+
+export function calculateEndTime(startTime, duration) {
+  const totalStartMinutes = startTime.hours * 60 + startTime.minutes;
+  const totalDurationMinutes = duration.hours * 60 + duration.minutes;
+  const totalEndMinutes = totalStartMinutes + totalDurationMinutes;
+
+  const endHours = Math.floor(totalEndMinutes / 60) % 24;
+  const endMinutes = totalEndMinutes % 60;
+
+  let endTime = { hours: endHours, minutes: endMinutes };
+
+  return endTime;
 }
