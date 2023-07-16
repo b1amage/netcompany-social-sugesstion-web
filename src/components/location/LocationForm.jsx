@@ -608,7 +608,7 @@ const LocationForm = ({
                     (currency?.title || currency) ? "focus:ring-2 ring-1 ring-black border-black"
                       : currencyErr && "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 border-secondary-400 "
                   } rounded-lg`}
-                  wrapperClassName=" sm:w-[150px]"
+                  wrapperClassName="w-full"
                   options={currencyList}
                   value={currency}
                   defaultTitle={"SELECT CURRENCY"}

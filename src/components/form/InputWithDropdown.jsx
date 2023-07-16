@@ -36,7 +36,6 @@ const InputWithDropdown = ({
   hideSuggestions,
   onClear,
   defaultValue,
-  onChange,
 }) => {
   const [input, setInput] = useState(defaultValue || "" || searchQuery);
   const [suggestions, setSuggestions] = useState([]);
