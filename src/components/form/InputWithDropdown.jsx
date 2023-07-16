@@ -6,7 +6,6 @@ import inputState from "@/constants/inputState";
 import Error from "./Error";
 import Loading from "@/components/loading/Loading";
 import Text from "@/components/typography/Text";
-import { GoLocation } from "react-icons/go";
 import Image from "@/components/image/Image";
 import { DEFAULT } from "@/constants/defaultData";
 
@@ -36,8 +35,10 @@ const InputWithDropdown = ({
   searchQuery,
   hideSuggestions,
   onClear,
+  defaultValue,
+  onChange,
 }) => {
-  const [input, setInput] = useState("" || searchQuery);
+  const [input, setInput] = useState(defaultValue || "" || searchQuery);
   const [suggestions, setSuggestions] = useState([]);
   const [selected, setSelected] = useState(false);
   const [err, setErr] = useState(null);
@@ -145,6 +146,7 @@ const InputWithDropdown = ({
             onChange={(e) => {
               setSelected(false);
               setInput(e.target.value);
+              onChange && onChange();
               // setHideSuggestions(false);
               onChange()
               // if (suggestions.length === 0)

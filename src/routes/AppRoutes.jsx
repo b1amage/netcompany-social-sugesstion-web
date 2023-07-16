@@ -4,7 +4,13 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 // import { useSelector } from "react-redux";
 
 const AllEventsScreen = React.lazy(() => import("@/screens/AllEventsScreen"));
-const ItineraryDetailsScreen = React.lazy(() => import("@/screens/ItineraryDetailsScreen"));
+const UpdateEventScreen = React.lazy(() =>
+  import("@/screens/UpdateEventScreen")
+);
+
+const ItineraryDetailsScreen = React.lazy(() =>
+  import("@/screens/ItineraryDetailsScreen")
+);
 const ItineraryLocationDetailsScreen = React.lazy(() => import("@/screens/ItineraryLocationDetailsScreen"));
 
 const ItinerariesScreen = React.lazy(() =>
@@ -60,7 +66,7 @@ const AppRoutes = () => {
       navigate(ROUTE.LOGIN);
     }
   }, []);
-  
+
   return (
     <>
       <Navbar />
@@ -93,6 +99,7 @@ const AppRoutes = () => {
           <Route path={ROUTE.EDIT_PROFILE} element={<EditProfileScreen />} />
           <Route path="/error/:message" element={<ErrorScreen />} />
           <Route path="/event/create" element={<CreateEventScreen />} />
+          <Route path="/event/update/:id" element={<UpdateEventScreen />} />
 
           <Route path="/user/:_id" element={<UserProfileScreen />} />
           <Route path="/event/:id" element={<EventDetailsScreen />} />

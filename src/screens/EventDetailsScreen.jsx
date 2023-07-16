@@ -130,7 +130,7 @@ const EventDetailsScreen = () => {
               <Wrapper>
                 <Button
                   onClick={() => {
-                    navigate(`/event/edit/${id}`);
+                    navigate(`/event/update/${id}`);
                   }}
                   className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl"
                 >

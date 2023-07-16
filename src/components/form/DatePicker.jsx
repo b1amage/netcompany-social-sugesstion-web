@@ -1,10 +1,16 @@
 import React from "react";
 import Label from "./Label";
 import Error from "./Error";
-import inputState from "@/constants/inputState";
 
-const DatePicker = ({ onChange, label, err, required, id, className }) => {
-  console.log("date picker", err);
+const DatePicker = ({
+  onChange,
+  label,
+  err,
+  required,
+  id,
+  className,
+  defaultValue,
+}) => {
   const handleKeyDown = (e) => {
     e.preventDefault();
   };
@@ -20,6 +26,7 @@ const DatePicker = ({ onChange, label, err, required, id, className }) => {
         </Label>
 
         <input
+          value={defaultValue}
           onKeyDown={handleKeyDown}
           onChange={onChange}
           datepicker="true"
