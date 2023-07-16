@@ -157,7 +157,6 @@ const FilterContent = ({
                     : dayTypeErr &&
                       "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 "
                 } !rounded-2xl`}
-                // err={dayTypeErr}
               />
             </Wrapper>
           </Wrapper>
