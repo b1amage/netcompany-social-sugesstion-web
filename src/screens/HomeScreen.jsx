@@ -57,7 +57,9 @@ const HomeScreen = () => {
     const handler = (e) => 
     {  
       e.preventDefault();
+      // console.log("Reload")
       localStorage.removeItem("gpsPermission")
+      localStorage.removeItem("isGetCurrentLocation")
     }
     window.addEventListener("beforeunload", handler);
     return () => {
@@ -66,30 +68,29 @@ const HomeScreen = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.removeItem("isGetCurrentLocation")
+    if (localStorage.getItem("gpsPermission") === "denied"){
+        dispatch(
+          changeLatitude(
+            JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+              ?.location?.lat
+          )
+        );
+        dispatch(
+          changeLongitude(
+            JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+              ?.location?.lng
+          )
+        );
+      return
+    }
+
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-        if (localStorage.getItem("gpsPermission") !== "denied"){
           localStorage.setItem("gpsPermission", "denied");
           dispatch(changeLatitude(coords.latitude));
           dispatch(changeLongitude(coords.longitude));
-        } else{
-          dispatch(
-            changeLatitude(
-              JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-                ?.location?.lat
-            )
-          );
-          dispatch(
-            changeLongitude(
-              JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-                ?.location?.lng
-            )
-          );
-        }
       },
       (error) => {
-        localStorage.setItem("isGetCurrentLocation", false)
         if (
           error.code == error.PERMISSION_DENIED && localStorage.getItem("currentLocation")
         ) {
@@ -105,9 +106,11 @@ const HomeScreen = () => {
                 ?.location?.lng
             )
           );
+        
         }
+        localStorage.setItem("isGetCurrentLocation", false)
         setIsFeaturedLoading(false)
-        setIsLatestLoading(false)
+        setIsLatestLoading(false) 
       }
     );
 
