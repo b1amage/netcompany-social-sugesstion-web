@@ -2,16 +2,15 @@ import Image from "@/components/image/Image";
 import Note from "@/components/note/Note";
 import warning from "@/assets/warning.svg";
 
-import { useMemo, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import Button from "@/components/button/Button";
-import { BsFillPencilFill } from "react-icons/bs";
 import Wrapper from "@/components/wrapper/Wrapper";
 import { useNavigate } from "react-router-dom";
 
 import locationImg from "@/assets/location.svg";
 import Heading from "@/components/typography/Heading";
 import SubHeading from "@/components/typography/SubHeading";
+import { DEFAULT } from "@/constants/defaultData";
 
 const PlaceCard = ({
   place,
@@ -38,7 +37,7 @@ const PlaceCard = ({
       } sm:flex-row gap-3 !p-2 transition-all shadow-lg cursor-pointer md:py-4 xl:pt-6 bg-neutral-400 rounded-xl lg:hover:-translate-y-2 ${className}`}
     >
       <Image
-        src={place?.location?.imageUrls[0]}
+        src={place?.location?.imageUrls[0] || DEFAULT.location}
         alt={place?.location?.name}
         className={`!rounded-xl sm:w-[400px] sm:h-[150px] h-[250px]`}
         imageClassName=""

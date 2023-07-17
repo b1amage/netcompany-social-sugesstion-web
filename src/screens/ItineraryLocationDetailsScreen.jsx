@@ -16,6 +16,7 @@ import { toast } from "react-hot-toast";
 import Description from "@/components/form/Description";
 import { AiOutlineClose } from "react-icons/ai";
 import Error from "@/components/form/Error";
+import { DEFAULT } from "@/constants/defaultData";
 
 const ItineraryLocationDetailsScreen = () => {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -66,7 +67,7 @@ const ItineraryLocationDetailsScreen = () => {
       <Heading className="!text-[32px]">
         {place.state.location.location.name}
       </Heading>
-      <Image src={place.state.location.location.imageUrls[0]} />
+      <Image src={place.state.location.location.imageUrls[0] || DEFAULT.location} />
       <Wrapper col="true" className="">
         <Heading className="!px-0 !text-[28px] items-center flex gap-2">
           Description
