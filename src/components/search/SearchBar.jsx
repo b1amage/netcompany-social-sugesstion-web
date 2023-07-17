@@ -15,7 +15,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [searchParams, setSearchParams] = useSearchParams();
   const [suggestNextCursor, setSuggestNextCursor] = useState();
-  // const [hideSuggestions, setHideSuggestions] = useState(true);
+  const [hideSuggestions, setHideSuggestions] = useState(true);
 
   const navigate = useNavigate();
 
@@ -86,10 +86,13 @@ const SearchBar = ({ className, wrapperClassName }) => {
         inputClassName="!h-[60px] !rounded-2xl"
         wrapperClassName=""
         hideError="true"
+        onClear={() => {}}
         onEnter={handleKeyPress}
         searchQuery={searchParams.get("searchInput")}
         dropdownClassName="!z-[8500]"
         withClearButton="true"
+        onChange={() => setHideSuggestions(false)}
+        hideSuggestions={hideSuggestions}
       />
     </div>
   );
