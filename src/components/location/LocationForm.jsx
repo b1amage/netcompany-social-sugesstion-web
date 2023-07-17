@@ -188,7 +188,7 @@ const LocationForm = ({
           name: title,
           address: address,
           description: description,
-          imageUrls: imgList.length === 0 ? [DEFAULT.location] : imgList,
+          imageUrls: imgList,
           locationCategory: category.title,
           location: {
             type: "Point",
@@ -230,7 +230,7 @@ const LocationForm = ({
           name: title,
           address: address,
           description: description,
-          imageUrls: imgList.length === 0 ? [DEFAULT.location] : imgList,
+          imageUrls: imgList,
           locationCategory: category.title,
           location: {
             type: "Point",
@@ -270,7 +270,7 @@ const LocationForm = ({
             name: title,
             address: address,
             description: description,
-            imageUrls: imgList.length === 0 ? [DEFAULT.location] : imgList,
+            imageUrls: imgList,
             locationCategory: category.title,
             location: {
               type: "Point",
@@ -314,7 +314,7 @@ const LocationForm = ({
             name: title,
             address: address,
             description: description,
-            imageUrls: imgList.length === 0 ? [DEFAULT.location] : imgList,
+            imageUrls: imgList,
             locationCategory: category.title,
             location: {
               type: "Point",
@@ -349,7 +349,7 @@ const LocationForm = ({
         name: title,
         address: address,
         description: description,
-        imageUrls: imgList.length === 0 ? [DEFAULT.location] : imgList,
+        imageUrls: imgList,
         locationCategory: category.title,
         location: {
           type: "Point",
@@ -608,7 +608,7 @@ const LocationForm = ({
                     (currency?.title || currency) ? "focus:ring-2 ring-1 ring-black border-black"
                       : currencyErr && "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 border-secondary-400 "
                   } rounded-lg`}
-                  wrapperClassName=" sm:w-[150px]"
+                  wrapperClassName="w-full"
                   options={currencyList}
                   value={currency}
                   defaultTitle={"SELECT CURRENCY"}
@@ -755,7 +755,7 @@ const LocationForm = ({
           title={`${window.location.pathname === '/create-location' ? "Registering location" : "Updating loacation"}. Wait for a few seconds to be directed to the previous page`}
           children={<Loading />}
           className="!fixed"
-          formClassName="items-center"
+          formClassName="items-center !h-fit"
           titleClassName="!text-green-500"
         />
       )}

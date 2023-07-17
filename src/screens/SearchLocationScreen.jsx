@@ -9,6 +9,8 @@ import locationApi from "@/api/locationApi";
 import ProfileCard from "@/components/card/ProfileCard";
 import Loading from "@/components/loading/Loading";
 import { useSearchParams } from "react-router-dom";
+import Note from "@/components/note/Note";
+import question from "@/assets/question.svg"
 
 const SearchLocationScreen = () => {
   // useCurrentLocation()
@@ -17,7 +19,6 @@ const SearchLocationScreen = () => {
   const [nextCursor, setNextCursor] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [lastFetch, setLastFetch] = useState(Date.now());
-  const [isFeaturedUpdating, setIsFeaturedUpdating] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [resettingScroll, setResettingScroll] = useState(false);
@@ -33,7 +34,7 @@ const SearchLocationScreen = () => {
   useEffect(() => {
     // if (latitude && longitude) {
       // if (currentLocation) {
-      setIsLoading(false)
+      // setIsLoading(false)
       const fetchLocations = async () => {
         const response = await locationApi.getFeaturedLocation({
           locationCategory:
@@ -94,9 +95,6 @@ const SearchLocationScreen = () => {
     if (nextCursor === null) return;
     
     setLastFetch(now);
-    // setIsFeaturedUpdating(true)
-    // const fetchLocations = async () => {
-      // setIsFeaturedUpdating(true)
     const response = await locationApi.getFeaturedLocation(
       {
         locationCategory:
@@ -152,18 +150,13 @@ const SearchLocationScreen = () => {
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
         const nextCursor = localStorage.getItem("nextCursor");
-        // if (nextCursor.length > 10) {
-        // }
-       
-        await loadMoreData(nextCursor);
-
-        // if (!isFeaturedUpdating){
-        // } 
+        if (nextCursor.length > 10) {
+          await loadMoreData(nextCursor);
+        }
       }
     };
 
     tabRef.current.addEventListener("scroll", handleScroll);
-    // console.log(tabRef.current)
     return () => {
       if (tabRef.current) {
         // Remember to remove event listener when the component is unmounted
@@ -182,18 +175,19 @@ const SearchLocationScreen = () => {
   return (
     <Screen className="flex flex-col gap-4 px-3 py-4 lg:gap-8 md:px-6 md:py-5 lg:px-20 !h-screen !overflow-hidden !min-h-0">
       <SubNavbar user={user} searchFilter searchBar displayAddress/>
+      <Wrapper className="items-center">
       {searchParams.get("searchInput") !== "" ? (
         locations.length > 0 ? (
           <Heading className="text-black/40 !text-[24px] md:!text-[32px]">
             Results for{" "}
-            <span className="text-primary-400">
+            <span className="text-secondary-300">
               "{searchParams.get("searchInput")}"
             </span>
           </Heading>
         ) : (
-          <Heading className="text-primary-400 !text-[24px] md:!text-[32px]">
+          <Heading className="text-black/40 !text-[24px] md:!text-[32px]">
             No results found for{" "}
-            <span className="text-primary-400">
+            <span className="text-secondary-300">
               "{searchParams.get("searchInput")}"
             </span>
           </Heading>
@@ -206,6 +200,14 @@ const SearchLocationScreen = () => {
           No results found
         </Heading>
       )}
+        <Note 
+        wrapperClassName="relative"
+        buttonClassName="!relative !top-0 translate-y-0 "
+        noteClassName="!-top-1.5  !h-auto !w-[160px] sm:!w-[200px] md:!w-[250px] translate-x-1/2 sm:translate-x-0 sm:left-0"
+        // iconClassName="!w-[40px] md:!w-[30px]"
+        src={question} description="The result is based on your preference and search distance in your profile" />
+      </Wrapper>
+
       {isLoading ? (
         <Wrapper className="h-full items-center !justify-center">
           <Loading className="w-[60px] h-[60px]" />
@@ -225,7 +227,6 @@ const SearchLocationScreen = () => {
                     imageUrls: location.imageUrls,
                     name: location.name,
                     address: location.address,
-                    // description: location.description,
                   }}
                   className="!w-full !h-[350px]"
                 />
@@ -238,7 +239,6 @@ const SearchLocationScreen = () => {
           </Heading> 
         )
       )}
-      {/* w-[220px] sm:w-[300px] md:w-[350px] lg:w-[420px] xl:w-[360px] !h-[400px] !max-w-none */}
     </Screen>
   );
 };
