@@ -8,12 +8,6 @@ import Range from "@/components/form/Range";
 import { DISTANCE } from "@/constants/distance";
 import Button from "@/components/button/Button";
 import { useDispatch } from "react-redux";
-import {
-  changeSearchDistance,
-  changeTime,
-  changeCategory,
-  resetFilter,
-} from "@/features/filterSlice";
 import VALIDATE from "@/helpers/validateForm";
 import Error from "@/components/form/Error";
 import Time from "@/components/location/Time";
@@ -113,7 +107,7 @@ const FilterContent = ({
           setCategoryValue(option);
         }}
         openClassName="!ring-black ring-1 focus:ring-black !border-black"
-        className={`ring-black ${categoryValue && `ring-1 `}`}
+        className={`!rounded-2xl ring-black ${categoryValue && `ring-1 `}`}
       />
       <Wrapper col="true" className="gap-2">
         <Label>Time</Label>
@@ -156,8 +150,7 @@ const FilterContent = ({
                     ? "ring-1 ring-black border-black"
                     : dayTypeErr &&
                       "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 "
-                }`}
-                // err={dayTypeErr}
+                } !rounded-2xl`}
               />
             </Wrapper>
           </Wrapper>
