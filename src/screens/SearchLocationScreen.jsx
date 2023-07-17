@@ -178,25 +178,25 @@ const SearchLocationScreen = () => {
       <Wrapper className="items-center">
       {searchParams.get("searchInput") !== "" ? (
         locations.length > 0 ? (
-          <Heading className="text-black/40 !text-[24px] md:!text-[32px]">
+          <Heading className="!text-black !text-[24px] md:!text-[32px]">
             Results for{" "}
-            <span className="text-secondary-300">
+            <span className="text-secondary-400">
               "{searchParams.get("searchInput")}"
             </span>
           </Heading>
         ) : (
-          <Heading className="text-black/40 !text-[24px] md:!text-[32px]">
+          <Heading className="!text-black !text-[24px] md:!text-[32px]">
             No results found for{" "}
-            <span className="text-secondary-300">
+            <span className="text-secondary-400">
               "{searchParams.get("searchInput")}"
             </span>
           </Heading>
         )
       ) : ( ((latitude && longitude) && (localStorage.getItem("currentLocation")))?
-        <Heading className="text-primary-400 !text-[24px] md:!text-[32px]">
+        <Heading className="!text-primary-400 !text-[24px] md:!text-[32px]">
           Show all results
         </Heading> :
-        <Heading className="text-primary-400 !text-[24px] md:!text-[32px]">
+        <Heading className="!text-primary-400 !text-[24px] md:!text-[32px]">
           No results found
         </Heading>
       )}

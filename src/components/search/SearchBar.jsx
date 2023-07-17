@@ -37,6 +37,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
         pathname: ROUTE.SEARCH_LOCATION,
         search: `?searchInput=${value || ""}`,
       });
+      setHideSuggestions(true)
   };
 
   useEffect(() => {
