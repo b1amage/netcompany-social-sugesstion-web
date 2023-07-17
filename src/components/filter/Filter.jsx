@@ -60,12 +60,6 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
   }, [searchParams]);
 
   const handleCloseFilter = () => {
-    // console.log("Clicked")
-    // console.log(searchParams.get("locationCategory"));
-    // console.log(searchParams.get("openFrom"));
-    // console.log(searchParams.get("closeTo"));
-    // console.log(searchParams.get("dayType"));
-    // console.log(searchParams.get('searchDistance'))
     setCategoryValue(
       searchParams.get("locationCategory")
         ? {title: searchParams.get("locationCategory")}
@@ -148,13 +142,10 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
             }
             className={`${
               isClicked ? "translate-y-0" : "translate-y-full"
-            } duration-300 items-center !z-[8500] `}
+            } duration-300 items-center !z-[9100] `}
             formClassName="overflow-y-scroll justify-center  !h-[600px] md:!h-[650px] !py-0 !px-4 "
-            // overflow-hidden justify-center items-end md:items-center 2xl:!py-16
-            // overflow-y-scroll !h-auto w-full justify-center md:p-0 md:px-2 !rounded-b-none rounded-t-xl md:!rounded-2xl md:py-0
             titleClassName="text-[20px]"
             childrenClassName="!mt-0 w-full"
-            // setShowPopup={setShowAutoComplete}
           />
         </>
       )}
@@ -168,9 +159,6 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
           setSearchParams({listType: option.title})
           dispatch(changeCategory(option))
         }}
-        // onClick={() => {
-        //   setSearchParams({listType: locationListType.title})
-        // }}
         openClassName="!ring-black ring-1 focus:ring-black !border-black"
         className={`${
           locationListType?.title || locationListType
