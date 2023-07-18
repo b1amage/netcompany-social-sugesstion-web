@@ -18,20 +18,22 @@ const Time = ({
       <Label className={`text-[12px] sm:text-[14px] ${labelClassName}`}>
         {label} {required && <span className="text-secondary-400">*</span>}
       </Label>
-      <Input
+      <input
         type="time"
-        className={`h-[60px] appearance-none flex justify-between !w-full bg-white items-center
-        ${value 
-          ? "ring-1 ring-black focus:!ring-green-500 focus:!border-green-500 "
-          : err ? "focus:!ring-secondary-400 !border-secondary-400 ring-1 ring-secondary-400"
-        : "!border-black focus:!border-black !ring-black"
-    } ${
-      value && "!border-black focus:!border-black !ring-black ring-1 "
-    } ${className}`}
+        className={`appearance-none bg-white items-center w-full p-4 text-sm transition-all duration-300 border rounded-2xl outline-none focus:ring-1 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100
+        ${
+          value
+            ? "ring-1 ring-black focus:!ring-green-500 focus:!border-green-500 "
+            : err
+            ? "focus:!ring-secondary-400 !border-secondary-400 ring-1 ring-secondary-400"
+            : "!border-black focus:!border-black !ring-black"
+        } ${
+          value && "!border-black focus:!border-black !ring-black ring-1 "
+        } ${className}`}
         onChange={onChange}
         value={value}
       />
-    </Wrapper>
+    </Wrapper >
   );
 };
 

@@ -273,3 +273,7 @@
 .hide-cursor {
   caret-color: transparent;
 }
+
+.dropdown{
+  z-index: 8500 !important;
+}
