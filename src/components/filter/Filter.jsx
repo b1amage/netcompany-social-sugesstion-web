@@ -10,7 +10,7 @@ import close from "@/assets/close.svg";
 import { AiFillCheckCircle, AiOutlineClose } from "react-icons/ai";
 import { useSearchParams } from "react-router-dom";
 import Dropdown from "@/components/form/Dropdown";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { changeCategory } from "@/features/filterSlice";
 
 const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
@@ -21,25 +21,29 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
     return `${hours}:${minutes}`;
   };
 
-  const {category} = useSelector(({filter}) => {
-    return{
-      category: filter.category
-    }
-  })
-  const homeFilterList = [{title: "ALL"}, {title: "POPULAR"}, {title: "LATEST"}]
-  const [locationListType, setLocationListType] = useState()
+  const homeFilterList = [
+    { title: "ALL" },
+    { title: "POPULAR" },
+    { title: "LATEST" },
+  ];
+  const [locationListType, setLocationListType] = useState();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isClicked, setIsClicked] = useState(false);
   const [isFiltered, setIsFiltered] = useState(false);
-
   const [searchDistanceValue, setSearchDistanceValue] = useState("");
-
   const [categoryValue, setCategoryValue] = useState("");
+
   const [dayType, setDayType] = useState("");
   const [openTime, setOpenTime] = useState("");
   const [closeTime, setCloseTime] = useState("");
 
-  const dispatch = useDispatch()
+  const [dayTypeErr, setDayTypeErr] = useState();
+  const [openTimeErr, setOpenTimeErr] = useState();
+  const [closeTimeErr, setCloseTimeErr] = useState();
+
+  const [submitErr, setSubmitErr] = useState();
+
+  const dispatch = useDispatch();
   useEffect(() => {
     setCategoryValue(searchParams.get("locationCategory") || "");
     setDayType(searchParams.get("dayType") || "");
@@ -56,13 +60,17 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
         ? searchParams.get("searchDistance")
         : JSON.parse(localStorage.getItem("user")).searchDistance
     );
-    setLocationListType(searchParams.get('listType') ? {title: searchParams.get('listType')} : homeFilterList[0])
+    setLocationListType(
+      searchParams.get("listType")
+        ? { title: searchParams.get("listType") }
+        : homeFilterList[0]
+    );
   }, [searchParams]);
 
   const handleCloseFilter = () => {
     setCategoryValue(
       searchParams.get("locationCategory")
-        ? {title: searchParams.get("locationCategory")}
+        ? { title: searchParams.get("locationCategory") }
         : ""
     );
     setOpenTime(
@@ -73,13 +81,18 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
     setCloseTime(
       searchParams.get("closeTo") ? formatTime(searchParams.get("closeTo")) : ""
     );
-    setDayType(searchParams.get("dayType") ? {title: searchParams.get("dayType")} : "");
+    setDayType(
+      searchParams.get("dayType") ? { title: searchParams.get("dayType") } : ""
+    );
     setSearchDistanceValue(
       searchParams.get("searchDistance")
         ? searchParams.get("searchDistance")
         : JSON.parse(localStorage.getItem("user")).searchDistance
-
     );
+    setDayTypeErr()
+    setOpenTimeErr()
+    setCloseTimeErr()
+    setSubmitErr();
     setIsClicked(false);
   };
   return (
@@ -128,6 +141,14 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
                     setCloseTime={setCloseTime}
                     searchDistanceValue={searchDistanceValue}
                     setSearchDistanceValue={setSearchDistanceValue}
+                    dayTypeErr={dayTypeErr}
+                    setDayTypeErr={setDayTypeErr}
+                    openTimeErr={openTimeErr}
+                    setOpenTimeErr={setOpenTimeErr}
+                    closeTimeErr={closeTimeErr}
+                    setCloseTimeErr={setCloseTimeErr}
+                    submitErr={submitErr}
+                    setSubmitErr={setSubmitErr}
                   />
                 </Wrapper>
                 <Button
@@ -143,28 +164,28 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
             className={`${
               isClicked ? "translate-y-0" : "translate-y-full"
             } duration-300 items-center !z-[9100] `}
-            formClassName="overflow-y-scroll justify-center  !h-[600px] md:!h-[650px] !py-0 !px-4 "
+            formClassName="justify-center items-center !h-fit !py-0 !px-4 "
             titleClassName="text-[20px]"
             childrenClassName="!mt-0 w-full"
           />
         </>
       )}
-      {homeFilter && 
-      <Dropdown 
-        defaultTitle=""
-        options={homeFilterList}
-        value={locationListType}
-        onChange={(option) => {
-          setLocationListType(option);
-          setSearchParams({listType: option.title})
-          dispatch(changeCategory(option))
-        }}
-        openClassName="!ring-black ring-1 focus:ring-black !border-black"
-        className={`${
-          locationListType?.title || locationListType
-            && " "  
-        } !w-[150px] h-[60px] !rounded-2xl flex items-center cursor-pointer`}
-      />}
+      {homeFilter && (
+        <Dropdown
+          defaultTitle=""
+          options={homeFilterList}
+          value={locationListType}
+          onChange={(option) => {
+            setLocationListType(option);
+            setSearchParams({ listType: option.title });
+            dispatch(changeCategory(option));
+          }}
+          openClassName="!ring-black ring-1 focus:ring-black !border-black"
+          className={`${
+            locationListType?.title || (locationListType && " ")
+          } !w-[150px] h-[60px] !rounded-2xl flex items-center cursor-pointer`}
+        />
+      )}
     </Wrapper>
   );
 };

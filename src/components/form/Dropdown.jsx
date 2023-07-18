@@ -13,10 +13,9 @@ const Dropdown = ({
   defaultTitle,
   className,
   required,
-  err,
-  // onClick,
   wrapperClassName,
-  openClassName
+  openClassName,
+  dropdownClassName
 }) => {
   const [isOpen, setIsOpen] = useState(null);
   const handleClick = () => {
@@ -67,7 +66,7 @@ const Dropdown = ({
       </div>
       {isOpen && (
         <ul
-          className={`border border-primary-400 w-full max-h-[400px] block my-2 overflow-y-scroll bg-primary-400 text-white  absolute z-50 text-sm top-full transition-all duration-300 outline-none  md:text-base md:px-2 placeholder:text-secondary-100 font-bold`}
+          className={`border border-primary-400 w-full max-h-[400px] block my-2 overflow-y-scroll bg-primary-400 text-white  absolute z-50 text-sm top-full transition-all duration-300 outline-none  md:text-base md:px-2 placeholder:text-secondary-100 font-bold ${dropdownClassName}`}
         >
           {renderedOptions}
         </ul>

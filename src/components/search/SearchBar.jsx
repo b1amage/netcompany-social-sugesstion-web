@@ -90,7 +90,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
         onClear={() => {}}
         onEnter={handleKeyPress}
         searchQuery={searchParams.get("searchInput")}
-        dropdownClassName="!z-[8500]"
+        dropdownClassName="dropdown"
         withClearButton="true"
         onChange={() => setHideSuggestions(false)}
         hideSuggestions={hideSuggestions}
