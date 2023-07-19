@@ -19,6 +19,7 @@ module.exports = {
         },
         secondary: {
           400: "#E35F52",
+          300: "#00349E",
           200: "#FF7D70",
         },
         teriary: {

@@ -178,32 +178,32 @@ const SearchLocationScreen = () => {
       <Wrapper className="items-center">
       {searchParams.get("searchInput") !== "" ? (
         locations.length > 0 ? (
-          <Heading className="text-black/40 !text-[24px] md:!text-[32px]">
-            Results for{" "}
-            <span className="text-primary-400">
+          <Heading className="!text-black !text-[24px] md:!text-[32px]">
+            Search results for{" "}
+            <span className="text-secondary-400">
               "{searchParams.get("searchInput")}"
             </span>
           </Heading>
         ) : (
-          <Heading className="text-primary-400 !text-[24px] md:!text-[32px]">
+          <Heading className="!text-black !text-[24px] md:!text-[32px]">
             No results found for{" "}
-            <span className="text-primary-400">
+            <span className="text-secondary-400">
               "{searchParams.get("searchInput")}"
             </span>
           </Heading>
         )
       ) : ( ((latitude && longitude) && (localStorage.getItem("currentLocation")))?
-        <Heading className="text-primary-400 !text-[24px] md:!text-[32px]">
+        <Heading className="!text-primary-400 !text-[24px] md:!text-[32px]">
           Show all results
         </Heading> :
-        <Heading className="text-primary-400 !text-[24px] md:!text-[32px]">
+        <Heading className="!text-primary-400 !text-[24px] md:!text-[32px]">
           No results found
         </Heading>
       )}
         <Note 
         wrapperClassName="relative"
         buttonClassName="!relative !top-0 translate-y-0 "
-        noteClassName="!-top-1.5  !h-auto !w-[160px] sm:!w-[200px] md:!w-[250px] translate-x-1/2 sm:translate-x-0 sm:left-0"
+        noteClassName="!-top-1.5  !h-auto !w-[160px] sm:!w-[200px] md:!w-[250px] sm:-translate-x-1/2 right-0 sm:left-0"
         // iconClassName="!w-[40px] md:!w-[30px]"
         src={question} description="The result is based on your preference and search distance in your profile" />
       </Wrapper>
@@ -228,7 +228,7 @@ const SearchLocationScreen = () => {
                     name: location.name,
                     address: location.address,
                   }}
-                  className="!w-full !h-[350px]"
+                  className="!w-full h-[250px] sm:!h-[300px] md:!h-[350px]"
                 />
               );
             })}

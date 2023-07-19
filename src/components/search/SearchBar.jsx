@@ -37,6 +37,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
         pathname: ROUTE.SEARCH_LOCATION,
         search: `?searchInput=${value || ""}`,
       });
+      setHideSuggestions(true)
   };
 
   useEffect(() => {
@@ -89,7 +90,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
         onClear={() => {}}
         onEnter={handleKeyPress}
         searchQuery={searchParams.get("searchInput")}
-        dropdownClassName="!z-[8500]"
+        dropdownClassName="dropdown"
         withClearButton="true"
         onChange={() => setHideSuggestions(false)}
         hideSuggestions={hideSuggestions}
