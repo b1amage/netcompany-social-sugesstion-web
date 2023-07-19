@@ -14,13 +14,13 @@ const Time = ({
   required,
 }) => {
   return (
-    <Wrapper col="true" className={`w-full ${wrapperClassName}`}>
-      <Label className={`text-[12px] sm:text-[14px] ${labelClassName}`}>
+    <Wrapper col="true" className={`w-fit ${wrapperClassName}`}>
+      <Label className={`text-[10px] sm:!text-[14px] ${labelClassName}`}>
         {label} {required && <span className="text-secondary-400">*</span>}
       </Label>
       <input
         type="time"
-        className={`appearance-none bg-white items-center w-full p-4 text-sm transition-all duration-300 border rounded-2xl outline-none focus:ring-1 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100
+        className={`appearance-none bg-white items-center w-full p-4 text-sm md:text-[20px] transition-all duration-300 border rounded-2xl outline-none focus:ring-1 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100
         ${
           value
             ? "ring-1 ring-black focus:!ring-green-500 focus:!border-green-500 "
