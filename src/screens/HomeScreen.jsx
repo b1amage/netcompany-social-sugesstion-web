@@ -171,6 +171,8 @@ const HomeScreen = () => {
             method: "GET",
           }
         );
+
+        console.log(data);
         dispatch(changeCurrentLocation(data.results[0]));
         console.log(data.results[0]);
         localStorage.setItem(
