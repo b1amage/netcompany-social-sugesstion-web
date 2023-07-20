@@ -172,7 +172,7 @@ const HomeScreen = () => {
           }
         );
 
-        const data = response.json();
+        const data = await response.json();
         console.log(data);
         dispatch(changeCurrentLocation(data.results[0]));
         console.log(data.results[0]);
