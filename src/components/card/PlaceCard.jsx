@@ -21,6 +21,7 @@ const PlaceCard = ({
 }
 ) => {
   const navigate = useNavigate();
+  const MAX_DESCRIPTION_LENGTH = 250
   return (
     <Wrapper
       {...props}
@@ -34,17 +35,17 @@ const PlaceCard = ({
       col="true"
       className={`w-full ${
         place?.location?.isDeleted && "border-2 !border-secondary-400"
-      } sm:flex-row gap-3 !p-2 transition-all shadow-lg cursor-pointer md:py-4 xl:pt-6 bg-neutral-400 rounded-xl lg:hover:-translate-y-2 ${className}`}
+      } sm:flex-row gap-3 !p-2 transition-all shadow-lg cursor-grab md:py-4 xl:pt-6 bg-neutral-400 rounded-xl  ${className}`}
     >
       <Image
         src={place?.location?.imageUrls[0] || DEFAULT.location}
         alt={place?.location?.name}
-        className={`!rounded-xl sm:w-[400px] sm:h-[150px] h-[250px]`}
+        className={`!rounded-xl sm:w-[400px] sm:h-[200px] md:h-[180px] h-[250px]`}
         imageClassName=""
         animate
       />
 
-      <Wrapper col="true" className="w-full !relative justify-between">
+      <Wrapper col="true" className="w-full !relative">
         <Wrapper col="true" className="">
           <Wrapper className="items-center ">
             <Wrapper className="w-full items-center">
@@ -103,9 +104,9 @@ const PlaceCard = ({
         </Wrapper>
 
         <SubHeading
-          className={`!text-[12px] sm:!text-[14px] !text-black text-overflow-ellipsis break-all`}
+          className={`!text-[12px] sm:!text-[14px] !text-black break-all`}
         >
-          {place?.note}
+          {place?.note.length > MAX_DESCRIPTION_LENGTH ? place?.note.slice(0, MAX_DESCRIPTION_LENGTH + 1) + "..." : place?.note}
         </SubHeading>
       </Wrapper>
     </Wrapper>

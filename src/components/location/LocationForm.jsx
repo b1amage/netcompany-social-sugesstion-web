@@ -20,8 +20,8 @@ import { DEFAULT } from "@/constants/defaultData";
 // import { imageList } from "@/constants/images";
 import Loading from "@/components/loading/Loading";
 import Popup from "@/components/popup/Popup";
-import localStorageKey from "@/constants/localStorageKeys";
-import ROUTE from "@/constants/routes";
+// import localStorageKey from "@/constants/localStorageKeys";
+// import ROUTE from "@/constants/routes";
 
 import { currencyList } from "@/constants/currencyList";
 
@@ -384,14 +384,6 @@ const LocationForm = ({
     // // // console.log(response)
     // setIsLoading(false);
   };
-
-  useEffect(() => {
-    const user =
-      localStorage.getItem(localStorageKey.user) || JSON.stringify({});
-    if (user === JSON.stringify({})) {
-      navigate(ROUTE.LOGIN);
-    }
-  }, []);
 
   useEffect(() => {
     if (imgList.length > 0) {

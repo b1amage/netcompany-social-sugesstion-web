@@ -19,8 +19,6 @@ import Error from "@/components/form/Error";
 import { DEFAULT } from "@/constants/defaultData";
 
 const ItineraryLocationDetailsScreen = () => {
-  const [isUpdating, setIsUpdating] = useState(false);
-
   const notifyUpdate = () => toast.success("Successfully update!");
 
   const place = useLocation();
@@ -67,24 +65,27 @@ const ItineraryLocationDetailsScreen = () => {
       <Heading className="!text-[32px]">
         {place.state.location.location.name}
       </Heading>
-      <Image src={place.state.location.location.imageUrls[0] || DEFAULT.location} />
-      <Wrapper col="true" className="">
-        <Heading className="!px-0 !text-[28px] items-center flex gap-2">
-          Description
-          <Button
-            onClick={() => {
-              // navigate(`/location/edit/${id}`);
-              // editItinerary(itinerary)
-              setShowEditPopup(true)
-              console.log("Edit!");
-            }}
-            className="!bg-transparent !border-none !bg-opacity-40 !text-black !h-fit !my-0 !p-2"
-          >
-            <BsFillPencilFill className="text-sm" />
-          </Button>
-        </Heading>
-        <SubHeading className="break-words">{place.state.location.note}</SubHeading>
+      <Wrapper>
+        <Image src={place.state.location.location.imageUrls[0] || DEFAULT.location} />
+        <Wrapper col="true" className="">
+          <Heading className="!px-0 !text-[28px] items-center flex gap-2">
+            Description
+            <Button
+              onClick={() => {
+                // navigate(`/location/edit/${id}`);
+                // editItinerary(itinerary)
+                setShowEditPopup(true)
+                console.log("Edit!");
+              }}
+              className="!bg-transparent !border-none !bg-opacity-40 !text-black !h-fit !my-0 !p-2"
+            >
+              <BsFillPencilFill className="text-sm" />
+            </Button>
+          </Heading>
+          <SubHeading className="break-words">{place.state.location.note}</SubHeading>
+        </Wrapper>
       </Wrapper>
+      
       {showEditPopup && <Popup
           onClose={() => {
             closePopup();
