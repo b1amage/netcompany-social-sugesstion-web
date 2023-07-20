@@ -168,6 +168,7 @@ const HomeScreen = () => {
         const { data } = await axios.get(
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${key}`,
           {
+            withCredentials: "include",
             headers: {
               "Content-Type": "application/json",
               Authorization: null,
