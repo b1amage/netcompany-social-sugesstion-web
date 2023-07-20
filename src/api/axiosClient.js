@@ -1,11 +1,16 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: process.env.NODE_ENV === "dev" ? "http://localhost:8080" : "/api",
-
+  baseURL:
+    process.env.NODE_ENV === "dev"
+      ? "http://localhost:8080"
+      : "https://netcompany-social-suggestion-backend.vercel.app",
   // baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
+    Authorization: `Bearer ${
+      localStorage.getItem("token_axios") && localStorage.getItem("token_axios")
+    }`,
   },
 });
 
@@ -14,6 +19,11 @@ const axiosClient = axios.create({
 axios.interceptors.request.use(
   function (config) {
     // Do something before request is sent
+    const token = localStorage.getItem("token_axios");
+    if (typeof token === "string" && token != "") {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
     return config;
   },
   function (error) {

@@ -39,6 +39,8 @@ const authApi = {
         backendResponse
       );
 
+      localStorage.setItem("token_axios", backendResponse.data?.accessToken);
+
       // location.reload();
       navigate("/");
 
@@ -64,6 +66,7 @@ const authApi = {
       localStorage.removeItem("registerEmail");
       localStorage.removeItem("username");
       localStorage.removeItem("avatar");
+      localStorage.removeItem("token_axios");
 
       console.log("Logout successfully");
       location.reload();
@@ -81,6 +84,8 @@ const authApi = {
       console.log(response);
       setMessage("You are all set!");
       localStorage.setItem("user", JSON.stringify(response.data.verifiedUser));
+      localStorage.setItem("token_axios", response.data?.accessToken);
+
       navigate("/");
     } catch (error) {
       console.log(error);
