@@ -8,7 +8,9 @@ const userApi = {
       const url = `/user/profile/${id}`;
       const response = await axiosClient.get(url, {
         withCredentials: true,
-        Authorization: `Bearer ${token}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       console.log(response);
