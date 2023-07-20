@@ -54,45 +54,45 @@ const HomeScreen = () => {
   );
 
   useEffect(() => {
-    const handler = (e) => 
-    {  
+    const handler = (e) => {
       e.preventDefault();
       // console.log("Reload")
-      localStorage.removeItem("gpsPermission")
-      localStorage.removeItem("isGetCurrentLocation")
-    }
+      localStorage.removeItem("gpsPermission");
+      localStorage.removeItem("isGetCurrentLocation");
+    };
     window.addEventListener("beforeunload", handler);
     return () => {
-        window.removeEventListener("beforeunload", handler);
+      window.removeEventListener("beforeunload", handler);
     };
   }, []);
 
   useEffect(() => {
-    if (localStorage.getItem("gpsPermission") === "denied"){
-        dispatch(
-          changeLatitude(
-            JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-              ?.location?.lat
-          )
-        );
-        dispatch(
-          changeLongitude(
-            JSON.parse(localStorage.getItem("currentLocation"))?.geometry
-              ?.location?.lng
-          )
-        );
-      return
+    if (localStorage.getItem("gpsPermission") === "denied") {
+      dispatch(
+        changeLatitude(
+          JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+            ?.location?.lat
+        )
+      );
+      dispatch(
+        changeLongitude(
+          JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+            ?.location?.lng
+        )
+      );
+      return;
     }
 
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-          localStorage.setItem("gpsPermission", "denied");
-          dispatch(changeLatitude(coords.latitude));
-          dispatch(changeLongitude(coords.longitude));
+        localStorage.setItem("gpsPermission", "denied");
+        dispatch(changeLatitude(coords.latitude));
+        dispatch(changeLongitude(coords.longitude));
       },
       (error) => {
         if (
-          error.code == error.PERMISSION_DENIED && localStorage.getItem("currentLocation")
+          error.code == error.PERMISSION_DENIED &&
+          localStorage.getItem("currentLocation")
         ) {
           dispatch(
             changeLatitude(
@@ -106,18 +106,17 @@ const HomeScreen = () => {
                 ?.location?.lng
             )
           );
-        
         }
-        localStorage.setItem("isGetCurrentLocation", false)
-        setIsFeaturedLoading(false)
-        setIsLatestLoading(false) 
+        localStorage.setItem("isGetCurrentLocation", false);
+        setIsFeaturedLoading(false);
+        setIsLatestLoading(false);
       }
     );
 
     console.log(latitude);
     console.log(longitude);
   }, []);
-  
+
   const { user } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -126,7 +125,7 @@ const HomeScreen = () => {
       localStorage.setItem("loginReload", "false");
       location.reload();
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     setIsFeaturedLoading(true);
@@ -139,12 +138,10 @@ const HomeScreen = () => {
         setFeaturedLocations(response.data.results);
         localStorage.setItem("featuredNextCursor", response.data.next_cursor);
         setFeaturedNextCursor(response.data.next_cursor);
-      setIsFeaturedLoading(false);
-
+        setIsFeaturedLoading(false);
       };
       fetchFeaturedLocations();
     }
-
   }, [latitude, longitude]);
 
   useEffect(() => {
@@ -158,21 +155,19 @@ const HomeScreen = () => {
         setLatestLocations(response.data.results);
         localStorage.setItem("latestNextCursor", response.data.next_cursor);
         setLatestNextCursor(response.data.next_cursor);
-      setIsLatestLoading(false);
-
+        setIsLatestLoading(false);
       };
       fetchLatestLocations();
-    } 
-
+    }
   }, [latitude, longitude]);
 
   useEffect(() => {
     // console.log(isLoading);
     if (latitude && longitude && !currentLocation) {
       const fetchAddress = async () => {
-
         const { data } = await axios.get(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${key}`
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${key}`,
+          { withCredentials: true, Authorization: null }
         );
         dispatch(changeCurrentLocation(data.results[0]));
         console.log(data.results[0]);
@@ -180,7 +175,7 @@ const HomeScreen = () => {
           "currentLocation",
           JSON.stringify(data.results[0])
         );
-        localStorage.setItem("isGetCurrentLocation", false)
+        localStorage.setItem("isGetCurrentLocation", false);
       };
       fetchAddress();
     }
@@ -199,10 +194,8 @@ const HomeScreen = () => {
     const fetchFeaturedLocations = async () => {
       const response = await locationApi.getFeaturedLocation(
         {
-          lat:
-            latitude,
-          lng:
-            longitude,
+          lat: latitude,
+          lng: longitude,
         },
         nextCursor
       );
@@ -227,10 +220,8 @@ const HomeScreen = () => {
       console.log(longitude);
       const response = await locationApi.getLatestLocation(
         {
-          lat:
-            latitude,
-          lng:
-            longitude,
+          lat: latitude,
+          lng: longitude,
         },
         nextCursor
       );
@@ -243,7 +234,7 @@ const HomeScreen = () => {
 
   const renderPopularLocations = (
     <Wrapper col="true" className="gap-4 my-4">
-      <Wrapper className="justify-between items-end">
+      <Wrapper className="items-end justify-between">
         <Label className="!text-[32px]">Popular</Label>
       </Wrapper>
       {!isFeaturedLoading ? (
@@ -272,7 +263,7 @@ const HomeScreen = () => {
 
   const renderLatestLocations = (
     <Wrapper col="true" className="gap-4">
-      <Wrapper className="justify-between items-end">
+      <Wrapper className="items-end justify-between">
         <Label className="!text-[32px]">Latest</Label>
       </Wrapper>
       {!isLatestLoading ? (
@@ -300,20 +291,20 @@ const HomeScreen = () => {
   );
   return (
     <>
-        <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
-          <>
-            <Wrapper col="true" className="gap-4 md:items-center">
-              <SubNavbar user={user} searchBar displayAddress/>
-            </Wrapper>
+      <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
+        <>
+          <Wrapper col="true" className="gap-4 md:items-center">
+            <SubNavbar user={user} searchBar displayAddress />
+          </Wrapper>
 
-            <OnBoardingSlider />
-            <>
-              {renderPopularLocations}
-              {renderLatestLocations}
-            </>
-            {/* )} */}
+          <OnBoardingSlider />
+          <>
+            {renderPopularLocations}
+            {renderLatestLocations}
           </>
-        </Screen>
+          {/* )} */}
+        </>
+      </Screen>
       {/* )} */}
     </>
   );
