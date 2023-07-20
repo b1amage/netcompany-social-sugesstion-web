@@ -8,7 +8,9 @@ const axiosClient = axios.create({
   // baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${
+      localStorage.getItem("token_axios") && localStorage.getItem("token_axios")
+    }`,
   },
 });
 
