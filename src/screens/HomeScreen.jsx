@@ -169,9 +169,6 @@ const HomeScreen = () => {
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${key}`,
           {
             method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
           }
         );
         dispatch(changeCurrentLocation(data.results[0]));
