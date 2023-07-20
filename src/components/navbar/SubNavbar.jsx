@@ -13,27 +13,22 @@ import {
 } from "@/features/currentLocationSlice";
 import AutoCompleteScreen from "@/test/AutoComplete";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import useCurrentLocation from "@/hooks/useCurrentLocation";
 import locationImg from "@/assets/location.svg";
 import Heading from "@/components/typography/Heading";
 import User from "@/components/user/User";
 import SearchBar from "@/components/search/SearchBar";
-import { FaSearch } from "react-icons/fa";
 import Button from "@/components/button/Button";
 import { useNavigate } from "react-router-dom";
 import useViewport from "@/hooks/useScreenWidth";
-import ROUTE from "@/constants/routes";
 
 const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName, displayAddress }) => {
   const dispatch = useDispatch();
-  const { isAdded, isShowFilter, currentLocation, latitude, longitude } = useSelector(
+  const { isAdded, isShowFilter, currentLocation } = useSelector(
     ({ navbar, currentLocation }) => {
       return {
         isAdded: navbar.isAdded,
         isShowFilter: navbar.isShowFilter,
         currentLocation: currentLocation.currentLocation,
-        latitude: currentLocation.latitude,
-        longitude: currentLocation.longitude,
       };
     }
   );
@@ -76,7 +71,7 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
               imageClassName="md:w-[28px] md:h-[28px]"
             />
             <Heading className="!text-[14px] w-fit truncate ">
-              {!localStorage.getItem("gpsPermission") ? "...Loading"
+              {!localStorage.getItem("isGetCurrentLocation") ? "...Loading"
                   : (currentLocation) ? currentLocation.formatted_address 
                 : !localStorage.getItem("currentLocation")
                 ? "Enter a location"
@@ -93,7 +88,7 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
                 navigate("/create-location");
               }}
               // active
-              className="md:!w-[500px] !my-0 md:!rounded-2xl flex justify-evenly gap-2 h-[60px] !rounded-full !fixed md:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 md:!bg-primary-400 md:!border-primary-400 border-secondary-400"
+              className="md:!w-[450px] !my-0 md:!rounded-2xl !px-1 flex justify-center gap-2 h-[60px] !rounded-full !fixed md:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 md:!bg-primary-400 md:!border-primary-400 border-secondary-400"
             >
               <Image
                 imageClassName=""
@@ -124,7 +119,6 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
       {showAutoComplete && <Popup
           onClose={() => {}}
           actions={[]}
-          // title="Search location"
           children={
             <>
               {width >= 768 && (
@@ -137,12 +131,9 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
                 />
 
                 <AutoCompleteScreen
-                  // label="Location"
                   className={`!h-[60px] !py-2`}
-                  // address={currentLocation && currentLocation.formatted_address}
                   onChange={onChangeCurrentLocation}
                   setAddress={setAddress}
-                  // addressErr={addressErr}
                 />
               </Wrapper>
             </>
@@ -153,7 +144,6 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
           formClassName="items-center h-full w-full !rounded-none md:!py-2 md:!px-4 md:!rounded-lg"
           titleClassName="text-[20px]"
           childrenClassName="!mt-0 w-full flex-col"
-          // setShowPopup={setShowAutoComplete}
         />}
     </>
   );

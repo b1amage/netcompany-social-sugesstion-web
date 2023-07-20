@@ -8,17 +8,12 @@ import Range from "@/components/form/Range";
 import { DISTANCE } from "@/constants/distance";
 import Button from "@/components/button/Button";
 import { useDispatch } from "react-redux";
-import {
-  changeSearchDistance,
-  changeTime,
-  changeCategory,
-  resetFilter,
-} from "@/features/filterSlice";
 import VALIDATE from "@/helpers/validateForm";
 import Error from "@/components/form/Error";
 import Time from "@/components/location/Time";
 import { useSearchParams } from "react-router-dom";
 import question from "@/assets/question.svg"
+import TimePicker from "@/components/form/TimePicker";
 const FilterContent = ({
   setIsFiltered,
   setIsClicked,
@@ -32,16 +27,21 @@ const FilterContent = ({
   setCloseTime,
   searchDistanceValue,
   setSearchDistanceValue,
+  dayTypeErr,
+  setDayTypeErr,
+  openTimeErr, 
+  setOpenTimeErr,
+  closeTimeErr, 
+  setCloseTimeErr,
+  submitErr,
+  setSubmitErr,
+  
 }) => {
   const dayTypes = [{ title: "Weekday" }, { title: "Weekend" }];
-  const [dayTypeErr, setDayTypeErr] = useState();
-  const [openTimeErr, setOpenTimeErr] = useState();
-  const [closeTimeErr, setCloseTimeErr] = useState();
-  const [submitErr, setSubmitErr] = useState();
   const handleDistanceChange = ({ x }) => setSearchDistanceValue(x);
+  
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const dispatch = useDispatch();
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -113,14 +113,15 @@ const FilterContent = ({
           setCategoryValue(option);
         }}
         openClassName="!ring-black ring-1 focus:ring-black !border-black"
-        className={`ring-black ${categoryValue && `ring-1 `}`}
+        className={`!rounded-2xl ring-black ${categoryValue && `ring-1 `}`}
+        dropdownClassName="!max-h-[250px]"
       />
       <Wrapper col="true" className="gap-2">
         <Label>Time</Label>
 
         <Wrapper col="true" className={`gap-2 w-full`}>
-          <Wrapper className="flex-col gap-2 w-full">
-            <Wrapper className="gap-4 w-full">
+          <Wrapper col="true" className="gap-2 w-full">
+            <Wrapper className="gap-2 w-full ">
               <Time
                 label="Open From:"
                 labelClassName="!text-[12px]"
@@ -129,6 +130,8 @@ const FilterContent = ({
                 }}
                 value={openTime}
                 err={openTimeErr}
+                className=""
+                wrapperClassName=""
               />
               <Time
                 label="Close To:"
@@ -138,12 +141,13 @@ const FilterContent = ({
                 }}
                 value={closeTime}
                 err={closeTimeErr}
+                className=""
+                wrapperClassName=""
               />
             </Wrapper>
             <Wrapper col="true" className="w-full">
               <Label className="!text-[14px]">On:</Label>
               <Dropdown
-                // label="On"
                 defaultTitle="DAY TYPE"
                 options={dayTypes}
                 value={dayType}
@@ -156,8 +160,7 @@ const FilterContent = ({
                     ? "ring-1 ring-black border-black"
                     : dayTypeErr &&
                       "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 "
-                }`}
-                // err={dayTypeErr}
+                } !rounded-2xl`}
               />
             </Wrapper>
           </Wrapper>
@@ -175,7 +178,7 @@ const FilterContent = ({
       />
 
       <Wrapper col="true" className="">
-        <Error fluid className={`mt-4 ${!submitErr && "invisible"}`}>
+        <Error fluid className={`${!submitErr && "invisible"}`}>
           {submitErr}
         </Error>
 
