@@ -3,9 +3,12 @@ import axiosClient from "@/api/axiosClient";
 const userApi = {
   async getUserProfile(id) {
     try {
+      const token = localStorage.getItem("token_axios");
+
       const url = `/user/profile/${id}`;
       const response = await axiosClient.get(url, {
         withCredentials: true,
+        Authorization: `Bearer ${token}`,
       });
 
       console.log(response);
