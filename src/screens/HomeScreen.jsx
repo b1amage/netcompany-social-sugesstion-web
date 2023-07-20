@@ -172,12 +172,12 @@ const HomeScreen = () => {
           }
         );
 
-        console.log(response);
-        dispatch(changeCurrentLocation(response.results[0]));
-        console.log(response.results[0]);
+        const data = response.json();
+        dispatch(changeCurrentLocation(data.results[0]));
+        console.log(data.results[0]);
         localStorage.setItem(
           "currentLocation",
-          JSON.stringify(response.results[0])
+          JSON.stringify(data.results[0])
         );
         localStorage.setItem("isGetCurrentLocation", false);
       };
