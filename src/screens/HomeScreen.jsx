@@ -172,7 +172,6 @@ const HomeScreen = () => {
             headers: {
               "Content-Type": "application/json",
             },
-            credentials: "include",
           }
         );
         dispatch(changeCurrentLocation(data.results[0]));
