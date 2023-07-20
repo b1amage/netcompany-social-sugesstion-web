@@ -8,6 +8,7 @@ const axiosClient = axios.create({
   // baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
   },
 });
 

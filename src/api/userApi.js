@@ -8,9 +8,9 @@ const userApi = {
       const url = `/user/profile/${id}`;
       const response = await axiosClient.get(url, {
         withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
 
       console.log(response);
@@ -29,6 +29,9 @@ const userApi = {
       console.log("calling get created location with url: ", url);
       const response = await axiosClient.get(url, {
         withCredentials: true,
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
 
       console.log("response of  ", url, response);
