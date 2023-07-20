@@ -165,19 +165,19 @@ const HomeScreen = () => {
     // console.log(isLoading);
     if (latitude && longitude && !currentLocation) {
       const fetchAddress = async () => {
-        const { data } = await fetch(
+        const response = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${key}`,
           {
             method: "GET",
           }
         );
 
-        console.log(data);
-        dispatch(changeCurrentLocation(data.results[0]));
-        console.log(data.results[0]);
+        console.log(response);
+        dispatch(changeCurrentLocation(response.results[0]));
+        console.log(response.results[0]);
         localStorage.setItem(
           "currentLocation",
-          JSON.stringify(data.results[0])
+          JSON.stringify(response.results[0])
         );
         localStorage.setItem("isGetCurrentLocation", false);
       };
