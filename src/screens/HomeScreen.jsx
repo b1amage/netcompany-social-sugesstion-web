@@ -167,7 +167,13 @@ const HomeScreen = () => {
       const fetchAddress = async () => {
         const { data } = await axios.get(
           `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${key}`,
-          { withCredentials: true, Authorization: null }
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: null,
+            },
+          }
         );
         dispatch(changeCurrentLocation(data.results[0]));
         console.log(data.results[0]);
