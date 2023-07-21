@@ -29,10 +29,10 @@ const ItineraryLocationDetailsScreen = () => {
   const [showEditPopup, setShowEditPopup] = useState(false);
   const navigate = useNavigate()
 
-  const closePopup = () => {
-    setShowEditPopup(false);
-    setSubmitErr();
-  };
+  // const closePopup = () => {
+  //   setShowEditPopup(false);
+  //   setSubmitErr();
+  // };
 
   const handleCancelEdit = () => {
     setNote(place.state.location.note)
@@ -65,19 +65,17 @@ const ItineraryLocationDetailsScreen = () => {
       <Heading className="!text-[32px]">
         {place.state.location.location.name}
       </Heading>
-      <Wrapper>
-        <Image src={place.state.location.location.imageUrls[0] || DEFAULT.location} />
-        <Wrapper col="true" className="">
-          <Heading className="!px-0 !text-[28px] items-center flex gap-2">
+      <Wrapper col="true" className="sm:flex-row !gap-4">
+        <Image src={place.state.location.location.imageUrls[0] || DEFAULT.location} className="h-[300px] sm:h-auto w-full" />
+        <Wrapper col="true" className="w-full gap-4">
+          <Heading className="!px-0 !text-[28px] items-center flex gap-2 justify-between">
             Description
             <Button
               onClick={() => {
-                // navigate(`/location/edit/${id}`);
-                // editItinerary(itinerary)
                 setShowEditPopup(true)
                 console.log("Edit!");
               }}
-              className="!bg-transparent !border-none !bg-opacity-40 !text-black !h-fit !my-0 !p-2"
+              className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl !h-fit !my-0"
             >
               <BsFillPencilFill className="text-sm" />
             </Button>
@@ -88,7 +86,7 @@ const ItineraryLocationDetailsScreen = () => {
       
       {showEditPopup && <Popup
           onClose={() => {
-            closePopup();
+            // closePopup();
           }}
           actions={[
             {
@@ -134,7 +132,7 @@ const ItineraryLocationDetailsScreen = () => {
               <Button
                 className="!absolute top-0 right-0 !bg-transparent !rounded-none !border-none !my-0"
                 onClick={() => {
-                  closePopup();
+                  handleCancelEdit();
                 }}
               >
                 <AiOutlineClose className="text-[32px]  text-black " />

@@ -5,7 +5,7 @@ import PlaceCard from "@/components/card/PlaceCard";
 import Image from "@/components/image/Image";
 import Heading from "@/components/typography/Heading";
 import Wrapper from "@/components/wrapper/Wrapper";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import itineraryApi from "@/api/itineraryApi";
 import { useParams } from "react-router-dom";
@@ -19,10 +19,11 @@ import eventApi from "@/api/eventApi";
 import Error from "@/components/form/Error";
 import { toast } from "react-hot-toast";
 import Loading from "@/components/loading/Loading";
-import useItineraryDragAndDrop from "@/hooks/useItineraryDragAndDrop";
+// import useItineraryDragAndDrop from "@/hooks/useItineraryDragAndDrop";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const ItineraryDetailsScreen = () => {
+  const CARD_HEIGHT = 1000000000;
   const { user } = useSelector((state) => state.user);
   const [hideSuggestions, setHideSuggestions] = useState(true);
   const [itinerary, setItinerary] = useState();
@@ -34,11 +35,16 @@ const ItineraryDetailsScreen = () => {
   const [selectedSuggestLocation, setSelectedSuggestLocation] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isUpload, setIsUpload] = useState(false);
 
   const [note, setNote] = useState("");
   const [suggestNextCursor, setSuggestNextCursor] = useState();
   const [submitErr, setSubmitErr] = useState("");
   const { id } = useParams();
+  
+  const [showFloatButton, setShowFloatButton] = useState(false)
+
+  const buttonRef = useRef()
 
   const notifyCreate = () => toast.success("Successfully create!");
 
@@ -46,6 +52,7 @@ const ItineraryDetailsScreen = () => {
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
+    document.documentElement.style.scrollBehavior="unset"
     const getDetails = async () => {
       const response = await itineraryApi.getItineraryDetails(
         id,
@@ -62,6 +69,12 @@ const ItineraryDetailsScreen = () => {
     };
     getDetails();
   }, [id, isUpdating]);
+
+  useEffect(() => {
+    if (isUpload){
+      document.documentElement.scrollTop=document.documentElement.scrollHeight
+    }
+  }, [isUpload])
 
   const handleSaveLocation = () => {
     setSubmitErr();
@@ -83,6 +96,7 @@ const ItineraryDetailsScreen = () => {
       note: note,
     });
     const handleCreate = async () => {
+      setIsUpload(false)
       setIsUpdating(true);
       const response = await itineraryApi.saveLocation({
         itineraryId: id,
@@ -99,6 +113,7 @@ const ItineraryDetailsScreen = () => {
       setNote("");
       setShowCreatePopup(false);
       setIsUpdating(false);
+      setIsUpload(true)
     };
     handleCreate();
   };
@@ -159,24 +174,8 @@ const ItineraryDetailsScreen = () => {
 
     return apiHandler();
   };
-  // const {
-  //   handleDragEnd,
-  //   handleDragOver,
-  //   handleDragStart,
-  //   handleDrop,
-  //   handleDrag,
-  // } = useItineraryDragAndDrop(async (updateList) => {
-  //   console.log({
-  //     itineraryId: id,
-  //     savedLocations: updateList,
-  //   });
-  //   await itineraryApi.updateLocationsOrder({
-  //     itineraryId: id,
-  //     savedLocations: updateList,
-  //   });
-  // });
 
-  function handleOnDragEnd(result) {
+  const handleOnDragEnd = (result) => {
     const { source, destination } = result;
 
     if (!destination) return;
@@ -193,9 +192,31 @@ const ItineraryDetailsScreen = () => {
     });
   }
 
+  useEffect(() => {
+    if (!buttonRef.current) return;
+    console.log(buttonRef.current.getBoundingClientRect())
+    const {height, y} = buttonRef.current.getBoundingClientRect()
+    const checkScrollTop = () => {
+      // console.log(document.documentElement.scrollTop);
+      if(document.documentElement.scrollTop >= y - height){
+        setShowFloatButton(true)
+      } else{
+        setShowFloatButton(false)
+      }
+    };
+  
+    window.addEventListener('scroll', checkScrollTop);
+  
+    return () => {
+      window.removeEventListener('scroll', checkScrollTop);
+    };
+
+    // if (document.documentElement.scrollTop > buttonRef.current.getBoundingClientRect())
+  }, [])
+
   return (
-    <Screen className="flex flex-col  px-3 py-4 gap-6 md:gap-4 md:px-6 md:py-5 !rounded-none lg:px-20 !min-h-0 ">
-      <DragDropContext onDragEnd={handleOnDragEnd}>
+    <Screen className="flex flex-col  px-3 py-4 gap-6 md:gap-4 md:px-6 md:py-5 !rounded-none lg:px-20 !min-h-0">
+      <DragDropContext onDragStart={() => {}} onDragEnd={handleOnDragEnd}>
         {!availableErr ? (
           <>
             <SubNavbar user={user} wrapperClassName="!gap-0" />
@@ -204,11 +225,12 @@ const ItineraryDetailsScreen = () => {
                 {itinerary?.name}
               </Heading>
               <Button
+                _ref={buttonRef}
                 onClick={() => {
                   setShowCreatePopup(true);
                 }}
                 active
-                className="md:!w-[280px] md:hover:opacity-70 md:!rounded-2xl flex justify-evenly gap-2 h-[60px] !rounded-full !fixed md:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 md:!bg-primary-400 md:!border-primary-400 border-secondary-400"
+                className={`!my-0 h-[60px] flex justify-center gap-2 md:!rounded-2xl md:!static md:!bg-primary-400 md:!border-primary-400 md:hover:opacity-70 !fixed !rounded-full z-[4000] right-4 bottom-4 border-secondary-400 bg-secondary-400 ${showFloatButton ? "md:!border-secondary-400 md:!bg-secondary-400 md:!rounded-full md:!fixed z-[4000] md:right-4 md:bottom-4 !w-fit" : "md:!w-[280px] md:bg-primary-400 md:border-primary-400 "}`}
               >
                 <Image
                   imageClassName=""
@@ -216,7 +238,7 @@ const ItineraryDetailsScreen = () => {
                   alt="add"
                   className="w-[28px] h-[28px]"
                 />
-                <Heading className="md:block text-white hidden !text-[20px]">
+                <Heading className={` text-white !text-[20px] hidden  ${showFloatButton ? "md:hidden" : "md:block"}`}>
                   Save a new location
                 </Heading>
               </Button>
