@@ -520,7 +520,7 @@ const LocationForm = ({
               >
                 <Wrapper className="flex-col gap-2 w-full">
                   <Label>Weekday:</Label>
-                  <Wrapper className="gap-4 w-full">
+                  <Wrapper className="gap-2 w-full justify-between">
                     <Time
                       required
                       label="Open time:"
@@ -549,7 +549,7 @@ const LocationForm = ({
                     Weekend: <i>(Optional)</i>
                   </Label>
 
-                  <Wrapper className="gap-4 w-full">
+                  <Wrapper className="gap-2 w-full justify-between">
                     <Time
                       label="Open time:"
                       onChange={(e) => {
@@ -607,13 +607,14 @@ const LocationForm = ({
                   className={`${
                     (currency?.title || currency) ? "focus:ring-2 ring-1 ring-black border-black"
                       : currencyErr && "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 border-secondary-400 "
-                  } rounded-lg`}
+                  } rounded-lg `}
                   wrapperClassName="w-full"
                   options={currencyList}
                   value={currency}
                   defaultTitle={"SELECT CURRENCY"}
                   onChange={(option) => setCurrency(option)}
                   err={currencyErr}
+                  dropdownClassName="!overflow-auto"
                 />
               </Wrapper>
             </Wrapper>
