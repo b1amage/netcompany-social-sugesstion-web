@@ -397,7 +397,7 @@ const LocationForm = ({
         onSubmit={handleSubmit}
         className={`${isShowImage && "overflow-hidden h-screen"}`}
       >
-        <Wrapper col="true" className="justify-between w-full gap-2 my-8">
+        <Wrapper col="true" className="justify-between w-full gap-4 my-8">
           <Wrapper className="" col="true">
             <AutoCompleteScreen
               label="Location"
