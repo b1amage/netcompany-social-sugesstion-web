@@ -121,7 +121,7 @@ const FilterContent = ({
 
         <Wrapper col="true" className={`gap-2 w-full`}>
           <Wrapper col="true" className="gap-2 w-full">
-            <Wrapper className="gap-2 w-full ">
+            <Wrapper className="gap-2 w-full justify-between">
               <Time
                 label="Open From:"
                 labelClassName="!text-[12px]"
