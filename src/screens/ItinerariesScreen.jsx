@@ -31,6 +31,7 @@ const ItinerariesScreen = () => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [selectedItinerary, setSelectedItinerary] = useState()
   const [isLoading, setIsLoading] = useState(true)
+  const [isCreateLoading, setIsCreateLoading] = useState(false)
 
   const notifyCreate = () => toast.success("Successfully create!!");
 
@@ -58,6 +59,7 @@ const ItinerariesScreen = () => {
 
   const handleCreateItinerary = (e) => {
     e.preventDefault();
+    setIsCreateLoading(true)
     if (value.trim() === "") {
       setErr("Please enter the name for itinerary!");
       return;
@@ -72,6 +74,7 @@ const ItinerariesScreen = () => {
       notifyCreate();
       setValue("");
       setErr();
+      setIsCreateLoading(false)
     };
     createItinerary();
   };
@@ -153,7 +156,7 @@ const ItinerariesScreen = () => {
       setIsLoading(false)
     };
     getItineraryList();
-  }, []);
+  }, [isCreateLoading]);
 
   const loadMoreData = async (nextCursor) => {
     const now = Date.now();
