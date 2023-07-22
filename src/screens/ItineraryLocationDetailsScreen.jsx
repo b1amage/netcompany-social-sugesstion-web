@@ -3,11 +3,10 @@ import SubNavbar from "@/components/navbar/SubNavbar";
 import Heading from "@/components/typography/Heading";
 import SubHeading from "@/components/typography/SubHeading";
 import Image from "@/components/image/Image";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Wrapper from "@/components/wrapper/Wrapper";
-import Label from "@/components/form/Label";
 import Button from "@/components/button/Button";
 import { BsFillPencilFill } from "react-icons/bs";
 import Popup from "@/components/popup/Popup";
@@ -29,11 +28,6 @@ const ItineraryLocationDetailsScreen = () => {
   const [showEditPopup, setShowEditPopup] = useState(false);
   const navigate = useNavigate()
 
-  // const closePopup = () => {
-  //   setShowEditPopup(false);
-  //   setSubmitErr();
-  // };
-
   const handleCancelEdit = () => {
     setNote(place.state.location.note)
     setShowEditPopup(false);
@@ -41,11 +35,13 @@ const ItineraryLocationDetailsScreen = () => {
   };
 
   const handleEditLocationNote = () => {
+    if (note.trim === "" || !note) {
+      setSubmitErr("You haven't added any note!")
+      return;
+    }
     const handleUpdate = async () => {
-      // setIsUpdating(true);
       await itineraryApi.updateSavedLocation(
         {
-          // itineraryId: id,
           itineraryLocationId: id,
           note: note,
         },
@@ -53,12 +49,10 @@ const ItineraryLocationDetailsScreen = () => {
         navigate,
         notifyUpdate
       );
-      // setNote("");
-      // setIsUpdating(false);
-      // setShowEditPopup(false);
     };
     handleUpdate();
   };
+
   return (
     <Screen className="flex flex-col  px-3 py-4 gap-6 md:gap-4 md:px-6 md:py-5 !rounded-none lg:px-20 !min-h-0">
       <SubNavbar user={user} />
@@ -69,7 +63,7 @@ const ItineraryLocationDetailsScreen = () => {
         <Image src={place.state.location.location.imageUrls[0] || DEFAULT.location} className="h-[300px] sm:h-auto w-full" />
         <Wrapper col="true" className="w-full gap-4">
           <Heading className="!px-0 !text-[28px] items-center flex gap-2 justify-between">
-            Description
+            Note
             <Button
               onClick={() => {
                 setShowEditPopup(true)
@@ -143,7 +137,6 @@ const ItineraryLocationDetailsScreen = () => {
           formClassName="items-center !h-auto w-full !rounded-none md:!py-2 md:!px-4 md:!rounded-lg relative"
           titleClassName="text-[20px]"
           childrenClassName="!mt-0 w-full"
-          // setShowPopup={setShowAutoComplete}
         />}
     </Screen>
   );
