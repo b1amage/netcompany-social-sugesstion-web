@@ -15,7 +15,7 @@ const Time = ({
 }) => {
   return (
     <Wrapper col="true" className={`w-full ${wrapperClassName}`}>
-      <Label className={`text-[12px] sm:text-[14px] ${labelClassName}`}>
+      <Label className={`text-[10px] sm:!text-[14px] ${labelClassName}`}>
         {label} {required && <span className="text-secondary-400">*</span>}
       </Label>
       <input
