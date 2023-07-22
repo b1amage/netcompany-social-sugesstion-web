@@ -252,7 +252,7 @@ const ItinerariesScreen = () => {
       ) : <Wrapper>
         <Heading>There is no itinerary yet!</Heading>
       </Wrapper>) : (
-        <Wrapper>
+        <Wrapper className="justify-center">
           <Loading />
         </Wrapper>
       )
