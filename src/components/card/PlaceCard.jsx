@@ -2,90 +2,80 @@ import Image from "@/components/image/Image";
 import Note from "@/components/note/Note";
 import warning from "@/assets/warning.svg";
 
-import { useMemo, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import Button from "@/components/button/Button";
-import { BsFillPencilFill } from "react-icons/bs";
 import Wrapper from "@/components/wrapper/Wrapper";
 import { useNavigate } from "react-router-dom";
 
 import locationImg from "@/assets/location.svg";
+import Heading from "@/components/typography/Heading";
+import SubHeading from "@/components/typography/SubHeading";
+import { DEFAULT } from "@/constants/defaultData";
 
 const PlaceCard = ({
   place,
-  description,
   className,
   setShowDeletePopup,
-  setShowEditPopup,
   setSelectedLocation,
-  setNote
-}) => {
-  // const { imageUrls, name, address } = place;
-  const cardSizeStyles = useMemo(() =>
-    // "w-[200px] h-[230px] md:w-[250px] md:h-[300px] xl:w-[400px] xl:h-[180px]",
-    []
-  );
-
+  ...props
+}
+) => {
   const navigate = useNavigate();
-  const [readMore, setReadMore] = useState(false);
-
+  const MAX_DESCRIPTION_LENGTH = 250
   return (
-    <div
-      className={`${cardSizeStyles} w-full ${
+    <Wrapper
+      {...props}
+      onClick={() => {
+        navigate(`/itinerary/location/details/${place._id}`, {
+          state: {
+            location: place,
+          },
+        });
+      }}
+      col="true"
+      className={`w-full ${
         place?.location?.isDeleted && "border-2 !border-secondary-400"
-      } flex-col gap-3 !p-2 transition-all shadow-lg cursor-pointer md:py-4 xl:pt-6 bg-neutral-400 rounded-xl lg:hover:-translate-y-2 ${className}`}
+      } sm:flex-row gap-3 !p-2 transition-all shadow-lg cursor-grab md:py-4 xl:pt-6 bg-neutral-400 rounded-xl  ${className}`}
     >
-      {place?.location?.isDeleted && (
-        <Note
-          wrapperClassName="relative flex justify-end w-full"
-          buttonClassName="!relative translate-y-0"
-          noteClassName="-top-1.5 !h-auto !w-[160px] sm:!w-[200px] md:!w-[250px] !z-[7900]"
-          iconClassName="!w-[40px] md:!w-[30px]"
-          src={warning}
-          description="This location is already removed from the system!"
-        />
-      )}
-      <Wrapper col="true" className="sm:flex-row py-2 ">
-        <Image
-          src={place?.location?.imageUrls[0]}
-          alt={place?.location?.name}
-          className={`!rounded-xl ${!readMore ? "sm:w-[200px] h-[150px]" : "sm:w-[400px] h-[250px]"}`}
-          imageClassName=""
-          animate
-        />
+      <Image
+        src={place?.location?.imageUrls[0] || DEFAULT.location}
+        alt={place?.location?.name}
+        className={`!rounded-xl sm:w-[400px] sm:h-[200px] md:h-[180px] h-[250px]`}
+        imageClassName=""
+        animate
+      />
 
-        {/* CONTENT */}
-        <div className={`flex flex-col justify-between w-full max-w-4xl !gap-4 ${!readMore && "truncate"}`}>
-          {/* TITLE & ADDRESS */}
-          <div className="flex flex-col !gap-4">
-            <Wrapper className="!justify-between items-center ">
-              <h1
-                onClick={() => {
-                  if (place?.location?.isDeleted) return;
-                  navigate(`/location/details/${place?.location?._id}`);
+      <Wrapper col="true" className="w-full !relative">
+        <Wrapper col="true" className="">
+          <Wrapper className="items-center ">
+            <Wrapper className="w-full items-center">
+              <Heading
+                className="text-overflow-ellipsis-2-clamp hover:underline "
+                onClick={(e) => {
+                  e.stopPropagation();
+
+                  navigate(!place?.location?.isDeleted ?(`/location/details/${place?.location?._id}`) : "/error/This location no longer exists" );
                 }}
-                className="cursor-pointer text-lg font-semibold w-fit flex gap-4 break-words max-w-full whitespace-normal"
               >
                 {place?.location?.name}
-              </h1>
+              </Heading>
+              {place?.location?.isDeleted && (
+                <Note
+                  wrapperClassName="relative"
+                  buttonClassName="!relative !top-0 translate-y-0 "
+                  noteClassName="!-top-1.5 !h-auto !w-[160px] sm:!w-[200px] md:!w-[250px] !left-0"
+                  iconClassName="!w-[40px] md:!w-[30px]"
+                  src={warning}
+                  description="This location is already removed from the system!"
+                />
+              )}
+            </Wrapper>
+
+            <Wrapper className="items-center w-fit ">
               <Wrapper className="!w-fit justify-end">
                 <Button
                   onClick={(e) => {
-                    // navigate(`/location/edit/${id}`);
-                    // editItinerary(itinerary)
-                    e.stopPropagation()
-                    setSelectedLocation(place);
-                    setNote(place?.note)
-                    setShowEditPopup(true);
-                    console.log("Edit!");
-                  }}
-                  className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl !h-fit !my-0 !p-2"
-                >
-                  <BsFillPencilFill className="text-sm" />
-                </Button>
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation()
+                    e.stopPropagation();
 
                     setSelectedLocation(place);
 
@@ -98,36 +88,28 @@ const PlaceCard = ({
                 </Button>
               </Wrapper>
             </Wrapper>
-            
-            
-          <Wrapper
-            className="flex items-center cursor-pointer hover:bg-gray-200/60 duration-300 rounded-lg truncate"
-          >
+          </Wrapper>
+
+          <Wrapper className="flex items-center cursor-pointer hover:bg-gray-200/60 duration-300 rounded-lg ">
             <Image
               src={locationImg}
               alt="location"
               className=" !mx-0"
               imageClassName=""
             />
-            <h3 className="text-sm truncate">
+            <SubHeading className="!text-[12px] sm:!text-[14px] !text-black text-overflow-ellipsis">
               {place?.location?.address}
-            </h3>
-            </Wrapper>
-            
-          </div>
+            </SubHeading>
+          </Wrapper>
+        </Wrapper>
 
-          {/* DESCRIPTION */}
-          <div
-            onClick={() => setReadMore(!readMore)}
-            className="mt-2 text-sm text-left"
-          >
-            <p className={` ${!readMore && "truncate"}`}>
-              {description}
-            </p>
-          </div>
-        </div>
+        <SubHeading
+          className={`!text-[12px] sm:!text-[14px] !text-black break-all`}
+        >
+          {place?.note.length > MAX_DESCRIPTION_LENGTH ? place?.note.slice(0, MAX_DESCRIPTION_LENGTH + 1) + "..." : place?.note}
+        </SubHeading>
       </Wrapper>
-    </div>
+    </Wrapper>
   );
 };
 

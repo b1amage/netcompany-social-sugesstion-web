@@ -23,6 +23,8 @@ const InputWithDropdown = ({
   subFieldToDisplay,
   icon,
   clearInputAfterSelect,
+  isForEventSearch,
+  onChange,
   hideError,
   inputClassName,
   wrapperClassName,
@@ -34,7 +36,6 @@ const InputWithDropdown = ({
   hideSuggestions,
   onClear,
   defaultValue,
-  onChange,
 }) => {
   const [input, setInput] = useState(defaultValue || "" || searchQuery);
   const [suggestions, setSuggestions] = useState([]);
@@ -146,7 +147,7 @@ const InputWithDropdown = ({
               setInput(e.target.value);
               onChange && onChange();
               // setHideSuggestions(false);
-              // onChange(e.target.value)
+              onChange()
               // if (suggestions.length === 0)
               //   setErr(`No place with name ${input} found in database`);
               if (!selected && !hideError) setErr("Please select!");

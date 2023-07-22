@@ -54,7 +54,7 @@ const itineraryApi = {
       console.log(error);
     }
   },
-  async getItineraryDetails(id){
+  async getItineraryDetails(id, setAvailableErr){
     try{
       const url = `/itinerary/${id}`
       const response = await axiosClient.get(url, {
@@ -63,6 +63,8 @@ const itineraryApi = {
       return response
     } catch (error){
       console.log(error);
+      setAvailableErr(error.response.data.message)
+      return error.response
     }
   },
   async saveLocation(data){
@@ -71,11 +73,10 @@ const itineraryApi = {
       const response = await axiosClient.post(url, data,{
         withCredentials: true,
       });
-      
       return response
     } catch (error){
       console.log(error);
-      return error
+      return error.response
     }
   },
   async deleteSavedLocation(id, notifyDelete){
@@ -90,16 +91,33 @@ const itineraryApi = {
       console.log(error);
     }
   }, 
-  async updateSavedLocation(data, setSubmitErr){
+  async updateSavedLocation(data, setSubmitErr, navigate, notifyUpdate){
     try{
       const url = `/itinerary/location/update`
       const response = await axiosClient.patch(url, data,{
         withCredentials: true,
       });
+      notifyUpdate()
+      navigate(-1)
       return response
     } catch (error){
       console.log(error);
       setSubmitErr(error.response.data.message)
+      return error.response
+    }
+  }, 
+  async updateLocationsOrder(data){
+    try{
+      const url = `/itinerary/location/order`
+      const response = await axiosClient.patch(url, data,{
+        withCredentials: true,
+      });
+      console.log(response)
+      return response
+    } catch (error){
+      console.log(error);
+      // setSubmitErr(error.response.data.message)
+      return error.response
     }
   }, 
 };

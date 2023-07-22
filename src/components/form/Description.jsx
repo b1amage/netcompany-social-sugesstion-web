@@ -16,12 +16,12 @@ const Description = ({
   maxWordCount
 }) => {
   return (
-    <Wrapper className={`my-4 ${wrapperClassName}`} col="true">
-      <Wrapper className="justify-between">
+    <Wrapper className={`my-4 ${wrapperClassName} w-full`} col="true">
+      <Wrapper className="justify-between ">
         <Label className={labelClassName}>
           {label} {optional && <i>(optional)</i>}
         </Label>
-        {counter && <SubHeading className="absolute right-0 px-4 !text-[20px] !text-black">
+        {counter && <SubHeading className=" px-4 !text-[20px] !text-black">
           {value.length}/{maxWordCount}
         </SubHeading>}
       </Wrapper>

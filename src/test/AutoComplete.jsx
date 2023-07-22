@@ -29,7 +29,7 @@ const AutoCompleteScreen = ({ label, address, setAddress, className, onChange })
     }
   };
   return (
-    <div className="w-full relative">
+    <div className="w-full relative flex flex-col gap-2">
       {/* <LoadScript libraries={["places"]} googleMapsApiKey={key}> */}
       {label && <Label required>{label}</Label>}
       <StandaloneSearchBox

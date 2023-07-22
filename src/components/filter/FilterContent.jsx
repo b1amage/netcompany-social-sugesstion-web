@@ -121,7 +121,7 @@ const FilterContent = ({
 
         <Wrapper col="true" className={`gap-2 w-full`}>
           <Wrapper col="true" className="gap-2 w-full">
-            <Wrapper className="gap-2 w-full ">
+            <Wrapper className="gap-2 w-full justify-between">
               <Time
                 label="Open From:"
                 labelClassName="!text-[12px]"
@@ -161,6 +161,7 @@ const FilterContent = ({
                     : dayTypeErr &&
                       "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 "
                 } !rounded-2xl`}
+                dropdownClassName="!overflow-auto"
               />
             </Wrapper>
           </Wrapper>

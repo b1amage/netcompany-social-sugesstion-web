@@ -27,7 +27,7 @@ const EditLocationScreen = () => {
   }, []);
   return (
     <>
-      {!locationDetails ? <Loading /> : <Screen className={`py-8 md:py-16 lg:py-0 location-form`}>
+      {!locationDetails ? <Loading /> : <Screen className={`py-8 md:py-16 lg:py-0 !mb-0 location-form`}>
         <Heading className="w-full sm:text-center !text-[42px] leading-10">
           Update Location
         </Heading>
