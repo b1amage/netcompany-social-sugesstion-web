@@ -507,25 +507,18 @@ const CreateEventScreen = () => {
                       </Error>
                     )}
                   </Wrapper>
-
-                  {(event.duration?.hours || event.duration?.minutes) && (
-                    <Wrapper
-                      col="true"
-                      className="gap-1 ml-4 md:gap-2 lg:gap-3"
-                    >
-                      <Label className="">Duration</Label>
-                      <Wrapper className="inline-flex px-4 py-3 text-sm transition-all duration-300 bg-white border rounded-lg outline-none resize-none w-fit border-primary-400 focus:ring-1 focus:ring-primary-400 md:text-base md:px-6 md:py-4">
-                        <Text className="text-black">
-                          {event.duration.hours}h
-                        </Text>
-                        <Text className="text-black">:</Text>
-                        <Text className="text-black">
-                          {event.duration.minutes}m
-                        </Text>
-                      </Wrapper>
-                    </Wrapper>
-                  )}
                 </Wrapper>
+
+                {(event.duration?.hours || event.duration?.minutes) && (
+                  <Wrapper col="true" className="gap-1 md:gap-2 lg:gap-3">
+                    <Text className="flex items-center gap-2 text-black">
+                      <Text className="font-bold">Duration:</Text>
+                      <Text>
+                        {event.duration.hours}h : {event.duration.minutes}m
+                      </Text>
+                    </Text>
+                  </Wrapper>
+                )}
               </Wrapper>
             )}
           </Wrapper>

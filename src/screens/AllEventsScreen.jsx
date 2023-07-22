@@ -144,10 +144,18 @@ const AllEventsScreen = () => {
         />
       </Wrapper>
 
-      <Heading>Result for {input === "" ? "all" : input}</Heading>
+      <Heading className="!capitalize">
+        {input === ""
+          ? `Results for ${type} Events`
+          : type === "all"
+          ? `Results for "${input}"`
+          : `Results ${type} Events with keywords "${input}"`}
+      </Heading>
 
       {loading ? (
-        <Loading />
+        <Wrapper className="my-20 flex-center">
+          <Loading />
+        </Wrapper>
       ) : (
         <div
           ref={listRef}
