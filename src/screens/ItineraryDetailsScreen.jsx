@@ -230,7 +230,7 @@ const ItineraryDetailsScreen = () => {
                   setShowCreatePopup(true);
                 }}
                 active
-                className={`!my-0 h-[60px] flex justify-center gap-2 md:!rounded-2xl md:!static md:!bg-primary-400 md:!border-primary-400 md:hover:opacity-70 !fixed !rounded-full z-[4000] right-4 bottom-4 border-secondary-400 bg-secondary-400 ${showFloatButton ? "md:!border-secondary-400 md:!bg-secondary-400 md:!rounded-full md:!fixed z-[4000] md:right-4 md:bottom-4 !w-fit" : "md:!w-[280px] md:bg-primary-400 md:border-primary-400 "}`}
+                className={`!my-0 h-[60px] flex justify-center gap-2 md:!rounded-2xl md:!static md:!bg-primary-400 md:!border-primary-400 md:hover:opacity-70 !fixed !rounded-full z-[4000] right-4 bottom-4 border-secondary-400 bg-secondary-400 ${showFloatButton ? "md:!border-secondary-400 md:!bg-secondary-400 md:!rounded-full md:!fixed z-[4000] md:right-4 md:bottom-4 !w-fit" : "md:!w-[300px] md:bg-primary-400 md:border-primary-400 "}`}
               >
                 <Image
                   imageClassName=""
