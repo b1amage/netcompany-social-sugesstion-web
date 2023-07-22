@@ -397,11 +397,11 @@ const LocationForm = ({
         onSubmit={handleSubmit}
         className={`${isShowImage && "overflow-hidden h-screen"}`}
       >
-        <Wrapper col="true" className="justify-between w-full gap-8 my-8">
+        <Wrapper col="true" className="justify-between w-full gap-2 my-8">
           <Wrapper className="" col="true">
             <AutoCompleteScreen
               label="Location"
-              className={`bg-white h-[60px] !py-2 ${
+              className={`bg-white h-[60px] !my-0 !py-2 ${
                 addressErr &&
                 (address.trim() !== ""
                   ? "focus:border-green-500 focus:ring-2 ring-1 focus:ring-green-500"
@@ -427,7 +427,7 @@ const LocationForm = ({
             )}
           </Wrapper>
 
-          <Wrapper className="my-4" col="true">
+          <Wrapper className="" col="true">
             <Label>
               Title <span className="text-secondary-400">*</span>
             </Label>
@@ -445,10 +445,8 @@ const LocationForm = ({
                   : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
                 }`}
               value={title}
-              // err={titleErr}
               onChange={(e) => {
                 setTitle(e.target.value);
-                // setTitleErr(VALIDATE.title(title));
               }}
             />
           </Wrapper>
@@ -470,26 +468,10 @@ const LocationForm = ({
               }`}
           />
 
-          {/* <Wrapper className="my-4" col="true">
-            <Label>
-              Description <i>(optional)</i>
-            </Label>
-            <textarea
-              className={`w-full bg-white h-[150px] focus:ring-1 focus:ring-primary-400 px-4 py-3 text-sm transition-all duration-300 outline-none rounded-lg border border-black ${
-                description.trim() !== "" &&
-                "focus:border-green-500 ring-1 ring-black focus:!ring-green-500 "
-              } md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 resize-none`}
-              placeholder="Enter the description"
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value);
-              }}
-            />
-          </Wrapper> */}
-
           <Description 
             label="Description"
             optional
+            wrapperClassName="!my-0"
             textareaClassName={
               description.trim() !== "" &&
               "focus:border-green-500 ring-1 ring-black focus:!ring-green-500 "
@@ -500,19 +482,19 @@ const LocationForm = ({
               setDescription(e.target.value);
             }}
           />
-          <Wrapper col="true" className="gap-4 xl:flex-row ">
-            <Wrapper col="true" className="gap-4 !w-full">
+          <Wrapper col="true" className="gap-2 xl:flex-row ">
+            <Wrapper col="true" className="gap-2 !w-full">
               <Label>
                 Time <span className="text-secondary-400">*</span>
               </Label>
 
               <Wrapper
                 col="true"
-                className={`gap-4 ${width > 520 && "!flex-row "} w-full`}
+                className={`gap-2 ${width > 520 && "!flex-row "} w-full`}
               >
                 <Wrapper className="flex-col gap-2 w-full">
                   <Label>Weekday:</Label>
-                  <Wrapper className="gap-4 w-full">
+                  <Wrapper className="gap-2 w-full">
                     <Time
                       required
                       label="Open time:"
