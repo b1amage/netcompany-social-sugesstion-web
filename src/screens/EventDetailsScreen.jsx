@@ -26,6 +26,8 @@ import toast, { Toaster } from "react-hot-toast";
 import Note from "@/components/note/Note";
 import warning from "@/assets/warning.svg";
 
+import { isTimeInPast } from "@/helpers/dateTimeHelpers";
+
 function convertDateTime(dateTimeString) {
   var date = new Date(dateTimeString);
 
@@ -44,12 +46,16 @@ const EventDetailsScreen = () => {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
   const [event, setEvent] = useState({});
+  const [isInvalid, setIsInvalid] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
+  useEffect(() => {
+    console.log(isInvalid);
+  }, [isInvalid]);
 
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
@@ -69,6 +75,8 @@ const EventDetailsScreen = () => {
       const response = await eventApi.getEvent(id);
       setEvent(response.data);
       console.log(response.data.description);
+
+      setIsInvalid(isTimeInPast(response.data.startDateTime));
       setLoading(false);
     };
     handleApi();
@@ -126,7 +134,7 @@ const EventDetailsScreen = () => {
               </Wrapper>
             </Wrapper>
 
-            {event.userId === user._id && (
+            {event.userId === user._id && !isInvalid && (
               <Wrapper>
                 <Button
                   onClick={() => {
