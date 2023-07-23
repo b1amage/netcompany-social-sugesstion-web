@@ -1,7 +1,7 @@
 import Screen from "@/components/container/Screen";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Heading from "@/components/typography/Heading";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useLayoutEffect } from "react";
 import SubHeading from "@/components/typography/SubHeading";
 import Input from "@/components/form/Input";
 import Error from "@/components/form/Error";
@@ -280,6 +280,10 @@ const CreateEventScreen = () => {
 
     apiHandle();
   };
+
+  useLayoutEffect(() => {
+    localStorage.removeItem("eventCreateImages");
+  }, []);
 
   return (
     <Screen className="relative p-5">
