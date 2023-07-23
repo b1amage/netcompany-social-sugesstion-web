@@ -78,7 +78,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
     <div className={`w-full relative ${wrapperClassName}`}>
       <InputWithDropdown
         handleGet={handleGetLocationSuggestList}
-        placeholder="Search location"
+        placeholder="Search for registered locations"
         onSelect={handlePlaceSelect}
         loadMore={handleLoadmoreSuggestList}
         fieldToDisplay="name"

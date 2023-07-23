@@ -74,10 +74,11 @@ const ItineraryDetailsScreen = () => {
     if (isUpload){
       document.documentElement.scrollTop=document.documentElement.scrollHeight
     }
-  }, [isUpload])
+  }, [isUpload, locations])
 
   const handleSaveLocation = () => {
     setSubmitErr();
+    setIsUpload(false)
     if (!selectedSuggestLocation) {
       setSubmitErr("Please enter a location!");
       return;
@@ -96,7 +97,6 @@ const ItineraryDetailsScreen = () => {
       note: note,
     });
     const handleCreate = async () => {
-      setIsUpload(false)
       setIsUpdating(true);
       const response = await itineraryApi.saveLocation({
         itineraryId: id,
@@ -158,6 +158,7 @@ const ItineraryDetailsScreen = () => {
 
   const handlePlaceSelect = (location) => {
     setHideSuggestions(true);
+    setSubmitErr()
     setSelectedSuggestLocation(location);
   };
 
@@ -194,7 +195,7 @@ const ItineraryDetailsScreen = () => {
 
   useEffect(() => {
     if (!buttonRef.current) return;
-    console.log(buttonRef.current.getBoundingClientRect())
+    // console.log(buttonRef.current.getBoundingClientRect())
     const {height, y} = buttonRef.current.getBoundingClientRect()
     const checkScrollTop = () => {
       // console.log(document.documentElement.scrollTop);
@@ -239,7 +240,7 @@ const ItineraryDetailsScreen = () => {
                   className="w-[28px] h-[28px]"
                 />
                 <Heading className={` text-white !text-[20px] hidden  ${showFloatButton ? "md:hidden" : "md:block"}`}>
-                  Save a new location
+                  Add new location
                 </Heading>
               </Button>
             </Wrapper>
@@ -323,13 +324,13 @@ const ItineraryDetailsScreen = () => {
                 children={
                   <>
                     <Heading className="text-center !text-[28px]">
-                      {showCreatePopup ? "Save location" : "Edit location"}
+                      {showCreatePopup ? "Add location" : "Edit location"}
                     </Heading>
                     <Wrapper col="true" className="!w-full">
                       <InputWithDropdown
                         label="Location:"
                         handleGet={handleGetLocationSuggestList}
-                        placeholder="Select location"
+                        placeholder="Select registered location"
                         onSelect={handlePlaceSelect}
                         loadMore={handleLoadmoreSuggestList}
                         hideSuggestions={hideSuggestions}
