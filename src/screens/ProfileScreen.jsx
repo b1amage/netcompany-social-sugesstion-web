@@ -129,7 +129,7 @@ const ProfileScreen = () => {
 
                   <Wrapper
                     className={`flex-center absolute top-0 right-0 ${
-                      width > 768 ? "block" : "hidden"
+                      width > 768 ? "block" : ""
                     }`}
                   >
                     <Button
@@ -138,7 +138,9 @@ const ProfileScreen = () => {
                       primary
                     >
                       <BsPencilFill />
-                      <span className="capitalize">Edit info</span>
+                      <span className="hidden capitalize lg:block">
+                        Edit info
+                      </span>
                     </Button>
                     {/* <Button
                     className="!bg-danger"
@@ -193,7 +195,7 @@ const ProfileScreen = () => {
         </>
       )}
       {isShowEdit && (
-        <Wrapper className="flex-center absolute right-4 md:hidden ">
+        <Wrapper className="absolute flex-center right-4 md:hidden ">
           <Button
             onClick={() => navigate(ROUTE.EDIT_PROFILE)}
             className="!text-primary-800 !relative !gap-2 !my-0"

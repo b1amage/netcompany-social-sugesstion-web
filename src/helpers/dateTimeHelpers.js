@@ -77,3 +77,18 @@ export function calculateEndTime(startTime, duration) {
 
   return endTime;
 }
+
+export function isTimeInPast(timeString) {
+  // Parse the time string into a Date object.
+  let time = new Date(timeString);
+
+  // Get the current time.
+  let currentTime = new Date();
+
+  // Compare the two times. If the time is less than the current time, it's in the past.
+  if (time < currentTime) {
+    return true;
+  } else {
+    return false;
+  }
+}
