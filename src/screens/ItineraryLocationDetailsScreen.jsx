@@ -35,10 +35,6 @@ const ItineraryLocationDetailsScreen = () => {
   };
 
   const handleEditLocationNote = () => {
-    if (note.trim === "" || !note) {
-      setSubmitErr("You haven't added any note!")
-      return;
-    }
     const handleUpdate = async () => {
       await itineraryApi.updateSavedLocation(
         {
@@ -74,7 +70,7 @@ const ItineraryLocationDetailsScreen = () => {
               <BsFillPencilFill className="text-sm" />
             </Button>
           </Heading>
-          <SubHeading className="break-words">{place.state.location.note}</SubHeading>
+          <SubHeading className="break-words">{place.state.location.note || "You haven't added any note!"}</SubHeading>
         </Wrapper>
       </Wrapper>
       
