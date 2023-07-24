@@ -88,7 +88,7 @@ const ItineraryDetailsScreen = () => {
         (location) => location?.location?._id === selectedSuggestLocation?._id
       ).length === 1
     ) {
-      setSubmitErr("This location has been saved already!");
+      setSubmitErr("This location has already been added!");
       return;
     }
     console.log({
@@ -336,9 +336,12 @@ const ItineraryDetailsScreen = () => {
                         hideSuggestions={hideSuggestions}
                         searchQuery={selectedSuggestLocation?.location?.name}
                         fieldToDisplay="name"
-                        onClear={() => {}}
+                        onClear={() => {
+                          setSubmitErr()
+                        }}
                         subFieldToDisplay="address"
                         icon={<GoLocation />}
+                        withClearButton="true"
                         inputClassName="!h-[60px] !rounded-2xl !ring-black"
                         wrapperClassName=""
                         hideError
