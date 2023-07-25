@@ -236,9 +236,9 @@ const ItinerariesScreen = () => {
         <Wrapper
           _ref={tabRef}
           col="true"
-          className="md:gap-8 gap-6 overflow-y-scroll pr-3 py-8 !h-[600px] items-center"
+          className="md:gap-6 md:grid md:grid-cols-2 gap-4 overflow-y-scroll pr-3 py-8 !h-[600px] items-center"
         >
-          {itineraries.map((itinerary, index) => {
+          {itineraries.map((itinerary) => {
             return (
               <ItineraryCard
                 key={itinerary._id}
