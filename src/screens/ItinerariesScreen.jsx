@@ -207,9 +207,9 @@ const ItinerariesScreen = () => {
   }, [showCreatePopup, showEditPopup])
 
   return (
-    <Screen className="flex flex-col  px-3 py-4 gap-6 md:gap-4 md:px-6 md:py-5 !rounded-none lg:px-20 !min-h-0  ">
+    <Screen className="flex flex-col px-3 py-4 gap-6 md:gap-4 md:px-6 md:py-5 !rounded-none lg:px-20 !min-h-0 sm:!mb-2 lg:!mt-[120px]">
       <SubNavbar user={user} wrapperClassName="!gap-0" />
-      <Wrapper className="md:justify-between md:items-center items-start">
+      <Wrapper className="sm:justify-between sm:items-center items-start">
         <Heading className="!text-[28px]">My itineraries</Heading>
         <Button
           onClick={() => {
@@ -218,7 +218,7 @@ const ItinerariesScreen = () => {
             setShowCreatePopup(true);
           }}
           active
-          className="md:!w-[280px] md:hover:opacity-70 md:!rounded-2xl flex justify-evenly gap-2 h-[60px] !rounded-full !fixed md:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 md:!bg-primary-400 md:!border-primary-400 border-secondary-400"
+          className="!my-0 sm:!w-[280px] sm:hover:opacity-70 sm:!rounded-2xl flex justify-center gap-2 h-[60px] !rounded-full !fixed sm:!static z-[4000] right-4 !w-fit  bottom-4 !bg-secondary-400 sm:!bg-primary-400 sm:!border-primary-400 border-secondary-400"
         >
           <Image
             imageClassName=""
@@ -226,7 +226,7 @@ const ItinerariesScreen = () => {
             alt="add"
             className="w-[28px] h-[28px]"
           />
-          <Heading className="md:block text-white hidden !text-[20px]">
+          <Heading className="sm:block text-white hidden !text-[20px]">
             Create new itinerary
           </Heading>
         </Button>
@@ -236,7 +236,7 @@ const ItinerariesScreen = () => {
         <Wrapper
           _ref={tabRef}
           col="true"
-          className="md:gap-6 md:grid md:grid-cols-2 gap-4 overflow-y-scroll pr-3 py-8 !h-[600px] items-center"
+          className="sm:gap-6 sm:grid sm:grid-cols-2 gap-4 overflow-y-scroll sm:!max-h-[350px] xl:!max-h-[400px] items-center"
         >
           {itineraries.map((itinerary) => {
             return (
