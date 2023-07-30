@@ -69,6 +69,7 @@ const AllEventsScreen = () => {
       localStorage.setItem("eventsNextCursor", response.data.next_cursor);
       setEvents(response.data.results);
       console.log(response);
+      setInput("");
       setLoading(false);
     };
 
