@@ -146,10 +146,10 @@ const AllEventsScreen = () => {
 
       <Heading className="!capitalize">
         {input === ""
-          ? `Results for ${type} Events`
+          ? `${type} Events`
           : type === "all"
-          ? `Results for "${input}"`
-          : `Results ${type} Events with keywords "${input}"`}
+          ? `All Events with keywords "${input}"`
+          : `${type} Events with keywords "${input}"`}
       </Heading>
 
       {loading ? (
