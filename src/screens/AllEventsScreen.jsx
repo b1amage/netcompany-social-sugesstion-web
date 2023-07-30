@@ -13,6 +13,7 @@ import Select from "@/components/form/Select";
 import EventCard from "@/components/card/EventCard";
 import { debounce } from "lodash";
 import Loading from "../components/loading/Loading";
+import { classNames } from "classnames";
 
 const AllEventsScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -145,12 +146,22 @@ const AllEventsScreen = () => {
         />
       </Wrapper>
 
-      <Heading className="!capitalize">
-        {input === ""
-          ? `${type} Events`
-          : type === "all"
-          ? `All Events with keywords "${input}"`
-          : `${type} Events with keywords "${input}"`}
+      <Heading className="!capitalize flex gap-1 items-center">
+        {input === "" ? (
+          <>
+            <Text>{type}</Text> <Text>Events</Text>
+          </>
+        ) : type === "all" ? (
+          <>
+            <Text>All Events with keywords</Text>{" "}
+            <Text className="!text-red-400 text-[16px]">{input}</Text>
+          </>
+        ) : (
+          <>
+            <Text>{type} Events with keywords</Text>{" "}
+            <Text className="!text-red-400  text-[16px]">{input}</Text>
+          </>
+        )}
       </Heading>
 
       {loading ? (
