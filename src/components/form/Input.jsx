@@ -22,7 +22,8 @@ const Input = ({
   errClassName,
   onWheel,
   wrapperInputClassName,
-  onKeyPress,
+  _ref,
+  onEnter
 }) => {
   const [focused, setFocused] = useState(false);
 
@@ -38,6 +39,7 @@ const Input = ({
 
       <div className="relative">
         <input
+          ref={_ref}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           disabled={disabled}
@@ -58,6 +60,11 @@ const Input = ({
           onChange={onChange}
           min={min}
           onWheel={onWheel}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              onEnter && onEnter();
+            }
+          }}
         />
 
         {icon && (

@@ -27,12 +27,17 @@ import Deleting from "@/components/loading/Deleting";
 import toast, { Toaster } from "react-hot-toast";
 import { GoLocation } from "react-icons/go";
 import { changeLocation } from "@/features/locationSlice";
+import { FaRegCommentDots } from "react-icons/fa";
+import Input from "@/components/form/Input";
+import send from "@/assets/send.svg";
+import TextArea from "@/components/form/TextArea";
 
 const DetailsScreen = () => {
   const notifyDelete = () => toast.success("Successfully delete!");
   const { id } = useParams();
   const { user } = useSelector((state) => state.user);
 
+  const commentRef = useRef();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [locationDetails, setLocationDetails] = useState();
@@ -47,6 +52,9 @@ const DetailsScreen = () => {
   const [likedCount, setLikedCount] = useState(0);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [comment, setComment] = useState("");
+  const [onReset, setOnReset] = useState(false)
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -61,6 +69,7 @@ const DetailsScreen = () => {
   });
 
   let likedListRef = useRef();
+  const commentsRef = useRef();
 
   useEffect(() => {
     const getLocationDetails = async () => {
@@ -129,6 +138,14 @@ const DetailsScreen = () => {
     handleDelete();
   };
 
+  const deleteComment = () => {
+    console.log("Delete!")
+  }
+
+  const editComment = () => {
+    console.log("Edit!")
+  }
+
   const popupRef = useRef();
   const onClose = () => setShowLikedUsers(false);
   useOnClickOutside(popupRef, onClose);
@@ -163,13 +180,32 @@ const DetailsScreen = () => {
     return formattedNum;
   }
 
+  const handleAddComment = (e) => {
+    console.log(comment.includes("\n"))
+    if (comment.trim() === "" || !comment) return;
+    setOnReset(true)
+    setComments((prev) => [
+      { user: locationDetails?.user, content: comment },
+      ...prev,
+    ]);
+    setComment("")
+    commentRef.current.value = ""
+    commentRef.current.blur();
+    // setOnReset(false)
+  };
+
+  useEffect(() => {
+    if(onReset){
+      commentsRef.current.scrollTop = 0
+    }
+  }, [onReset])
   return (
     <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       {loading ? (
         <LoadingScreen />
       ) : (
         <>
-          <Wrapper col="true" className="px-3">
+          <Wrapper col="true" className="">
             {deleting && (
               <Portal>
                 <Wrapper className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
@@ -200,7 +236,7 @@ const DetailsScreen = () => {
               </Wrapper>
 
               {locationDetails.userId === user._id && (
-                <Wrapper>
+                <Wrapper className="">
                   <Button
                     onClick={() => {
                       navigate(`/location/edit/${id}`);
@@ -310,7 +346,7 @@ const DetailsScreen = () => {
               <Image className="rounded-none" src={DEFAULT.location} />
             )}
 
-            <Wrapper col="true" className="flex-1 px-3 py-2">
+            <Wrapper col="true" className="flex-1">
               <Wrapper className="items-center justify-between">
                 <Category
                   onClick={() => {}}
@@ -362,12 +398,12 @@ const DetailsScreen = () => {
                       {convertTime(locationDetails.weekend.openTime)} -{" "}
                       {convertTime(locationDetails.weekend.closeTime)}
                     </Text>
-                  )}
+                  )}                              
               </Wrapper>
 
-              <Wrapper col="true" className="flex-1 my-4">
+              <Wrapper col="true" className="flex-1 my-4 !gap-4">
                 {/* Like + Save */}
-                <Wrapper className="!gap-5 pb-5 border-b border-b-neutral-200 w-full items-center">
+                <Wrapper className="!gap-2 pb-4 border-b border-b-neutral-200 w-full items-center">
                   {liked ? (
                     <BsFillHeartFill
                       className="text-lg cursor-pointer text-secondary-400"
@@ -384,8 +420,18 @@ const DetailsScreen = () => {
                     className="cursor-pointer"
                     onClick={() => setShowLikedUsers(true)}
                   >
-                    {likedCount} liked this post
+                    {likedCount}
                   </Text>
+
+                  <Wrapper className="!gap-2 items-center px-4 cursor-pointer">
+                    <FaRegCommentDots className="text-lg" />
+                    <Text
+                      className=""
+                      onClick={() => commentRef.current.focus()}
+                    >
+                      Comments
+                    </Text>
+                  </Wrapper>
                 </Wrapper>
 
                 {showLikedUsers && (
@@ -489,13 +535,56 @@ const DetailsScreen = () => {
                     </div>
                   </Portal>
                 )}
-
+                
                 {/* Comment */}
-                <Wrapper col="true" className="xl:h-[300px] xl:overflow-y-auto">
-                  <CommentCard />
-                  <CommentCard />
-                  <CommentCard />
+                <Wrapper _ref={commentsRef} col="true" className="sm:max-h-[400px] !gap-10 sm:overflow-y-auto">
+                  {comments.length > 0 ? (
+                    comments.map((comment, index) => {
+                      return <CommentCard key={index} user={comment.user} comment={comment.content} onDelete={deleteComment} onEdit={editComment} />;
+                    })
+                  ) : (
+                    <Heading>
+                      {" "}
+                      Become the first person comment in this location
+                    </Heading>
+                  )}
                 </Wrapper>
+
+                <Wrapper className="rounded-lg items-end ">
+                  <TextArea
+                    placeholder="Write your comment..."
+                    className="!py-4 !px-3 focus:!ring-0 max-h-[150px] w-full"
+                    type="text"
+                    value={comment}
+                    _ref={commentRef}
+                    icon={send}
+                    onChange={(e) => {
+                        setComment(e.target.value)
+                        console.log(e.target.value)
+                        setOnReset(false)
+                      }
+                    }
+                    onEnter={handleAddComment}
+                    onIconClick={handleAddComment}
+                    rows={1}
+                    wrapperClassName="w-full !gap-0"
+                    onReset={onReset}
+                  />
+                  
+                  <Button
+                      onClick={() => {handleAddComment()}}
+                      className="!my-0 !bg-transparent !border-none !p-0"
+                    >
+                      <Image
+                        src={send}
+                        alt="icon input"
+                        className="object-cover w-full h-full"
+                      />
+                    </Button>
+                  
+                </Wrapper>
+                
+
               </Wrapper>
             </Wrapper>
           </Wrapper>
