@@ -31,6 +31,7 @@ import { FaRegCommentDots } from "react-icons/fa";
 import Input from "@/components/form/Input";
 import send from "@/assets/send.svg";
 import TextArea from "@/components/form/TextArea";
+import commentApi from "@/api/commentApi";
 
 const DetailsScreen = () => {
   const notifyDelete = () => toast.success("Successfully delete!");
@@ -55,6 +56,7 @@ const DetailsScreen = () => {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
   const [onReset, setOnReset] = useState(false)
+  const [commentsNextCursor, setCommentsNextCursor] = useState()
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -103,6 +105,63 @@ const DetailsScreen = () => {
   }, [showLikedUsers]);
 
   useEffect(() => {}, [showLikedUsers]);
+
+  useEffect(() => {
+    const getComments = async() => {
+      const response = await commentApi.getCommentsOfLocation(id);
+      localStorage.setItem("comments", JSON.stringify(response.data.results))
+      setComments(response.data.results)
+      localStorage.setItem("commentsNextCursor", response.data.next_cursor)
+      setCommentsNextCursor(response.data.next_cursor)
+      console.log(response)
+    }
+    getComments()
+  }, [])
+
+  const loadMoreData = async (nextCursor) => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 1000) return;
+    if (nextCursor === null) return;
+    
+    setLastFetch(now);
+    const response = await commentApi.getCommentsOfLocation(id,
+      nextCursor
+    );
+    const newComments = [
+      ...JSON.parse(localStorage.getItem("comments")),
+      ...response.data.results,
+    ];
+    localStorage.setItem("comments", JSON.stringify(newComments))
+    setComments((prev) => [...prev, ...response.data.results]);
+    localStorage.setItem("commentsNextCursor", response.data.next_cursor);
+    setCommentsNextCursor(response.data.next_cursor);
+  };
+
+  useEffect(() => {
+    if (!commentsRef.current) return;
+    const handleScroll = async () => {
+      const { scrollTop, scrollHeight, clientHeight } = commentsRef.current;
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight;
+      
+      if (isScrolledToBottom) {
+        console.log("Scrolled to bottom!");
+        const nextCursor = localStorage.getItem("commentsNextCursor");
+        if (nextCursor.length > 10) {
+          await loadMoreData(nextCursor);
+        }
+      }
+    };
+
+    commentsRef.current.addEventListener("scroll", handleScroll);
+    return () => {
+      if (commentsRef.current) {
+        // Remember to remove event listener when the component is unmounted
+        commentsRef.current.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [loadMoreData]);
 
   const handleLikeClick = () => {
     const handleLikeOrUnlike = async () => {
@@ -184,13 +243,19 @@ const DetailsScreen = () => {
     console.log(comment.includes("\n"))
     if (comment.trim() === "" || !comment) return;
     setOnReset(true)
-    setComments((prev) => [
-      { user: locationDetails?.user, content: comment },
+    
+    const postComment = async () => {
+      const response = await commentApi.createComment({locationId: id, content: comment})
+      console.log(response)
+      setComments((prev) => [
+      { user: user, ...response.data },
       ...prev,
     ]);
-    setComment("")
-    commentRef.current.value = ""
-    commentRef.current.blur();
+      setComment("")
+      commentRef.current.value = ""
+      commentRef.current.blur();
+    }
+    postComment()
     // setOnReset(false)
   };
 
@@ -540,7 +605,7 @@ const DetailsScreen = () => {
                 <Wrapper _ref={commentsRef} col="true" className="sm:max-h-[400px] !gap-10 sm:overflow-y-auto">
                   {comments.length > 0 ? (
                     comments.map((comment, index) => {
-                      return <CommentCard key={index} user={comment.user} comment={comment.content} onDelete={deleteComment} onEdit={editComment} />;
+                      return <CommentCard key={index} currentUser={user} user={comment.user} comment={comment} onDelete={deleteComment} onEdit={editComment} />;
                     })
                   ) : (
                     <Heading>
