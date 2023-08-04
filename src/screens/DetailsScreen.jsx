@@ -32,6 +32,8 @@ import Input from "@/components/form/Input";
 import send from "@/assets/send.svg";
 import TextArea from "@/components/form/TextArea";
 import commentApi from "@/api/commentApi";
+import User from "@/components/user/User";
+import { AiOutlineClose } from "react-icons/ai";
 
 const DetailsScreen = () => {
   const notifyDelete = () => toast.success("Successfully delete!");
@@ -57,8 +59,11 @@ const DetailsScreen = () => {
   const [comment, setComment] = useState("");
   const [onReset, setOnReset] = useState(false)
   const [commentsNextCursor, setCommentsNextCursor] = useState()
+  const [selectedComment, setSelectedComment] = useState()
+  const [showComment, setShowComment] = useState(false)
+  const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false)
+  const [showEditCommentPopup, setShowEditCommentPopup] = useState(false)
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
@@ -143,7 +148,7 @@ const DetailsScreen = () => {
     if (!commentsRef.current) return;
     const handleScroll = async () => {
       const { scrollTop, scrollHeight, clientHeight } = commentsRef.current;
-      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight;
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 100;
       
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
@@ -197,14 +202,6 @@ const DetailsScreen = () => {
     handleDelete();
   };
 
-  const deleteComment = () => {
-    console.log("Delete!")
-  }
-
-  const editComment = () => {
-    console.log("Edit!")
-  }
-
   const popupRef = useRef();
   const onClose = () => setShowLikedUsers(false);
   useOnClickOutside(popupRef, onClose);
@@ -239,6 +236,51 @@ const DetailsScreen = () => {
     return formattedNum;
   }
 
+  // COMMENTS FUNCTIONS
+  const handleThreeDotsClick = (id) => {
+    if (selectedComment === id){
+      setSelectedComment()
+      return
+    }
+    setSelectedComment(id)
+  }
+
+  const handleCloseComment = () => {
+    setShowComment(false)
+    setShowDeleteCommentPopup(false)
+    setSelectedComment()
+    setShowEditCommentPopup(false)
+    setComment("")
+  }
+
+  const handleEditComment = () => {
+    const editComment = async() =>{
+      const response = await commentApi.updateComment({commentId: selectedComment, content: comment})
+      console.log(response)
+      setComments((prev) => 
+      {
+        return prev.map((comment) =>
+          comment._id === response.data._id ? {user: user, ...response.data} : comment
+        );
+      }
+      );
+      setSelectedComment()
+      setShowEditCommentPopup(false)
+    }
+    editComment()
+  }
+
+  const handleDeleteComment = (id) => {
+    const deleteComment = async() => {
+      await commentApi.deleteComment(id)
+      const newList = comments.filter(comment => comment._id !== id)
+      setComments(newList)
+      localStorage.setItem("comments", JSON.stringify(newList))
+      setSelectedComment()
+      setShowDeleteCommentPopup(false)
+    }
+    deleteComment()
+  }
   const handleAddComment = (e) => {
     console.log(comment.includes("\n"))
     if (comment.trim() === "" || !comment) return;
@@ -254,6 +296,7 @@ const DetailsScreen = () => {
       setComment("")
       commentRef.current.value = ""
       commentRef.current.blur();
+      setShowComment(false)
     }
     postComment()
     // setOnReset(false)
@@ -265,7 +308,7 @@ const DetailsScreen = () => {
     }
   }, [onReset])
   return (
-    <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
+    <Screen className="flex flex-col gap-5 px-3 py-4 !mb-2 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       {loading ? (
         <LoadingScreen />
       ) : (
@@ -281,7 +324,7 @@ const DetailsScreen = () => {
 
             <Wrapper className="items-center justify-between">
               <Wrapper
-                className="items-center my-3 !gap-5"
+                className="items-center my-2 !gap-2 truncate"
                 onClick={() =>
                   navigate(
                     user._id === locationDetails.user._id
@@ -291,28 +334,28 @@ const DetailsScreen = () => {
                 }
               >
                 <Image
-                  className="w-[75px] h-[75px] !rounded-full"
+                  className="w-[60px] h-[60px] !rounded-full"
                   src={locationDetails?.user?.imageUrl}
                 />
-                <Wrapper col="true">
-                  <Heading>{locationDetails?.user?.username}</Heading>
-                  <Text>{locationDetails?.user?.email}</Text>
+                <Wrapper col="true" className="truncate">
+                  <Heading className="text-lg w-fit truncate">{locationDetails?.user?.username}</Heading>
+                  <Text className="text-md sm:!text-[16px] truncate">{locationDetails?.user?.email}</Text>
                 </Wrapper>
               </Wrapper>
-
+              {/* <User user={locationDetails?.user} src={locationDetails?.user?.imageUrl} /> */}
               {locationDetails.userId === user._id && (
                 <Wrapper className="">
                   <Button
                     onClick={() => {
                       navigate(`/location/edit/${id}`);
                     }}
-                    className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl"
+                    className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-sm sm:!text-xl !p-2 sm:!py-3 sm:!px-4"
                   >
                     <BsFillPencilFill />
                   </Button>
                   <Button
                     onClick={() => setShowDeletePopup(true)}
-                    className="!bg-danger !bg-opacity-40 !text-danger !text-xl"
+                    className="!bg-danger !bg-opacity-40 !text-danger !text-sm sm:!text-xl !p-2 sm:!py-3 sm:!px-4"
                   >
                     <MdDelete />
                   </Button>
@@ -492,9 +535,9 @@ const DetailsScreen = () => {
                     <FaRegCommentDots className="text-lg" />
                     <Text
                       className=""
-                      onClick={() => commentRef.current.focus()}
+                      onClick={() => setShowComment(true)}
                     >
-                      Comments
+                      Write comments
                     </Text>
                   </Wrapper>
                 </Wrapper>
@@ -602,10 +645,13 @@ const DetailsScreen = () => {
                 )}
                 
                 {/* Comment */}
-                <Wrapper _ref={commentsRef} col="true" className="sm:max-h-[400px] !gap-10 sm:overflow-y-auto">
+                <Wrapper _ref={commentsRef} col="true" className="max-h-[200px] sm:max-h-[400px] pr-2 !gap-10 overflow-y-auto">
                   {comments.length > 0 ? (
                     comments.map((comment, index) => {
-                      return <CommentCard key={index} currentUser={user} user={comment.user} comment={comment} onDelete={deleteComment} onEdit={editComment} />;
+                      return <CommentCard key={index} currentUser={user} user={comment.user} comment={comment} onDelete={() => setShowDeleteCommentPopup(true)} onEdit={() => {
+                        setShowEditCommentPopup(true)
+                        setComment(comment.content)
+                      }} onThreeDotsClick={handleThreeDotsClick} selectedComment={selectedComment}/>;
                     })
                   ) : (
                     <Heading>
@@ -614,47 +660,98 @@ const DetailsScreen = () => {
                     </Heading>
                   )}
                 </Wrapper>
+              </Wrapper>
+            </Wrapper>
+          </Wrapper>
+        </>
+      )}
 
-                <Wrapper className="rounded-lg items-end ">
+      {(showComment || showEditCommentPopup) && <Popup
+          onClose={() => {
+            // closePopup();
+            handleCloseComment()
+          }}
+          actions={[
+            {
+              title: "cancel",
+              danger: true,
+              buttonClassName:
+                "!bg-white border-primary-400 border !text-primary-400 hover:!bg-danger hover:!border-danger hover:opacity-100 hover:!text-white",
+              action: handleCloseComment,
+            },
+            {
+              title: "Post",
+              danger: true,
+              buttonClassName:
+                "!bg-primary-400 !border-primary-400 border hover:opacity-70",
+              action: !showEditCommentPopup ? handleAddComment : handleEditComment,
+            },
+          ]}
+          // title="Search location"
+          children={
+            <>
+              <Heading className="text-center !text-[28px]">
+                {showEditCommentPopup ? "Edit comment" :"Write comment"}
+              </Heading>
+
+              <Wrapper className="rounded-lg items-end w-full">
                   <TextArea
                     placeholder="Write your comment..."
-                    className="!py-4 !px-3 focus:!ring-0 max-h-[150px] w-full"
+                    className="!py-4 !px-3 focus:!ring-0 max-h-[150px] !h-[150px] w-full"
                     type="text"
                     value={comment}
                     _ref={commentRef}
                     icon={send}
                     onChange={(e) => {
                         setComment(e.target.value)
-                        console.log(e.target.value)
+                        // console.log(e.target.value)
                         setOnReset(false)
                       }
                     }
-                    onEnter={handleAddComment}
-                    onIconClick={handleAddComment}
-                    rows={1}
+                    rows={5}
                     wrapperClassName="w-full !gap-0"
                     onReset={onReset}
                   />
-                  
-                  <Button
-                      onClick={() => {handleAddComment()}}
-                      className="!my-0 !bg-transparent !border-none !p-0"
-                    >
-                      <Image
-                        src={send}
-                        alt="icon input"
-                        className="object-cover w-full h-full"
-                      />
-                    </Button>
-                  
-                </Wrapper>
                 
+                </Wrapper>
 
-              </Wrapper>
-            </Wrapper>
-          </Wrapper>
-        </>
-      )}
+              {/* <Error fluid className={`${!submitErr && "invisible"}`}>
+                {submitErr}
+              </Error> */}
+              <Button
+                className="!absolute top-0 right-0 !bg-transparent !rounded-none !border-none !my-0"
+                onClick={() => {
+                  // handleCancelEdit();
+                  handleCloseComment()
+                }}
+              >
+                <AiOutlineClose className="text-[32px]  text-black " />
+              </Button>
+            </>
+          }
+          className={` px-4 sm:px-12 `}
+          formClassName="items-center !h-auto w-full !rounded-none md:!py-2 md:!px-4 md:!rounded-lg relative"
+          titleClassName="text-[20px]"
+          childrenClassName="!mt-0 w-full"
+        />}
+        {showDeleteCommentPopup && (
+              <Popup
+                title="Are you sure to remove this comment?"
+                onClose={() => handleCloseComment()}
+                actions={[
+                  {
+                    title: "cancel",
+                    danger: false,
+                    action: () => handleCloseComment(),
+                  },
+                  {
+                    title: "delete",
+                    danger: true,
+                    action: () => handleDeleteComment(selectedComment),
+                  },
+                ]}
+              />
+            )}
     </Screen>
   );
 };

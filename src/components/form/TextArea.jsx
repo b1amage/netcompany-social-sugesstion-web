@@ -13,11 +13,11 @@ const TextArea = ({ label, required, id, err, placeholder, onChange, rows, class
   
   useEffect(() => {
     const currentHeight = parseInt(_ref.current.style.height, 10);
-    console.log(currentHeight)
+    // console.log(currentHeight)
     if (currentHeight <= 150){
       _ref.current.style.overflowY = "hidden"
     } else{
-      _ref.current.style.overflowY = "scroll"
+      _ref.current.style.overflowY = "auto"
     }
     
   }, [value])

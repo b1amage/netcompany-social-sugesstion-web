@@ -1,14 +1,17 @@
 import Wrapper from "@/components/wrapper/Wrapper";
 import Image from "@/components/image/Image";
-import React from "react";
+import React, { useState } from "react";
 import Heading from "@/components/typography/Heading";
 import Text from "@/components/typography/Text";
-import { BsHeart, BsReplyAll, BsThreeDotsVertical } from "react-icons/bs";
+import { BsFillPencilFill, BsHeart, BsReplyAll, BsThreeDotsVertical } from "react-icons/bs";
+import Button from "@/components/button/Button";
+import { MdDelete } from "react-icons/md";
+// import commentApi from "api/commentApi";
 
-const CommentCard = ({ user, currentUser, comment, onDelete, onEdit }) => {
+const CommentCard = ({ user, currentUser, comment, onDelete, onEdit, onThreeDotsClick, selectedComment }) => {
   return (
     <Wrapper col="true" className="relative rounded-2xl !gap-2">
-      <Wrapper className="items-center justify-between">
+      <Wrapper className="items-center justify-between relative">
         <Wrapper className="items-center truncate">
           <Image imageClassName="" className="w-[32px] h-[32px] sm:w-10 sm:h-10 !rounded-full" src={user?.imageUrl} />
 
@@ -17,25 +20,29 @@ const CommentCard = ({ user, currentUser, comment, onDelete, onEdit }) => {
           </Wrapper>
         </Wrapper>
 
-        {currentUser._id === comment.userId && <BsThreeDotsVertical className="cursor-pointer !text-[16px] sm:!text-[20px]" />}
-        {/* <Wrapper className="!w-fit">
+        {currentUser._id === comment.userId && <BsThreeDotsVertical className="cursor-pointer !text-[16px] sm:!text-[20px]" onClick={() => {
+          onThreeDotsClick(comment._id)
+          }} />}
+        {(selectedComment === comment._id) && <Wrapper col="true" className="bg-white absolute bottom-0 right-0 !w-fit translate-y-full">
           <Button
             onClick={(e) => {
               onEdit()
             }}
-            className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !h-fit !p-2 !my-0"
+            className="!bg-primary-400 text-[12px] sm:text-[14px] flex gap-2 !justify-start !bg-opacity-40 !text-primary-400 !h-fit !p-2 !my-0"
           >
-            <BsFillPencilFill className="text-sm" />
+            <BsFillPencilFill className="" />
+            Edit
           </Button>
           <Button
-            onClick={(e) => {
+            onClick={() => {
               onDelete()
             }}
-            className="!bg-danger !bg-opacity-40 !text-danger !h-fit !p-2 !my-0"
+            className="!bg-danger text-[12px] sm:text-[14px] flex gap-2 !bg-opacity-40 !justify-start !text-danger !h-fit !p-2 !my-0"
           >
-            <MdDelete className="text-sm" />
+            <MdDelete className="" />
+            Delete
           </Button>
-        </Wrapper> */}
+        </Wrapper>}
       </Wrapper>
 
       <Wrapper col="true">
