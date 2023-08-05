@@ -3,46 +3,98 @@ import Image from "@/components/image/Image";
 import React, { useState } from "react";
 import Heading from "@/components/typography/Heading";
 import Text from "@/components/typography/Text";
-import { BsFillPencilFill, BsHeart, BsReplyAll, BsThreeDotsVertical } from "react-icons/bs";
+import {
+  BsFillHeartFill,
+  BsFillPencilFill,
+  BsHeart,
+  BsReplyAll,
+  BsThreeDotsVertical,
+} from "react-icons/bs";
 import Button from "@/components/button/Button";
 import { MdDelete } from "react-icons/md";
+import commentApi from "@/api/commentApi";
 // import commentApi from "api/commentApi";
 
-const CommentCard = ({ user, currentUser, comment, onDelete, onEdit, onThreeDotsClick, selectedComment }) => {
+const CommentCard = ({
+  user,
+  currentUser,
+  comment,
+  onDelete,
+  onEdit,
+  onThreeDotsClick,
+  selectedComment,
+}) => {
+  const [likeComment, setLikeComment] = useState(comment.likedByUser ? true : false);
+  const [likeCommentCount, setLikeCommentCount] = useState(comment?.heartCount)
+
+  const handleLikeComment = (id) => {
+    const likeOrUnlikeComment = async () => {
+      if (!likeComment) {
+        console.log("call like");
+        // await locationApi.like(id);
+        await commentApi.likeComment(id)
+        setLikeComment((prev) => !prev);
+        setLikeCommentCount((prev) => prev + 1);
+      } else {
+        console.log("call unlike");
+        await commentApi.unLikeComment(id)
+        // await locationApi.unlike(id);
+        setLikeComment((prev) => !prev);
+        setLikeCommentCount((prev) => prev - 1);
+      }
+    };
+    likeOrUnlikeComment();
+  };
   return (
     <Wrapper col="true" className="relative rounded-2xl !gap-2">
       <Wrapper className="items-center justify-between relative">
         <Wrapper className="items-center truncate">
-          <Image imageClassName="" className="w-[32px] h-[32px] sm:w-10 sm:h-10 !rounded-full" src={user?.imageUrl} />
+          <Image
+            imageClassName=""
+            className="w-[32px] h-[32px] sm:w-10 sm:h-10 !rounded-full"
+            src={user?.imageUrl}
+          />
 
           <Wrapper col="true" className="!gap-0 truncate w-fit">
-            <Heading className="w-fit !text-[12px] sm:!text-[16px] truncate">{user?.username}</Heading>
+            <Heading className="w-fit !text-[12px] sm:!text-[16px] truncate">
+              {user?.username}
+            </Heading>
           </Wrapper>
         </Wrapper>
 
-        {currentUser._id === comment.userId && <BsThreeDotsVertical className="cursor-pointer !text-[16px] sm:!text-[20px]" onClick={() => {
-          onThreeDotsClick(comment._id)
-          }} />}
-        {(selectedComment === comment._id) && <Wrapper col="true" className="bg-white absolute bottom-0 right-0 !w-fit translate-y-full">
-          <Button
-            onClick={(e) => {
-              onEdit()
-            }}
-            className="!bg-primary-400 text-[12px] sm:text-[14px] flex gap-2 !justify-start !bg-opacity-40 !text-primary-400 !h-fit !p-2 !my-0"
-          >
-            <BsFillPencilFill className="" />
-            Edit
-          </Button>
-          <Button
+        {currentUser._id === comment.userId && (
+          <BsThreeDotsVertical
+            className="cursor-pointer !text-[16px] sm:!text-[20px]"
             onClick={() => {
-              onDelete()
+              onThreeDotsClick(comment._id);
             }}
-            className="!bg-danger text-[12px] sm:text-[14px] flex gap-2 !bg-opacity-40 !justify-start !text-danger !h-fit !p-2 !my-0"
+          />
+        )}
+        {selectedComment === comment._id && (
+          <Wrapper
+            col="true"
+            className="bg-white absolute bottom-0 right-0 !w-fit translate-y-full"
           >
-            <MdDelete className="" />
-            Delete
-          </Button>
-        </Wrapper>}
+            <Button
+              onClick={(e) => {
+                onEdit();
+              }}
+              className="!bg-primary-400 text-[12px] sm:text-[14px] flex gap-2 !justify-start !bg-opacity-40 !text-primary-400 !h-fit !p-2 !my-0"
+            >
+              <BsFillPencilFill className="" />
+              Edit
+            </Button>
+            <Button
+              onClick={() => {
+                onDelete();
+              }}
+              className="!bg-danger text-[12px] sm:text-[14px] flex gap-2 !bg-opacity-40 !justify-start !text-danger !h-fit !p-2 !my-0"
+            >
+              <MdDelete className="" />
+              Delete
+            </Button>
+          </Wrapper>
+        )}
       </Wrapper>
 
       <Wrapper col="true">
@@ -61,8 +113,18 @@ const CommentCard = ({ user, currentUser, comment, onDelete, onEdit, onThreeDots
             <Text>{comment?.numOfReplies}</Text>
           </Wrapper>
           <Wrapper className="items-center !gap-2">
-            <BsHeart className="text-lg" />
-            <Text>{comment?.heartCount}</Text>
+            {likeComment ? (
+              <BsFillHeartFill
+                className="text-lg cursor-pointer text-secondary-400"
+                onClick={() => handleLikeComment(comment._id)}
+              />
+            ) : (
+              <BsHeart
+                className="text-lg"
+                onClick={() => handleLikeComment(comment._id)}
+              />
+            )}
+            <Text>{likeCommentCount}</Text>
           </Wrapper>
         </Wrapper>
       </Wrapper>

@@ -290,7 +290,7 @@ const DetailsScreen = () => {
       const response = await commentApi.createComment({locationId: id, content: comment})
       console.log(response)
       setComments((prev) => [
-      { user: user, ...response.data },
+      { user: user, likedByUser: false, ...response.data },
       ...prev,
     ]);
       setComment("")
@@ -648,7 +648,7 @@ const DetailsScreen = () => {
                 <Wrapper _ref={commentsRef} col="true" className="max-h-[200px] sm:max-h-[400px] pr-2 !gap-10 overflow-y-auto">
                   {comments.length > 0 ? (
                     comments.map((comment, index) => {
-                      return <CommentCard key={index} currentUser={user} user={comment.user} comment={comment} onDelete={() => setShowDeleteCommentPopup(true)} onEdit={() => {
+                      return <CommentCard key={comment._id} currentUser={user} user={comment.user} comment={comment} onDelete={() => setShowDeleteCommentPopup(true)} onEdit={() => {
                         setShowEditCommentPopup(true)
                         setComment(comment.content)
                       }} onThreeDotsClick={handleThreeDotsClick} selectedComment={selectedComment}/>;

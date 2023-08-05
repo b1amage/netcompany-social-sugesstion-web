@@ -15,7 +15,7 @@ const commentApi = {
       return error.response.data.message;
     }
   },
-  async createComment(data, nextCursor = "") {
+  async createComment(data) {
     try {
       const url = `/comment`;
       const response = await axiosClient.post(url, data, {
@@ -47,6 +47,34 @@ const commentApi = {
     try {
       const url = `/comment`;
       const response = await axiosClient.patch(url, data, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error.response.data.message);
+      // setSubmitErr((prev) => [...prev, error.response.data.message]);
+      return error.response.data.message;
+    }
+  },
+  async likeComment(id) {
+    try {
+      const url = `/comment/like/${id}`;
+      const response = await axiosClient.post(url, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error.response.data.message);
+      // setSubmitErr((prev) => [...prev, error.response.data.message]);
+      return error.response.data.message;
+    }
+  },
+  async unLikeComment(id) {
+    try {
+      const url = `/comment/like/${id}`;
+      const response = await axiosClient.delete(url, {
         withCredentials: true,
       });
       console.log(response);
