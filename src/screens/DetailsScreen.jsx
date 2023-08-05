@@ -34,6 +34,7 @@ import TextArea from "@/components/form/TextArea";
 import commentApi from "@/api/commentApi";
 import User from "@/components/user/User";
 import { AiOutlineClose } from "react-icons/ai";
+import Error from "@/components/form/Error";
 
 const DetailsScreen = () => {
   const notifyDelete = () => toast.success("Successfully delete!");
@@ -57,13 +58,17 @@ const DetailsScreen = () => {
   const [deleting, setDeleting] = useState(false);
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
-  const [onReset, setOnReset] = useState(false)
-  const [commentsNextCursor, setCommentsNextCursor] = useState()
-  const [selectedComment, setSelectedComment] = useState()
-  const [showComment, setShowComment] = useState(false)
-  const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false)
-  const [showEditCommentPopup, setShowEditCommentPopup] = useState(false)
+  const [onReset, setOnReset] = useState(false);
+  const [commentsNextCursor, setCommentsNextCursor] = useState();
+  const [selectedComment, setSelectedComment] = useState();
+  const [showComment, setShowComment] = useState(false);
+  const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
+  const [showEditCommentPopup, setShowEditCommentPopup] = useState(false);
+  const [err, setErr] = useState()
   const navigate = useNavigate();
+
+  const notifyErr = (err) => toast.error(err) 
+  const notifySuccess = (success) => toast.success(success)
 
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
@@ -112,16 +117,16 @@ const DetailsScreen = () => {
   useEffect(() => {}, [showLikedUsers]);
 
   useEffect(() => {
-    const getComments = async() => {
+    const getComments = async () => {
       const response = await commentApi.getCommentsOfLocation(id);
-      localStorage.setItem("comments", JSON.stringify(response.data.results))
-      setComments(response.data.results)
-      localStorage.setItem("commentsNextCursor", response.data.next_cursor)
-      setCommentsNextCursor(response.data.next_cursor)
-      console.log(response)
-    }
-    getComments()
-  }, [])
+      localStorage.setItem("comments", JSON.stringify(response.data.results));
+      setComments(response.data.results);
+      localStorage.setItem("commentsNextCursor", response.data.next_cursor);
+      setCommentsNextCursor(response.data.next_cursor);
+      console.log(response);
+    };
+    getComments();
+  }, []);
 
   const loadMoreData = async (nextCursor) => {
     const now = Date.now();
@@ -129,16 +134,14 @@ const DetailsScreen = () => {
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
     if (now - lastFetch < 1000) return;
     if (nextCursor === null) return;
-    
+
     setLastFetch(now);
-    const response = await commentApi.getCommentsOfLocation(id,
-      nextCursor
-    );
+    const response = await commentApi.getCommentsOfLocation(id, nextCursor);
     const newComments = [
       ...JSON.parse(localStorage.getItem("comments")),
       ...response.data.results,
     ];
-    localStorage.setItem("comments", JSON.stringify(newComments))
+    localStorage.setItem("comments", JSON.stringify(newComments));
     setComments((prev) => [...prev, ...response.data.results]);
     localStorage.setItem("commentsNextCursor", response.data.next_cursor);
     setCommentsNextCursor(response.data.next_cursor);
@@ -149,7 +152,7 @@ const DetailsScreen = () => {
     const handleScroll = async () => {
       const { scrollTop, scrollHeight, clientHeight } = commentsRef.current;
       const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 100;
-      
+
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
         const nextCursor = localStorage.getItem("commentsNextCursor");
@@ -238,75 +241,92 @@ const DetailsScreen = () => {
 
   // COMMENTS FUNCTIONS
   const handleThreeDotsClick = (id) => {
-    if (selectedComment === id){
-      setSelectedComment()
-      return
+    if (selectedComment === id) {
+      setSelectedComment();
+      return;
     }
-    setSelectedComment(id)
-  }
+    setSelectedComment(id);
+  };
 
   const handleCloseComment = () => {
-    setShowComment(false)
-    setShowDeleteCommentPopup(false)
-    setSelectedComment()
-    setShowEditCommentPopup(false)
-    setComment("")
-  }
+    setShowComment(false);
+    setShowDeleteCommentPopup(false);
+    setSelectedComment();
+    setErr()
+    setShowEditCommentPopup(false);
+    setComment("");
+  };
 
   const handleEditComment = () => {
-    const editComment = async() =>{
-      const response = await commentApi.updateComment({commentId: selectedComment, content: comment})
-      console.log(response)
-      setComments((prev) => 
-      {
-        return prev.map((comment) =>
-          comment._id === response.data._id ? {user: user, ...response.data} : comment
-        );
+    const editComment = async () => {
+      const response = await commentApi.updateComment({
+        commentId: selectedComment,
+        content: comment,
+      }, setErr);
+      console.log(response);
+      if (response.status !== 200){
+        return
       }
-      );
-      setSelectedComment()
-      setShowEditCommentPopup(false)
-    }
-    editComment()
-  }
+      notifySuccess("Update successfully!")
+      setComments((prev) => {
+        return prev.map((comment) =>
+          comment._id === response.data._id
+            ? { user: user, ...response.data }
+            : comment
+        );
+      });
+      setSelectedComment();
+      setShowEditCommentPopup(false);
+    };
+    editComment();
+  };
 
   const handleDeleteComment = (id) => {
-    const deleteComment = async() => {
-      await commentApi.deleteComment(id)
-      const newList = comments.filter(comment => comment._id !== id)
-      setComments(newList)
-      localStorage.setItem("comments", JSON.stringify(newList))
-      setSelectedComment()
-      setShowDeleteCommentPopup(false)
-    }
-    deleteComment()
-  }
+    const deleteComment = async () => {
+      const response = await commentApi.deleteComment(id, notifyErr);
+      if (response.status !== 200){
+        setShowDeleteCommentPopup(false)
+        return
+      }
+      const newList = comments.filter((comment) => comment._id !== id);
+      setComments(newList);
+      localStorage.setItem("comments", JSON.stringify(newList));
+      setSelectedComment();
+      setShowDeleteCommentPopup(false);
+    };
+    deleteComment();
+  };
+
   const handleAddComment = (e) => {
-    console.log(comment.includes("\n"))
+    console.log(comment.includes("\n"));
     if (comment.trim() === "" || !comment) return;
-    setOnReset(true)
-    
+    setOnReset(true);
+
     const postComment = async () => {
-      const response = await commentApi.createComment({locationId: id, content: comment})
-      console.log(response)
+      const response = await commentApi.createComment({
+        locationId: id,
+        content: comment,
+      }, setErr);
+      console.log(response);
+      notifySuccess("Post successfully!")
       setComments((prev) => [
-      { user: user, likedByUser: false, ...response.data },
-      ...prev,
-    ]);
-      setComment("")
-      commentRef.current.value = ""
+        { user: user, likedByUser: false, ...response.data },
+        ...prev,
+      ]);
+      setComment("");
+      commentRef.current.value = "";
       commentRef.current.blur();
-      setShowComment(false)
-    }
-    postComment()
+      setShowComment(false);
+    };
+    postComment();
     // setOnReset(false)
   };
 
   useEffect(() => {
-    if(onReset){
-      commentsRef.current.scrollTop = 0
+    if (onReset) {
+      commentsRef.current.scrollTop = 0;
     }
-  }, [onReset])
+  }, [onReset]);
   return (
     <Screen className="flex flex-col gap-5 px-3 py-4 !mb-2 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       {loading ? (
@@ -338,8 +358,12 @@ const DetailsScreen = () => {
                   src={locationDetails?.user?.imageUrl}
                 />
                 <Wrapper col="true" className="truncate">
-                  <Heading className="text-lg w-fit truncate">{locationDetails?.user?.username}</Heading>
-                  <Text className="text-md sm:!text-[16px] truncate">{locationDetails?.user?.email}</Text>
+                  <Heading className="text-lg w-fit truncate">
+                    {locationDetails?.user?.username}
+                  </Heading>
+                  <Text className="text-md sm:!text-[16px] truncate">
+                    {locationDetails?.user?.email}
+                  </Text>
                 </Wrapper>
               </Wrapper>
               {/* <User user={locationDetails?.user} src={locationDetails?.user?.imageUrl} /> */}
@@ -506,7 +530,7 @@ const DetailsScreen = () => {
                       {convertTime(locationDetails.weekend.openTime)} -{" "}
                       {convertTime(locationDetails.weekend.closeTime)}
                     </Text>
-                  )}                              
+                  )}
               </Wrapper>
 
               <Wrapper col="true" className="flex-1 my-4 !gap-4">
@@ -533,10 +557,7 @@ const DetailsScreen = () => {
 
                   <Wrapper className="!gap-2 items-center px-4 cursor-pointer">
                     <FaRegCommentDots className="text-lg" />
-                    <Text
-                      className=""
-                      onClick={() => setShowComment(true)}
-                    >
+                    <Text className="" onClick={() => setShowComment(true)}>
                       Write comments
                     </Text>
                   </Wrapper>
@@ -643,15 +664,30 @@ const DetailsScreen = () => {
                     </div>
                   </Portal>
                 )}
-                
+
                 {/* Comment */}
-                <Wrapper _ref={commentsRef} col="true" className="max-h-[200px] sm:max-h-[400px] pr-2 !gap-10 overflow-y-auto">
+                <Wrapper
+                  _ref={commentsRef}
+                  col="true"
+                  className="max-h-[200px] sm:max-h-[400px] pr-2 !gap-10 overflow-y-auto pb-8"
+                >
                   {comments.length > 0 ? (
                     comments.map((comment, index) => {
-                      return <CommentCard key={comment._id} currentUser={user} user={comment.user} comment={comment} onDelete={() => setShowDeleteCommentPopup(true)} onEdit={() => {
-                        setShowEditCommentPopup(true)
-                        setComment(comment.content)
-                      }} onThreeDotsClick={handleThreeDotsClick} selectedComment={selectedComment}/>;
+                      return (
+                        <CommentCard
+                          key={comment._id}
+                          currentUser={user}
+                          user={comment.user}
+                          comment={comment}
+                          onDelete={() => setShowDeleteCommentPopup(true)}
+                          onEdit={() => {
+                            setShowEditCommentPopup(true);
+                            setComment(comment.content);
+                          }}
+                          onThreeDotsClick={handleThreeDotsClick}
+                          selectedComment={selectedComment}
+                        />
+                      );
                     })
                   ) : (
                     <Heading>
@@ -666,35 +702,51 @@ const DetailsScreen = () => {
         </>
       )}
 
-      {(showComment || showEditCommentPopup) && <Popup
+      {(showComment || showEditCommentPopup) && (
+        <Popup
           onClose={() => {
             // closePopup();
-            handleCloseComment()
+            handleCloseComment();
           }}
           actions={[
             {
               title: "cancel",
               danger: true,
               buttonClassName:
-                "!bg-white border-primary-400 border !text-primary-400 hover:!bg-danger hover:!border-danger hover:opacity-100 hover:!text-white",
+                " !h-fit !mt-4 !mb-0 !bg-white border-primary-400 border !text-primary-400 hover:!bg-danger hover:!border-danger hover:opacity-100 hover:!text-white",
               action: handleCloseComment,
             },
             {
               title: "Post",
               danger: true,
               buttonClassName:
-                "!bg-primary-400 !border-primary-400 border hover:opacity-70",
-              action: !showEditCommentPopup ? handleAddComment : handleEditComment,
+                "!h-fit !mt-4 !mb-0 !bg-primary-400 !border-primary-400 border hover:opacity-70",
+              action: !showEditCommentPopup
+                ? handleAddComment
+                : handleEditComment,
             },
           ]}
           // title="Search location"
           children={
             <>
-              <Heading className="text-center !text-[28px]">
-                {showEditCommentPopup ? "Edit comment" :"Write comment"}
-              </Heading>
+              <Wrapper className="justify-end">
+                <Button
+                  className="!p-0 !bg-transparent !rounded-none !border-none !my-0"
+                  onClick={() => {
+                    // handleCancelEdit();
+                    handleCloseComment();
+                  }}
+                >
+                  <AiOutlineClose className="text-[32px]  text-black " />
+                </Button>
+              </Wrapper>
 
-              <Wrapper className="rounded-lg items-end w-full">
+              <Wrapper col="true" className="gap-4">
+                <Heading className="text-center !text-[28px]">
+                  {showEditCommentPopup ? "Edit comment" : "Write comment"}
+                </Heading>
+
+                <Wrapper className="rounded-lg items-end w-full">
                   <TextArea
                     placeholder="Write your comment..."
                     className="!py-4 !px-3 focus:!ring-0 max-h-[150px] !h-[150px] w-full"
@@ -703,55 +755,46 @@ const DetailsScreen = () => {
                     _ref={commentRef}
                     icon={send}
                     onChange={(e) => {
-                        setComment(e.target.value)
-                        // console.log(e.target.value)
-                        setOnReset(false)
-                      }
-                    }
+                      setComment(e.target.value);
+                      // console.log(e.target.value)
+                      setOnReset(false);
+                    }}
                     rows={5}
                     wrapperClassName="w-full !gap-0"
                     onReset={onReset}
                   />
-                
                 </Wrapper>
 
-              {/* <Error fluid className={`${!submitErr && "invisible"}`}>
-                {submitErr}
-              </Error> */}
-              <Button
-                className="!absolute top-0 right-0 !bg-transparent !rounded-none !border-none !my-0"
-                onClick={() => {
-                  // handleCancelEdit();
-                  handleCloseComment()
-                }}
-              >
-                <AiOutlineClose className="text-[32px]  text-black " />
-              </Button>
+                <Error fluid className={`${!err && "invisible"}`}>
+                  {err}
+                </Error>
+              </Wrapper>
             </>
           }
           className={` px-4 sm:px-12 `}
-          formClassName="items-center !h-auto w-full !rounded-none md:!py-2 md:!px-4 md:!rounded-lg relative"
+          formClassName="items-center !h-auto w-full !rounded-none md:!py-4 md:!px-4 md:!rounded-lg relative !block !p-2"
           titleClassName="text-[20px]"
           childrenClassName="!mt-0 w-full"
-        />}
-        {showDeleteCommentPopup && (
-              <Popup
-                title="Are you sure to remove this comment?"
-                onClose={() => handleCloseComment()}
-                actions={[
-                  {
-                    title: "cancel",
-                    danger: false,
-                    action: () => handleCloseComment(),
-                  },
-                  {
-                    title: "delete",
-                    danger: true,
-                    action: () => handleDeleteComment(selectedComment),
-                  },
-                ]}
-              />
-            )}
+        />
+      )}
+      {showDeleteCommentPopup && (
+        <Popup
+          title="Are you sure to remove this comment?"
+          onClose={() => handleCloseComment()}
+          actions={[
+            {
+              title: "cancel",
+              danger: false,
+              action: () => handleCloseComment(),
+            },
+            {
+              title: "delete",
+              danger: true,
+              action: () => handleDeleteComment(selectedComment),
+            },
+          ]}
+        />
+      )}
     </Screen>
   );
 };

@@ -13,6 +13,7 @@ import {
 import Button from "@/components/button/Button";
 import { MdDelete } from "react-icons/md";
 import commentApi from "@/api/commentApi";
+import { toast } from "react-hot-toast";
 // import commentApi from "api/commentApi";
 
 const CommentCard = ({
@@ -26,18 +27,33 @@ const CommentCard = ({
 }) => {
   const [likeComment, setLikeComment] = useState(comment.likedByUser ? true : false);
   const [likeCommentCount, setLikeCommentCount] = useState(comment?.heartCount)
-
+  const notifyErr = (err) => toast.error(err)
+  const [lastFetch, setLastFetch] = useState(Date.now())
   const handleLikeComment = (id) => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 2000) return;
+    setLastFetch(now);
+
     const likeOrUnlikeComment = async () => {
       if (!likeComment) {
         console.log("call like");
         // await locationApi.like(id);
-        await commentApi.likeComment(id)
+        const response = await commentApi.likeComment(id)
+        if (response.status !== 200){
+          notifyErr(response.data.message)
+          return
+        }
         setLikeComment((prev) => !prev);
         setLikeCommentCount((prev) => prev + 1);
       } else {
         console.log("call unlike");
-        await commentApi.unLikeComment(id)
+        const response = await commentApi.unLikeComment(id)
+        if (response.status !== 200){
+          notifyErr(response.data.message)
+          return
+        }
         // await locationApi.unlike(id);
         setLikeComment((prev) => !prev);
         setLikeCommentCount((prev) => prev - 1);

@@ -12,10 +12,10 @@ const commentApi = {
     } catch (error) {
       console.log(error.response.data.message);
       // setSubmitErr((prev) => [...prev, error.response.data.message]);
-      return error.response.data.message;
+      return error.response;
     }
   },
-  async createComment(data) {
+  async createComment(data, setErr) {
     try {
       const url = `/comment`;
       const response = await axiosClient.post(url, data, {
@@ -25,11 +25,11 @@ const commentApi = {
       return response;
     } catch (error) {
       console.log(error.response.data.message);
-      // setSubmitErr((prev) => [...prev, error.response.data.message]);
-      return error.response.data.message;
+      setErr(error.response.data.message);
+      return error.response;
     }
   },
-  async deleteComment(id) {
+  async deleteComment(id, notifyErr) {
     try {
       const url = `/comment/${id}`;
       const response = await axiosClient.delete(url, {
@@ -40,10 +40,11 @@ const commentApi = {
     } catch (error) {
       console.log(error.response.data.message);
       // setSubmitErr((prev) => [...prev, error.response.data.message]);
-      return error.response.data.message;
+      notifyErr(error.response.data.message)
+      return error.response;
     }
   },
-  async updateComment(data) {
+  async updateComment(data, setErr) {
     try {
       const url = `/comment`;
       const response = await axiosClient.patch(url, data, {
@@ -53,8 +54,8 @@ const commentApi = {
       return response;
     } catch (error) {
       console.log(error.response.data.message);
-      // setSubmitErr((prev) => [...prev, error.response.data.message]);
-      return error.response.data.message;
+      setErr(error.response.data.message);
+      return error.response;
     }
   },
   async likeComment(id) {
@@ -68,7 +69,7 @@ const commentApi = {
     } catch (error) {
       console.log(error.response.data.message);
       // setSubmitErr((prev) => [...prev, error.response.data.message]);
-      return error.response.data.message;
+      return error.response;
     }
   },
   async unLikeComment(id) {
@@ -82,7 +83,7 @@ const commentApi = {
     } catch (error) {
       console.log(error.response.data.message);
       // setSubmitErr((prev) => [...prev, error.response.data.message]);
-      return error.response.data.message;
+      return error.response;
     }
   },
 };
