@@ -27,12 +27,21 @@ import Deleting from "@/components/loading/Deleting";
 import toast, { Toaster } from "react-hot-toast";
 import { GoLocation } from "react-icons/go";
 import { changeLocation } from "@/features/locationSlice";
+import { FaRegCommentDots } from "react-icons/fa";
+import Input from "@/components/form/Input";
+import send from "@/assets/send.svg";
+import TextArea from "@/components/form/TextArea";
+import commentApi from "@/api/commentApi";
+import User from "@/components/user/User";
+import { AiOutlineClose } from "react-icons/ai";
+import Error from "@/components/form/Error";
 
 const DetailsScreen = () => {
   const notifyDelete = () => toast.success("Successfully delete!");
   const { id } = useParams();
   const { user } = useSelector((state) => state.user);
 
+  const commentRef = useRef();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [locationDetails, setLocationDetails] = useState();
@@ -47,8 +56,19 @@ const DetailsScreen = () => {
   const [likedCount, setLikedCount] = useState(0);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [comment, setComment] = useState("");
+  const [onReset, setOnReset] = useState(false);
+  const [commentsNextCursor, setCommentsNextCursor] = useState();
+  const [selectedComment, setSelectedComment] = useState();
+  const [showComment, setShowComment] = useState(false);
+  const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
+  const [showEditCommentPopup, setShowEditCommentPopup] = useState(false);
+  const [err, setErr] = useState()
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+
+  const notifyErr = (err) => toast.error(err) 
+  const notifySuccess = (success) => toast.success(success)
 
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
@@ -61,6 +81,7 @@ const DetailsScreen = () => {
   });
 
   let likedListRef = useRef();
+  const commentsRef = useRef();
 
   useEffect(() => {
     const getLocationDetails = async () => {
@@ -94,6 +115,61 @@ const DetailsScreen = () => {
   }, [showLikedUsers]);
 
   useEffect(() => {}, [showLikedUsers]);
+
+  useEffect(() => {
+    const getComments = async () => {
+      const response = await commentApi.getCommentsOfLocation(id);
+      localStorage.setItem("comments", JSON.stringify(response.data.results));
+      setComments(response.data.results);
+      localStorage.setItem("commentsNextCursor", response.data.next_cursor);
+      setCommentsNextCursor(response.data.next_cursor);
+      console.log(response);
+    };
+    getComments();
+  }, []);
+
+  const loadMoreData = async (nextCursor) => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 1000) return;
+    if (nextCursor === null) return;
+
+    setLastFetch(now);
+    const response = await commentApi.getCommentsOfLocation(id, nextCursor);
+    const newComments = [
+      ...JSON.parse(localStorage.getItem("comments")),
+      ...response.data.results,
+    ];
+    localStorage.setItem("comments", JSON.stringify(newComments));
+    setComments((prev) => [...prev, ...response.data.results]);
+    localStorage.setItem("commentsNextCursor", response.data.next_cursor);
+    setCommentsNextCursor(response.data.next_cursor);
+  };
+
+  useEffect(() => {
+    if (!commentsRef.current) return;
+    const handleScroll = async () => {
+      const { scrollTop, scrollHeight, clientHeight } = commentsRef.current;
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 100;
+
+      if (isScrolledToBottom) {
+        console.log("Scrolled to bottom!");
+        const nextCursor = localStorage.getItem("commentsNextCursor");
+        if (nextCursor.length > 10) {
+          await loadMoreData(nextCursor);
+        }
+      }
+    };
+
+    commentsRef.current.addEventListener("scroll", handleScroll);
+    return () => {
+      if (commentsRef.current) {
+        // Remember to remove event listener when the component is unmounted
+        commentsRef.current.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [loadMoreData]);
 
   const handleLikeClick = () => {
     const handleLikeOrUnlike = async () => {
@@ -163,13 +239,104 @@ const DetailsScreen = () => {
     return formattedNum;
   }
 
+  // COMMENTS FUNCTIONS
+  const handleThreeDotsClick = (id) => {
+    if (selectedComment === id) {
+      setSelectedComment();
+      return;
+    }
+    setSelectedComment(id);
+  };
+
+  const handleCloseComment = () => {
+    setShowComment(false);
+    setShowDeleteCommentPopup(false);
+    setSelectedComment();
+    setErr()
+    setShowEditCommentPopup(false);
+    setComment("");
+  };
+
+  const handleEditComment = () => {
+    const editComment = async () => {
+      const response = await commentApi.updateComment({
+        commentId: selectedComment,
+        content: comment,
+      }, setErr);
+      console.log(response);
+      if (response.status !== 200){
+        return
+      }
+      notifySuccess("Successfully update!")
+      setComments((prev) => {
+        return prev.map((comment) =>
+          comment._id === response.data._id
+            ? { user: user, ...response.data }
+            : comment
+        );
+      });
+      setSelectedComment();
+      setComment("")
+      setShowEditCommentPopup(false);
+    };
+    editComment();
+  };
+
+  const handleDeleteComment = (id) => {
+    const deleteComment = async () => {
+      const response = await commentApi.deleteComment(id, notifyErr);
+      if (response.status !== 200){
+        setShowDeleteCommentPopup(false)
+        setSelectedComment();
+        return
+      }
+      const newList = comments.filter((comment) => comment._id !== id);
+      notifySuccess("Successfully delete!")
+      setComments(newList);
+      localStorage.setItem("comments", JSON.stringify(newList));
+      setSelectedComment();
+      setShowDeleteCommentPopup(false);
+    };
+    deleteComment();
+  };
+
+  const handleAddComment = (e) => {
+    console.log(comment.includes("\n"));
+    if (comment.trim() === "" || !comment) return;
+    setOnReset(true);
+
+    const postComment = async () => {
+      const response = await commentApi.createComment({
+        locationId: id,
+        content: comment,
+      }, setErr);
+      console.log(response);
+      notifySuccess("Successfully post!")
+      setComments((prev) => [
+        { user: user, likedByUser: false, ...response.data },
+        ...prev,
+      ]);
+      setComment("");
+      commentRef.current.value = "";
+      commentRef.current.blur();
+      setShowComment(false);
+    };
+    postComment();
+    // setOnReset(false)
+  };
+
+  useEffect(() => {
+    if (onReset) {
+      commentsRef.current.scrollTop = 0;
+    }
+  }, [onReset]);
   return (
-    <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
+    <Screen className="flex flex-col gap-5 px-3 py-4 !mb-2 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       {loading ? (
         <LoadingScreen />
       ) : (
         <>
-          <Wrapper col="true" className="px-3">
+          <Wrapper col="true" className="">
             {deleting && (
               <Portal>
                 <Wrapper className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
@@ -180,7 +347,7 @@ const DetailsScreen = () => {
 
             <Wrapper className="items-center justify-between">
               <Wrapper
-                className="items-center my-3 !gap-5"
+                className="items-center my-2 !gap-2 truncate"
                 onClick={() =>
                   navigate(
                     user._id === locationDetails.user._id
@@ -190,28 +357,32 @@ const DetailsScreen = () => {
                 }
               >
                 <Image
-                  className="w-[75px] h-[75px] !rounded-full"
+                  className="w-[60px] h-[60px] !rounded-full"
                   src={locationDetails?.user?.imageUrl}
                 />
-                <Wrapper col="true">
-                  <Heading>{locationDetails?.user?.username}</Heading>
-                  <Text>{locationDetails?.user?.email}</Text>
+                <Wrapper col="true" className="truncate">
+                  <Heading className="text-lg w-fit truncate">
+                    {locationDetails?.user?.username}
+                  </Heading>
+                  <Text className="text-md sm:!text-[16px] truncate">
+                    {locationDetails?.user?.email}
+                  </Text>
                 </Wrapper>
               </Wrapper>
-
+              {/* <User user={locationDetails?.user} src={locationDetails?.user?.imageUrl} /> */}
               {locationDetails.userId === user._id && (
-                <Wrapper>
+                <Wrapper className="">
                   <Button
                     onClick={() => {
                       navigate(`/location/edit/${id}`);
                     }}
-                    className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl"
+                    className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-sm sm:!text-xl !p-2 sm:!py-3 sm:!px-4"
                   >
                     <BsFillPencilFill />
                   </Button>
                   <Button
                     onClick={() => setShowDeletePopup(true)}
-                    className="!bg-danger !bg-opacity-40 !text-danger !text-xl"
+                    className="!bg-danger !bg-opacity-40 !text-danger !text-sm sm:!text-xl !p-2 sm:!py-3 sm:!px-4"
                   >
                     <MdDelete />
                   </Button>
@@ -310,7 +481,7 @@ const DetailsScreen = () => {
               <Image className="rounded-none" src={DEFAULT.location} />
             )}
 
-            <Wrapper col="true" className="flex-1 px-3 py-2">
+            <Wrapper col="true" className="flex-1">
               <Wrapper className="items-center justify-between">
                 <Category
                   onClick={() => {}}
@@ -365,9 +536,9 @@ const DetailsScreen = () => {
                   )}
               </Wrapper>
 
-              <Wrapper col="true" className="flex-1 my-4">
+              <Wrapper col="true" className="flex-1 my-4 !gap-4">
                 {/* Like + Save */}
-                <Wrapper className="!gap-5 pb-5 border-b border-b-neutral-200 w-full items-center">
+                <Wrapper className="!gap-2 pb-4 border-b border-b-neutral-200 w-full items-center">
                   {liked ? (
                     <BsFillHeartFill
                       className="text-lg cursor-pointer text-secondary-400"
@@ -384,8 +555,15 @@ const DetailsScreen = () => {
                     className="cursor-pointer"
                     onClick={() => setShowLikedUsers(true)}
                   >
-                    {likedCount} liked this post
+                    {likedCount}
                   </Text>
+
+                  <Wrapper className="!gap-2 items-center px-4 cursor-pointer">
+                    <FaRegCommentDots className="text-lg" />
+                    <Text className="" onClick={() => setShowComment(true)}>
+                      Write comments
+                    </Text>
+                  </Wrapper>
                 </Wrapper>
 
                 {showLikedUsers && (
@@ -491,15 +669,135 @@ const DetailsScreen = () => {
                 )}
 
                 {/* Comment */}
-                <Wrapper col="true" className="xl:h-[300px] xl:overflow-y-auto">
-                  <CommentCard />
-                  <CommentCard />
-                  <CommentCard />
+                <Wrapper
+                  _ref={commentsRef}
+                  col="true"
+                  className="max-h-[200px] sm:max-h-[400px] pr-2 !gap-10 overflow-y-auto pb-8"
+                >
+                  {comments.length > 0 ? (
+                    comments.map((comment) => {
+                      return (
+                        <CommentCard
+                          key={comment._id}
+                          currentUser={user}
+                          user={comment.user}
+                          comment={comment}
+                          onDelete={() => setShowDeleteCommentPopup(true)}
+                          onEdit={() => {
+                            setShowEditCommentPopup(true);
+                            setComment(comment.content);
+                          }}
+                          onThreeDotsClick={handleThreeDotsClick}
+                          selectedComment={selectedComment}
+                          notifyErr={notifyErr}
+                        />
+                      );
+                    })
+                  ) : (
+                    <Heading>
+                      {" "}
+                      Become the first person comment in this location
+                    </Heading>
+                  )}
                 </Wrapper>
               </Wrapper>
             </Wrapper>
           </Wrapper>
         </>
+      )}
+
+      {(showComment || showEditCommentPopup) && (
+        <Popup
+          onClose={() => {
+            // closePopup();
+            handleCloseComment();
+          }}
+          actions={[
+            {
+              title: "cancel",
+              danger: true,
+              buttonClassName:
+                " !h-fit !mt-4 !mb-0 !bg-white border-primary-400 border !text-primary-400 hover:!bg-danger hover:!border-danger hover:opacity-100 hover:!text-white",
+              action: handleCloseComment,
+            },
+            {
+              title: "Post",
+              danger: true,
+              buttonClassName:
+                "!h-fit !mt-4 !mb-0 !bg-primary-400 !border-primary-400 border hover:opacity-70",
+              action: !showEditCommentPopup
+                ? handleAddComment
+                : handleEditComment,
+            },
+          ]}
+          // title="Search location"
+          children={
+            <>
+              <Wrapper className="justify-end">
+                <Button
+                  className="!p-0 !bg-transparent !rounded-none !border-none !my-0"
+                  onClick={() => {
+                    // handleCancelEdit();
+                    handleCloseComment();
+                  }}
+                >
+                  <AiOutlineClose className="text-[32px]  text-black " />
+                </Button>
+              </Wrapper>
+
+              <Wrapper col="true" className="gap-4">
+                <Heading className="text-center !text-[28px]">
+                  {showEditCommentPopup ? "Edit comment" : "Write comment"}
+                </Heading>
+
+                <Wrapper className="rounded-lg items-end w-full">
+                  <TextArea
+                    placeholder="Write your comment..."
+                    className="!py-4 !px-3 focus:!ring-0 max-h-[150px] !h-[150px] w-full"
+                    type="text"
+                    value={comment}
+                    _ref={commentRef}
+                    icon={send}
+                    onChange={(e) => {
+                      setComment(e.target.value);
+                      // console.log(e.target.value)
+                      setOnReset(false);
+                    }}
+                    rows={5}
+                    wrapperClassName="w-full !gap-0"
+                    onReset={onReset}
+                  />
+                </Wrapper>
+
+                <Error fluid className={`${!err && "invisible"}`}>
+                  {err}
+                </Error>
+              </Wrapper>
+            </>
+          }
+          className={` px-4 sm:px-12 `}
+          formClassName="items-center !h-auto w-full !rounded-none md:!py-4 md:!px-4 md:!rounded-lg relative !block !p-2"
+          titleClassName="text-[20px]"
+          childrenClassName="!mt-0 w-full"
+        />
+      )}
+      {showDeleteCommentPopup && (
+        <Popup
+          title="Are you sure to remove this comment?"
+          onClose={() => handleCloseComment()}
+          actions={[
+            {
+              title: "cancel",
+              danger: false,
+              action: () => handleCloseComment(),
+            },
+            {
+              title: "delete",
+              danger: true,
+              action: () => handleDeleteComment(selectedComment),
+            },
+          ]}
+        />
       )}
     </Screen>
   );
