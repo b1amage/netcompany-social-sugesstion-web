@@ -21,6 +21,7 @@ import { toast } from "react-hot-toast";
 import Loading from "@/components/loading/Loading";
 // import useItineraryDragAndDrop from "@/hooks/useItineraryDragAndDrop";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { set } from "lodash";
 
 const ItineraryDetailsScreen = () => {
   const locationsRef = useRef();
@@ -72,13 +73,17 @@ const ItineraryDetailsScreen = () => {
 
   useEffect(() => {
     if (!locationsRef.current) return;
-    if (isUpload && screen.width >= 660) {
-      locationsRef.current.scrollTop = locationsRef.current.scrollHeight;
-    } else {
-      document.documentElement.scrollTop =
+    if (isUpload) {
+      if (screen.width >= 660) {
+        locationsRef.current.scrollTop = locationsRef.current.scrollHeight;
+      }
+      else {
+        document.documentElement.scrollTop =
         document.documentElement.scrollHeight;
-    }
-  }, [isUpload, locations]);
+      }
+    } 
+    setIsUpload(false)
+  }, [locations]);
 
   const handleSaveLocation = () => {
     setSubmitErr();
