@@ -275,28 +275,42 @@ const UpdateEventScreen = () => {
     console.log(event);
     const apiHandle = async () => {
       // check
+      const newError = {};
       if (event.name.length === 0 || !event.name) {
-        setError({ ...error, name: "Cannot be null" });
-        return;
+        // setError({ ...error, name: "Cannot be null" });
+        newError.name = "Cannot be null";
+        // return;
       }
 
       if (event.guests.length === 0) {
-        setError({ ...error, guests: "Must be at least 1 guest" });
-        return;
+        // setError({ ...error, guests: "Must be at least 1 guest" });
+        newError.guests = "Must be at least 1 guest";
+        // return;
       }
 
       if (event.locationId.length === 0 || !event.locationId) {
-        setError({ ...error, locationId: "Cannot be null" });
-        return;
+        // setError({ ...error, locationId: "Cannot be null" });
+        newError.locationId = "Cannot be null";
+
+        // return;
       }
 
       if (!event.startDate) {
-        setError({ ...error, startDate: "Cannot be null" });
-        return;
+        // setError({ ...error, startDate: "Cannot be null" });
+        newError.startDate = "Cannot be null";
+
+        // return;
       }
 
       if (!event.allDay && (!event.startTime.hours || !event.endTime.hours)) {
-        setError({ ...error, startTime: "Cannot be null" });
+        // setError({ ...error, startTime: "Cannot be null" });
+        newError.startTime = "Cannot be null";
+
+        // return;
+      }
+
+      if (JSON.stringify(newError) !== "{}") {
+        setError({ ...error, ...newError });
         return;
       }
 
