@@ -7,6 +7,7 @@ import Wrapper from "@/components/wrapper/Wrapper";
 import Heading from "@/components/typography/Heading";
 import { useNavigate } from "react-router-dom";
 import { DEFAULT } from "@/constants/defaultData";
+import { convertDateTimeGMT } from "@/helpers/dateTimeHelpers";
 
 const EventCard = (props) => {
   function parseDate(isoString) {
@@ -16,9 +17,10 @@ const EventCard = (props) => {
 
     return [`${dd}/${mm}/${yyyy}`, `${hh}:${mi}`];
   }
+
   const { event, className } = props;
-  const { imageUrls, name, location, startDateTime, _id } = event;
-  const [date, time] = parseDate(startDateTime);
+  const { imageUrls, name, location, startDateTime, _id, allDay } = event;
+  const [date, time] = convertDateTimeGMT(startDateTime).split(",");
   const navigate = useNavigate();
   return (
     <Wrapper
@@ -57,7 +59,7 @@ const EventCard = (props) => {
 
         <Wrapper className="items-center gap-2">
           <AiOutlineClockCircle />
-          <Text>{time}</Text>
+          <Text>{allDay ? "All Day" : time}</Text>
         </Wrapper>
       </Wrapper>
     </Wrapper>
