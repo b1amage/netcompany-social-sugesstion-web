@@ -184,17 +184,17 @@ const CreateEventScreen = () => {
 
   const handleEndTimeChange = (e) => {
     if (!event.startDate) {
-      setError({ ...error, startTime: "Choose a date first" });
+      setError({ ...error, endTime: "Choose a date first" });
       return;
     }
 
     if (!event.startTime) {
-      setError({ ...error, startTime: "Choose a start time first" });
+      setError({ ...error, endTime: "Choose a start time first" });
       return;
     }
 
     if (isDateToday(event.startDate) && isInvalidTime(e.target.value)) {
-      setError({ ...error, startTime: "Cannot choose time from past!" });
+      setError({ ...error, endTime: "Cannot choose time from past!" });
       return;
     }
 
@@ -258,9 +258,19 @@ const CreateEventScreen = () => {
         // return;
       }
 
-      if (!event.allDay && (!event.startTime.hours || !event.endTime.hours)) {
+      if (
+        !event.allDay &&
+        (!event.startTime.hours || !event.startTime.minutes)
+      ) {
         // setError({ ...error, startTime: "Cannot be null" });
         newError.startTime = "Cannot be null";
+
+        // return;
+      }
+
+      if (!event.allDay && (!event.endTime.hours || !event.endTime.minutes)) {
+        // setError({ ...error, startTime: "Cannot be null" });
+        newError.endTime = "Cannot be null";
 
         // return;
       }
@@ -407,6 +417,7 @@ const CreateEventScreen = () => {
             {/* guest list */}
             <Wrapper col="true">
               <InputWithDropdown
+                inputClassName={error.guests && inputState.err}
                 label="Guest List"
                 required
                 handleGet={handleGetGuestSuggestList}
@@ -461,6 +472,7 @@ const CreateEventScreen = () => {
           <Wrapper col="true" className="!w-full !gap-1">
             <Wrapper className="!flex-col md:items-center md:!flex-row">
               <InputWithDropdown
+                inputClassName={error.locationId && inputState.err}
                 label="Location"
                 required
                 handleGet={handleGetLocationSuggestList}
@@ -504,16 +516,28 @@ const CreateEventScreen = () => {
                   <Wrapper col="true">
                     <Wrapper>
                       <TimePicker
-                        err={null}
-                        className="!w-[120px]"
+                        // err={error.startTime}
+                        className={`!w-[120px] ${
+                          error.startTime === null
+                            ? ""
+                            : error.startTime === ""
+                            ? inputState.success
+                            : inputState.err
+                        }`}
                         label="Start time"
                         required
                         onChange={handleTimeChange}
                       />
                       {/* duration */}
                       <TimePicker
-                        err={null}
-                        className="!w-[120px]"
+                        // err={error.endTime}
+                        className={`!w-[120px] ${
+                          error.endTime === null
+                            ? ""
+                            : error.endTime === ""
+                            ? inputState.success
+                            : inputState.err
+                        }`}
                         label="End time"
                         required
                         onChange={handleEndTimeChange}
