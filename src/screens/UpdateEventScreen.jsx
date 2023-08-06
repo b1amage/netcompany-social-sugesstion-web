@@ -41,6 +41,8 @@ import {
 import Loading from "@/components/loading/Loading";
 import { convertDateTime } from "@/helpers/dateTimeHelpers";
 import { calculateEndTime } from "@/helpers/dateTimeHelpers";
+import { isTimeInPast } from "@/helpers/dateTimeHelpers";
+import { convertDateTimeGMT } from "@/helpers/dateTimeHelpers";
 
 function parseDate(isoString) {
   const [datePart, timePart] = isoString.split("T");
@@ -48,6 +50,19 @@ function parseDate(isoString) {
   const [hh, mi] = timePart.split(":");
 
   return [`${yyyy}-${mm}-${dd}`, `${hh}:${mi}`];
+}
+
+function convertDateFormat(inputDate) {
+  const parts = inputDate.split("/");
+  if (parts.length !== 3) {
+    throw new Error("Invalid date format");
+  }
+
+  const day = parts[0];
+  const month = parts[1];
+  const year = parts[2];
+
+  return `${year}-${month}-${day}`;
 }
 
 const UpdateEventScreen = () => {
@@ -365,7 +380,11 @@ const UpdateEventScreen = () => {
       newEvent.imageUrls = imageUrls;
       newEvent.eventId = id;
 
-      const [date, time] = parseDate(newEvent.startDate);
+      console.log("new start date", convertDateTimeGMT(newEvent.startDate));
+
+      const date = convertDateFormat(
+        convertDateTimeGMT(newEvent.startDate).split(",")[0]
+      );
       console.log(date);
 
       const newDate = new Date(date);
@@ -374,11 +393,14 @@ const UpdateEventScreen = () => {
       const luxonDateTime = DateTime.fromJSDate(newDate);
       const newStartDate = luxonDateTime.toISO();
 
+      console.log(newStartDate);
+
       newEvent.startDate = newStartDate;
 
       setEvent(newEvent);
 
       console.log(newEvent);
+      // return;
 
       const response = await eventApi.updateEvent(newEvent);
 
@@ -613,7 +635,7 @@ const UpdateEventScreen = () => {
                         <Wrapper>
                           <TimePicker
                             err={null}
-                            className="!w-[120px]"
+                            className="!w-[140px]"
                             label="Start time"
                             required
                             onChange={handleTimeChange}
@@ -630,7 +652,7 @@ const UpdateEventScreen = () => {
                           {/* endtime */}
                           <TimePicker
                             err={null}
-                            className="!w-[120px]"
+                            className="!w-[140px]"
                             label="End time"
                             required
                             onChange={handleEndTimeChange}
