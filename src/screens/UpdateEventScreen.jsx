@@ -42,6 +42,14 @@ import Loading from "@/components/loading/Loading";
 import { convertDateTime } from "@/helpers/dateTimeHelpers";
 import { calculateEndTime } from "@/helpers/dateTimeHelpers";
 
+function parseDate(isoString) {
+  const [datePart, timePart] = isoString.split("T");
+  const [yyyy, mm, dd] = datePart.split("-");
+  const [hh, mi] = timePart.split(":");
+
+  return [`${yyyy}-${mm}-${dd}`, `${hh}:${mi}`];
+}
+
 const UpdateEventScreen = () => {
   const defaultEventError = useMemo(() => defaultCreateEventError, []);
 
@@ -207,6 +215,11 @@ const UpdateEventScreen = () => {
   };
 
   const handleTimeChange = (e) => {
+    // const luxonDateTime = DateTime.fromJSDate(chosenDate);
+    // const newStartDate = luxonDateTime.toISO();
+    // setEvent({ ...event, startDate: newStartDate });
+    // setError({ ...error, startDate: "" });
+
     if (!event.startDate) {
       setError({ ...error, startTime: "Choose a date first" });
       return;
@@ -217,12 +230,38 @@ const UpdateEventScreen = () => {
       return;
     }
 
+    if (
+      !isEndTimeAfterStartTime(
+        e.target.value,
+        `${event.endTime.hours}:${event.endTime.minutes}`
+      )
+    ) {
+      setError({
+        ...error,
+        startTime: "Invalid time",
+      });
+      return;
+    }
+
     const [hours, minutes] = e.target.value.split(":");
 
-    setEvent({
-      ...event,
-      startTime: { hours: hours * 1, minutes: minutes * 1 },
-    });
+    if (event.endTime.hours) {
+      const duration = calculateDuration(
+        e.target.value,
+        `${event.endTime.hours}:${event.endTime.minutes}`
+      );
+
+      setEvent({
+        ...event,
+        startTime: { hours: hours * 1, minutes: minutes * 1 },
+        duration,
+      });
+    } else {
+      setEvent({
+        ...event,
+        startTime: { hours: hours * 1, minutes: minutes * 1 },
+      });
+    }
 
     setError({ ...error, startTime: "" });
   };
@@ -325,7 +364,21 @@ const UpdateEventScreen = () => {
 
       newEvent.imageUrls = imageUrls;
       newEvent.eventId = id;
+
+      const [date, time] = parseDate(newEvent.startDate);
+      console.log(date);
+
+      const newDate = new Date(date);
+      newDate.setHours(0, 0, 0, 0);
+
+      const luxonDateTime = DateTime.fromJSDate(newDate);
+      const newStartDate = luxonDateTime.toISO();
+
+      newEvent.startDate = newStartDate;
+
       setEvent(newEvent);
+
+      console.log(newEvent);
 
       const response = await eventApi.updateEvent(newEvent);
 
@@ -622,9 +675,9 @@ const UpdateEventScreen = () => {
                   setEvent({
                     ...event,
                     allDay: !oldAllDay,
-                    startTime: { hours: 0, minutes: 0 },
-                    endTime: { hours: 0, minutes: 0 },
-                    duration: { hours: 0, minutes: 0 },
+                    startTime: { hours: 23, minutes: 58 },
+                    endTime: { hours: 23, minutes: 59 },
+                    duration: { hours: 0, minutes: 1 },
                   });
                 }}
               />

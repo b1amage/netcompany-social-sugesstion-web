@@ -258,7 +258,7 @@ const EventDetailsScreen = () => {
               <Wrapper col="true" className="!gap-0">
                 <SubHeading className="flex items-center gap-1 !text-black">
                   <AiFillCalendar />
-                  Start at {startDt}
+                  Start at {event.allDay ? startDt.split(",")[0] : startDt}
                 </SubHeading>
 
                 <SubHeading className="flex items-center gap-1">
