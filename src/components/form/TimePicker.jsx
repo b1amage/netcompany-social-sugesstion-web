@@ -2,7 +2,22 @@ import React from "react";
 import Label from "./Label";
 import Error from "./Error";
 
-const TimePicker = ({ onChange, label, id, required, err, defaultValue }) => {
+const TimePicker = ({
+  onChange,
+  label,
+  id,
+  required,
+  err,
+  defaultValue,
+  className,
+}) => {
+  // ${
+  //         err === null
+  //           ? "!border-primary-400 focus:ring-primary-400"
+  //           : err === ""
+  //           ? "!border-green-500 focus:ring-green-500"
+  //           : "!border-danger focus:ring-danger"
+  //       }
   const handleKeyDown = (e) => {
     e.preventDefault();
   };
@@ -14,13 +29,7 @@ const TimePicker = ({ onChange, label, id, required, err, defaultValue }) => {
       <input
         value={defaultValue}
         onKeyDown={handleKeyDown}
-        className={`${
-          err === null
-            ? "!border-primary-400 focus:ring-primary-400"
-            : err === ""
-            ? "!border-green-500 focus:ring-green-500"
-            : "!border-danger focus:ring-danger"
-        } w-full px-4 py-3 text-sm transition-all duration-300 border rounded-lg outline-none focus:ring-1 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100`}
+        className={`border-primary-400 focus:ring-primary-400 w-full px-4 py-3 text-sm transition-all duration-300 border rounded-lg outline-none focus:ring-1 md:text-base md:px-6 md:py-4 focus:border-primary-100 placeholder:text-secondary-100 ${className}`}
         id="time"
         type="time"
         onChange={onChange}
