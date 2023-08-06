@@ -24,10 +24,10 @@ const CommentCard = ({
   onEdit,
   onThreeDotsClick,
   selectedComment,
+  notifyErr
 }) => {
   const [likeComment, setLikeComment] = useState(comment.likedByUser ? true : false);
   const [likeCommentCount, setLikeCommentCount] = useState(comment?.heartCount)
-  const notifyErr = (err) => toast.error(err)
   const [lastFetch, setLastFetch] = useState(Date.now())
   const handleLikeComment = (id) => {
     const now = Date.now();
@@ -42,7 +42,7 @@ const CommentCard = ({
         // await locationApi.like(id);
         const response = await commentApi.likeComment(id)
         if (response.status !== 200){
-          notifyErr(response.data.message)
+          notifyErr("This comment does not exist!")
           return
         }
         setLikeComment((prev) => !prev);
@@ -51,7 +51,7 @@ const CommentCard = ({
         console.log("call unlike");
         const response = await commentApi.unLikeComment(id)
         if (response.status !== 200){
-          notifyErr(response.data.message)
+          notifyErr("This comment does not exist!")
           return
         }
         // await locationApi.unlike(id);

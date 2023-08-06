@@ -267,7 +267,7 @@ const DetailsScreen = () => {
       if (response.status !== 200){
         return
       }
-      notifySuccess("Update successfully!")
+      notifySuccess("Successfully update!")
       setComments((prev) => {
         return prev.map((comment) =>
           comment._id === response.data._id
@@ -276,6 +276,7 @@ const DetailsScreen = () => {
         );
       });
       setSelectedComment();
+      setComment("")
       setShowEditCommentPopup(false);
     };
     editComment();
@@ -289,6 +290,7 @@ const DetailsScreen = () => {
         return
       }
       const newList = comments.filter((comment) => comment._id !== id);
+      notifySuccess("Successfully delete!")
       setComments(newList);
       localStorage.setItem("comments", JSON.stringify(newList));
       setSelectedComment();
@@ -308,7 +310,7 @@ const DetailsScreen = () => {
         content: comment,
       }, setErr);
       console.log(response);
-      notifySuccess("Post successfully!")
+      notifySuccess("Successfully post!")
       setComments((prev) => [
         { user: user, likedByUser: false, ...response.data },
         ...prev,
@@ -672,7 +674,7 @@ const DetailsScreen = () => {
                   className="max-h-[200px] sm:max-h-[400px] pr-2 !gap-10 overflow-y-auto pb-8"
                 >
                   {comments.length > 0 ? (
-                    comments.map((comment, index) => {
+                    comments.map((comment) => {
                       return (
                         <CommentCard
                           key={comment._id}
@@ -686,6 +688,7 @@ const DetailsScreen = () => {
                           }}
                           onThreeDotsClick={handleThreeDotsClick}
                           selectedComment={selectedComment}
+                          notifyErr={notifyErr}
                         />
                       );
                     })

@@ -33,7 +33,7 @@ const ItinerariesScreen = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [isCreateLoading, setIsCreateLoading] = useState(false)
 
-  const notifyCreate = () => toast.success("Successfully create!!");
+  const notifyCreate = () => toast.success("Successfully create!");
 
   const notifyDelete = () => toast.success("Successfully delete!");
 
