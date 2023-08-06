@@ -174,7 +174,9 @@ const SearchLocationScreen = () => {
 
   return (
     <Screen className="flex flex-col gap-4 px-3 py-4 lg:gap-8 md:px-6 md:py-5 lg:px-20 !h-screen !overflow-hidden !min-h-0">
-      <SubNavbar user={user} searchFilter searchBar displayAddress/>
+      <SubNavbar user={user} searchFilter searchBar displayAddress onClear={() => {
+        setSearchParams({searchInput: ""})
+      }}/>
       <Wrapper className="items-center">
       {searchParams.get("searchInput") !== "" ? (
         locations.length > 0 ? (

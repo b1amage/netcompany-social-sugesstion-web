@@ -1,7 +1,4 @@
-import Input from "@/components/form/Input";
 import React, { useEffect, useState } from "react";
-import search from "@/assets/search.svg";
-import Image from "@/components/image/Image";
 
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ROUTE from "@/constants/routes";
@@ -10,7 +7,7 @@ import { toast } from "react-hot-toast";
 import InputWithDropdown from "@/components/form/InputWithDropdown";
 import { GoLocation } from "react-icons/go";
 import eventApi from "@/api/eventApi";
-const SearchBar = ({ className, wrapperClassName }) => {
+const SearchBar = ({ onClear, className, wrapperClassName }) => {
   const [value, setValue] = useState();
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [searchParams, setSearchParams] = useSearchParams();
@@ -87,7 +84,7 @@ const SearchBar = ({ className, wrapperClassName }) => {
         inputClassName="!h-[60px] !rounded-2xl"
         wrapperClassName=""
         hideError="true"
-        onClear={() => {}}
+        onClear={onClear}
         onEnter={handleKeyPress}
         searchQuery={searchParams.get("searchInput")}
         dropdownClassName="dropdown"
