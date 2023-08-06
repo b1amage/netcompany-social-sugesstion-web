@@ -71,8 +71,10 @@ const ItineraryDetailsScreen = () => {
   }, [id, isUpdating]);
 
   useEffect(() => {
-    if (isUpload){
+    if (isUpload && screen.width >= 660){
       locationsRef.current.scrollTop = locationsRef.current.scrollHeight
+    } else{
+      document.documentElement.scrollTop = document.documentElement.scrollHeight
     }
   }, [isUpload, locations])
 
