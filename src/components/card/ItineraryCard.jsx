@@ -22,8 +22,8 @@ const ItineraryCard = ({itinerary, setSelectedItinerary, setShowDeletePopup, edi
   }
 
   return (
-    <Wrapper className="duration-300 border md:hover:border-b-4 md:hover:border-r-4 md:hover:border-b-neutral-600 md:hover:border-r-neutral-600 md:hover:drop-shadow relative bg-neutral-300 rounded-2xl justify-around items-center px-4 w-full h-[168px]">
-        <Wrapper onClick={handleWrapperClick} col="true" className="py-6 w-full break-all cursor-pointer">
+    <Wrapper onClick={handleWrapperClick} className="duration-300 border md:hover:border-b-4 md:hover:border-r-4 md:hover:border-b-neutral-600 md:hover:border-r-neutral-600 md:hover:drop-shadow relative bg-neutral-300 rounded-2xl justify-around items-center px-4 w-full h-[168px]">
+        <Wrapper  col="true" className="py-6 w-full break-all cursor-pointer">
           <Heading className="break-words text-[16px] md:!text-[20px]">{name}</Heading>
           <Heading className="!text-[14px] md:!text-[16px] relative flex gap-4"> {numOfLocations} Locations {hasDeletedLocation && <Note wrapperClassName="relative" buttonClassName="!relative !z-[1000]" noteClassName="left-0 !h-auto !w-[160px] sm:!w-[200px] md:!w-[320px] !z-[7900]" iconClassName="!w-[40px] md:!w-[20px]" src={warning} description="This itinerary contains a deleted location!" />}</Heading>
         </Wrapper>
