@@ -69,6 +69,7 @@ const AllEventsScreen = () => {
       localStorage.setItem("eventsNextCursor", response.data.next_cursor);
       setEvents(response.data.results);
       console.log(response);
+      setInput("");
       setLoading(false);
     };
 
@@ -144,12 +145,31 @@ const AllEventsScreen = () => {
         />
       </Wrapper>
 
-      <Heading className="!capitalize">
-        {input === ""
-          ? `Results for ${type} Events`
-          : type === "all"
-          ? `Results for "${input}"`
-          : `Results ${type} Events with keywords "${input}"`}
+      <Heading className="!capitalize flex gap-1 items-center">
+        {input !== "" && events.length === 0 ? (
+          <>
+            <Text>No results for keywords</Text>{" "}
+            <Text className="!text-red-400 text-[16px]">{input}</Text>
+          </>
+        ) : input === "" && events.length === 0 ? (
+          <>
+            <Text>No results</Text>
+          </>
+        ) : input === "" ? (
+          <>
+            <Text>{type}</Text> <Text>Events</Text>
+          </>
+        ) : type === "all" ? (
+          <>
+            <Text>All Events with keywords</Text>{" "}
+            <Text className="!text-red-400 text-[16px]">{input}</Text>
+          </>
+        ) : (
+          <>
+            <Text>{type} Events with keywords</Text>{" "}
+            <Text className="!text-red-400  text-[16px]">{input}</Text>
+          </>
+        )}
       </Heading>
 
       {loading ? (

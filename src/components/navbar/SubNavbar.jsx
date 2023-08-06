@@ -21,7 +21,7 @@ import Button from "@/components/button/Button";
 import { useNavigate } from "react-router-dom";
 import useViewport from "@/hooks/useScreenWidth";
 
-const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName, displayAddress }) => {
+const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName, displayAddress, onClear }) => {
   const dispatch = useDispatch();
   const { isAdded, isShowFilter, currentLocation } = useSelector(
     ({ navbar, currentLocation }) => {
@@ -101,7 +101,7 @@ const SubNavbar = ({ user, homeFilter, searchFilter, searchBar, wrapperClassName
               </Heading>
             </Button>
           )}
-          {searchBar && <SearchBar className="w-full" />}
+          {searchBar && <SearchBar onClear={onClear} className="w-full" />}
           {isShowFilter && (
             <Wrapper className="items-center w-fit justify-end gap-4">
               <Filter

@@ -55,7 +55,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const handler = (e) => {
-      e.preventDefault();
+      // e.preventDefault();
       // console.log("Reload")
       localStorage.removeItem("gpsPermission");
       localStorage.removeItem("isGetCurrentLocation");
@@ -299,7 +299,7 @@ const HomeScreen = () => {
       <Screen className="flex flex-col gap-5 px-3 py-4 lg:gap-10 md:px-6 md:py-5 lg:px-20">
         <>
           <Wrapper col="true" className="gap-4 md:items-center">
-            <SubNavbar user={user} searchBar displayAddress />
+            <SubNavbar user={user} searchBar displayAddress onClear={()=>{}}/>
           </Wrapper>
 
           <OnBoardingSlider />

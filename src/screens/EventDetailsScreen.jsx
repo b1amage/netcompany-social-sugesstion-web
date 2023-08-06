@@ -27,6 +27,7 @@ import Note from "@/components/note/Note";
 import warning from "@/assets/warning.svg";
 
 import { isTimeInPast } from "@/helpers/dateTimeHelpers";
+import { convertDateTimeGMT } from "@/helpers/dateTimeHelpers";
 
 function convertDateTime(dateTimeString) {
   var date = new Date(dateTimeString);
@@ -50,6 +51,7 @@ const EventDetailsScreen = () => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const [startDt, setStartDt] = useState("");
 
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
@@ -75,8 +77,9 @@ const EventDetailsScreen = () => {
       const response = await eventApi.getEvent(id);
       setEvent(response.data);
       console.log(response.data.description);
+      setStartDt(convertDateTimeGMT(response.data.startDateTime));
 
-      setIsInvalid(isTimeInPast(response.data.startDateTime));
+      setIsInvalid(isTimeInPast(response.data.expiredAt));
       setLoading(false);
     };
     handleApi();
@@ -255,7 +258,7 @@ const EventDetailsScreen = () => {
               <Wrapper col="true" className="!gap-0">
                 <SubHeading className="flex items-center gap-1 !text-black">
                   <AiFillCalendar />
-                  Start at {convertDateTime(event.startDateTime)}
+                  Start at {startDt}
                 </SubHeading>
 
                 <SubHeading className="flex items-center gap-1">
