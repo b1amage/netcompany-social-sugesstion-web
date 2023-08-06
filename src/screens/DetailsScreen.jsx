@@ -258,6 +258,11 @@ const DetailsScreen = () => {
   };
 
   const handleEditComment = () => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 2000) return;
+    setLastFetch(now);
     const editComment = async () => {
       const response = await commentApi.updateComment({
         commentId: selectedComment,
@@ -300,7 +305,7 @@ const DetailsScreen = () => {
     deleteComment();
   };
 
-  const handleAddComment = (e) => {
+  const handleAddComment = (e) => {    
     console.log(comment.includes("\n"));
     if (comment.trim() === "" || !comment) return;
     setOnReset(true);

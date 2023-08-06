@@ -1,32 +1,9 @@
 import Wrapper from "@/components/wrapper/Wrapper";
-import React, { useEffect, useImperativeHandle, useRef } from "react";
+import React from "react";
 import Label from "./Label";
 import Error from "./Error";
 
-const TextArea = ({ label, required, id, err, placeholder, onChange, rows, className, value, _ref, wrapperClassName, onReset }) => {
-
-  useEffect(() => {
-      _ref.current.style.height = 'auto';
-      _ref.current.style.height = _ref.current.scrollHeight + 'px';
-  
-  }, [_ref.current]);
-  
-  useEffect(() => {
-    const currentHeight = parseInt(_ref.current.style.height, 10);
-    // console.log(currentHeight)
-    if (currentHeight <= 150){
-      _ref.current.style.overflowY = "hidden"
-    } else{
-      _ref.current.style.overflowY = "auto"
-    }
-    
-  }, [value])
-
-  useEffect(() => {
-    if (onReset){
-      _ref.current.style.height = 'auto';
-    }
-  },[onReset])
+const TextArea = ({ label, required, id, err, placeholder, onChange, rows, _ref,className, value, wrapperClassName, }) => {
   return (
     <Wrapper col="true" className={`${wrapperClassName}`}>
       <Label htmlFor={id} required={required}>
@@ -42,12 +19,10 @@ const TextArea = ({ label, required, id, err, placeholder, onChange, rows, class
         placeholder={placeholder}
         onChange={e => {
           onChange(e);
-          e.target.style.height = 'auto';
-          e.target.style.height = e.target.scrollHeight + 'px';
         }}
       >
       </textarea>
-      
+
       {err && err !== "" && <Error fluid>{err}</Error>}
     </Wrapper>
   );
