@@ -494,7 +494,7 @@ const LocationForm = ({
               >
                 <Wrapper className="flex-col gap-2 w-full">
                   <Label>Weekday:</Label>
-                  <Wrapper className="gap-2 w-full justify-between">
+                  <Wrapper className="gap-4 w-full">
                     <Time
                       required
                       label="Open time:"
@@ -523,7 +523,7 @@ const LocationForm = ({
                     Weekend: <i>(Optional)</i>
                   </Label>
 
-                  <Wrapper className="gap-2 w-full justify-between">
+                  <Wrapper className="gap-4 w-full">
                     <Time
                       label="Open time:"
                       onChange={(e) => {

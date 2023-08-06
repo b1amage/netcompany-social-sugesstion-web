@@ -109,7 +109,7 @@ const Filter = ({ wrapperClassName, className, searchFilter, homeFilter }) => {
               alt="filter"
               className="w-[28px] h-[28px]"
             />
-            {(categoryValue || (openTime && closeTime && dayType)) && (
+            {(categoryValue || (openTime && closeTime && dayType) || (searchDistanceValue !== JSON.parse(localStorage.getItem("user")).searchDistance)) && (
               <AiFillCheckCircle
                 className={`text-black absolute bottom-2 left-1/2 translate-x-1/4`}
               />

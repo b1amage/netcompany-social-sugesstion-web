@@ -23,7 +23,7 @@ import Loading from "@/components/loading/Loading";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const ItineraryDetailsScreen = () => {
-  const locationsRef = useRef()
+  const locationsRef = useRef();
   const { user } = useSelector((state) => state.user);
   const [hideSuggestions, setHideSuggestions] = useState(true);
   const [itinerary, setItinerary] = useState();
@@ -41,7 +41,7 @@ const ItineraryDetailsScreen = () => {
   const [suggestNextCursor, setSuggestNextCursor] = useState();
   const [submitErr, setSubmitErr] = useState("");
   const { id } = useParams();
-  
+
   // const [showFloatButton, setShowFloatButton] = useState(false)
 
   // const buttonRef = useRef()
@@ -52,7 +52,7 @@ const ItineraryDetailsScreen = () => {
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    document.documentElement.style.scrollBehavior="unset"
+    document.documentElement.style.scrollBehavior = "unset";
     const getDetails = async () => {
       const response = await itineraryApi.getItineraryDetails(
         id,
@@ -71,16 +71,18 @@ const ItineraryDetailsScreen = () => {
   }, [id, isUpdating]);
 
   useEffect(() => {
-    if (isUpload && screen.width >= 660){
-      locationsRef.current.scrollTop = locationsRef.current.scrollHeight
-    } else{
-      document.documentElement.scrollTop = document.documentElement.scrollHeight
+    if (!locationsRef.current) return;
+    if (isUpload && screen.width >= 660) {
+      locationsRef.current.scrollTop = locationsRef.current.scrollHeight;
+    } else {
+      document.documentElement.scrollTop =
+        document.documentElement.scrollHeight;
     }
-  }, [isUpload, locations])
+  }, [isUpload, locations]);
 
   const handleSaveLocation = () => {
     setSubmitErr();
-    setIsUpload(false)
+    setIsUpload(false);
     if (!selectedSuggestLocation) {
       setSubmitErr("Please enter a location!");
       return;
@@ -115,7 +117,7 @@ const ItineraryDetailsScreen = () => {
       setNote("");
       setShowCreatePopup(false);
       setIsUpdating(false);
-      setIsUpload(true)
+      setIsUpload(true);
     };
     handleCreate();
   };
@@ -160,7 +162,7 @@ const ItineraryDetailsScreen = () => {
 
   const handlePlaceSelect = (location) => {
     setHideSuggestions(true);
-    setSubmitErr()
+    setSubmitErr();
     setSelectedSuggestLocation(location);
   };
 
@@ -187,13 +189,13 @@ const ItineraryDetailsScreen = () => {
     const [removed] = newItems.splice(source.index, 1);
     newItems.splice(destination.index, 0, removed);
     setLocations(newItems);
-    const updateList = newItems.map(item => item._id)
+    const updateList = newItems.map((item) => item._id);
     // console.log(updateList)
     itineraryApi.updateLocationsOrder({
       itineraryId: id,
       savedLocations: updateList,
     });
-  }
+  };
 
   return (
     <Screen className="flex flex-col sm:!mb-2 px-3 py-4 gap-6 md:gap-4 md:px-6 lg:!mt-[120px] md:py-5 !rounded-none lg:px-20 !min-h-0">
@@ -219,54 +221,58 @@ const ItineraryDetailsScreen = () => {
                   alt="add"
                   className="w-[28px] h-[28px]"
                 />
-                <Heading className={` text-white !text-[20px] hidden  sm:block`}>
+                <Heading
+                  className={` text-white !text-[20px] hidden  sm:block`}
+                >
                   Add new location
                 </Heading>
               </Button>
             </Wrapper>
-            <Wrapper _ref={locationsRef} className="sm:max-h-[350px] sm:overflow-y-auto">
             {!isLoading ? (
               locations?.length > 0 ? (
                 <Droppable droppableId="locations">
                   {(provided) => (
+                    <Wrapper _ref={locationsRef} col="true" className="sm:max-h-[350px] sm:overflow-y-auto">
+
                     <ul
                       className="leading-10 list-none "
                       {...provided.droppableProps}
                       ref={provided.innerRef}
                     >
-                      {locations.map((location, index) => {
-                        return (
-                          <Draggable
-                            key={location._id}
-                            draggableId={location._id}
-                            index={index}
-                          >
-                            {(provided) => (
-                              <li
-                                className="mt-4"
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                              >
-                                <PlaceCard
-                                  // _ref={provided.innerRef}
-                                  index={index}
-                                  provided={provided}
-                                  key={location._id}
-                                  place={location}
-                                  className=""
-                                  setShowDeletePopup={setShowDeletePopup}
-                                  setSelectedLocation={
-                                    setSelectedSuggestLocation
-                                  }
-                                />
-                              </li>
-                            )}
-                          </Draggable>
-                        );
-                      })}
-                      {provided.placeholder}
-                    </ul>
+                        {locations.map((location, index) => {
+                          return (
+                            <Draggable
+                              key={location._id}
+                              draggableId={location._id}
+                              index={index}
+                            >
+                              {(provided) => (
+                                <li
+                                  className="mt-4"
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <PlaceCard
+                                    // _ref={provided.innerRef}
+                                    index={index}
+                                    provided={provided}
+                                    key={location._id}
+                                    place={location}
+                                    className=""
+                                    setShowDeletePopup={setShowDeletePopup}
+                                    setSelectedLocation={
+                                      setSelectedSuggestLocation
+                                    }
+                                  />
+                                </li>
+                              )}
+                            </Draggable>
+                          );
+                        })}
+                        {provided.placeholder}
+                      
+                    </ul></Wrapper>
                   )}
                 </Droppable>
               ) : (
@@ -279,8 +285,7 @@ const ItineraryDetailsScreen = () => {
                 <Loading />
               </Wrapper>
             )}
-            </Wrapper>
-            
+
             {showCreatePopup && (
               <Popup
                 onClose={() => {
@@ -320,7 +325,7 @@ const ItineraryDetailsScreen = () => {
                         searchQuery={selectedSuggestLocation?.location?.name}
                         fieldToDisplay="name"
                         onClear={() => {
-                          setSubmitErr()
+                          setSubmitErr();
                         }}
                         subFieldToDisplay="address"
                         icon={<GoLocation />}
