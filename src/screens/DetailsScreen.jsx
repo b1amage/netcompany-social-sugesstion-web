@@ -287,6 +287,7 @@ const DetailsScreen = () => {
       const response = await commentApi.deleteComment(id, notifyErr);
       if (response.status !== 200){
         setShowDeleteCommentPopup(false)
+        setSelectedComment();
         return
       }
       const newList = comments.filter((comment) => comment._id !== id);
