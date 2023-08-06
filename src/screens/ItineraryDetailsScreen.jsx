@@ -23,7 +23,7 @@ import Loading from "@/components/loading/Loading";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const ItineraryDetailsScreen = () => {
-  const CARD_HEIGHT = 1000000000;
+  const locationsRef = useRef()
   const { user } = useSelector((state) => state.user);
   const [hideSuggestions, setHideSuggestions] = useState(true);
   const [itinerary, setItinerary] = useState();
@@ -72,7 +72,7 @@ const ItineraryDetailsScreen = () => {
 
   useEffect(() => {
     if (isUpload){
-      document.documentElement.scrollTop=document.documentElement.scrollHeight
+      locationsRef.current.scrollTop = locationsRef.current.scrollHeight
     }
   }, [isUpload, locations])
 
@@ -128,7 +128,7 @@ const ItineraryDetailsScreen = () => {
       const newList = locations.filter(
         (item) => item._id !== selectedSuggestLocation._id
       );
-      localStorage.setItem("itineraryLocation", JSON.stringify(newList));
+      localStorage.setItem("itineraryLocations", JSON.stringify(newList));
       setLocations(newList);
       setSelectedSuggestLocation();
       setNote("");
@@ -193,30 +193,8 @@ const ItineraryDetailsScreen = () => {
     });
   }
 
-  // useEffect(() => {
-  //   if (!buttonRef.current) return;
-  //   // console.log(buttonRef.current.getBoundingClientRect())
-  //   const {height, y} = buttonRef.current.getBoundingClientRect()
-  //   const checkScrollTop = () => {
-  //     // console.log(document.documentElement.scrollTop);
-  //     if(document.documentElement.scrollTop >= y - height){
-  //       setShowFloatButton(true)
-  //     } else{
-  //       setShowFloatButton(false)
-  //     }
-  //   };
-  
-  //   window.addEventListener('scroll', checkScrollTop);
-  
-  //   return () => {
-  //     window.removeEventListener('scroll', checkScrollTop);
-  //   };
-
-  //   // if (document.documentElement.scrollTop > buttonRef.current.getBoundingClientRect())
-  // }, [])
-
   return (
-    <Screen className="flex flex-col !mb-2 px-3 py-4 gap-6 md:gap-4 md:px-6 lg:!mt-[120px] md:py-5 !rounded-none lg:px-20 !min-h-0">
+    <Screen className="flex flex-col sm:!mb-2 px-3 py-4 gap-6 md:gap-4 md:px-6 lg:!mt-[120px] md:py-5 !rounded-none lg:px-20 !min-h-0">
       <DragDropContext onDragStart={() => {}} onDragEnd={handleOnDragEnd}>
         {!availableErr ? (
           <>
@@ -244,12 +222,13 @@ const ItineraryDetailsScreen = () => {
                 </Heading>
               </Button>
             </Wrapper>
+            <Wrapper _ref={locationsRef} className="sm:max-h-[350px] sm:overflow-y-auto">
             {!isLoading ? (
               locations?.length > 0 ? (
                 <Droppable droppableId="locations">
                   {(provided) => (
                     <ul
-                      className="leading-10 list-none sm:max-h-[350px] sm:overflow-y-scroll"
+                      className="leading-10 list-none "
                       {...provided.droppableProps}
                       ref={provided.innerRef}
                     >
@@ -298,6 +277,8 @@ const ItineraryDetailsScreen = () => {
                 <Loading />
               </Wrapper>
             )}
+            </Wrapper>
+            
             {showCreatePopup && (
               <Popup
                 onClose={() => {
