@@ -92,3 +92,16 @@ export function isTimeInPast(timeString) {
     return false;
   }
 }
+
+export function convertDateTimeGMT(dateTimeString) {
+  var date = new Date(dateTimeString);
+
+  var day = ("0" + date.getDate()).slice(-2);
+  var month = ("0" + (date.getMonth() + 1)).slice(-2); // Months are zero indexed
+  var year = date.getFullYear();
+
+  var hours = ("0" + date.getHours()).slice(-2);
+  var minutes = ("0" + date.getMinutes()).slice(-2);
+
+  return `${day}/${month}/${year}, ${hours}:${minutes}`;
+}
