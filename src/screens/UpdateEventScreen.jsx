@@ -622,9 +622,9 @@ const UpdateEventScreen = () => {
                   setEvent({
                     ...event,
                     allDay: !oldAllDay,
-                    startTime: { hours: 0, minutes: 0 },
-                    endTime: { hours: 0, minutes: 0 },
-                    duration: { hours: 0, minutes: 0 },
+                    startTime: { hours: 23, minutes: 58 },
+                    endTime: { hours: 23, minutes: 59 },
+                    duration: { hours: 0, minutes: 1 },
                   });
                 }}
               />
