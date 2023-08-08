@@ -65,11 +65,11 @@ const DetailsScreen = () => {
   const [showComment, setShowComment] = useState(false);
   const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
   const [showEditCommentPopup, setShowEditCommentPopup] = useState(false);
-  const [err, setErr] = useState()
+  const [err, setErr] = useState();
   const navigate = useNavigate();
 
-  const notifyErr = (err) => toast.error(err) 
-  const notifySuccess = (success) => toast.success(success)
+  const notifyErr = (err) => toast.error(err);
+  const notifySuccess = (success) => toast.success(success);
 
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
@@ -149,11 +149,10 @@ const DetailsScreen = () => {
   };
 
   useEffect(() => {
-    if (!commentsRef.current) return;
     const handleScroll = async () => {
-      const { scrollTop, scrollHeight, clientHeight } = commentsRef.current;
-      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 100;
-
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      // console.log(scrollTop)
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 200;
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
         const nextCursor = localStorage.getItem("commentsNextCursor");
@@ -163,12 +162,12 @@ const DetailsScreen = () => {
       }
     };
 
-    commentsRef.current.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      if (commentsRef.current) {
+      // if (document.documentElement) {
         // Remember to remove event listener when the component is unmounted
-        commentsRef.current.removeEventListener("scroll", handleScroll);
-      }
+        window.removeEventListener("scroll", handleScroll);
+      // }
     };
   }, [loadMoreData]);
 
@@ -253,8 +252,8 @@ const DetailsScreen = () => {
     setShowComment(false);
     setShowDeleteCommentPopup(false);
     setSelectedComment();
-    setReplyComment()
-    setErr()
+    setReplyComment();
+    setErr();
     setShowEditCommentPopup(false);
     setComment("");
   };
@@ -266,15 +265,18 @@ const DetailsScreen = () => {
     if (now - lastFetch < 2000) return;
     setLastFetch(now);
     const editComment = async () => {
-      const response = await commentApi.updateComment({
-        commentId: selectedComment,
-        content: comment,
-      }, setErr);
+      const response = await commentApi.updateComment(
+        {
+          commentId: selectedComment,
+          content: comment,
+        },
+        setErr
+      );
       console.log(response);
-      if (response.status !== 200){
-        return
+      if (response.status !== 200) {
+        return;
       }
-      notifySuccess("Successfully update!")
+      notifySuccess("Successfully update!");
       setComments((prev) => {
         return prev.map((comment) =>
           comment._id === response.data._id
@@ -283,7 +285,7 @@ const DetailsScreen = () => {
         );
       });
       setSelectedComment();
-      setComment("")
+      setComment("");
       setShowEditCommentPopup(false);
     };
     editComment();
@@ -292,13 +294,13 @@ const DetailsScreen = () => {
   const handleDeleteComment = (id) => {
     const deleteComment = async () => {
       const response = await commentApi.deleteComment(id, notifyErr);
-      if (response.status !== 200){
-        setShowDeleteCommentPopup(false)
+      if (response.status !== 200) {
+        setShowDeleteCommentPopup(false);
         setSelectedComment();
-        return
+        return;
       }
       const newList = comments.filter((comment) => comment._id !== id);
-      notifySuccess("Successfully delete!")
+      notifySuccess("Successfully delete!");
       setComments(newList);
       localStorage.setItem("comments", JSON.stringify(newList));
       setSelectedComment();
@@ -307,18 +309,21 @@ const DetailsScreen = () => {
     deleteComment();
   };
 
-  const handleAddComment = () => {    
+  const handleAddComment = () => {
     console.log(comment.includes("\n"));
     if (comment.trim() === "" || !comment) return;
     setOnReset(true);
 
     const postComment = async () => {
-      const response = await commentApi.createComment({
-        locationId: id,
-        content: comment,
-      }, setErr);
+      const response = await commentApi.createComment(
+        {
+          locationId: id,
+          content: comment,
+        },
+        setErr
+      );
       console.log(response);
-      notifySuccess("Successfully post!")
+      notifySuccess("Successfully post!");
       setComments((prev) => [
         { user: user, likedByUser: false, ...response.data },
         ...prev,
@@ -334,23 +339,25 @@ const DetailsScreen = () => {
 
   // REPLY FUNCTIONS
   const onReplyButtonClick = (id) => {
-    setReplyComment(id)
-    setComment(`@${comments.filter(comment => comment._id === id)[0].user.username}`)
-  }
+    setReplyComment(id);
+    setComment(
+      `@${comments.filter((comment) => comment._id === id)[0].user.username}`
+    );
+  };
 
   useEffect(() => {
     if (onReset) {
-      commentsRef.current.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
     }
   }, [onReset]);
 
   return (
-    <Screen className="flex flex-col gap-5 px-3 py-4 !mb-2 lg:gap-10 md:px-6 md:py-5 lg:px-20">
+    <Screen _ref={commentsRef} className="flex flex-col gap-5 px-3 py-4 !mb-2 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       {loading ? (
         <LoadingScreen />
       ) : (
         <>
-          <Wrapper col="true" className="">
+          <Wrapper  col="true" className="">
             {deleting && (
               <Portal>
                 <Wrapper className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
@@ -683,11 +690,7 @@ const DetailsScreen = () => {
                 )}
 
                 {/* Comment */}
-                <Wrapper
-                  _ref={commentsRef}
-                  col="true"
-                  className="max-h-[200px] sm:max-h-[400px] pr-2 !gap-10 overflow-y-auto pb-8"
-                >
+                <Wrapper col="true" className="!gap-10 pb-8">
                   {comments.length > 0 ? (
                     comments.map((comment) => {
                       return (
@@ -762,7 +765,15 @@ const DetailsScreen = () => {
 
               <Wrapper col="true" className="gap-4">
                 <Heading className="text-center !text-[28px]">
-                  {showEditCommentPopup ? "Edit comment" : replyComment ? `Reply comment of ${comments.filter(comment => comment._id === replyComment)[0].user.username}` : "Write comment"}
+                  {showEditCommentPopup
+                    ? "Edit comment"
+                    : replyComment
+                    ? `Reply comment of ${
+                        comments.filter(
+                          (comment) => comment._id === replyComment
+                        )[0].user.username
+                      }`
+                    : "Write comment"}
                 </Heading>
 
                 <Wrapper className="rounded-lg items-end w-full">

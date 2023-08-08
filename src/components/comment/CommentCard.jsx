@@ -14,6 +14,7 @@ import Button from "@/components/button/Button";
 import { MdDelete } from "react-icons/md";
 import commentApi from "@/api/commentApi";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 // import commentApi from "api/commentApi";
 
 const CommentCard = ({
@@ -30,6 +31,7 @@ const CommentCard = ({
   const [likeComment, setLikeComment] = useState(comment.likedByUser ? true : false);
   const [likeCommentCount, setLikeCommentCount] = useState(comment?.heartCount)
   const [lastFetch, setLastFetch] = useState(Date.now())
+  const navigate = useNavigate()
   const handleLikeComment = (id) => {
     const now = Date.now();
 
@@ -65,7 +67,7 @@ const CommentCard = ({
   return (
     <Wrapper col="true" className="relative rounded-2xl !gap-2">
       <Wrapper className="items-center justify-between relative">
-        <Wrapper className="items-center truncate">
+        <Wrapper onClick={() => {navigate(comment.userId === JSON.parse(localStorage.getItem("user"))._id ? `/profile` : `/user/${comment.userId}`)}} className="items-center truncate">
           <Image
             imageClassName=""
             className="w-[32px] h-[32px] sm:w-10 sm:h-10 !rounded-full"
@@ -90,26 +92,27 @@ const CommentCard = ({
         {selectedComment === comment._id && (
           <Wrapper
             col="true"
-            className="bg-white absolute bottom-0 right-0 !w-fit translate-y-full"
+            className="bg-white absolute bottom-0 right-2 !w-fit translate-y-full !gap-0 drop-shadow-lg"
           >
-            <Button
-              onClick={(e) => {
+            <Wrapper
+              onClick={() => {
                 onEdit();
               }}
-              className="!bg-primary-400 text-[12px] sm:text-[14px] flex gap-2 !justify-start !bg-opacity-40 !text-primary-400 !h-fit !p-2 !my-0"
+              className=" cursor-pointer text-[12px] sm:text-[14px] flex gap-2 justify-start text-primary-400 !h-fit !p-2 !my-0 items-center hover:bg-primary-400 hover:text-white duration-300"
             >
               <BsFillPencilFill className="" />
               Edit
-            </Button>
-            <Button
+            </Wrapper>
+
+            <Wrapper
               onClick={() => {
                 onDelete();
               }}
-              className="!bg-danger text-[12px] sm:text-[14px] flex gap-2 !bg-opacity-40 !justify-start !text-danger !h-fit !p-2 !my-0"
+              className="cursor-pointer text-[12px] sm:text-[14px] flex gap-2 justify-start text-primary-400 !h-fit !p-2 !my-0 items-center hover:bg-danger hover:text-white duration-300"
             >
               <MdDelete className="" />
               Delete
-            </Button>
+            </Wrapper>
           </Wrapper>
         )}
       </Wrapper>
@@ -126,7 +129,7 @@ const CommentCard = ({
         {/* like, unlike, reply */}
         <Wrapper className="items-center !gap-2">
           <Wrapper className="items-center !gap-2">
-            <BsReplyAll className="text-xl" onClick={() => onReply(comment._id)} />
+            <BsReplyAll className="text-xl cursor-pointer" onClick={() => onReply(comment._id)} />
             <Text>{comment?.numOfReplies}</Text>
           </Wrapper>
           <Wrapper className="items-center !gap-2">
@@ -137,7 +140,7 @@ const CommentCard = ({
               />
             ) : (
               <BsHeart
-                className="text-lg"
+                className="text-lg cursor-pointer"
                 onClick={() => handleLikeComment(comment._id)}
               />
             )}
