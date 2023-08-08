@@ -24,7 +24,8 @@ const CommentCard = ({
   onEdit,
   onThreeDotsClick,
   selectedComment,
-  notifyErr
+  notifyErr,
+  onReply
 }) => {
   const [likeComment, setLikeComment] = useState(comment.likedByUser ? true : false);
   const [likeCommentCount, setLikeCommentCount] = useState(comment?.heartCount)
@@ -125,7 +126,7 @@ const CommentCard = ({
         {/* like, unlike, reply */}
         <Wrapper className="items-center !gap-2">
           <Wrapper className="items-center !gap-2">
-            <BsReplyAll className="text-xl" />
+            <BsReplyAll className="text-xl" onClick={() => onReply(comment._id)} />
             <Text>{comment?.numOfReplies}</Text>
           </Wrapper>
           <Wrapper className="items-center !gap-2">

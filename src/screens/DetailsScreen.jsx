@@ -61,6 +61,7 @@ const DetailsScreen = () => {
   const [onReset, setOnReset] = useState(false);
   const [commentsNextCursor, setCommentsNextCursor] = useState();
   const [selectedComment, setSelectedComment] = useState();
+  const [replyComment, setReplyComment] = useState();
   const [showComment, setShowComment] = useState(false);
   const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
   const [showEditCommentPopup, setShowEditCommentPopup] = useState(false);
@@ -252,6 +253,7 @@ const DetailsScreen = () => {
     setShowComment(false);
     setShowDeleteCommentPopup(false);
     setSelectedComment();
+    setReplyComment()
     setErr()
     setShowEditCommentPopup(false);
     setComment("");
@@ -305,7 +307,7 @@ const DetailsScreen = () => {
     deleteComment();
   };
 
-  const handleAddComment = (e) => {    
+  const handleAddComment = () => {    
     console.log(comment.includes("\n"));
     if (comment.trim() === "" || !comment) return;
     setOnReset(true);
@@ -330,11 +332,18 @@ const DetailsScreen = () => {
     // setOnReset(false)
   };
 
+  // REPLY FUNCTIONS
+  const onReplyButtonClick = (id) => {
+    setReplyComment(id)
+    setComment(`@${comments.filter(comment => comment._id === id)[0].user.username}`)
+  }
+
   useEffect(() => {
     if (onReset) {
       commentsRef.current.scrollTop = 0;
     }
   }, [onReset]);
+
   return (
     <Screen className="flex flex-col gap-5 px-3 py-4 !mb-2 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       {loading ? (
@@ -692,6 +701,7 @@ const DetailsScreen = () => {
                             setShowEditCommentPopup(true);
                             setComment(comment.content);
                           }}
+                          onReply={onReplyButtonClick}
                           onThreeDotsClick={handleThreeDotsClick}
                           selectedComment={selectedComment}
                           notifyErr={notifyErr}
@@ -711,7 +721,7 @@ const DetailsScreen = () => {
         </>
       )}
 
-      {(showComment || showEditCommentPopup) && (
+      {(showComment || showEditCommentPopup || replyComment) && (
         <Popup
           onClose={() => {
             // closePopup();
@@ -752,7 +762,7 @@ const DetailsScreen = () => {
 
               <Wrapper col="true" className="gap-4">
                 <Heading className="text-center !text-[28px]">
-                  {showEditCommentPopup ? "Edit comment" : "Write comment"}
+                  {showEditCommentPopup ? "Edit comment" : replyComment ? `Reply comment of ${comments.filter(comment => comment._id === replyComment)[0].user.username}` : "Write comment"}
                 </Heading>
 
                 <Wrapper className="rounded-lg items-end w-full">
@@ -761,8 +771,6 @@ const DetailsScreen = () => {
                     className="!py-4 !px-3 focus:!ring-0 max-h-[150px] !h-[150px] w-full"
                     type="text"
                     value={comment}
-                    _ref={commentRef}
-                    icon={send}
                     onChange={(e) => {
                       setComment(e.target.value);
                       // console.log(e.target.value)
