@@ -240,12 +240,17 @@ const DetailsScreen = () => {
   }
 
   // COMMENTS FUNCTIONS
-  const handleThreeDotsClick = (id) => {
-    if (selectedComment === id) {
+  const handleEditButton = (comment) => {
+    setShowEditCommentPopup(true);
+    setComment(comment.content);
+  }
+
+  const handleThreeDotsClick = (comment) => {
+    if (selectedComment && selectedComment._id === comment._id) {
       setSelectedComment();
       return;
     }
-    setSelectedComment(id);
+    setSelectedComment(comment);
   };
 
   const handleCloseComment = () => {
@@ -264,10 +269,14 @@ const DetailsScreen = () => {
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
     if (now - lastFetch < 2000) return;
     setLastFetch(now);
+    if (comment.trim() === "" || !comment) {
+      setErr("Please enter the comment!")
+      return
+    };
     const editComment = async () => {
       const response = await commentApi.updateComment(
         {
-          commentId: selectedComment,
+          commentId: selectedComment._id,
           content: comment,
         },
         setErr
@@ -311,7 +320,10 @@ const DetailsScreen = () => {
 
   const handleAddComment = () => {
     console.log(comment.includes("\n"));
-    if (comment.trim() === "" || !comment) return;
+    if (comment.trim() === "" || !comment) {
+      setErr("Please enter the comment!")
+      return
+    };
     setOnReset(true);
 
     const postComment = async () => {
@@ -338,11 +350,8 @@ const DetailsScreen = () => {
   };
 
   // REPLY FUNCTIONS
-  const onReplyButtonClick = (id) => {
-    setReplyComment(id);
-    setComment(
-      `@${comments.filter((comment) => comment._id === id)[0].user.username}`
-    );
+  const onReplyButtonClick = (comment) => {
+    setReplyComment(comment);
   };
 
   useEffect(() => {
@@ -700,10 +709,7 @@ const DetailsScreen = () => {
                           user={comment.user}
                           comment={comment}
                           onDelete={() => setShowDeleteCommentPopup(true)}
-                          onEdit={() => {
-                            setShowEditCommentPopup(true);
-                            setComment(comment.content);
-                          }}
+                          onEdit={handleEditButton}
                           onReply={onReplyButtonClick}
                           onThreeDotsClick={handleThreeDotsClick}
                           selectedComment={selectedComment}
@@ -769,15 +775,14 @@ const DetailsScreen = () => {
                     ? "Edit comment"
                     : replyComment
                     ? `Reply comment of ${
-                        comments.filter(
-                          (comment) => comment._id === replyComment
-                        )[0].user.username
+                        replyComment.user.username
                       }`
                     : "Write comment"}
                 </Heading>
 
                 <Wrapper className="rounded-lg items-end w-full">
                   <TextArea
+                    _ref={commentRef}
                     placeholder="Write your comment..."
                     className="!py-4 !px-3 focus:!ring-0 max-h-[150px] !h-[150px] w-full"
                     type="text"
@@ -785,11 +790,9 @@ const DetailsScreen = () => {
                     onChange={(e) => {
                       setComment(e.target.value);
                       // console.log(e.target.value)
-                      setOnReset(false);
                     }}
                     rows={5}
                     wrapperClassName="w-full !gap-0"
-                    onReset={onReset}
                   />
                 </Wrapper>
 
@@ -818,7 +821,7 @@ const DetailsScreen = () => {
             {
               title: "delete",
               danger: true,
-              action: () => handleDeleteComment(selectedComment),
+              action: () => handleDeleteComment(selectedComment._id),
             },
           ]}
         />

@@ -85,18 +85,18 @@ const CommentCard = ({
           <BsThreeDotsVertical
             className="cursor-pointer !text-[16px] sm:!text-[20px]"
             onClick={() => {
-              onThreeDotsClick(comment._id);
+              onThreeDotsClick(comment);
             }}
           />
         )}
-        {selectedComment === comment._id && (
+        {selectedComment && selectedComment._id === comment._id && (
           <Wrapper
             col="true"
             className="bg-white absolute bottom-0 right-2 !w-fit translate-y-full !gap-0 drop-shadow-lg"
           >
             <Wrapper
               onClick={() => {
-                onEdit();
+                onEdit(comment);
               }}
               className=" cursor-pointer text-[12px] sm:text-[14px] flex gap-2 justify-start text-primary-400 !h-fit !p-2 !my-0 items-center hover:bg-primary-400 hover:text-white duration-300"
             >
@@ -129,7 +129,7 @@ const CommentCard = ({
         {/* like, unlike, reply */}
         <Wrapper className="items-center !gap-2">
           <Wrapper className="items-center !gap-2">
-            <BsReplyAll className="text-xl cursor-pointer" onClick={() => onReply(comment._id)} />
+            <BsReplyAll className="text-xl cursor-pointer" onClick={() => onReply(comment)} />
             <Text>{comment?.numOfReplies}</Text>
           </Wrapper>
           <Wrapper className="items-center !gap-2">

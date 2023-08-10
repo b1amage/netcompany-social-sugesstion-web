@@ -1,6 +1,7 @@
 import axiosClient from "@/api/axiosClient";
 
 const commentApi = {
+  // COMMENTS API
   async getCommentsOfLocation(locationId, nextCursor = "") {
     try {
       const url = `/comment/location/${locationId}?next_cursor=${nextCursor}`;
@@ -83,6 +84,51 @@ const commentApi = {
     } catch (error) {
       console.log(error.response.data.message);
       // setSubmitErr((prev) => [...prev, error.response.data.message]);
+      return error.response;
+    }
+  },
+
+  // REPLY API
+  async createReply(data, setErr) {
+    try {
+      const url = `/reply`;
+      const response = await axiosClient.post(url, data, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error.response.data.message);
+      setErr(error.response.data.message);
+      return error.response;
+    }
+  },
+  async getRepliesOfComment(commentId, nextCursor = "") {
+    try {
+      const url = `/reply/comment/${commentId}?next_cursor=${nextCursor}`;
+      const response = await axiosClient.get(url, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error.response.data.message);
+      // setSubmitErr((prev) => [...prev, error.response.data.message]);
+      return error.response;
+    }
+  },
+  async deleteReplyComment(id, notifyErr) {
+    try {
+      const url = `/reply/${id}`;
+      const response = await axiosClient.delete(url, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error.response.data.message);
+      // setSubmitErr((prev) => [...prev, error.response.data.message]);
+      notifyErr(error.response.data.message)
       return error.response;
     }
   },
