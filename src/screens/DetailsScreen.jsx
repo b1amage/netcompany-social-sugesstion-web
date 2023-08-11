@@ -62,9 +62,12 @@ const DetailsScreen = () => {
   const [commentsNextCursor, setCommentsNextCursor] = useState();
   const [selectedComment, setSelectedComment] = useState();
   const [replyComment, setReplyComment] = useState();
-  const [showComment, setShowComment] = useState(false);
+  const [showCommentPopup, setShowCommentPopup] = useState(false);
+  const [showReplyPopup, setShowReplyPopup] = useState(false)
   const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
+  const [showDeleteReplyPopup, setShowDeleteReplyPopup] = useState(false);
   const [showEditCommentPopup, setShowEditCommentPopup] = useState(false);
+  const [isReplyDeleted, setIsReplyDeleted] = useState(false)
   const [err, setErr] = useState();
   const navigate = useNavigate();
 
@@ -254,10 +257,12 @@ const DetailsScreen = () => {
   };
 
   const handleCloseComment = () => {
-    setShowComment(false);
+    setShowCommentPopup(false);
     setShowDeleteCommentPopup(false);
     setSelectedComment();
     setReplyComment();
+    setShowReplyPopup(false)
+    setShowDeleteReplyPopup(false)
     setErr();
     setShowEditCommentPopup(false);
     setComment("");
@@ -342,7 +347,7 @@ const DetailsScreen = () => {
       setComment("");
       commentRef.current.value = "";
       commentRef.current.blur();
-      setShowComment(false);
+      setShowCommentPopup(false);
     };
     postComment();
     // setOnReset(false)
@@ -350,6 +355,7 @@ const DetailsScreen = () => {
 
   // REPLY FUNCTIONS
   const onReplyButtonClick = (comment) => {
+    setShowReplyPopup(true)
     setReplyComment(comment);
   };
 
@@ -357,6 +363,9 @@ const DetailsScreen = () => {
     setReplyComment(comment);
   }
 
+  const onDeleteReplyButtonClick = () => {
+    setShowDeleteReplyPopup(true)
+  }
   const handleAddReplyComment = () => {
     if (comment.trim() === "" || !comment) {
       setErr("Please enter the comment!")
@@ -392,8 +401,22 @@ const DetailsScreen = () => {
     // setOnReset(false)
   };
 
-  const handleDeleteReplyComment = () => {
-
+  const handleDeleteReplyComment = (comment) => {
+    const deleteReply = async() => {
+      const response = await commentApi.deleteReplyComment(comment._id, notifyErr);
+      if (response.status !== 200) {
+        setShowDeleteCommentPopup(false);
+        setReplyComment();
+        setIsReplyDeleted(false)
+        setShowDeleteCommentPopup(false);
+        return;
+      }
+      notifySuccess("Successfully delete!");
+      setReplyComment();
+      setIsReplyDeleted(true)
+      setShowDeleteCommentPopup(false);
+    }
+    deleteReply()
   }
   // useEffect(() => {
   //   if (onReset) {
@@ -631,7 +654,7 @@ const DetailsScreen = () => {
 
                   <Wrapper className="!gap-2 items-center px-4 cursor-pointer">
                     <FaRegCommentDots className="text-lg" />
-                    <Text className="" onClick={() => setShowComment(true)}>
+                    <Text className="" onClick={() => setShowCommentPopup(true)}>
                       Write comments
                     </Text>
                   </Wrapper>
@@ -756,6 +779,9 @@ const DetailsScreen = () => {
                           selectedComment={selectedComment}
                           notifyErr={notifyErr}
                           onThreeDotsReplyClick={handleThreeDotsReplyClick}
+                          isReplyDeleted={isReplyDeleted}
+                          replyComment={replyComment}
+                          onDeleteReply={onDeleteReplyButtonClick}
                         />
                       );
                     })
@@ -772,7 +798,7 @@ const DetailsScreen = () => {
         </>
       )}
 
-      {(showComment || showEditCommentPopup || replyComment) && (
+      {(showCommentPopup || showEditCommentPopup || showReplyPopup) && (
         <Popup
           onClose={() => {
             // closePopup();
@@ -791,7 +817,7 @@ const DetailsScreen = () => {
               danger: true,
               buttonClassName:
                 "!h-fit !mt-4 !mb-0 !bg-primary-400 !border-primary-400 border hover:opacity-70",
-              action: (showEditCommentPopup && handleEditComment) || (showComment && handleAddComment) || (replyComment && handleAddReplyComment)
+              action: (showEditCommentPopup && handleEditComment) || (showCommentPopup && handleAddComment) || (replyComment && handleAddReplyComment)
             },
           ]}
           // title="Search location"
@@ -848,7 +874,7 @@ const DetailsScreen = () => {
           childrenClassName="!mt-0 w-full"
         />
       )}
-      {showDeleteCommentPopup && (
+      {showDeleteCommentPopup || showDeleteReplyPopup && (
         <Popup
           title="Are you sure to remove this comment?"
           onClose={() => handleCloseComment()}
@@ -861,7 +887,7 @@ const DetailsScreen = () => {
             {
               title: "delete",
               danger: true,
-              action: () => handleDeleteComment(selectedComment._id),
+              action: (() => (selectedComment && handleDeleteComment(selectedComment._id)) || (replyComment && handleDeleteReplyComment(replyComment))),
             },
           ]}
         />

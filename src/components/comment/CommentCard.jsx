@@ -1,6 +1,6 @@
 import Wrapper from "@/components/wrapper/Wrapper";
 import Image from "@/components/image/Image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Heading from "@/components/typography/Heading";
 import Text from "@/components/typography/Text";
 import {
@@ -28,6 +28,9 @@ const CommentCard = ({
   notifyErr,
   onReply,
   onThreeDotsReplyClick,
+  isReplyDeleted,
+  onDeleteReply,
+  replyComment
 }) => {
   const [likeComment, setLikeComment] = useState(
     comment.likedByUser ? true : false
@@ -37,6 +40,14 @@ const CommentCard = ({
   const [replies, setReplies] = useState([]);
   const [repliesNextCursor, setRepliesNextCursor] = useState();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if(isReplyDeleted){
+      const newList = replies.filter(reply => reply._id !== comment._id)
+      setReplies(newList)
+    }
+  }, [isReplyDeleted])
+
   const handleLikeComment = (id) => {
     const now = Date.now();
 
@@ -207,13 +218,14 @@ const CommentCard = ({
                   currentUser={currentUser}
                   user={reply.user}
                   comment={reply}
-                  // onDelete={() => setShowDeleteCommentPopup(true)}
+                  onDelete={onDeleteReply}
                   // onEdit={handleEditButton}
                   onReply={onReply}
-                  onThreeDotsClick={() => onThreeDotsReplyClick(comment)}
-                  // selectedComment={selectedComment}
+                  onThreeDotsClick={() => onThreeDotsReplyClick(reply)}
+                  selectedComment={replyComment}
                   // notifyErr={notifyErr}
                   // onThreeDotsReplyClick={handleThreeDotsReplyClick}
+                  // onDeleteReply={onDeleteReply}
                 />
               );
             })}
