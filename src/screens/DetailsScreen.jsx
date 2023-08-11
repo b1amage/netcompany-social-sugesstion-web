@@ -319,7 +319,6 @@ const DetailsScreen = () => {
   };
 
   const handleAddComment = () => {
-    console.log(comment.includes("\n"));
     if (comment.trim() === "" || !comment) {
       setErr("Please enter the comment!")
       return
@@ -354,11 +353,53 @@ const DetailsScreen = () => {
     setReplyComment(comment);
   };
 
-  useEffect(() => {
-    if (onReset) {
-      document.documentElement.scrollTop = 0;
-    }
-  }, [onReset]);
+  const handleThreeDotsReplyClick = (comment) => {
+    setReplyComment(comment);
+  }
+
+  const handleAddReplyComment = () => {
+    if (comment.trim() === "" || !comment) {
+      setErr("Please enter the comment!")
+      return
+    };
+    console.log({
+      targetCommentId: replyComment.targetCommentId ? replyComment.targetCommentId : replyComment._id,
+      targetUserId: replyComment.user._id,
+      content: comment
+    })
+    // return
+    const postReplyComment = async () => {
+      const response = await commentApi.createReply(
+        {
+          targetCommentId: replyComment.targetCommentId ? replyComment.targetCommentId : replyComment._id,
+          targetUserId: replyComment.user._id,
+          content: comment
+        },
+        setErr
+      );
+      console.log(response);
+      notifySuccess("Successfully post!");
+      // setComments((prev) => [
+      //   { user: user, likedByUser: false, ...response.data },
+      //   ...prev,
+      // ]);
+      setComment("");
+      commentRef.current.value = "";
+      commentRef.current.blur();
+      setReplyComment();
+    };
+    postReplyComment();
+    // setOnReset(false)
+  };
+
+  const handleDeleteReplyComment = () => {
+
+  }
+  // useEffect(() => {
+  //   if (onReset) {
+  //     document.documentElement.scrollTop = 0;
+  //   }
+  // }, [onReset]);
 
   return (
     <Screen _ref={commentsRef} className="flex flex-col gap-5 px-3 py-4 !mb-2 lg:gap-10 md:px-6 md:py-5 lg:px-20">
@@ -714,6 +755,7 @@ const DetailsScreen = () => {
                           onThreeDotsClick={handleThreeDotsClick}
                           selectedComment={selectedComment}
                           notifyErr={notifyErr}
+                          onThreeDotsReplyClick={handleThreeDotsReplyClick}
                         />
                       );
                     })
@@ -749,9 +791,7 @@ const DetailsScreen = () => {
               danger: true,
               buttonClassName:
                 "!h-fit !mt-4 !mb-0 !bg-primary-400 !border-primary-400 border hover:opacity-70",
-              action: !showEditCommentPopup
-                ? handleAddComment
-                : handleEditComment,
+              action: (showEditCommentPopup && handleEditComment) || (showComment && handleAddComment) || (replyComment && handleAddReplyComment)
             },
           ]}
           // title="Search location"
