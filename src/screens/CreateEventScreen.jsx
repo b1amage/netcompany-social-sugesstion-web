@@ -336,6 +336,7 @@ const CreateEventScreen = () => {
         setEvent(defaultEvent);
         localStorage.removeItem("eventCreateImages");
         localStorage.removeItem("eventCreate");
+        localStorage.removeItem("createLocationName");
         navigate("/events");
       }
     };
