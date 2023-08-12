@@ -159,6 +159,16 @@ const CreateEventScreen = () => {
     const newStartDate = luxonDateTime.toISO();
     setEvent({ ...event, startDate: newStartDate });
     setError({ ...error, startDate: "" });
+
+    if (error.startTime || error.endTime) {
+      setError({ ...error, startDate: "", startTime: null, endTime: null });
+      setEvent({
+        ...event,
+        startDate: newStartDate,
+        startTime: { hours: null, minutes: null },
+        endTime: { hours: null, minutes: null },
+      });
+    }
   };
 
   const handleTimeChange = (e) => {
@@ -517,7 +527,14 @@ const CreateEventScreen = () => {
                     <Wrapper>
                       <TimePicker
                         // err={error.startTime}
-                        className={`!w-[120px] ${
+                        defaultValue={`${
+                          event.startTime.hours !== null &&
+                          event.startTime.hours.toString().padStart(2, "0")
+                        }:${
+                          event.startTime.minutes !== null &&
+                          event.startTime.minutes.toString().padStart(2, "0")
+                        }`}
+                        className={`!w-[120px] md:!w-[140px] ${
                           error.startTime === null
                             ? ""
                             : error.startTime === ""
@@ -531,7 +548,14 @@ const CreateEventScreen = () => {
                       {/* duration */}
                       <TimePicker
                         // err={error.endTime}
-                        className={`!w-[120px] ${
+                        defaultValue={`${
+                          event.endTime.hours !== null &&
+                          event.endTime.hours.toString().padStart(2, "0")
+                        }:${
+                          event.endTime.minutes !== null &&
+                          event.endTime.minutes.toString().padStart(2, "0")
+                        }`}
+                        className={`!w-[120px] md:!w-[140px] ${
                           error.endTime === null
                             ? ""
                             : error.endTime === ""
