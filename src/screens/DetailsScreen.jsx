@@ -67,6 +67,8 @@ const DetailsScreen = () => {
   const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
   const [showDeleteReplyPopup, setShowDeleteReplyPopup] = useState(false);
   const [showEditCommentPopup, setShowEditCommentPopup] = useState(false);
+  const [showEditReplyPopup, setShowEditReplyPopup] = useState(false);
+
   const [isReplyDeleted, setIsReplyDeleted] = useState(false)
   const [err, setErr] = useState();
   const navigate = useNavigate();
@@ -265,6 +267,7 @@ const DetailsScreen = () => {
     setShowDeleteReplyPopup(false)
     setErr();
     setShowEditCommentPopup(false);
+    setShowEditReplyPopup(false)
     setComment("");
   };
 
@@ -278,6 +281,11 @@ const DetailsScreen = () => {
       setErr("Please enter the comment!")
       return
     };
+    console.log({
+      commentId: selectedComment._id,
+      content: comment,
+    })
+    // return
     const editComment = async () => {
       const response = await commentApi.updateComment(
         {
@@ -366,6 +374,12 @@ const DetailsScreen = () => {
   const onDeleteReplyButtonClick = () => {
     setShowDeleteReplyPopup(true)
   }
+
+  const onEditReplyButtonClick = (reply) => {
+    setShowEditReplyPopup(true)
+    setComment(reply.content)
+  }
+
   const handleAddReplyComment = () => {
     if (comment.trim() === "" || !comment) {
       setErr("Please enter the comment!")
@@ -405,19 +419,60 @@ const DetailsScreen = () => {
     const deleteReply = async() => {
       const response = await commentApi.deleteReplyComment(comment._id, notifyErr);
       if (response.status !== 200) {
-        setShowDeleteCommentPopup(false);
         setReplyComment();
         setIsReplyDeleted(false)
-        setShowDeleteCommentPopup(false);
+        setShowDeleteReplyPopup(false);
         return;
       }
       notifySuccess("Successfully delete!");
       setReplyComment();
       setIsReplyDeleted(true)
-      setShowDeleteCommentPopup(false);
+      setShowDeleteReplyPopup(false);
     }
     deleteReply()
   }
+
+  const handleEditReplyComment = () => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 2000) return;
+    setLastFetch(now);
+    if (comment.trim() === "" || !comment) {
+      setErr("Please enter the comment!")
+      return
+    };
+    console.log({
+      replyId: replyComment._id,
+      content: comment,
+    })
+    // return
+    const editReply = async () => {
+      const response = await commentApi.updateReplyComment(
+        {
+          replyId: replyComment._id,
+          content: comment,
+        },
+        setErr
+      );
+      console.log(response);
+      if (response.status !== 200) {
+        return;
+      }
+      notifySuccess("Successfully update!");
+      // setComments((prev) => {
+      //   return prev.map((comment) =>
+      //     comment._id === response.data._id
+      //       ? { user: user, ...response.data }
+      //       : comment
+      //   );
+      // });
+      setReplyComment();
+      setComment("");
+      setShowEditReplyPopup(false);
+    };
+    editReply();
+  };
   // useEffect(() => {
   //   if (onReset) {
   //     document.documentElement.scrollTop = 0;
@@ -782,6 +837,7 @@ const DetailsScreen = () => {
                           isReplyDeleted={isReplyDeleted}
                           replyComment={replyComment}
                           onDeleteReply={onDeleteReplyButtonClick}
+                          onEditReply={onEditReplyButtonClick}
                         />
                       );
                     })
@@ -798,7 +854,7 @@ const DetailsScreen = () => {
         </>
       )}
 
-      {(showCommentPopup || showEditCommentPopup || showReplyPopup) && (
+      {(showCommentPopup || showEditCommentPopup || showReplyPopup || showEditReplyPopup) && (
         <Popup
           onClose={() => {
             // closePopup();
@@ -817,7 +873,7 @@ const DetailsScreen = () => {
               danger: true,
               buttonClassName:
                 "!h-fit !mt-4 !mb-0 !bg-primary-400 !border-primary-400 border hover:opacity-70",
-              action: (showEditCommentPopup && handleEditComment) || (showCommentPopup && handleAddComment) || (replyComment && handleAddReplyComment)
+              action: (showEditCommentPopup && handleEditComment) || (showCommentPopup && handleAddComment) || (showReplyPopup && handleAddReplyComment) || (showEditReplyPopup && handleEditReplyComment)
             },
           ]}
           // title="Search location"

@@ -29,7 +29,8 @@ const CommentCard = ({
   onReply,
   onThreeDotsReplyClick,
   isReplyDeleted,
-  onDeleteReply,
+  onDeleteReply, 
+  onEditReply,
   replyComment
 }) => {
   const [likeComment, setLikeComment] = useState(
@@ -219,7 +220,7 @@ const CommentCard = ({
                   user={reply.user}
                   comment={reply}
                   onDelete={onDeleteReply}
-                  // onEdit={handleEditButton}
+                  onEdit={() => onEditReply(reply)}
                   onReply={onReply}
                   onThreeDotsClick={() => onThreeDotsReplyClick(reply)}
                   selectedComment={replyComment}

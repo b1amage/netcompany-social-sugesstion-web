@@ -132,6 +132,20 @@ const commentApi = {
       return error.response;
     }
   },
+  async updateReplyComment(data, setErr) {
+    try {
+      const url = `/reply`;
+      const response = await axiosClient.patch(url, data, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error.response.data.message);
+      setErr(error.response.data.message);
+      return error.response;
+    }
+  },
 };
 
 export default commentApi;
