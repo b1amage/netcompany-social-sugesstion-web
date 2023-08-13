@@ -224,9 +224,18 @@ const CreateEventScreen = () => {
 
     const [hours, minutes] = e.target.value.split(":");
 
+    let duration;
+
+    if (event.startTime.hours && event.endTime.hours) {
+      duration = calculateDuration(
+        e.target.value,
+        `${event.endTime.hours}:${event.endTime.minutes}`
+      );
+    }
     setEvent({
       ...event,
       startTime: { hours: hours * 1, minutes: minutes * 1 },
+      duration,
     });
 
     setError({ ...error, startTime: "" });
