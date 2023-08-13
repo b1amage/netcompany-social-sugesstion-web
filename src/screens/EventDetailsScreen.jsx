@@ -116,9 +116,9 @@ const EventDetailsScreen = () => {
         <LoadingScreen />
       ) : (
         <Wrapper className="px-3" col="true">
-          <Wrapper className="items-center justify-between">
+          <Wrapper className="items-center truncate justify-between">
             <Wrapper
-              className="items-center my-3 !gap-5"
+              className="items-center my-2 !gap-2 truncate"
               onClick={() =>
                 navigate(
                   user._id === event.user._id
@@ -130,10 +130,15 @@ const EventDetailsScreen = () => {
               <Image
                 className="w-[75px] h-[75px] !rounded-full"
                 src={event?.user?.imageUrl}
+                imageClassName="!object-contain sm:!object-cover"
               />
-              <Wrapper col="true">
-                <Heading>{event?.user?.username}</Heading>
-                <Text>{event?.user?.email}</Text>
+              <Wrapper col="true" className="truncate ">
+                <Heading className="text-lg w-fit truncate">
+                  {event?.user?.username}
+                </Heading>
+                <Text className="text-md sm:!text-[16px] truncate">
+                  {event?.user?.email}
+                </Text>
               </Wrapper>
             </Wrapper>
 
@@ -143,13 +148,13 @@ const EventDetailsScreen = () => {
                   onClick={() => {
                     navigate(`/event/update/${id}`);
                   }}
-                  className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-xl"
+                  className="!bg-primary-400 !bg-opacity-40 !text-primary-400 !text-sm sm:!text-xl !p-2 sm:!py-3 sm:!px-4"
                 >
                   <BsFillPencilFill />
                 </Button>
                 <Button
                   onClick={() => setShowDeletePopup(true)}
-                  className="!bg-danger !bg-opacity-40 !text-danger !text-xl"
+                  className="!bg-danger !bg-opacity-40 !text-danger !text-sm sm:!text-xl !p-2 sm:!py-3 sm:!px-4"
                 >
                   <MdDelete />
                 </Button>

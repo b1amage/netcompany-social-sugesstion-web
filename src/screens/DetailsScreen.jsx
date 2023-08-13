@@ -366,8 +366,9 @@ const DetailsScreen = () => {
                 }
               >
                 <Image
-                  className="w-[60px] h-[60px] !rounded-full"
+                  className="w-[75px] h-[75px] !rounded-full"
                   src={locationDetails?.user?.imageUrl}
+                  imageClassName="!object-contain sm:!object-cover"
                 />
                 <Wrapper col="true" className="truncate">
                   <Heading className="text-lg truncate w-fit">
