@@ -217,7 +217,7 @@ const CreateEventScreen = () => {
     ) {
       setError({
         ...error,
-        startTime: "Invalid time",
+        startTime: "Invalid start time",
       });
       return;
     }
@@ -265,7 +265,7 @@ const CreateEventScreen = () => {
     ) {
       setError({
         ...error,
-        endTime: "Invalid time",
+        endTime: "Invalid endtime",
       });
       return;
     }
