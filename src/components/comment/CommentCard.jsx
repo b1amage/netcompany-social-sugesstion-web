@@ -15,6 +15,10 @@ import { MdDelete } from "react-icons/md";
 import commentApi from "@/api/commentApi";
 import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import Popup from "@/components/popup/Popup";
+import TextArea from "@/components/form/TextArea";
+import { AiOutlineClose } from "react-icons/ai";
+import Error from "@/components/form/Error";
 // import commentApi from "api/commentApi";
 
 const CommentCard = ({
@@ -26,12 +30,13 @@ const CommentCard = ({
   onThreeDotsClick,
   selectedComment,
   notifyErr,
-  onReply,
-  onThreeDotsReplyClick,
-  isReplyDeleted,
-  onDeleteReply, 
-  onEditReply,
-  replyComment
+  showCommentPopup,
+  showEditCommentPopup,
+  showDeleteCommentPopup,
+  onClose,
+  setComment,
+  commentRef,
+  onReply
 }) => {
   const [likeComment, setLikeComment] = useState(
     comment.likedByUser ? true : false
@@ -40,14 +45,140 @@ const CommentCard = ({
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [replies, setReplies] = useState([]);
   const [repliesNextCursor, setRepliesNextCursor] = useState();
+  const [replyComment, setReplyComment] = useState();
+  const [showReplyPopup, setShowReplyPopup] = useState(false);
+  const [showDeleteReplyPopup, setShowDeleteReplyPopup] = useState(false);
+  const [showEditReplyPopup, setShowEditReplyPopup] = useState(false);
+  
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if(isReplyDeleted){
-      const newList = replies.filter(reply => reply._id !== comment._id)
-      setReplies(newList)
+  // REPLY FUNCTIONS
+  const onReplyButtonClick = (comment) => {
+    setShowReplyPopup(true);
+    setReplyComment(comment);
+  };
+
+  const handleThreeDotsReplyClick = (comment) => {
+    setReplyComment(comment);
+  };
+
+  const onDeleteReplyButtonClick = () => {
+    setShowDeleteReplyPopup(true);
+  };
+
+  const onEditReplyButtonClick = (reply) => {
+    setShowEditReplyPopup(true);
+    setComment(reply.content);
+  };
+
+  const handleAddReplyComment = () => {
+    if (comment.trim() === "" || !comment) {
+      setErr("Please enter the comment!");
+      return;
     }
-  }, [isReplyDeleted])
+    console.log({
+      targetCommentId: replyComment.targetCommentId
+        ? replyComment.targetCommentId
+        : replyComment._id,
+      targetUserId: replyComment.user._id,
+      content: comment,
+    });
+
+    // return
+    const postReplyComment = async () => {
+      const response = await commentApi.createReply(
+        {
+          targetCommentId: replyComment.targetCommentId
+            ? replyComment.targetCommentId
+            : replyComment._id,
+          targetUserId: replyComment.user._id,
+          content: comment,
+        },
+        setErr
+      );
+      console.log(response);
+      notifySuccess("Successfully post!");
+      setReplies((prev) => [
+        ...prev,
+        { user: user, targetUser: replyComment.user, ...response.data },
+      ]);
+      setComment("");
+      commentRef.current.value = "";
+      commentRef.current.blur();
+      setReplyComment();
+      setShowReplyPopup(false);
+    };
+    postReplyComment();
+    // setOnReset(false)
+  };
+
+  const handleDeleteReplyComment = (comment) => {
+    const deleteReply = async () => {
+      const response = await commentApi.deleteReplyComment(
+        comment._id,
+        notifyErr
+      );
+      if (response.status !== 200) {
+        setReplyComment();
+        setIsReplyDeleted(false);
+        setShowDeleteReplyPopup(false);
+        return;
+      }
+      notifySuccess("Successfully delete!");
+      setReplyComment();
+      setIsReplyDeleted(true);
+      setShowDeleteReplyPopup(false);
+    };
+    deleteReply();
+  };
+
+  const handleEditReplyComment = () => {
+    const now = Date.now();
+
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 2000) return;
+    setLastFetch(now);
+    if (comment.trim() === "" || !comment) {
+      setErr("Please enter the comment!");
+      return;
+    }
+    console.log({
+      replyId: replyComment._id,
+      content: comment,
+    });
+    // return
+    const editReply = async () => {
+      const response = await commentApi.updateReplyComment(
+        {
+          replyId: replyComment._id,
+          content: comment,
+        },
+        setErr
+      );
+      console.log(response);
+      if (response.status !== 200) {
+        return;
+      }
+      notifySuccess("Successfully update!");
+      // setComments((prev) => {
+      //   return prev.map((comment) =>
+      //     comment._id === response.data._id
+      //       ? { user: user, ...response.data }
+      //       : comment
+      //   );
+      // });
+      setReplyComment();
+      setComment("");
+      setShowEditReplyPopup(false);
+    };
+    editReply();
+  };
+  // useEffect(() => {
+  //   if(isReplyDeleted){
+  //     const newList = replies.filter(reply => reply._id !== comment._id)
+  //     setReplies(newList)
+  //   }
+  // }, [isReplyDeleted])
 
   const handleLikeComment = (id) => {
     const now = Date.now();
@@ -163,7 +294,8 @@ const CommentCard = ({
           {comment.targetUser && (
             <Link
               to={
-                comment.targetUserId === JSON.parse(localStorage.getItem("user"))._id
+                comment.targetUserId ===
+                JSON.parse(localStorage.getItem("user"))._id
                   ? `/profile`
                   : `/user/${comment.targetUserId}`
               }
@@ -183,7 +315,7 @@ const CommentCard = ({
           <Wrapper className="items-center !gap-2">
             <BsReplyAll
               className="text-xl cursor-pointer"
-              onClick={() => onReply(comment)}
+              onClick={() => onReplyButtonClick(comment)}
             />
             <Text>{comment?.numOfReplies}</Text>
           </Wrapper>
@@ -219,19 +351,144 @@ const CommentCard = ({
                   currentUser={currentUser}
                   user={reply.user}
                   comment={reply}
-                  onDelete={onDeleteReply}
+                  onDelete={onDeleteReplyButtonClick}
                   onEdit={() => onEditReply(reply)}
+                  onClose={onClose}
                   onReply={onReply}
-                  onThreeDotsClick={() => onThreeDotsReplyClick(reply)}
+                  onThreeDotsClick={() => handleThreeDotsReplyClick(reply)}
                   selectedComment={replyComment}
-                  // notifyErr={notifyErr}
-                  // onThreeDotsReplyClick={handleThreeDotsReplyClick}
-                  // onDeleteReply={onDeleteReply}
+                  notifyErr={notifyErr}
                 />
               );
             })}
         </Wrapper>
       </Wrapper>
+      {replyComment &&
+        replyComment._id === comment._id &&
+        (showCommentPopup ||
+          showEditCommentPopup ||
+          showReplyPopup ||
+          showEditReplyPopup) && (
+          <Popup
+            onClose={() => {
+              // closePopup();
+              onClose();
+              setReplyComment();
+              setShowReplyPopup(false)
+              setShowDeleteReplyPopup(false)
+              setShowEditReplyPopup(false)
+            }}
+            actions={[
+              {
+                title: "cancel",
+                danger: true,
+                buttonClassName:
+                  " !h-fit !mt-4 !mb-0 !bg-white border-primary-400 border !text-primary-400 hover:!bg-danger hover:!border-danger hover:opacity-100 hover:!text-white",
+                action: () => {
+                  onClose();
+                  setReplyComment();
+                  setShowReplyPopup(false)
+                  setShowDeleteReplyPopup(false)
+                  setShowEditReplyPopup(false)
+                },
+              },
+              {
+                title: "Post",
+                danger: true,
+                buttonClassName:
+                  "!h-fit !mt-4 !mb-0 !bg-primary-400 !border-primary-400 border hover:opacity-70",
+                action: () => {},
+              },
+            ]}
+            // title="Search location"
+            children={
+              <>
+                <Wrapper className="justify-end">
+                  <Button
+                    className="!p-0 !bg-transparent !rounded-none !border-none !my-0"
+                    onClick={() => {
+                      // handleCancelEdit();
+                      onClose();
+                      setReplyComment();
+                      setShowReplyPopup(false)
+                      setShowDeleteReplyPopup(false)
+                      setShowEditReplyPopup(false)
+                    }}
+                  >
+                    <AiOutlineClose className="text-[32px]  text-black " />
+                  </Button>
+                </Wrapper>
+
+                <Wrapper col="true" className="gap-4">
+                  <Heading className="text-center !text-[28px]">
+                    {showEditCommentPopup
+                      ? "Edit comment"
+                      : showReplyPopup
+                      ? `Reply comment of ${replyComment.user.username}`
+                      : "Write comment"}
+                  </Heading>
+
+                  <Wrapper className="rounded-lg items-end w-full">
+                    <TextArea
+                      placeholder="Write your comment..."
+                      className="!py-4 !px-3 focus:!ring-0 max-h-[150px] !h-[150px] w-full"
+                      type="text"
+                      value={comment}
+                      onChange={(e) => {
+                        // setComment(e.target.value);
+                        // console.log(e.target.value)
+                      }}
+                      rows={5}
+                      wrapperClassName="w-full !gap-0"
+                    />
+                  </Wrapper>
+
+                  {/* <Error fluid className={`${!err && "invisible"}`}>
+                  {err}
+                </Error> */}
+                </Wrapper>
+              </>
+            }
+            className={` px-4 sm:px-12 `}
+            formClassName="items-center !h-auto w-full !rounded-none md:!py-4 md:!px-4 md:!rounded-lg relative !block !p-2"
+            titleClassName="text-[20px]"
+            childrenClassName="!mt-0 w-full"
+          />
+        )}
+      {showDeleteCommentPopup ||
+        (showDeleteReplyPopup && (
+          <Popup
+            title="Are you sure to remove this comment?"
+            onClose={() => {
+              onClose()
+              setReplyComment();
+              setShowReplyPopup(false)
+              setShowDeleteReplyPopup(false)
+              setShowEditReplyPopup(false)            
+            }}
+            actions={[
+              {
+                title: "cancel",
+                danger: false,
+                action: () => {
+                  onClose()
+                  setReplyComment();
+                  setShowReplyPopup(false)
+                  setShowDeleteReplyPopup(false)
+                  setShowEditReplyPopup(false)
+                },
+                    
+                // action: () => {},
+              },
+              {
+                title: "delete",
+                danger: true,
+                // action: (() => (selectedComment && handleDeleteComment(selectedComment._id)) || (replyComment && handleDeleteReplyComment(replyComment))),
+                // action: () => {},
+              },
+            ]}
+          />
+        ))}
     </Wrapper>
   );
 };

@@ -61,15 +61,10 @@ const DetailsScreen = () => {
   const [onReset, setOnReset] = useState(false);
   const [commentsNextCursor, setCommentsNextCursor] = useState();
   const [selectedComment, setSelectedComment] = useState();
-  const [replyComment, setReplyComment] = useState();
   const [showCommentPopup, setShowCommentPopup] = useState(false);
-  const [showReplyPopup, setShowReplyPopup] = useState(false)
   const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
-  const [showDeleteReplyPopup, setShowDeleteReplyPopup] = useState(false);
   const [showEditCommentPopup, setShowEditCommentPopup] = useState(false);
-  const [showEditReplyPopup, setShowEditReplyPopup] = useState(false);
-
-  const [isReplyDeleted, setIsReplyDeleted] = useState(false)
+  // const [replies, setReplies] = useState([])
   const [err, setErr] = useState();
   const navigate = useNavigate();
 
@@ -120,7 +115,7 @@ const DetailsScreen = () => {
     getLikedUsers();
   }, [showLikedUsers]);
 
-  useEffect(() => {}, [showLikedUsers]);
+  useEffect(() => { }, [showLikedUsers]);
 
   useEffect(() => {
     const getComments = async () => {
@@ -170,8 +165,8 @@ const DetailsScreen = () => {
     window.addEventListener("scroll", handleScroll);
     return () => {
       // if (document.documentElement) {
-        // Remember to remove event listener when the component is unmounted
-        window.removeEventListener("scroll", handleScroll);
+      // Remember to remove event listener when the component is unmounted
+      window.removeEventListener("scroll", handleScroll);
       // }
     };
   }, [loadMoreData]);
@@ -262,12 +257,8 @@ const DetailsScreen = () => {
     setShowCommentPopup(false);
     setShowDeleteCommentPopup(false);
     setSelectedComment();
-    setReplyComment();
-    setShowReplyPopup(false)
-    setShowDeleteReplyPopup(false)
     setErr();
     setShowEditCommentPopup(false);
-    setShowEditReplyPopup(false)
     setComment("");
   };
 
@@ -361,123 +352,23 @@ const DetailsScreen = () => {
     // setOnReset(false)
   };
 
-  // REPLY FUNCTIONS
-  const onReplyButtonClick = (comment) => {
-    setShowReplyPopup(true)
-    setReplyComment(comment);
-  };
+  
 
-  const handleThreeDotsReplyClick = (comment) => {
-    setReplyComment(comment);
-  }
-
-  const onDeleteReplyButtonClick = () => {
-    setShowDeleteReplyPopup(true)
-  }
-
-  const onEditReplyButtonClick = (reply) => {
-    setShowEditReplyPopup(true)
-    setComment(reply.content)
-  }
-
-  const handleAddReplyComment = () => {
-    if (comment.trim() === "" || !comment) {
-      setErr("Please enter the comment!")
-      return
-    };
-    console.log({
-      targetCommentId: replyComment.targetCommentId ? replyComment.targetCommentId : replyComment._id,
-      targetUserId: replyComment.user._id,
-      content: comment
-    })
-    // return
-    const postReplyComment = async () => {
-      const response = await commentApi.createReply(
-        {
-          targetCommentId: replyComment.targetCommentId ? replyComment.targetCommentId : replyComment._id,
-          targetUserId: replyComment.user._id,
-          content: comment
-        },
-        setErr
-      );
-      console.log(response);
-      notifySuccess("Successfully post!");
-      // setComments((prev) => [
-      //   { user: user, likedByUser: false, ...response.data },
-      //   ...prev,
-      // ]);
-      setComment("");
-      commentRef.current.value = "";
-      commentRef.current.blur();
-      setReplyComment();
-    };
-    postReplyComment();
-    // setOnReset(false)
-  };
-
-  const handleDeleteReplyComment = (comment) => {
-    const deleteReply = async() => {
-      const response = await commentApi.deleteReplyComment(comment._id, notifyErr);
-      if (response.status !== 200) {
-        setReplyComment();
-        setIsReplyDeleted(false)
-        setShowDeleteReplyPopup(false);
-        return;
-      }
-      notifySuccess("Successfully delete!");
-      setReplyComment();
-      setIsReplyDeleted(true)
-      setShowDeleteReplyPopup(false);
-    }
-    deleteReply()
-  }
-
-  const handleEditReplyComment = () => {
-    const now = Date.now();
-
-    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
-    if (now - lastFetch < 2000) return;
-    setLastFetch(now);
-    if (comment.trim() === "" || !comment) {
-      setErr("Please enter the comment!")
-      return
-    };
-    console.log({
-      replyId: replyComment._id,
-      content: comment,
-    })
-    // return
-    const editReply = async () => {
-      const response = await commentApi.updateReplyComment(
-        {
-          replyId: replyComment._id,
-          content: comment,
-        },
-        setErr
-      );
-      console.log(response);
-      if (response.status !== 200) {
-        return;
-      }
-      notifySuccess("Successfully update!");
-      // setComments((prev) => {
-      //   return prev.map((comment) =>
-      //     comment._id === response.data._id
-      //       ? { user: user, ...response.data }
-      //       : comment
-      //   );
-      // });
-      setReplyComment();
-      setComment("");
-      setShowEditReplyPopup(false);
-    };
-    editReply();
-  };
-  // useEffect(() => {
-  //   if (onReset) {
-  //     document.documentElement.scrollTop = 0;
-  //   }
-  // }, [onReset]);
+  // const handleGetReplies = (comment, replies, setReplies, repliesNextCursor, setRepliesNextCursor) => {
+  //   const getReplies = async () => {
+  //     const response = await commentApi.getRepliesOfComment(
+  //       comment._id,
+  //       repliesNextCursor
+  //     );
+  //     if (replies.length === 0) {
+  //       setReplies(response.data.results.reverse());
+  //     } else {
+  //       setReplies((prev) => [...response.data.results.reverse(), ...prev]);
+  //     }
+  //     setRepliesNextCursor(response.data.next_cursor);
+  //   };
+  //   getReplies();
+  // };
 
   return (
     <Screen _ref={commentsRef} className="flex flex-col gap-5 px-3 py-4 !mb-2 lg:gap-10 md:px-6 md:py-5 lg:px-20">
@@ -485,7 +376,7 @@ const DetailsScreen = () => {
         <LoadingScreen />
       ) : (
         <>
-          <Wrapper  col="true" className="">
+          <Wrapper col="true" className="">
             {deleting && (
               <Portal>
                 <Wrapper className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-[9999] flex-center">
@@ -633,7 +524,7 @@ const DetailsScreen = () => {
             <Wrapper col="true" className="flex-1">
               <Wrapper className="items-center justify-between">
                 <Category
-                  onClick={() => {}}
+                  onClick={() => { }}
                   isActive
                   disableHover="true"
                   className="self-start"
@@ -757,7 +648,7 @@ const DetailsScreen = () => {
 
                             if (
                               likedListRef.current.scrollTop +
-                                likedListRef.current.clientHeight >=
+                              likedListRef.current.clientHeight >=
                               likedListRef.current.scrollHeight
                             ) {
                               console.log("Scrolled to bottom!");
@@ -829,15 +720,18 @@ const DetailsScreen = () => {
                           comment={comment}
                           onDelete={() => setShowDeleteCommentPopup(true)}
                           onEdit={handleEditButton}
-                          onReply={onReplyButtonClick}
                           onThreeDotsClick={handleThreeDotsClick}
                           selectedComment={selectedComment}
                           notifyErr={notifyErr}
-                          onThreeDotsReplyClick={handleThreeDotsReplyClick}
-                          isReplyDeleted={isReplyDeleted}
-                          replyComment={replyComment}
-                          onDeleteReply={onDeleteReplyButtonClick}
-                          onEditReply={onEditReplyButtonClick}
+                          onClose={() => handleCloseComment()}
+                          showCommentPopup={showCommentPopup} 
+                          showEditCommentPopup={showEditCommentPopup} 
+                          showDeleteCommentPopup={showDeleteCommentPopup}
+                          err={err}
+                          setErr={setErr}
+                          setComment={setComment}
+                          commentRef={commentRef}
+                        // onGetReplies={handleGetReplies}
                         />
                       );
                     })
@@ -854,7 +748,7 @@ const DetailsScreen = () => {
         </>
       )}
 
-      {(showCommentPopup || showEditCommentPopup || showReplyPopup || showEditReplyPopup) && (
+      {/* {(showCommentPopup || showEditCommentPopup || showReplyPopup || showEditReplyPopup) && (
         <Popup
           onClose={() => {
             // closePopup();
@@ -947,7 +841,7 @@ const DetailsScreen = () => {
             },
           ]}
         />
-      )}
+      )} */}
     </Screen>
   );
 };
@@ -957,11 +851,10 @@ function Arrow(props) {
   return (
     <div
       onClick={props.onClick}
-      className={`absolute w-10 h-10 z-50 -translate-y-1/2 flex-center top-1/2 bg-opacity-20 bg-black ${
-        props.left
+      className={`absolute w-10 h-10 z-50 -translate-y-1/2 flex-center top-1/2 bg-opacity-20 bg-black ${props.left
           ? "arrow--left left-4 cursor-pointer"
           : "arrow--right right-4 cursor-pointer"
-      } ${disabeld}`}
+        } ${disabeld}`}
     >
       <svg
         onClick={props.onClick}
