@@ -200,11 +200,21 @@ const CreateEventScreen = () => {
   const handleTimeChange = (e) => {
     if (!event.startDate) {
       setError({ ...error, startTime: "Choose a date first" });
+      setEvent({
+        ...event,
+        startTime: { hours: null, minutes: null },
+        duration: null,
+      });
       return;
     }
 
     if (isDateToday(event.startDate) && isInvalidTime(e.target.value)) {
       setError({ ...error, startTime: "Cannot choose time from past!" });
+      setEvent({
+        ...event,
+        startTime: { hours: null, minutes: null },
+        duration: null,
+      });
       return;
     }
 
@@ -215,6 +225,12 @@ const CreateEventScreen = () => {
         `${event.endTime?.hours}:${event.endTime?.minutes}`
       )
     ) {
+      setEvent({
+        ...event,
+        startTime: { hours: null, minutes: null },
+        duration: null,
+      });
+
       setError({
         ...error,
         startTime: "Invalid start time",
@@ -243,16 +259,31 @@ const CreateEventScreen = () => {
 
   const handleEndTimeChange = (e) => {
     if (!event.startDate) {
+      setEvent({
+        ...event,
+        endTime: { hours: null, minutes: null },
+        duration: null,
+      });
       setError({ ...error, endTime: "Choose a date first" });
       return;
     }
 
     if (!event.startTime) {
+      setEvent({
+        ...event,
+        endTime: { hours: null, minutes: null },
+        duration: null,
+      });
       setError({ ...error, endTime: "Choose a start time first" });
       return;
     }
 
     if (isDateToday(event.startDate) && isInvalidTime(e.target.value)) {
+      setEvent({
+        ...event,
+        endTime: { hours: null, minutes: null },
+        duration: null,
+      });
       setError({ ...error, endTime: "Cannot choose time from past!" });
       return;
     }
@@ -263,6 +294,11 @@ const CreateEventScreen = () => {
         e.target.value
       )
     ) {
+      setEvent({
+        ...event,
+        endTime: { hours: null, minutes: null },
+        duration: null,
+      });
       setError({
         ...error,
         endTime: "Invalid endtime",
