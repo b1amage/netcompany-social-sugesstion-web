@@ -175,7 +175,7 @@ const AllEventsScreen = () => {
         : (
           <>
             {/* <Text>{type} Events with keywords</Text>{" "} */}
-            {type} Events for <Text className="!text-secondary-400">{input}</Text>
+            {type} Events for <Text className="!text-secondary-400">"{input}"</Text>
           </>
         )
         }
