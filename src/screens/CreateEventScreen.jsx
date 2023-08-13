@@ -27,6 +27,7 @@ import Button from "@/components/button/Button";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import ImageUpload from "@/components/form/ImageUpload";
 import Label from "@/components/form/Label";
+import { convertDateTime } from "@/helpers/dateTimeHelpers";
 
 import {
   isEndTimeAfterStartTime,
@@ -38,6 +39,7 @@ import {
   defaultCreateEventError,
   defaultCreateEventForm,
 } from "@/constants/event";
+import locationApi from "@/api/locationApi";
 
 const CreateEventScreen = () => {
   const defaultEvent = useMemo(() => defaultCreateEventForm, []);
@@ -49,15 +51,35 @@ const CreateEventScreen = () => {
   const [suggestNextCursor, setSuggestNextCursor] = useState(undefined);
   const [guestNextCursor, setGuestNextCursor] = useState(undefined);
   const [showGuestPortal, setShowGuestPortal] = useState(false);
+  const [name, setName] = useState(null);
+  const [hideSuggest, setHideSuggest] = useState(true);
 
   const navigate = useNavigate();
   const popupRef = useRef();
   useOnClickOutside(popupRef, () => setShowGuestPortal(false));
 
+  useEffect(() => {
+    if (localStorage.getItem("eventCreate")) {
+      const newEvent = JSON.parse(localStorage.getItem("eventCreate"));
+      setEvent(newEvent);
+    }
+
+    if (localStorage.getItem("createLocationName")) {
+      const newName = JSON.parse(localStorage.getItem("createLocationName"));
+      console.log("new Name", newName);
+      setName(newName);
+    }
+  }, []);
+
   // check every change of event
   useEffect(() => {
     console.log(`Event change: ${JSON.stringify(event, null, 2)}`);
+    localStorage.setItem("eventCreate", JSON.stringify(event, null, 2));
   }, [event]);
+
+  useEffect(() => {
+    console.log(`name: ${name}`);
+  }, [name]);
 
   const handleNameChange = (e) => {
     const enteredText = e.target.value;
@@ -84,9 +106,13 @@ const CreateEventScreen = () => {
   };
 
   const handlePlaceSelect = (location) => {
+    console.log(location);
     const newEvent = { ...event, locationId: location._id };
     setEvent(newEvent);
+    setName(location.name);
     setError({ ...error, locationId: null });
+
+    localStorage.setItem("createLocationName", JSON.stringify(location.name));
   };
 
   const handleLoadmoreSuggestList = (text) => {
@@ -159,41 +185,107 @@ const CreateEventScreen = () => {
     const newStartDate = luxonDateTime.toISO();
     setEvent({ ...event, startDate: newStartDate });
     setError({ ...error, startDate: "" });
+
+    if (error.startTime || error.endTime) {
+      setError({ ...error, startDate: "", startTime: null, endTime: null });
+      setEvent({
+        ...event,
+        startDate: newStartDate,
+        startTime: { hours: null, minutes: null },
+        endTime: { hours: null, minutes: null },
+      });
+    }
   };
 
   const handleTimeChange = (e) => {
+    const [hours, minutes] = e.target.value.split(":");
     if (!event.startDate) {
       setError({ ...error, startTime: "Choose a date first" });
+      setEvent({
+        ...event,
+        startTime: { hours: hours, minutes: minutes },
+        duration: null,
+      });
       return;
     }
 
     if (isDateToday(event.startDate) && isInvalidTime(e.target.value)) {
       setError({ ...error, startTime: "Cannot choose time from past!" });
+      setEvent({
+        ...event,
+        startTime: { hours: hours, minutes: minutes },
+        duration: null,
+      });
       return;
     }
 
-    const [hours, minutes] = e.target.value.split(":");
+    if (
+      event.endTime.hours &&
+      !isEndTimeAfterStartTime(
+        e.target.value,
+        `${event.endTime?.hours}:${event.endTime?.minutes}`
+      )
+    ) {
+      setEvent({
+        ...event,
+        startTime: { hours: hours, minutes: minutes },
+        duration: null,
+      });
 
+      setError({
+        ...error,
+        startTime: "Invalid start time",
+      });
+      return;
+    }
+
+    // const [hours, minutes] = e.target.value.split(":");
+
+    let duration;
+
+    if (event.startTime.hours && event.endTime.hours) {
+      duration = calculateDuration(
+        e.target.value,
+        `${event.endTime.hours}:${event.endTime.minutes}`
+      );
+    }
     setEvent({
       ...event,
       startTime: { hours: hours * 1, minutes: minutes * 1 },
+      duration,
     });
 
     setError({ ...error, startTime: "" });
   };
 
   const handleEndTimeChange = (e) => {
+    const [hours, minutes] = e.target.value.split(":");
     if (!event.startDate) {
+      setEvent({
+        ...event,
+        endTime: { hours: hours, minutes: minutes },
+        duration: null,
+      });
       setError({ ...error, endTime: "Choose a date first" });
       return;
     }
 
     if (!event.startTime) {
+      setEvent({
+        ...event,
+        endTime: { hours: hours, minutes: minutes },
+        duration: null,
+      });
       setError({ ...error, endTime: "Choose a start time first" });
       return;
     }
 
     if (isDateToday(event.startDate) && isInvalidTime(e.target.value)) {
+      setEvent({
+        ...event,
+        endTime: { hours: hours, minutes: minutes },
+        duration: null,
+      });
       setError({ ...error, endTime: "Cannot choose time from past!" });
       return;
     }
@@ -204,14 +296,18 @@ const CreateEventScreen = () => {
         e.target.value
       )
     ) {
+      setEvent({
+        ...event,
+        endTime: { hours: hours, minutes: minutes },
+        duration: null,
+      });
       setError({
         ...error,
-        startTime: "Invalid time",
+        endTime: "Invalid endtime",
       });
       return;
     }
 
-    const [hours, minutes] = e.target.value.split(":");
     const duration = calculateDuration(
       `${event.startTime.hours}:${event.startTime.minutes}`,
       e.target.value
@@ -299,6 +395,8 @@ const CreateEventScreen = () => {
         toast.success("Successfully create event!");
         setEvent(defaultEvent);
         localStorage.removeItem("eventCreateImages");
+        localStorage.removeItem("eventCreate");
+        localStorage.removeItem("createLocationName");
         navigate("/events");
       }
     };
@@ -459,6 +557,7 @@ const CreateEventScreen = () => {
             </Wrapper>
 
             <TextArea
+              value={event.description}
               placeholder="Description"
               label="Description"
               onChange={handleDescriptionChange}
@@ -472,6 +571,13 @@ const CreateEventScreen = () => {
           <Wrapper col="true" className="!w-full !gap-1">
             <Wrapper className="!flex-col md:items-center md:!flex-row">
               <InputWithDropdown
+                onChange={() => setHideSuggest(false)}
+                defaultValue={
+                  localStorage.getItem("createLocationName")
+                    ? JSON.parse(localStorage.getItem("createLocationName"))
+                    : null
+                }
+                hideSuggestions={hideSuggest}
                 inputClassName={error.locationId && inputState.err}
                 label="Location"
                 required
@@ -497,6 +603,7 @@ const CreateEventScreen = () => {
           <Wrapper className="!flex-col lg:flex-row">
             {/* date */}
             <DatePicker
+              defaultValue={convertDateTime(event.startDate)[0]}
               err={error.startDate}
               required
               label="Date"
@@ -517,7 +624,14 @@ const CreateEventScreen = () => {
                     <Wrapper>
                       <TimePicker
                         // err={error.startTime}
-                        className={`!w-[120px] ${
+                        defaultValue={`${
+                          event.startTime.hours !== null &&
+                          event.startTime.hours.toString().padStart(2, "0")
+                        }:${
+                          event.startTime.minutes !== null &&
+                          event.startTime.minutes.toString().padStart(2, "0")
+                        }`}
+                        className={`!w-[120px] md:!w-[140px] ${
                           error.startTime === null
                             ? ""
                             : error.startTime === ""
@@ -531,7 +645,14 @@ const CreateEventScreen = () => {
                       {/* duration */}
                       <TimePicker
                         // err={error.endTime}
-                        className={`!w-[120px] ${
+                        defaultValue={`${
+                          event.endTime.hours !== null &&
+                          event.endTime.hours.toString().padStart(2, "0")
+                        }:${
+                          event.endTime.minutes !== null &&
+                          event.endTime.minutes.toString().padStart(2, "0")
+                        }`}
+                        className={`!w-[120px] md:!w-[140px] ${
                           error.endTime === null
                             ? ""
                             : error.endTime === ""
@@ -575,9 +696,18 @@ const CreateEventScreen = () => {
               setEvent({
                 ...event,
                 allDay: !oldAllDay,
-                startTime: null,
-                endTime: null,
-                duration: null,
+                startTime: {
+                  hours: null,
+                  minutes: null,
+                },
+                endTime: {
+                  hours: null,
+                  minutes: null,
+                },
+                duration: {
+                  hours: null,
+                  minutes: null,
+                },
               });
             }}
           />
