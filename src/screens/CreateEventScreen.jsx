@@ -208,6 +208,20 @@ const CreateEventScreen = () => {
       return;
     }
 
+    if (
+      event.endTime.hours &&
+      !isEndTimeAfterStartTime(
+        e.target.value,
+        `${event.endTime?.hours}:${event.endTime?.minutes}`
+      )
+    ) {
+      setError({
+        ...error,
+        startTime: "Invalid time",
+      });
+      return;
+    }
+
     const [hours, minutes] = e.target.value.split(":");
 
     setEvent({
@@ -242,7 +256,7 @@ const CreateEventScreen = () => {
     ) {
       setError({
         ...error,
-        startTime: "Invalid time",
+        endTime: "Invalid time",
       });
       return;
     }
