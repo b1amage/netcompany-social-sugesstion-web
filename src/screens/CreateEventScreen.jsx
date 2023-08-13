@@ -198,11 +198,12 @@ const CreateEventScreen = () => {
   };
 
   const handleTimeChange = (e) => {
+    const [hours, minutes] = e.target.value.split(":");
     if (!event.startDate) {
       setError({ ...error, startTime: "Choose a date first" });
       setEvent({
         ...event,
-        startTime: { hours: null, minutes: null },
+        startTime: { hours: hours, minutes: minutes },
         duration: null,
       });
       return;
@@ -212,7 +213,7 @@ const CreateEventScreen = () => {
       setError({ ...error, startTime: "Cannot choose time from past!" });
       setEvent({
         ...event,
-        startTime: { hours: null, minutes: null },
+        startTime: { hours: hours, minutes: minutes },
         duration: null,
       });
       return;
@@ -227,7 +228,7 @@ const CreateEventScreen = () => {
     ) {
       setEvent({
         ...event,
-        startTime: { hours: null, minutes: null },
+        startTime: { hours: hours, minutes: minutes },
         duration: null,
       });
 
@@ -238,7 +239,7 @@ const CreateEventScreen = () => {
       return;
     }
 
-    const [hours, minutes] = e.target.value.split(":");
+    // const [hours, minutes] = e.target.value.split(":");
 
     let duration;
 
@@ -258,10 +259,11 @@ const CreateEventScreen = () => {
   };
 
   const handleEndTimeChange = (e) => {
+    const [hours, minutes] = e.target.value.split(":");
     if (!event.startDate) {
       setEvent({
         ...event,
-        endTime: { hours: null, minutes: null },
+        endTime: { hours: hours, minutes: minutes },
         duration: null,
       });
       setError({ ...error, endTime: "Choose a date first" });
@@ -271,7 +273,7 @@ const CreateEventScreen = () => {
     if (!event.startTime) {
       setEvent({
         ...event,
-        endTime: { hours: null, minutes: null },
+        endTime: { hours: hours, minutes: minutes },
         duration: null,
       });
       setError({ ...error, endTime: "Choose a start time first" });
@@ -281,7 +283,7 @@ const CreateEventScreen = () => {
     if (isDateToday(event.startDate) && isInvalidTime(e.target.value)) {
       setEvent({
         ...event,
-        endTime: { hours: null, minutes: null },
+        endTime: { hours: hours, minutes: minutes },
         duration: null,
       });
       setError({ ...error, endTime: "Cannot choose time from past!" });
@@ -296,7 +298,7 @@ const CreateEventScreen = () => {
     ) {
       setEvent({
         ...event,
-        endTime: { hours: null, minutes: null },
+        endTime: { hours: hours, minutes: minutes },
         duration: null,
       });
       setError({
@@ -306,7 +308,6 @@ const CreateEventScreen = () => {
       return;
     }
 
-    const [hours, minutes] = e.target.value.split(":");
     const duration = calculateDuration(
       `${event.startTime.hours}:${event.startTime.minutes}`,
       e.target.value
