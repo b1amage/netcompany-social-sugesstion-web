@@ -64,11 +64,11 @@ const DetailsScreen = () => {
   const [showComment, setShowComment] = useState(false);
   const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
   const [showEditCommentPopup, setShowEditCommentPopup] = useState(false);
-  const [err, setErr] = useState()
+  const [err, setErr] = useState();
   const navigate = useNavigate();
 
-  const notifyErr = (err) => toast.error(err) 
-  const notifySuccess = (success) => toast.success(success)
+  const notifyErr = (err) => toast.error(err);
+  const notifySuccess = (success) => toast.success(success);
 
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
@@ -174,12 +174,10 @@ const DetailsScreen = () => {
   const handleLikeClick = () => {
     const handleLikeOrUnlike = async () => {
       if (!liked) {
-        console.log("call like");
         await locationApi.like(id);
         setLiked((prev) => !prev);
         setLikedCount((prev) => prev + 1);
       } else {
-        console.log("call unlike");
         await locationApi.unlike(id);
         setLiked((prev) => !prev);
         setLikedCount((prev) => prev - 1);
@@ -252,7 +250,7 @@ const DetailsScreen = () => {
     setShowComment(false);
     setShowDeleteCommentPopup(false);
     setSelectedComment();
-    setErr()
+    setErr();
     setShowEditCommentPopup(false);
     setComment("");
   };
@@ -264,15 +262,18 @@ const DetailsScreen = () => {
     if (now - lastFetch < 2000) return;
     setLastFetch(now);
     const editComment = async () => {
-      const response = await commentApi.updateComment({
-        commentId: selectedComment,
-        content: comment,
-      }, setErr);
+      const response = await commentApi.updateComment(
+        {
+          commentId: selectedComment,
+          content: comment,
+        },
+        setErr
+      );
       console.log(response);
-      if (response.status !== 200){
-        return
+      if (response.status !== 200) {
+        return;
       }
-      notifySuccess("Successfully update!")
+      notifySuccess("Successfully update!");
       setComments((prev) => {
         return prev.map((comment) =>
           comment._id === response.data._id
@@ -281,7 +282,7 @@ const DetailsScreen = () => {
         );
       });
       setSelectedComment();
-      setComment("")
+      setComment("");
       setShowEditCommentPopup(false);
     };
     editComment();
@@ -290,13 +291,13 @@ const DetailsScreen = () => {
   const handleDeleteComment = (id) => {
     const deleteComment = async () => {
       const response = await commentApi.deleteComment(id, notifyErr);
-      if (response.status !== 200){
-        setShowDeleteCommentPopup(false)
+      if (response.status !== 200) {
+        setShowDeleteCommentPopup(false);
         setSelectedComment();
-        return
+        return;
       }
       const newList = comments.filter((comment) => comment._id !== id);
-      notifySuccess("Successfully delete!")
+      notifySuccess("Successfully delete!");
       setComments(newList);
       localStorage.setItem("comments", JSON.stringify(newList));
       setSelectedComment();
@@ -305,18 +306,21 @@ const DetailsScreen = () => {
     deleteComment();
   };
 
-  const handleAddComment = (e) => {    
+  const handleAddComment = (e) => {
     console.log(comment.includes("\n"));
     if (comment.trim() === "" || !comment) return;
     setOnReset(true);
 
     const postComment = async () => {
-      const response = await commentApi.createComment({
-        locationId: id,
-        content: comment,
-      }, setErr);
+      const response = await commentApi.createComment(
+        {
+          locationId: id,
+          content: comment,
+        },
+        setErr
+      );
       console.log(response);
-      notifySuccess("Successfully post!")
+      notifySuccess("Successfully post!");
       setComments((prev) => [
         { user: user, likedByUser: false, ...response.data },
         ...prev,
@@ -366,7 +370,7 @@ const DetailsScreen = () => {
                   src={locationDetails?.user?.imageUrl}
                 />
                 <Wrapper col="true" className="truncate">
-                  <Heading className="text-lg w-fit truncate">
+                  <Heading className="text-lg truncate w-fit">
                     {locationDetails?.user?.username}
                   </Heading>
                   <Text className="text-md sm:!text-[16px] truncate">
@@ -755,7 +759,7 @@ const DetailsScreen = () => {
                   {showEditCommentPopup ? "Edit comment" : "Write comment"}
                 </Heading>
 
-                <Wrapper className="rounded-lg items-end w-full">
+                <Wrapper className="items-end w-full rounded-lg">
                   <TextArea
                     placeholder="Write your comment..."
                     className="!py-4 !px-3 focus:!ring-0 max-h-[150px] !h-[150px] w-full"
