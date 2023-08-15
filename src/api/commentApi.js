@@ -146,6 +146,34 @@ const commentApi = {
       return error.response;
     }
   },
+  async likeReplyComment(id) {
+    try {
+      const url = `/reply/like/${id}`;
+      const response = await axiosClient.post(url, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error.response.data.message);
+      // setSubmitErr((prev) => [...prev, error.response.data.message]);
+      return error.response;
+    }
+  },
+  async unLikeReplyComment(id) {
+    try {
+      const url = `/reply/like/${id}`;
+      const response = await axiosClient.delete(url, {
+        withCredentials: true,
+      });
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error.response.data.message);
+      // setSubmitErr((prev) => [...prev, error.response.data.message]);
+      return error.response;
+    }
+  },
 };
 
 export default commentApi;

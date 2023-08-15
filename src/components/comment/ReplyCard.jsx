@@ -12,6 +12,7 @@ import {
 } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
 import { Link } from "react-router-dom";
+import commentApi from "@/api/commentApi";
 
 const ReplyCard = ({
   currentUser,
@@ -21,10 +22,45 @@ const ReplyCard = ({
   onEdit,
   onReply,
   onThreeDotsClick,
-likeComment,
   selectedComment,
+  notifyErr,
 }) => {
-    const [likeCommentCount, setLikeCommentCount] = useState(0)
+    const [likeReplyCommentCount, setLikeReplyCommentCount] = useState(comment.heartCount)
+    const [likeReplyComment, setLikeReplyComment] = useState(
+      comment.likedByUser ? true : false
+    );
+    const [lastFetch, setLastFetch] = useState(Date.now());
+
+    const handleLikeReplyComment = (id) => {
+      const now = Date.now();
+  
+      // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+      if (now - lastFetch < 2000) return;
+      setLastFetch(now);
+  
+      const likeOrUnlikeReplyComment = async () => {
+        if (!likeReplyComment) {
+          // await locationApi.like(id);
+          const response = await commentApi.likeReplyComment(id);
+          if (response.status !== 200) {
+            notifyErr("This comment does not exist!");
+            return;
+          }
+          setLikeReplyComment((prev) => !prev);
+          setLikeReplyCommentCount((prev) => prev + 1);
+        } else {
+          const response = await commentApi.unLikeReplyComment(id);
+          if (response.status !== 200) {
+            notifyErr("This comment does not exist!");
+            return;
+          }
+          // await locationApi.unlike(id);
+          setLikeReplyComment((prev) => !prev);
+          setLikeReplyCommentCount((prev) => prev - 1);
+        }
+      };
+      likeOrUnlikeReplyComment();
+    };
   return (
     <Wrapper col="true" className="relative rounded-2xl !gap-2">
       <Wrapper className="items-center justify-between relative">
@@ -112,22 +148,22 @@ likeComment,
             />
           </Wrapper>
           <Wrapper className="items-center !gap-2">
-            {likeComment ? (
+            {likeReplyComment ? (
               <BsFillHeartFill
                 className="text-lg cursor-pointer text-secondary-400"
                 onClick={() => {
-                    // handleLikeComment(comment._id)
+                    handleLikeReplyComment(comment._id)
                 }}
               />
             ) : (
               <BsHeart
                 className="text-lg cursor-pointer"
                 onClick={() => {
-                    // handleLikeComment(comment._id)
+                    handleLikeReplyComment(comment._id)
                 }}
               />
             )}
-            <Text>{likeCommentCount}</Text>
+            <Text>{likeReplyCommentCount}</Text>
           </Wrapper>
         </Wrapper>
       </Wrapper>

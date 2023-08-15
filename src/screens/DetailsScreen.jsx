@@ -131,7 +131,7 @@ const DetailsScreen = () => {
     const now = Date.now();
 
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
-    if (now - lastFetch < 5000) return;
+    if (now - lastFetch < 2000) return;
     if (nextCursor === null) return;
 
     setLastFetch(now);
@@ -150,7 +150,7 @@ const DetailsScreen = () => {
     const handleScroll = async () => {
       const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
       // console.log(scrollTop)
-      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 500;
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 1000;
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
         const nextCursor = localStorage.getItem("commentsNextCursor");

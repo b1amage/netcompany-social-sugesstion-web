@@ -180,7 +180,7 @@ const ItinerariesScreen = () => {
     if (!tabRef.current) return;
     const handleScroll = async () => {
       const { scrollTop, scrollHeight, clientHeight } = tabRef.current;
-      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight;
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 300;
 
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");

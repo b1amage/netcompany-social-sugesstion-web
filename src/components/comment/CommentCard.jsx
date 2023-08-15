@@ -200,6 +200,7 @@ const CommentCard = ({
     };
     likeOrUnlikeComment();
   };
+  
   const handleGetReplies = (comment) => {
     const getReplies = async () => {
       const response = await commentApi.getRepliesOfComment(
@@ -360,13 +361,7 @@ const CommentCard = ({
                     setShowReplyPopup(true);
                   }}
                   onThreeDotsClick={() => handleThreeDotsReplyClick(reply)}
-                  // replyComment={replyComment}
                   selectedComment={replyComment}
-                  // setReplyComment={setReplyComment}
-                  // commentRef={commentRef}
-                  // notifySuccess={notifySuccess}
-                  // err={err}
-                  // setErr={setErr}
                 />
               );
             })}
