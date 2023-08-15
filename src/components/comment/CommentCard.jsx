@@ -18,6 +18,7 @@ import Popup from "@/components/popup/Popup";
 import TextArea from "@/components/form/TextArea";
 import { AiOutlineClose } from "react-icons/ai";
 import Error from "@/components/form/Error";
+import ReplyCard from "./ReplyCard";
 
 const CommentCard = ({
   user,
@@ -338,11 +339,13 @@ const CommentCard = ({
         >
           <Text>View replies</Text>
         </Wrapper>}
-        <Wrapper col="true" className="!pl-12">
+        
+      </Wrapper>
+      <Wrapper col="true" className="!pl-12">
           {replies.length > 0 &&
             replies.map((reply) => {
               return (
-                <CommentCard
+                <ReplyCard
                   key={reply._id}
                   currentUser={currentUser}
                   user={reply.user}
@@ -354,22 +357,20 @@ const CommentCard = ({
                   onClose={onClose}
                   onReply={() => {
                     onReply(reply)
+                    setShowReplyPopup(true);
                   }}
                   onThreeDotsClick={() => handleThreeDotsReplyClick(reply)}
-                  notifyErr={notifyErr}
-                  replyComment={replyComment}
+                  // replyComment={replyComment}
                   selectedComment={replyComment}
-                  setReplyComment={setReplyComment}
-                  commentRef={commentRef}
-                  notifySuccess={notifySuccess}
-                  err={err}
-                  setErr={setErr}
+                  // setReplyComment={setReplyComment}
+                  // commentRef={commentRef}
+                  // notifySuccess={notifySuccess}
+                  // err={err}
+                  // setErr={setErr}
                 />
               );
             })}
         </Wrapper>
-      </Wrapper>
-      
     </Wrapper>
     {(showEditReplyPopup || showReplyPopup) && (
           <Popup
