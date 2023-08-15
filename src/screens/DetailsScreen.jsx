@@ -730,8 +730,7 @@ const DetailsScreen = () => {
                           setReplyComment={setReplyComment}
                           handleThreeDotsReplyClick={handleThreeDotsReplyClick}
                           notifySuccess={notifySuccess}
-                          // onEditReplyButtonClick={onEditReplyButtonClick}
-                        // onGetReplies={handleGetReplies}
+                          setSelectedComment={setSelectedComment}
                         />
                       );
                     })

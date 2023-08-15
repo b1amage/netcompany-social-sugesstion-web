@@ -19,6 +19,7 @@ import TextArea from "@/components/form/TextArea";
 import { AiOutlineClose } from "react-icons/ai";
 import Error from "@/components/form/Error";
 import ReplyCard from "./ReplyCard";
+import useOnClickOutside from "@/hooks/useOnClickOutside";
 
 const CommentCard = ({
   user,
@@ -34,6 +35,7 @@ const CommentCard = ({
   onReply,
   replyComment,
   setReplyComment,
+  setSelectedComment,
   handleThreeDotsReplyClick,
   err,
   setErr,
@@ -52,6 +54,12 @@ const CommentCard = ({
   const [showEditReplyPopup, setShowEditReplyPopup] = useState(false);
   const [replyCommentValue, setReplyCommentValue] = useState("")
   const navigate = useNavigate();
+  const dropdownRef = useRef()
+
+  useOnClickOutside(dropdownRef, () => {
+    setSelectedComment()
+    setReplyComment()
+  })
 
   // REPLY FUNCTIONS
   const onDeleteReplyButtonClick = () => {
@@ -88,7 +96,11 @@ const CommentCard = ({
         },
         setErr
       );
-      console.log(response);
+      if(response.status !== 200){
+        setErr(response.data.message);
+        return
+      }
+      // console.log(response);
       notifySuccess("Successfully post!");
       setReplies((prev) => [
         ...prev,
@@ -112,7 +124,6 @@ const CommentCard = ({
       );
       if (response.status !== 200) {
         setReplyComment();
-        setIsReplyDeleted(false);
         setShowDeleteReplyPopup(false);
         return;
       }
@@ -257,6 +268,7 @@ const CommentCard = ({
         )}
         {((selectedComment && selectedComment._id === comment._id)) && (
           <Wrapper
+            _ref={dropdownRef}
             col="true"
             className="bg-white absolute bottom-0 right-2 !w-fit translate-y-full !gap-0 drop-shadow-lg"
           >
@@ -298,8 +310,6 @@ const CommentCard = ({
             </Link>
           )}
           <Text className="!text-[12px] sm:!text-[16px] whitespace-pre-line">
-            {/* This such an amazing place that I have ever tried. Thank you for
-          recommend this place, Bao! */}
             {comment.content}
           </Text>
         </Wrapper>
@@ -336,7 +346,7 @@ const CommentCard = ({
           onClick={() => {
             handleGetReplies(comment);
           }}
-          className="cursor-pointer"
+          className="cursor-pointer !w-fit"
         >
           <Text>View replies</Text>
         </Wrapper>}
@@ -362,6 +372,9 @@ const CommentCard = ({
                   }}
                   onThreeDotsClick={() => handleThreeDotsReplyClick(reply)}
                   selectedComment={replyComment}
+                  setReplyComment={setReplyComment}
+                  notifyErr={notifyErr}
+                  dropdownRef={dropdownRef}
                 />
               );
             })}

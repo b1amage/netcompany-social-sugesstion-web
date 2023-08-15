@@ -24,6 +24,7 @@ const ReplyCard = ({
   onThreeDotsClick,
   selectedComment,
   notifyErr,
+  dropdownRef
 }) => {
     const [likeReplyCommentCount, setLikeReplyCommentCount] = useState(comment.heartCount)
     const [likeReplyComment, setLikeReplyComment] = useState(
@@ -95,6 +96,7 @@ const ReplyCard = ({
         )}
         {selectedComment && selectedComment._id === comment._id && (
           <Wrapper
+            _ref={dropdownRef}
             col="true"
             className="bg-white absolute bottom-0 right-2 !w-fit translate-y-full !gap-0 drop-shadow-lg"
           >
