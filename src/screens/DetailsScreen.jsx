@@ -6,7 +6,6 @@ import Image from "@/components/image/Image";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Heading from "@/components/typography/Heading";
 import Text from "@/components/typography/Text";
-import Guess from "@/components/guess/Guess";
 import { BsHeart, BsFillHeartFill, BsFillPencilFill } from "react-icons/bs";
 import CommentCard from "@/components/comment/CommentCard";
 import { useParams } from "react-router-dom";
@@ -24,15 +23,11 @@ import Button from "@/components/button/Button";
 import { MdDelete } from "react-icons/md";
 import Popup from "@/components/popup/Popup";
 import Deleting from "@/components/loading/Deleting";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { GoLocation } from "react-icons/go";
-import { changeLocation } from "@/features/locationSlice";
 import { FaRegCommentDots } from "react-icons/fa";
-import Input from "@/components/form/Input";
-import send from "@/assets/send.svg";
 import TextArea from "@/components/form/TextArea";
 import commentApi from "@/api/commentApi";
-import User from "@/components/user/User";
 import { AiOutlineClose } from "react-icons/ai";
 import Error from "@/components/form/Error";
 
@@ -64,6 +59,8 @@ const DetailsScreen = () => {
   const [showCommentPopup, setShowCommentPopup] = useState(false);
   const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
   const [showEditCommentPopup, setShowEditCommentPopup] = useState(false);
+  const [replyComment, setReplyComment] = useState();
+
   // const [replies, setReplies] = useState([])
   const [err, setErr] = useState();
   const navigate = useNavigate();
@@ -83,6 +80,7 @@ const DetailsScreen = () => {
 
   let likedListRef = useRef();
   const commentsRef = useRef();
+  const replyCommentRef = useRef()
 
   useEffect(() => {
     const getLocationDetails = async () => {
@@ -352,23 +350,18 @@ const DetailsScreen = () => {
     // setOnReset(false)
   };
 
-  
+  const onReplyButtonClick = (comment) => {
+    // setShowReplyPopup(true);
+    setReplyComment(comment);
+  };
 
-  // const handleGetReplies = (comment, replies, setReplies, repliesNextCursor, setRepliesNextCursor) => {
-  //   const getReplies = async () => {
-  //     const response = await commentApi.getRepliesOfComment(
-  //       comment._id,
-  //       repliesNextCursor
-  //     );
-  //     if (replies.length === 0) {
-  //       setReplies(response.data.results.reverse());
-  //     } else {
-  //       setReplies((prev) => [...response.data.results.reverse(), ...prev]);
-  //     }
-  //     setRepliesNextCursor(response.data.next_cursor);
-  //   };
-  //   getReplies();
-  // };
+  const handleThreeDotsReplyClick = (comment) => {
+    if (replyComment && replyComment._id === comment._id) {
+      setReplyComment();
+      return;
+    }
+    setReplyComment(comment);
+  };
 
   return (
     <Screen _ref={commentsRef} className="flex flex-col gap-5 px-3 py-4 !mb-2 lg:gap-10 md:px-6 md:py-5 lg:px-20">
@@ -720,17 +713,23 @@ const DetailsScreen = () => {
                           comment={comment}
                           onDelete={() => setShowDeleteCommentPopup(true)}
                           onEdit={handleEditButton}
+                          onReply={onReplyButtonClick}
                           onThreeDotsClick={handleThreeDotsClick}
                           selectedComment={selectedComment}
                           notifyErr={notifyErr}
-                          onClose={() => handleCloseComment()}
+                          onClose={handleCloseComment}
                           showCommentPopup={showCommentPopup} 
                           showEditCommentPopup={showEditCommentPopup} 
                           showDeleteCommentPopup={showDeleteCommentPopup}
                           err={err}
                           setErr={setErr}
                           setComment={setComment}
-                          commentRef={commentRef}
+                          commentRef={replyCommentRef}
+                          replyComment={replyComment}
+                          setReplyComment={setReplyComment}
+                          handleThreeDotsReplyClick={handleThreeDotsReplyClick}
+                          notifySuccess={notifySuccess}
+                          // onEditReplyButtonClick={onEditReplyButtonClick}
                         // onGetReplies={handleGetReplies}
                         />
                       );
@@ -748,7 +747,7 @@ const DetailsScreen = () => {
         </>
       )}
 
-      {/* {(showCommentPopup || showEditCommentPopup || showReplyPopup || showEditReplyPopup) && (
+      {(showCommentPopup || showEditCommentPopup) && (
         <Popup
           onClose={() => {
             // closePopup();
@@ -767,7 +766,7 @@ const DetailsScreen = () => {
               danger: true,
               buttonClassName:
                 "!h-fit !mt-4 !mb-0 !bg-primary-400 !border-primary-400 border hover:opacity-70",
-              action: (showEditCommentPopup && handleEditComment) || (showCommentPopup && handleAddComment) || (showReplyPopup && handleAddReplyComment) || (showEditReplyPopup && handleEditReplyComment)
+              action: (showEditCommentPopup && handleEditComment) || (showCommentPopup && handleAddComment)
             },
           ]}
           // title="Search location"
@@ -789,10 +788,6 @@ const DetailsScreen = () => {
                 <Heading className="text-center !text-[28px]">
                   {showEditCommentPopup
                     ? "Edit comment"
-                    : replyComment
-                    ? `Reply comment of ${
-                        replyComment.user.username
-                      }`
                     : "Write comment"}
                 </Heading>
 
@@ -824,7 +819,7 @@ const DetailsScreen = () => {
           childrenClassName="!mt-0 w-full"
         />
       )}
-      {showDeleteCommentPopup || showDeleteReplyPopup && (
+      {showDeleteCommentPopup && (
         <Popup
           title="Are you sure to remove this comment?"
           onClose={() => handleCloseComment()}
@@ -837,11 +832,11 @@ const DetailsScreen = () => {
             {
               title: "delete",
               danger: true,
-              action: (() => (selectedComment && handleDeleteComment(selectedComment._id)) || (replyComment && handleDeleteReplyComment(replyComment))),
+              action: (() => (selectedComment && handleDeleteComment(selectedComment._id)))
             },
           ]}
         />
-      )} */}
+      )}
     </Screen>
   );
 };

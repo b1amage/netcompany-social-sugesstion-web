@@ -1,6 +1,6 @@
 import Wrapper from "@/components/wrapper/Wrapper";
 import Image from "@/components/image/Image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Heading from "@/components/typography/Heading";
 import Text from "@/components/typography/Text";
 import {
@@ -13,13 +13,11 @@ import {
 import Button from "@/components/button/Button";
 import { MdDelete } from "react-icons/md";
 import commentApi from "@/api/commentApi";
-import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import Popup from "@/components/popup/Popup";
 import TextArea from "@/components/form/TextArea";
 import { AiOutlineClose } from "react-icons/ai";
 import Error from "@/components/form/Error";
-// import commentApi from "api/commentApi";
 
 const CommentCard = ({
   user,
@@ -30,49 +28,42 @@ const CommentCard = ({
   onThreeDotsClick,
   selectedComment,
   notifyErr,
-  showCommentPopup,
-  showEditCommentPopup,
-  showDeleteCommentPopup,
   onClose,
-  setComment,
   commentRef,
-  onReply
+  onReply,
+  replyComment,
+  setReplyComment,
+  handleThreeDotsReplyClick,
+  err,
+  setErr,
+  notifySuccess
 }) => {
   const [likeComment, setLikeComment] = useState(
     comment.likedByUser ? true : false
   );
+  const [replyCount, setReplyCount] = useState(comment?.numOfReplies)
   const [likeCommentCount, setLikeCommentCount] = useState(comment?.heartCount);
   const [lastFetch, setLastFetch] = useState(Date.now());
   const [replies, setReplies] = useState([]);
   const [repliesNextCursor, setRepliesNextCursor] = useState();
-  const [replyComment, setReplyComment] = useState();
   const [showReplyPopup, setShowReplyPopup] = useState(false);
   const [showDeleteReplyPopup, setShowDeleteReplyPopup] = useState(false);
   const [showEditReplyPopup, setShowEditReplyPopup] = useState(false);
-  
+  const [replyCommentValue, setReplyCommentValue] = useState("")
   const navigate = useNavigate();
 
   // REPLY FUNCTIONS
-  const onReplyButtonClick = (comment) => {
-    setShowReplyPopup(true);
-    setReplyComment(comment);
-  };
-
-  const handleThreeDotsReplyClick = (comment) => {
-    setReplyComment(comment);
-  };
-
   const onDeleteReplyButtonClick = () => {
     setShowDeleteReplyPopup(true);
   };
 
-  const onEditReplyButtonClick = (reply) => {
+  const onEditReplyButtonClick = (comment) => {
     setShowEditReplyPopup(true);
-    setComment(reply.content);
+    setReplyCommentValue(comment.content);
   };
-
+  
   const handleAddReplyComment = () => {
-    if (comment.trim() === "" || !comment) {
+    if (replyCommentValue.trim() === "" || !replyCommentValue) {
       setErr("Please enter the comment!");
       return;
     }
@@ -81,7 +72,7 @@ const CommentCard = ({
         ? replyComment.targetCommentId
         : replyComment._id,
       targetUserId: replyComment.user._id,
-      content: comment,
+      content: replyCommentValue,
     });
 
     // return
@@ -92,7 +83,7 @@ const CommentCard = ({
             ? replyComment.targetCommentId
             : replyComment._id,
           targetUserId: replyComment.user._id,
-          content: comment,
+          content: replyCommentValue,
         },
         setErr
       );
@@ -100,16 +91,16 @@ const CommentCard = ({
       notifySuccess("Successfully post!");
       setReplies((prev) => [
         ...prev,
-        { user: user, targetUser: replyComment.user, ...response.data },
+        { user: currentUser, targetUser: replyComment.user, ...response.data },
       ]);
-      setComment("");
       commentRef.current.value = "";
       commentRef.current.blur();
       setReplyComment();
+      setReplyCommentValue("")
+      setReplyCount(replyCount + 1)
       setShowReplyPopup(false);
     };
     postReplyComment();
-    // setOnReset(false)
   };
 
   const handleDeleteReplyComment = (comment) => {
@@ -124,9 +115,11 @@ const CommentCard = ({
         setShowDeleteReplyPopup(false);
         return;
       }
+      const newList = replies.filter((reply) => reply._id !== comment._id);
       notifySuccess("Successfully delete!");
+      setReplies(newList)
       setReplyComment();
-      setIsReplyDeleted(true);
+      setReplyCount(replyCount - 1)
       setShowDeleteReplyPopup(false);
     };
     deleteReply();
@@ -138,20 +131,20 @@ const CommentCard = ({
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
     if (now - lastFetch < 2000) return;
     setLastFetch(now);
-    if (comment.trim() === "" || !comment) {
+    if (replyCommentValue.trim() === "" || !replyCommentValue) {
       setErr("Please enter the comment!");
       return;
     }
     console.log({
       replyId: replyComment._id,
-      content: comment,
+      content: replyCommentValue,
     });
     // return
     const editReply = async () => {
       const response = await commentApi.updateReplyComment(
         {
           replyId: replyComment._id,
-          content: comment,
+          content: replyCommentValue,
         },
         setErr
       );
@@ -160,25 +153,19 @@ const CommentCard = ({
         return;
       }
       notifySuccess("Successfully update!");
-      // setComments((prev) => {
-      //   return prev.map((comment) =>
-      //     comment._id === response.data._id
-      //       ? { user: user, ...response.data }
-      //       : comment
-      //   );
-      // });
+      setReplies((prev) => {
+        return prev.map((reply) =>
+          reply._id === response.data._id
+            ? { user: currentUser, targetUser: replyComment.user, ...response.data }
+            : reply
+        );
+      });
       setReplyComment();
-      setComment("");
+      setReplyCommentValue("");
       setShowEditReplyPopup(false);
     };
     editReply();
   };
-  // useEffect(() => {
-  //   if(isReplyDeleted){
-  //     const newList = replies.filter(reply => reply._id !== comment._id)
-  //     setReplies(newList)
-  //   }
-  // }, [isReplyDeleted])
 
   const handleLikeComment = (id) => {
     const now = Date.now();
@@ -221,13 +208,18 @@ const CommentCard = ({
       if (replies.length === 0) {
         setReplies(response.data.results.reverse());
       } else {
-        setReplies((prev) => [...response.data.results.reverse(), ...prev]);
+        setReplies((prev) => {
+          const existingIds = new Set(prev.map(item => item._id));
+          const newResults = response.data.results.reverse().filter(result => !existingIds.has(result._id));
+          return [...newResults, ...prev];
+        });
       }
       setRepliesNextCursor(response.data.next_cursor);
     };
     getReplies();
   };
   return (
+    <>
     <Wrapper col="true" className="relative rounded-2xl !gap-2">
       <Wrapper className="items-center justify-between relative">
         <Wrapper
@@ -238,7 +230,7 @@ const CommentCard = ({
                 : `/user/${comment.userId}`
             );
           }}
-          className="items-center truncate"
+          className="items-center truncate cursor-pointer"
         >
           <Image
             imageClassName=""
@@ -261,7 +253,7 @@ const CommentCard = ({
             }}
           />
         )}
-        {selectedComment && selectedComment._id === comment._id && (
+        {((selectedComment && selectedComment._id === comment._id)) && (
           <Wrapper
             col="true"
             className="bg-white absolute bottom-0 right-2 !w-fit translate-y-full !gap-0 drop-shadow-lg"
@@ -315,9 +307,12 @@ const CommentCard = ({
           <Wrapper className="items-center !gap-2">
             <BsReplyAll
               className="text-xl cursor-pointer"
-              onClick={() => onReplyButtonClick(comment)}
+              onClick={() => {
+                onReply(comment)
+                setShowReplyPopup(true);
+              }}
             />
-            <Text>{comment?.numOfReplies}</Text>
+            <Text>{replyCount}</Text>
           </Wrapper>
           <Wrapper className="items-center !gap-2">
             {likeComment ? (
@@ -335,13 +330,14 @@ const CommentCard = ({
           </Wrapper>
         </Wrapper>
 
-        <Wrapper
+        {(comment.numOfReplies > 0 && repliesNextCursor !== null) && <Wrapper
           onClick={() => {
             handleGetReplies(comment);
           }}
+          className="cursor-pointer"
         >
           <Text>View replies</Text>
-        </Wrapper>
+        </Wrapper>}
         <Wrapper col="true" className="!pl-12">
           {replies.length > 0 &&
             replies.map((reply) => {
@@ -352,31 +348,35 @@ const CommentCard = ({
                   user={reply.user}
                   comment={reply}
                   onDelete={onDeleteReplyButtonClick}
-                  onEdit={() => onEditReply(reply)}
+                  onEdit={() =>  {
+                    onEditReplyButtonClick(reply)
+                  }}
                   onClose={onClose}
-                  onReply={onReply}
+                  onReply={() => {
+                    onReply(reply)
+                  }}
                   onThreeDotsClick={() => handleThreeDotsReplyClick(reply)}
-                  selectedComment={replyComment}
                   notifyErr={notifyErr}
+                  replyComment={replyComment}
+                  selectedComment={replyComment}
+                  setReplyComment={setReplyComment}
+                  commentRef={commentRef}
                 />
               );
             })}
         </Wrapper>
       </Wrapper>
-      {replyComment &&
-        replyComment._id === comment._id &&
-        (showCommentPopup ||
-          showEditCommentPopup ||
-          showReplyPopup ||
-          showEditReplyPopup) && (
+      
+    </Wrapper>
+    {(showEditReplyPopup || showReplyPopup) && (
           <Popup
             onClose={() => {
-              // closePopup();
               onClose();
               setReplyComment();
               setShowReplyPopup(false)
               setShowDeleteReplyPopup(false)
               setShowEditReplyPopup(false)
+              setReplyCommentValue("")
             }}
             actions={[
               {
@@ -397,7 +397,7 @@ const CommentCard = ({
                 danger: true,
                 buttonClassName:
                   "!h-fit !mt-4 !mb-0 !bg-primary-400 !border-primary-400 border hover:opacity-70",
-                action: () => {},
+                action: (showReplyPopup && handleAddReplyComment) || (showEditReplyPopup && handleEditReplyComment)
               },
             ]}
             // title="Search location"
@@ -407,9 +407,9 @@ const CommentCard = ({
                   <Button
                     className="!p-0 !bg-transparent !rounded-none !border-none !my-0"
                     onClick={() => {
-                      // handleCancelEdit();
                       onClose();
                       setReplyComment();
+                      setReplyCommentValue("")
                       setShowReplyPopup(false)
                       setShowDeleteReplyPopup(false)
                       setShowEditReplyPopup(false)
@@ -421,21 +421,20 @@ const CommentCard = ({
 
                 <Wrapper col="true" className="gap-4">
                   <Heading className="text-center !text-[28px]">
-                    {showEditCommentPopup
-                      ? "Edit comment"
-                      : showReplyPopup
-                      ? `Reply comment of ${replyComment.user.username}`
-                      : "Write comment"}
+                    {showEditReplyPopup
+                      ? "Edit reply"
+                      : `Reply comment of ${replyComment && replyComment.user.username}`}
                   </Heading>
 
                   <Wrapper className="rounded-lg items-end w-full">
                     <TextArea
+                      _ref={commentRef}
                       placeholder="Write your comment..."
                       className="!py-4 !px-3 focus:!ring-0 max-h-[150px] !h-[150px] w-full"
                       type="text"
-                      value={comment}
+                      value={replyCommentValue}
                       onChange={(e) => {
-                        // setComment(e.target.value);
+                        setReplyCommentValue(e.target.value);
                         // console.log(e.target.value)
                       }}
                       rows={5}
@@ -443,9 +442,9 @@ const CommentCard = ({
                     />
                   </Wrapper>
 
-                  {/* <Error fluid className={`${!err && "invisible"}`}>
-                  {err}
-                </Error> */}
+                  <Error fluid className={`${!err && "invisible"}`}>
+                    {err}
+                  </Error>
                 </Wrapper>
               </>
             }
@@ -455,8 +454,7 @@ const CommentCard = ({
             childrenClassName="!mt-0 w-full"
           />
         )}
-      {showDeleteCommentPopup ||
-        (showDeleteReplyPopup && (
+      {(showDeleteReplyPopup && (
           <Popup
             title="Are you sure to remove this comment?"
             onClose={() => {
@@ -477,19 +475,16 @@ const CommentCard = ({
                   setShowDeleteReplyPopup(false)
                   setShowEditReplyPopup(false)
                 },
-                    
-                // action: () => {},
               },
               {
                 title: "delete",
                 danger: true,
-                // action: (() => (selectedComment && handleDeleteComment(selectedComment._id)) || (replyComment && handleDeleteReplyComment(replyComment))),
-                // action: () => {},
+                action: () => (replyComment && handleDeleteReplyComment(replyComment)),
               },
             ]}
           />
         ))}
-    </Wrapper>
+    </>
   );
 };
 
