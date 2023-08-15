@@ -131,7 +131,7 @@ const DetailsScreen = () => {
     const now = Date.now();
 
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
-    if (now - lastFetch < 1000) return;
+    if (now - lastFetch < 5000) return;
     if (nextCursor === null) return;
 
     setLastFetch(now);
@@ -150,7 +150,7 @@ const DetailsScreen = () => {
     const handleScroll = async () => {
       const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
       // console.log(scrollTop)
-      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 200;
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 500;
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
         const nextCursor = localStorage.getItem("commentsNextCursor");
@@ -172,12 +172,10 @@ const DetailsScreen = () => {
   const handleLikeClick = () => {
     const handleLikeOrUnlike = async () => {
       if (!liked) {
-        console.log("call like");
         await locationApi.like(id);
         setLiked((prev) => !prev);
         setLikedCount((prev) => prev + 1);
       } else {
-        console.log("call unlike");
         await locationApi.unlike(id);
         setLiked((prev) => !prev);
         setLikedCount((prev) => prev - 1);
@@ -256,6 +254,7 @@ const DetailsScreen = () => {
     setShowDeleteCommentPopup(false);
     setSelectedComment();
     setErr();
+    setErr();
     setShowEditCommentPopup(false);
     setComment("");
   };
@@ -296,6 +295,7 @@ const DetailsScreen = () => {
         );
       });
       setSelectedComment();
+      setComment("");
       setComment("");
       setShowEditCommentPopup(false);
     };
@@ -390,11 +390,12 @@ const DetailsScreen = () => {
                 }
               >
                 <Image
-                  className="w-[60px] h-[60px] !rounded-full"
+                  className="w-[75px] h-[75px] !rounded-full"
                   src={locationDetails?.user?.imageUrl}
+                  imageClassName="!object-contain sm:!object-cover"
                 />
                 <Wrapper col="true" className="truncate">
-                  <Heading className="text-lg w-fit truncate">
+                  <Heading className="text-lg truncate w-fit">
                     {locationDetails?.user?.username}
                   </Heading>
                   <Text className="text-md sm:!text-[16px] truncate">
@@ -791,7 +792,7 @@ const DetailsScreen = () => {
                     : "Write comment"}
                 </Heading>
 
-                <Wrapper className="rounded-lg items-end w-full">
+                <Wrapper className="items-end w-full rounded-lg">
                   <TextArea
                     _ref={commentRef}
                     placeholder="Write your comment..."

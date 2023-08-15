@@ -22,6 +22,7 @@ const AllEventsScreen = () => {
   const [events, setEvents] = useState([]);
   const [eventsNextCursor, setEventsNextCursor] = useState(undefined);
   const [input, setInput] = useState("");
+  const [lastFetch, setLastFetch] = useState(Date.now());
   const navigate = useNavigate();
   const listRef = useRef();
 
@@ -92,7 +93,7 @@ const AllEventsScreen = () => {
   };
   return (
     <Screen className="p-4 py-2 pb-5 xl:gap-10 xl:pb-10">
-      <Heading>Events</Heading>
+      <Heading className="!text-[24px] md:!text-[32px]">Events</Heading>
 
       <Wrapper className="items-center justify-center my-5">
         <Button
@@ -145,31 +146,39 @@ const AllEventsScreen = () => {
         />
       </Wrapper>
 
-      <Heading className="!capitalize flex gap-1 items-center">
+      <Heading className="!capitalize flex gap-2 !text-primary-400 !text-[20px] md:!text-[28px]">
         {input !== "" && events.length === 0 ? (
           <>
-            <Text>No results for keywords</Text>{" "}
-            <Text className="!text-red-400 text-[16px]">{input}</Text>
+            {/* <Text>No results for keywords</Text>{" "}
+            <Text className="!text-secondary-400 text-[16px]">{input}</Text> */}
+            No results found for <Text className="!text-secondary-400">"{input}"</Text>
           </>
         ) : input === "" && events.length === 0 ? (
           <>
-            <Text>No results</Text>
+            {/* <Text>No results</Text> */}
+            No results found
           </>
         ) : input === "" ? (
           <>
-            <Text>{type}</Text> <Text>Events</Text>
+            {/* <Text>{type}</Text> <Text>Events</Text> */}
+            Show all results
           </>
-        ) : type === "all" ? (
+        ) : 
+        type === "all" ? 
+        (
           <>
-            <Text>All Events with keywords</Text>{" "}
-            <Text className="!text-red-400 text-[16px]">{input}</Text>
+            {/* <Text>All Events with keywords</Text>{" "} */}
+            All Events for
+            <Text className="!text-secondary-400">"{input}"</Text>
           </>
-        ) : (
+        ) 
+        : (
           <>
-            <Text>{type} Events with keywords</Text>{" "}
-            <Text className="!text-red-400  text-[16px]">{input}</Text>
+            {/* <Text>{type} Events with keywords</Text>{" "} */}
+            {type} Events for <Text className="!text-secondary-400">"{input}"</Text>
           </>
-        )}
+        )
+        }
       </Heading>
 
       {loading ? (
@@ -180,8 +189,11 @@ const AllEventsScreen = () => {
         <div
           ref={listRef}
           onScroll={() => {
+            const now = Date.now();
+            if (now - lastFetch < 500) return
+            setLastFetch(now);
             const { scrollTop, scrollHeight, clientHeight } = listRef.current;
-            if (scrollTop + clientHeight === scrollHeight) {
+            if (scrollTop + clientHeight >= scrollHeight - 1000) {
               console.log("Scrolled to bottom!");
               const handleApi = debounce(async () => {
                 if (eventsNextCursor === null) return;
@@ -202,11 +214,11 @@ const AllEventsScreen = () => {
               handleApi();
             }
           }}
-          className="flex flex-col p-5 lg:h-[500px] flex-wrap overflow-y-scroll"
+          className="flex flex-col  lg:h-[500px] flex-wrap overflow-y-scroll my-5 py-4"
         >
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 place-items-center lg:gap-y-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 place-items-center lg:gap-y-6 ">
             {events.length > 0 &&
-              events.map((item) => <EventCard event={item} key={item._id} />)}
+              events.map((item) => <EventCard event={item} key={item._id} className="border"/>)}
 
             {nextLoading && <Loading />}
           </div>

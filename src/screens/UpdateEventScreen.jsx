@@ -635,7 +635,7 @@ const UpdateEventScreen = () => {
                         <Wrapper>
                           <TimePicker
                             err={null}
-                            className="!w-[140px]"
+                            className="!w-[120px] md:!w-[140px]"
                             label="Start time"
                             required
                             onChange={handleTimeChange}
@@ -652,7 +652,7 @@ const UpdateEventScreen = () => {
                           {/* endtime */}
                           <TimePicker
                             err={null}
-                            className="!w-[140px]"
+                            className="!w-[120px] md:!w-[140px]"
                             label="End time"
                             required
                             onChange={handleEndTimeChange}

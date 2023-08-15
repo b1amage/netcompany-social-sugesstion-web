@@ -10,7 +10,7 @@ import ProfileCard from "@/components/card/ProfileCard";
 import Loading from "@/components/loading/Loading";
 import { useSearchParams } from "react-router-dom";
 import Note from "@/components/note/Note";
-import question from "@/assets/question.svg"
+import question from "@/assets/question.svg";
 
 const SearchLocationScreen = () => {
   // useCurrentLocation()
@@ -33,46 +33,57 @@ const SearchLocationScreen = () => {
 
   useEffect(() => {
     // if (latitude && longitude) {
-      // if (currentLocation) {
-      // setIsLoading(false)
-      const fetchLocations = async () => {
-        const response = await locationApi.getFeaturedLocation({
-          locationCategory:
-            searchParams.get("locationCategory") === ""
-              ? null
-              : searchParams.get("locationCategory"),
-          searchInput: searchParams.get("searchInput"),
-          lat: latitude ? latitude : JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lat,
-          lng: longitude ? longitude : JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lng,
-          searchDistance: searchParams.get("searchDistance") !== "" ?  searchParams.get("searchDistance") : null,
-          weekday:
-            searchParams.get("dayType") === "Weekday" &&
-            searchParams.get("openFrom") !== "" &&
-            searchParams.get("closeTo") !== ""
-              ? {
-                  openTime: searchParams.get("openFrom"),
-                  closeTime: searchParams.get("closeTo"),
-                }
-              : null,
-          weekend:
-            searchParams.get("dayType") === "Weekend" &&
-            searchParams.get("openFrom") !== "" &&
-            searchParams.get("closeTo") !== ""
-              ? {
-                  openTime: searchParams.get("openFrom"),
-                  closeTime: searchParams.get("closeTo"),
-                }
-              : null,
-        });
-        localStorage.setItem("searchLocations", JSON.stringify(response.data.results))
-        setLocations(response.data.results);
+    // if (currentLocation) {
+    // setIsLoading(false)
+    const fetchLocations = async () => {
+      const response = await locationApi.getFeaturedLocation({
+        locationCategory:
+          searchParams.get("locationCategory") === ""
+            ? null
+            : searchParams.get("locationCategory"),
+        searchInput: searchParams.get("searchInput"),
+        lat: latitude
+          ? latitude
+          : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+              ?.location?.lat,
+        lng: longitude
+          ? longitude
+          : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+              ?.location?.lng,
+        searchDistance:
+          searchParams.get("searchDistance") !== ""
+            ? searchParams.get("searchDistance")
+            : null,
+        weekday:
+          searchParams.get("dayType") === "Weekday" &&
+          searchParams.get("openFrom") !== "" &&
+          searchParams.get("closeTo") !== ""
+            ? {
+                openTime: searchParams.get("openFrom"),
+                closeTime: searchParams.get("closeTo"),
+              }
+            : null,
+        weekend:
+          searchParams.get("dayType") === "Weekend" &&
+          searchParams.get("openFrom") !== "" &&
+          searchParams.get("closeTo") !== ""
+            ? {
+                openTime: searchParams.get("openFrom"),
+                closeTime: searchParams.get("closeTo"),
+              }
+            : null,
+      });
+      localStorage.setItem(
+        "searchLocations",
+        JSON.stringify(response.data.results)
+      );
+      setLocations(response.data.results);
 
-        localStorage.setItem("nextCursor", response.data.next_cursor);
-        setNextCursor(response.data.next_cursor);
-        setIsLoading(false);
-      };
-      fetchLocations();
-    
+      localStorage.setItem("nextCursor", response.data.next_cursor);
+      setNextCursor(response.data.next_cursor);
+      setIsLoading(false);
+    };
+    fetchLocations();
   }, [latitude, longitude, searchParams]);
 
   useEffect(() => {
@@ -93,7 +104,7 @@ const SearchLocationScreen = () => {
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
     if (now - lastFetch < 1000) return;
     if (nextCursor === null) return;
-    
+
     setLastFetch(now);
     const response = await locationApi.getFeaturedLocation(
       {
@@ -102,9 +113,18 @@ const SearchLocationScreen = () => {
             ? null
             : searchParams.get("locationCategory"),
         searchInput: searchParams.get("searchInput"),
-        lat: latitude ? latitude : JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lat,
-          lng: longitude ? longitude : JSON.parse(localStorage.getItem("currentLocation"))?.geometry?.location?.lng,
-        searchDistance: searchParams.get("searchDistance") !== "" ? searchParams.get("searchDistance") : null,
+        lat: latitude
+          ? latitude
+          : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+              ?.location?.lat,
+        lng: longitude
+          ? longitude
+          : JSON.parse(localStorage.getItem("currentLocation"))?.geometry
+              ?.location?.lng,
+        searchDistance:
+          searchParams.get("searchDistance") !== ""
+            ? searchParams.get("searchDistance")
+            : null,
         weekday:
           searchParams.get("dayType") === "Weekday" &&
           searchParams.get("openFrom") !== "" &&
@@ -130,7 +150,7 @@ const SearchLocationScreen = () => {
       ...JSON.parse(localStorage.getItem("searchLocations")),
       ...response.data.results,
     ];
-    localStorage.setItem("searchLocations", JSON.stringify(newPlaces))
+    localStorage.setItem("searchLocations", JSON.stringify(newPlaces));
     setLocations((prev) => [...prev, ...response.data.results]);
     localStorage.setItem("nextCursor", response.data.next_cursor);
     setNextCursor(response.data.next_cursor);
@@ -146,7 +166,7 @@ const SearchLocationScreen = () => {
     const handleScroll = async () => {
       const { scrollTop, scrollHeight, clientHeight } = tabRef.current;
       const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight;
-      
+
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
         const nextCursor = localStorage.getItem("nextCursor");
@@ -174,71 +194,80 @@ const SearchLocationScreen = () => {
 
   return (
     <Screen className="flex flex-col gap-4 px-3 py-4 lg:gap-8 md:px-6 md:py-5 lg:px-20 !h-screen !overflow-hidden !min-h-0">
-      <SubNavbar user={user} searchFilter searchBar displayAddress onClear={() => {
-        setSearchParams({searchInput: ""})
-      }}/>
+      <SubNavbar
+        user={user}
+        searchFilter
+        searchBar
+        displayAddress
+        onClear={() => {
+          setSearchParams({ searchInput: "" });
+        }}
+      />
       <Wrapper className="items-center">
-      {searchParams.get("searchInput") !== "" ? (
-        locations.length > 0 ? (
-          <Heading className="!text-black !text-[24px] md:!text-[32px]">
-            Search results for{" "}
-            <span className="text-secondary-400">
-              "{searchParams.get("searchInput")}"
-            </span>
+        {searchParams.get("searchInput") !== "" ? (
+          locations.length > 0 ? (
+            <Heading className="!text-black !text-[24px] md:!text-[32px]">
+              Search results for{" "}
+              <span className="text-secondary-400">
+                "{searchParams.get("searchInput")}"
+              </span>
+            </Heading>
+          ) : (
+            <Heading className="!text-black !text-[24px] md:!text-[32px]">
+              No results found for{" "}
+              <span className="text-secondary-400">
+                "{searchParams.get("searchInput")}"
+              </span>
+            </Heading>
+          )
+        ) : latitude && longitude && localStorage.getItem("currentLocation") ? (
+          <Heading className="!text-primary-400 !text-[24px] md:!text-[32px]">
+            Show all results
           </Heading>
         ) : (
-          <Heading className="!text-black !text-[24px] md:!text-[32px]">
-            No results found for{" "}
-            <span className="text-secondary-400">
-              "{searchParams.get("searchInput")}"
-            </span>
+          <Heading className="!text-primary-400 !text-[24px] md:!text-[32px]">
+            No results found
           </Heading>
-        )
-      ) : ( ((latitude && longitude) && (localStorage.getItem("currentLocation")))?
-        <Heading className="!text-primary-400 !text-[24px] md:!text-[32px]">
-          Show all results
-        </Heading> :
-        <Heading className="!text-primary-400 !text-[24px] md:!text-[32px]">
-          No results found
-        </Heading>
-      )}
-        <Note 
-        wrapperClassName="relative"
-        buttonClassName="!relative !top-0 translate-y-0 "
-        noteClassName="!-top-1.5  !h-auto !w-[160px] sm:!w-[200px] md:!w-[250px] sm:-translate-x-1/2 right-0 sm:left-0"
-        // iconClassName="!w-[40px] md:!w-[30px]"
-        src={question} description="The result is based on your preference and search distance in your profile" />
+        )}
+        <Note
+          wrapperClassName="relative"
+          buttonClassName="!relative !top-0 translate-y-0 "
+          noteClassName="!-top-1.5  !h-auto !w-[160px] sm:!w-[200px] md:!w-[250px] sm:-translate-x-1/2 right-0 sm:left-0"
+          // iconClassName="!w-[40px] md:!w-[30px]"
+          src={question}
+          description="The result is based on your preference and search distance in your profile"
+        />
       </Wrapper>
 
       {isLoading ? (
         <Wrapper className="h-full items-center !justify-center">
           <Loading className="w-[60px] h-[60px]" />
         </Wrapper>
+      ) : locations.length > 0 ? (
+        <Wrapper
+          _ref={tabRef}
+          className="grid grid-cols-2 gap-4 overflow-y-scroll sm:grid-cols-3"
+        >
+          {locations.map((location) => {
+            return (
+              <ProfileCard
+                key={location._id}
+                place={{
+                  _id: location._id,
+                  imageUrls: location.imageUrls,
+                  name: location.name,
+                  address: location.address,
+                }}
+                className="!w-full h-[250px] sm:!h-[300px] md:!h-[350px]"
+              />
+            );
+          })}
+        </Wrapper>
       ) : (
-        locations.length > 0 ? (
-          <Wrapper
-            _ref={tabRef}
-            className="grid sm:grid-cols-3 grid-cols-2 gap-4 overflow-y-scroll"
-          >
-            {locations.map((location) => {
-              return (
-                <ProfileCard
-                  key={location._id}
-                  place={{
-                    _id: location._id,
-                    imageUrls: location.imageUrls,
-                    name: location.name,
-                    address: location.address,
-                  }}
-                  className="!w-full h-[250px] sm:!h-[300px] md:!h-[350px]"
-                />
-              );
-            })}
-          </Wrapper>
-        ) : (
-          ((!latitude && !longitude) && (!localStorage.getItem("currentLocation"))) && <Heading>
-            Please enter your current location!
-          </Heading> 
+        !latitude &&
+        !longitude &&
+        !localStorage.getItem("currentLocation") && (
+          <Heading>Please enter your current location!</Heading>
         )
       )}
     </Screen>

@@ -361,6 +361,9 @@ const CommentCard = ({
                   selectedComment={replyComment}
                   setReplyComment={setReplyComment}
                   commentRef={commentRef}
+                  notifySuccess={notifySuccess}
+                  err={err}
+                  setErr={setErr}
                 />
               );
             })}
