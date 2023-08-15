@@ -54,12 +54,12 @@ const CommentCard = ({
   const [showEditReplyPopup, setShowEditReplyPopup] = useState(false);
   const [replyCommentValue, setReplyCommentValue] = useState("")
   const navigate = useNavigate();
-  const dropdownRef = useRef()
+  // const dropdownRef = useRef()
 
-  useOnClickOutside(dropdownRef, () => {
-    setSelectedComment()
-    setReplyComment()
-  })
+  // useOnClickOutside(dropdownRef, () => {
+  //   setSelectedComment()
+  //   setReplyComment()
+  // })
 
   // REPLY FUNCTIONS
   const onDeleteReplyButtonClick = () => {
@@ -268,7 +268,7 @@ const CommentCard = ({
         )}
         {((selectedComment && selectedComment._id === comment._id)) && (
           <Wrapper
-            _ref={dropdownRef}
+            // _ref={dropdownRef}
             col="true"
             className="bg-white absolute bottom-0 right-2 !w-fit translate-y-full !gap-0 drop-shadow-lg"
           >
@@ -374,7 +374,7 @@ const CommentCard = ({
                   selectedComment={replyComment}
                   setReplyComment={setReplyComment}
                   notifyErr={notifyErr}
-                  dropdownRef={dropdownRef}
+                  // dropdownRef={dropdownRef}
                 />
               );
             })}
