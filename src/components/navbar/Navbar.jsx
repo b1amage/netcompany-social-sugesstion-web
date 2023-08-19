@@ -7,37 +7,26 @@ import Image from "@/components/image/Image";
 import logo from "@/assets/netcompany_logo.svg";
 import { darkIcons, lightIcons } from "@/constants/navIcons";
 import darkMenu from "@/assets/dark-menu.svg";
-import add from "@/assets/add.svg";
 import notification from "@/assets/bell.svg";
-
-import filter from "@/assets/filter.svg";
-import darkLogoutImg from "@/assets/navigation/dark-logout.svg";
+import whiteNotification from "@/assets/white_bell.svg";
 import close from "@/assets/close.svg";
 import { createPortal } from "react-dom";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useDispatch, useSelector } from "react-redux";
-import { validatePathname } from "@/features/navbarSlice";
 import Wrapper from "@/components/wrapper/Wrapper";
-import Counter from "@/components/counter/Counter";
-import Heading from "@/components/typography/Heading";
 import logoutImg from "@/assets/navigation/logout.svg";
 import { useNavigate } from "react-router-dom";
 import Popup from "@/components/popup/Popup";
 import ROUTE from "@/constants/routes";
 import { logout } from "@/features/userSlice";
 import Button from "@/components/button/Button";
-import { BsArrowBarLeft, BsPencilFill } from "react-icons/bs";
 import useAuthentication from "@/hooks/useAuthentication";
-
-import AutoCompleteScreen from "@/test/AutoComplete";
-import {
-  changeCurrentLocation,
-  changeLatitude,
-  changeLongitude,
-} from "@/features/currentLocationSlice";
-import useCurrentLocation from "@/hooks/useCurrentLocation";
-
-import Filter from "@/components/filter/Filter";
+import { AiOutlineArrowLeft } from "react-icons/ai";
+import Heading from "@/components/typography/Heading";
+import { mockNotification } from "@/constants/notifications";
+import NotificationCard from "@/components/card/NotificationCard";
+import { BsFillCircleFill } from "react-icons/bs";
+import { RxTriangleUp } from "react-icons/rx";
 
 // import { Autocomplete } from "@react-google-maps/api";
 const BREAK_POINT_NAVBAR = 768;
@@ -45,17 +34,21 @@ const BREAK_POINT_NAVBAR = 768;
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState();
-
+  const [showNotificationPopup, setShowNotificationPopup] = useState(false);
+  const [notifications, setNotifications] = useState(mockNotification || []);
   const viewport = useViewport();
 
   const { isLogin, isShowOnBoarding } = useAuthentication();
   const navbarRef = useRef();
+  const notificationsRef=useRef()
   useOnClickOutside(navbarRef, () => {
     // dispatch(handleCloseSideBarClick())
     setShow(false);
   });
 
+  useOnClickOutside(notificationsRef, () => {
+    setShowNotificationPopup(false)
+  })
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -88,28 +81,15 @@ const Navbar = () => {
     }
   }, [showPopup]);
 
-  // const {
-  //   isAdded,
-  //   isShowNotification,
-  //   isShowFilter,
-  //   isShowEdit,
-  // } = useSelector(({ navbar }) => {
-  //   return {
-  //     isAdded: navbar.isAdded,
-  //     isShowNotification: navbar.isShowNotification,
-  //     isShowFilter: navbar.isShowFilter,
-  //     isShowEdit: navbar.isShowEdit,
-  //   };
-  // });
-  // // console.log(places[0].geometry.location.lat());
-  // // console.log(places[0].geometry.location.lng());
-  // useEffect(() => {
-  //   dispatch(validatePathname(window.location.pathname));
-  //   // console.log(location)
-  //   // console.log([latitude, longitude])
-  //   // console.log(location)
-  // }, [window.location.pathname, isLogin, isShowOnBoarding]);
+  useEffect(() => {
+    if (showNotificationPopup && viewport.width <= BREAK_POINT_NAVBAR) {
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.documentElement.style.overflow = "auto";
+    }
+  }, [showNotificationPopup]);
 
+  // console.log(notifications.filter(notification => notification.isSeen === true))
   return createPortal(
     <nav className="w-full bg-white border-b border-gray-200">
       {showPopup && (
@@ -119,7 +99,7 @@ const Navbar = () => {
           actions={popupActions}
         />
       )}
-      <div className="">
+      <div className="relative">
         {/* Logo */}
         {viewport.width > BREAK_POINT_NAVBAR && (
           <div className="w-full relative bg-primary-400">
@@ -132,14 +112,63 @@ const Navbar = () => {
               onClick={() => isLogin && navigate("/")}
             />
 
-            {isLogin && !isShowOnBoarding && (
-              <Button
-                onClick={() => setShowPopup(true)}
-                className={`!my-0 !absolute top-1/2 -translate-y-1/2 py-1.5 mr-4 !border-danger !bg-danger !right-0`}
-                danger
+            <Wrapper className="mr-4 items-center w-full justify-end !absolute top-1/2 -translate-y-1/2 !gap-4">
+              {/* {isShowNotification && ( */}
+              <div
+                onClick={() => {
+                  setShowNotificationPopup(true);
+                  console.log("Clicked!");
+                }}
+                className="relative"
               >
-                Log out
-              </Button>
+                <Image
+                  imageClassName=""
+                  src={whiteNotification}
+                  alt="notification"
+                  className="w-[28px] h-[28px] mt-1 mr-0.5"
+                />
+                {notifications.filter((notification) => notification.isSeen)
+                  .length > 0 && (
+                  <BsFillCircleFill className="text-secondary-400 absolute top-0 right-0" />
+                )}
+                {
+                  showNotificationPopup && viewport.width > BREAK_POINT_NAVBAR && <RxTriangleUp className="text-white absolute text-2xl translate-x-1/2 right-1/2" />
+                }
+              </div>
+              {/* )} */}
+              {isLogin && !isShowOnBoarding && (
+                <Button
+                  onClick={() => setShowPopup(true)}
+                  className={`!my-0  py-1.5 mr-4 !border-danger !bg-danger !right-0`}
+                  danger
+                >
+                  Log out
+                </Button>
+              )}
+            </Wrapper>
+            {showNotificationPopup && viewport.width > BREAK_POINT_NAVBAR && (
+              <Wrapper
+                _ref={notificationsRef}
+                col="true"
+                className="bg-white !gap-0 max-h-[50vh] border-x border-b overflow-y-auto absolute right-4"
+              >
+                {notifications.map((notification, index) => {
+                  return (
+                    <NotificationCard
+                      notification={notification}
+                      onClick={() => {
+                        navigate(
+                          notification.redirectTo.modelType === "EVENT"
+                            ? `event/${notification.redirectTo.targetId}`
+                            : `/itinerary/details/${notification.redirectTo.targetId}`
+                        );
+                        setShowNotificationPopup(false);
+                      }}
+                      key={index}
+                    />
+                  );
+                })}
+              </Wrapper>
             )}
           </div>
         )}
@@ -160,16 +189,26 @@ const Navbar = () => {
                   }}
                 />
 
-                <Wrapper className="mr-4 items-center w-full justify-end">
+                <Wrapper className="mr-4 relative items-center w-full justify-end">
                   {/* {isShowNotification && ( */}
-                  <div className="relative">
+                  <div
+                    className="relative"
+                    onClick={() => {
+                      setShowNotificationPopup(true);
+                      console.log("Clicked!");
+                    }}
+                  >
                     <Image
                       imageClassName=""
                       src={notification}
                       alt="notification"
-                      className="w-[28px] h-[28px] m-2"
+                      className="w-[28px] h-[28px] mt-1 mr-0.5"
                     />
                     {/* <Counter count={10} /> */}
+                    {notifications.filter((notification) => notification.isSeen)
+                      .length > 0 && (
+                      <BsFillCircleFill className="text-secondary-400 absolute top-0 right-0" />
+                    )}
                   </div>
                   {/* )} */}
                 </Wrapper>
@@ -238,6 +277,55 @@ const Navbar = () => {
           </div>
         )}
       </div>
+      {showNotificationPopup && viewport.width <= BREAK_POINT_NAVBAR && (
+        <Popup
+          onClose={() => {}}
+          actions={[]}
+          // title="Search location"
+          children={
+            <>
+              <Wrapper className="absolute w-full bg-primary-400 justify-center py-2">
+                <Button
+                  className="!p-0 !bg-transparent !absolute left-2 top-1/2 -translate-y-1/2 !rounded-none !border-none !my-0"
+                  onClick={() => {}}
+                >
+                  <AiOutlineArrowLeft
+                    onClick={() => setShowNotificationPopup(false)}
+                    className="text-[20px] font-bold text-white "
+                  />
+                </Button>
+                <Heading className="text-white">Notifications</Heading>
+              </Wrapper>
+              <Wrapper
+                _ref={notificationsRef}
+                col="true"
+                className="pt-[40px] !gap-0 max-h-[100vh] overflow-y-auto notifications"
+              >
+                {notifications.map((notification, index) => {
+                  return (
+                    <NotificationCard
+                      notification={notification}
+                      onClick={() => {
+                        navigate(
+                          notification.redirectTo.modelType === "EVENT"
+                            ? `event/${notification.redirectTo.targetId}`
+                            : `/itinerary/details/${notification.redirectTo.targetId}`
+                        );
+                        setShowNotificationPopup(false);
+                      }}
+                      key={index}
+                    />
+                  );
+                })}
+              </Wrapper>
+            </>
+          }
+          className={`!justify-end`}
+          formClassName="!w-full sm:!w-3/4 !h-screen !p-0 !rounded-none !block "
+          titleClassName="text-[20px]"
+          childrenClassName=""
+        />
+      )}
     </nav>,
     document.querySelector(".navbar-container")
   );

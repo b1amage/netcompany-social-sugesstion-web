@@ -192,7 +192,7 @@ const CommentCard = ({
         // await locationApi.like(id);
         const response = await commentApi.likeComment(id);
         if (response.status !== 200) {
-          notifyErr("This comment does not exist!");
+          notifyErr("This reply does not exist!");
           return;
         }
         setLikeComment((prev) => !prev);
@@ -201,7 +201,7 @@ const CommentCard = ({
         console.log("call unlike");
         const response = await commentApi.unLikeComment(id);
         if (response.status !== 200) {
-          notifyErr("This comment does not exist!");
+          notifyErr("This reply does not exist!");
           return;
         }
         // await locationApi.unlike(id);
