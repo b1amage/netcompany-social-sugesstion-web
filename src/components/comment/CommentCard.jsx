@@ -324,7 +324,7 @@ const CommentCard = ({
                 setShowReplyPopup(true);
               }}
             />
-            <Text>{replyCount}</Text>
+            {/* <Text>{replyCount}</Text> */}
           </Wrapper>
           <Wrapper className="items-center !gap-2">
             {likeComment ? (
