@@ -12,7 +12,7 @@ import whiteNotification from "@/assets/white_bell.svg";
 import close from "@/assets/close.svg";
 import { createPortal } from "react-dom";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Wrapper from "@/components/wrapper/Wrapper";
 import logoutImg from "@/assets/navigation/logout.svg";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +27,8 @@ import { mockNotification } from "@/constants/notifications";
 import NotificationCard from "@/components/card/NotificationCard";
 import { BsFillCircleFill } from "react-icons/bs";
 import { RxTriangleUp } from "react-icons/rx";
+import notificationApi from "@/api/notificationApi";
+import { data } from "autoprefixer";
 
 // import { Autocomplete } from "@react-google-maps/api";
 const BREAK_POINT_NAVBAR = 768;
@@ -35,7 +37,8 @@ const Navbar = () => {
   const [show, setShow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);
-  const [notifications, setNotifications] = useState(mockNotification || []);
+  const [notifications, setNotifications] = useState([]);
+  const [unseenNotificationCount, setUnseenNotificationCount] = useState()
   const viewport = useViewport();
 
   const { isLogin, isShowOnBoarding } = useAuthentication();
@@ -60,6 +63,14 @@ const Navbar = () => {
     navigate(ROUTE.LOGIN);
   };
 
+  const getAllNotifications = () =>{
+    const getNotifications = async() => {
+      const response = await notificationApi.getNotifications()
+      console.log(response)
+      setNotifications(response.data.results)
+    }
+    getNotifications()
+  }
   const popupActions = [
     {
       title: "cancel",
@@ -89,6 +100,13 @@ const Navbar = () => {
     }
   }, [showNotificationPopup]);
 
+  useEffect(() => {
+    const getUnseenCount = async() => {
+      const response = await notificationApi.getUnseenNotifications()
+      setUnseenNotificationCount(response.data)
+    }
+    getUnseenCount()
+  },[])
   // console.log(notifications.filter(notification => notification.isSeen === true))
   return createPortal(
     <nav className="w-full bg-white border-b border-gray-200">
@@ -116,8 +134,8 @@ const Navbar = () => {
               {/* {isShowNotification && ( */}
               <div
                 onClick={() => {
-                  setShowNotificationPopup(true);
-                  console.log("Clicked!");
+                  setShowNotificationPopup(state => !state);
+                  getAllNotifications()
                 }}
                 className="relative"
               >
@@ -127,8 +145,7 @@ const Navbar = () => {
                   alt="notification"
                   className="w-[28px] h-[28px] mt-1 mr-0.5"
                 />
-                {notifications.filter((notification) => notification.isSeen)
-                  .length > 0 && (
+                {unseenNotificationCount > 0 && (
                   <BsFillCircleFill className="text-secondary-400 absolute top-0 right-0" />
                 )}
                 {
@@ -194,8 +211,8 @@ const Navbar = () => {
                   <div
                     className="relative"
                     onClick={() => {
-                      setShowNotificationPopup(true);
-                      console.log("Clicked!");
+                      setShowNotificationPopup(state => !state);
+                      getAllNotifications()    
                     }}
                   >
                     <Image
@@ -205,8 +222,7 @@ const Navbar = () => {
                       className="w-[28px] h-[28px] mt-1 mr-0.5"
                     />
                     {/* <Counter count={10} /> */}
-                    {notifications.filter((notification) => notification.isSeen)
-                      .length > 0 && (
+                    {unseenNotificationCount > 0 && (
                       <BsFillCircleFill className="text-secondary-400 absolute top-0 right-0" />
                     )}
                   </div>
