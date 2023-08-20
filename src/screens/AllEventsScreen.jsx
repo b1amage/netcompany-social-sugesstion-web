@@ -23,6 +23,7 @@ const AllEventsScreen = () => {
   const [eventsNextCursor, setEventsNextCursor] = useState(undefined);
   const [input, setInput] = useState("");
   const [lastFetch, setLastFetch] = useState(Date.now());
+  const [hideSuggestions, setHideSuggestions] = useState(true);
   const navigate = useNavigate();
   const listRef = useRef();
 
@@ -41,7 +42,7 @@ const AllEventsScreen = () => {
   useEffect(() => {
     const handleApi = async () => {
       setLoading(true);
-      const response = await eventApi.getEvents("", type, eventsNextCursor);
+      const response = await eventApi.getEvents(input, type, eventsNextCursor);
       setEventsNextCursor(response.data.next_cursor);
       localStorage.setItem("eventsNextCursor", response.data.next_cursor);
       setEvents(response.data.results);
@@ -49,7 +50,7 @@ const AllEventsScreen = () => {
       setLoading(false);
     };
     handleApi();
-  }, []);
+  }, [input, type]);
 
   const handleGetSuggestionsSearch = (text) => {
     const handleApi = async () => {
@@ -109,17 +110,11 @@ const AllEventsScreen = () => {
           onEnter={(input) => {
             setInput(input);
             console.log("input", input);
-            const apiHandler = async () => {
-              const response = await eventApi.getEvents(input, type, undefined);
-
-              console.log("enter", response);
-
-              setEventsNextCursor(response.data.next_cursor);
-              setEvents(response.data.results);
-            };
-
-            apiHandler();
+            setEventsNextCursor()
+            setHideSuggestions(true)
           }}
+          onChange={() => setHideSuggestions(false)}
+          hideSuggestions={hideSuggestions}
           hideLabel="true"
           handleGet={handleGetSuggestionsSearch}
           placeholder="Search event"
@@ -134,13 +129,7 @@ const AllEventsScreen = () => {
         <Select
           onChange={(item) => {
             setType(item);
-            const handleApi = async () => {
-              const response = await eventApi.getEvents("", item, undefined);
-              setEventsNextCursor(response.data.next_cursor);
-              setEvents(response.data.results);
-            };
-
-            handleApi();
+            setEventsNextCursor()
           }}
           options={["all", "invited", "created", "past"]}
         />
@@ -149,32 +138,26 @@ const AllEventsScreen = () => {
       <Heading className="!capitalize flex gap-2 !text-primary-400 !text-[20px] md:!text-[28px]">
         {input !== "" && events.length === 0 ? (
           <>
-            {/* <Text>No results for keywords</Text>{" "}
-            <Text className="!text-secondary-400 text-[16px]">{input}</Text> */}
             No results found for <Text className="!text-secondary-400">"{input}"</Text>
           </>
         ) : input === "" && events.length === 0 ? (
           <>
-            {/* <Text>No results</Text> */}
             No results found
           </>
         ) : input === "" ? (
           <>
-            {/* <Text>{type}</Text> <Text>Events</Text> */}
             Show all results
           </>
         ) : 
         type === "all" ? 
         (
           <>
-            {/* <Text>All Events with keywords</Text>{" "} */}
             All Events for
             <Text className="!text-secondary-400">"{input}"</Text>
           </>
         ) 
         : (
           <>
-            {/* <Text>{type} Events with keywords</Text>{" "} */}
             {type} Events for <Text className="!text-secondary-400">"{input}"</Text>
           </>
         )
