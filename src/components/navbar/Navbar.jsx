@@ -175,9 +175,12 @@ const Navbar = () => {
                       notification={notification}
                       onClick={() => {
                         navigate(
-                          notification.redirectTo.modelType === "EVENT"
+                          (notification.redirectTo.modelType === "EVENT" && notification.notifiCationType === "EVENT_MODIFICATION"
                             ? `event/${notification.redirectTo.targetId}`
-                            : `/itinerary/details/${notification.redirectTo.targetId}`
+                            : `/error/This event no longer exist`) ||
+                            (notification.redirectTo.modelType === "ITINERARY" && notification.notifiCationType === "ITINERARY_MODIFICATION"
+                            ? `/itinerary/details/${notification.redirectTo.targetId}`
+                            : `/error/This itinerary no longer exist`)
                         );
                         setShowNotificationPopup(false);
                       }}
@@ -323,9 +326,12 @@ const Navbar = () => {
                       notification={notification}
                       onClick={() => {
                         navigate(
-                          notification.redirectTo.modelType === "EVENT"
+                          (notification.redirectTo.modelType === "EVENT" && notification.notifiCationType === "EVENT_MODIFICATION"
                             ? `event/${notification.redirectTo.targetId}`
-                            : `/itinerary/details/${notification.redirectTo.targetId}`
+                            : `/error/This event no longer exist`) ||
+                            (notification.redirectTo.modelType === "ITINERARY" && notification.notifiCationType === "ITINERARY_MODIFICATION"
+                            ? `/itinerary/details/${notification.redirectTo.targetId}`
+                            : `/error/This itinerary no longer exist`)
                         );
                         setShowNotificationPopup(false);
                       }}
