@@ -74,8 +74,10 @@ const CreateEventScreen = () => {
   // check every change of event
   useEffect(() => {
     console.log(`Event change: ${JSON.stringify(event, null, 2)}`);
+    console.log(`Error change: ${JSON.stringify(error, null, 2)}`);
+
     localStorage.setItem("eventCreate", JSON.stringify(event, null, 2));
-  }, [event]);
+  }, [event, error]);
 
   useEffect(() => {
     console.log(`name: ${name}`);
@@ -577,6 +579,7 @@ const CreateEventScreen = () => {
                     ? JSON.parse(localStorage.getItem("createLocationName"))
                     : null
                 }
+                hideError={true}
                 hideSuggestions={hideSuggest}
                 inputClassName={error.locationId && inputState.err}
                 label="Location"
@@ -693,22 +696,48 @@ const CreateEventScreen = () => {
             checked={event.allDay}
             onClick={() => {
               const oldAllDay = event.allDay;
-              setEvent({
-                ...event,
-                allDay: !oldAllDay,
-                startTime: {
-                  hours: null,
-                  minutes: null,
-                },
-                endTime: {
-                  hours: null,
-                  minutes: null,
-                },
-                duration: {
-                  hours: null,
-                  minutes: null,
-                },
-              });
+
+              if (oldAllDay) {
+                setEvent({
+                  ...event,
+                  allDay: !oldAllDay,
+                  startTime: {
+                    hours: null,
+                    minutes: null,
+                  },
+                  endTime: {
+                    hours: null,
+                    minutes: null,
+                  },
+                  duration: {
+                    hours: null,
+                    minutes: null,
+                  },
+                });
+
+                setError({
+                  ...error,
+                  startTime: null,
+                  endTime: null,
+                });
+              } else {
+                setEvent({
+                  ...event,
+                  allDay: !oldAllDay,
+                  startTime: {
+                    hours: 0,
+                    minutes: 0,
+                  },
+                  endTime: {
+                    hours: 0,
+                    minutes: 0,
+                  },
+                  duration: {
+                    hours: 0,
+                    minutes: 0,
+                  },
+                });
+              }
             }}
           />
 
