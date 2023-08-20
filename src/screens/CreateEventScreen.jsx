@@ -579,6 +579,7 @@ const CreateEventScreen = () => {
                     ? JSON.parse(localStorage.getItem("createLocationName"))
                     : null
                 }
+                hideError={true}
                 hideSuggestions={hideSuggest}
                 inputClassName={error.locationId && inputState.err}
                 label="Location"
