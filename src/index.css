@@ -277,3 +277,15 @@
 .dropdown{
   z-index: 8500 !important;
 }
+
+.notifications::-webkit-scrollbar {
+  @apply w-2 h-10 transition-all;
+}
+
+.notifications::-webkit-scrollbar-track {
+  @apply shadow-sm bg-primary-400;
+}
+
+.notifications::-webkit-scrollbar-thumb {
+  @apply bg-secondary-400 outline-none;
+}

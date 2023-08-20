@@ -83,7 +83,7 @@ const EventDetailsScreen = () => {
       setLoading(false);
     };
     handleApi();
-  }, []);
+  }, [id]);
 
   const handleDelete = () => {
     const handleApi = async () => {

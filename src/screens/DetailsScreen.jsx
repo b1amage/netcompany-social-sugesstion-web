@@ -6,7 +6,6 @@ import Image from "@/components/image/Image";
 import Wrapper from "@/components/wrapper/Wrapper";
 import Heading from "@/components/typography/Heading";
 import Text from "@/components/typography/Text";
-import Guess from "@/components/guess/Guess";
 import { BsHeart, BsFillHeartFill, BsFillPencilFill } from "react-icons/bs";
 import CommentCard from "@/components/comment/CommentCard";
 import { useParams } from "react-router-dom";
@@ -24,15 +23,11 @@ import Button from "@/components/button/Button";
 import { MdDelete } from "react-icons/md";
 import Popup from "@/components/popup/Popup";
 import Deleting from "@/components/loading/Deleting";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { GoLocation } from "react-icons/go";
-import { changeLocation } from "@/features/locationSlice";
 import { FaRegCommentDots } from "react-icons/fa";
-import Input from "@/components/form/Input";
-import send from "@/assets/send.svg";
 import TextArea from "@/components/form/TextArea";
 import commentApi from "@/api/commentApi";
-import User from "@/components/user/User";
 import { AiOutlineClose } from "react-icons/ai";
 import Error from "@/components/form/Error";
 
@@ -61,9 +56,12 @@ const DetailsScreen = () => {
   const [onReset, setOnReset] = useState(false);
   const [commentsNextCursor, setCommentsNextCursor] = useState();
   const [selectedComment, setSelectedComment] = useState();
-  const [showComment, setShowComment] = useState(false);
+  const [showCommentPopup, setShowCommentPopup] = useState(false);
   const [showDeleteCommentPopup, setShowDeleteCommentPopup] = useState(false);
   const [showEditCommentPopup, setShowEditCommentPopup] = useState(false);
+  const [replyComment, setReplyComment] = useState();
+
+  // const [replies, setReplies] = useState([])
   const [err, setErr] = useState();
   const navigate = useNavigate();
 
@@ -82,6 +80,7 @@ const DetailsScreen = () => {
 
   let likedListRef = useRef();
   const commentsRef = useRef();
+  const replyCommentRef = useRef()
 
   useEffect(() => {
     const getLocationDetails = async () => {
@@ -114,7 +113,7 @@ const DetailsScreen = () => {
     getLikedUsers();
   }, [showLikedUsers]);
 
-  useEffect(() => {}, [showLikedUsers]);
+  useEffect(() => { }, [showLikedUsers]);
 
   useEffect(() => {
     const getComments = async () => {
@@ -132,7 +131,7 @@ const DetailsScreen = () => {
     const now = Date.now();
 
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
-    if (now - lastFetch < 1000) return;
+    if (now - lastFetch < 2000) return;
     if (nextCursor === null) return;
 
     setLastFetch(now);
@@ -148,11 +147,10 @@ const DetailsScreen = () => {
   };
 
   useEffect(() => {
-    if (!commentsRef.current) return;
     const handleScroll = async () => {
-      const { scrollTop, scrollHeight, clientHeight } = commentsRef.current;
-      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 100;
-
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      // console.log(scrollTop)
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 1000;
       if (isScrolledToBottom) {
         console.log("Scrolled to bottom!");
         const nextCursor = localStorage.getItem("commentsNextCursor");
@@ -162,12 +160,12 @@ const DetailsScreen = () => {
       }
     };
 
-    commentsRef.current.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      if (commentsRef.current) {
-        // Remember to remove event listener when the component is unmounted
-        commentsRef.current.removeEventListener("scroll", handleScroll);
-      }
+      // if (document.documentElement) {
+      // Remember to remove event listener when the component is unmounted
+      window.removeEventListener("scroll", handleScroll);
+      // }
     };
   }, [loadMoreData]);
 
@@ -238,18 +236,24 @@ const DetailsScreen = () => {
   }
 
   // COMMENTS FUNCTIONS
-  const handleThreeDotsClick = (id) => {
-    if (selectedComment === id) {
+  const handleEditButton = (comment) => {
+    setShowEditCommentPopup(true);
+    setComment(comment.content);
+  }
+
+  const handleThreeDotsClick = (comment) => {
+    if (selectedComment && selectedComment._id === comment._id) {
       setSelectedComment();
       return;
     }
-    setSelectedComment(id);
+    setSelectedComment(comment);
   };
 
   const handleCloseComment = () => {
-    setShowComment(false);
+    setShowCommentPopup(false);
     setShowDeleteCommentPopup(false);
     setSelectedComment();
+    setErr();
     setErr();
     setShowEditCommentPopup(false);
     setComment("");
@@ -261,10 +265,19 @@ const DetailsScreen = () => {
     // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
     if (now - lastFetch < 2000) return;
     setLastFetch(now);
+    if (comment.trim() === "" || !comment) {
+      setErr("Please enter the comment!")
+      return
+    };
+    console.log({
+      commentId: selectedComment._id,
+      content: comment,
+    })
+    // return
     const editComment = async () => {
       const response = await commentApi.updateComment(
         {
-          commentId: selectedComment,
+          commentId: selectedComment._id,
           content: comment,
         },
         setErr
@@ -282,6 +295,7 @@ const DetailsScreen = () => {
         );
       });
       setSelectedComment();
+      setComment("");
       setComment("");
       setShowEditCommentPopup(false);
     };
@@ -306,9 +320,11 @@ const DetailsScreen = () => {
     deleteComment();
   };
 
-  const handleAddComment = (e) => {
-    console.log(comment.includes("\n"));
-    if (comment.trim() === "" || !comment) return;
+  const handleAddComment = () => {
+    if (comment.trim() === "" || !comment) {
+      setErr("Please enter the comment!")
+      return
+    };
     setOnReset(true);
 
     const postComment = async () => {
@@ -328,19 +344,27 @@ const DetailsScreen = () => {
       setComment("");
       commentRef.current.value = "";
       commentRef.current.blur();
-      setShowComment(false);
+      setShowCommentPopup(false);
     };
     postComment();
     // setOnReset(false)
   };
 
-  useEffect(() => {
-    if (onReset) {
-      commentsRef.current.scrollTop = 0;
+  const onReplyButtonClick = (comment) => {
+    // setShowReplyPopup(true);
+    setReplyComment(comment);
+  };
+
+  const handleThreeDotsReplyClick = (comment) => {
+    if (replyComment && replyComment._id === comment._id) {
+      setReplyComment();
+      return;
     }
-  }, [onReset]);
+    setReplyComment(comment);
+  };
+
   return (
-    <Screen className="flex flex-col gap-5 px-3 py-4 !mb-2 lg:gap-10 md:px-6 md:py-5 lg:px-20">
+    <Screen _ref={commentsRef} className="flex flex-col gap-5 px-3 py-4 !mb-2 lg:gap-10 md:px-6 md:py-5 lg:px-20">
       {loading ? (
         <LoadingScreen />
       ) : (
@@ -494,7 +518,7 @@ const DetailsScreen = () => {
             <Wrapper col="true" className="flex-1">
               <Wrapper className="items-center justify-between">
                 <Category
-                  onClick={() => {}}
+                  onClick={() => { }}
                   isActive
                   disableHover="true"
                   className="self-start"
@@ -570,7 +594,7 @@ const DetailsScreen = () => {
 
                   <Wrapper className="!gap-2 items-center px-4 cursor-pointer">
                     <FaRegCommentDots className="text-lg" />
-                    <Text className="" onClick={() => setShowComment(true)}>
+                    <Text className="" onClick={() => setShowCommentPopup(true)}>
                       Write comments
                     </Text>
                   </Wrapper>
@@ -618,7 +642,7 @@ const DetailsScreen = () => {
 
                             if (
                               likedListRef.current.scrollTop +
-                                likedListRef.current.clientHeight >=
+                              likedListRef.current.clientHeight >=
                               likedListRef.current.scrollHeight
                             ) {
                               console.log("Scrolled to bottom!");
@@ -679,11 +703,7 @@ const DetailsScreen = () => {
                 )}
 
                 {/* Comment */}
-                <Wrapper
-                  _ref={commentsRef}
-                  col="true"
-                  className="max-h-[200px] sm:max-h-[400px] pr-2 !gap-10 overflow-y-auto pb-8"
-                >
+                <Wrapper col="true" className="!gap-10 pb-8">
                   {comments.length > 0 ? (
                     comments.map((comment) => {
                       return (
@@ -693,13 +713,24 @@ const DetailsScreen = () => {
                           user={comment.user}
                           comment={comment}
                           onDelete={() => setShowDeleteCommentPopup(true)}
-                          onEdit={() => {
-                            setShowEditCommentPopup(true);
-                            setComment(comment.content);
-                          }}
+                          onEdit={handleEditButton}
+                          onReply={onReplyButtonClick}
                           onThreeDotsClick={handleThreeDotsClick}
                           selectedComment={selectedComment}
                           notifyErr={notifyErr}
+                          onClose={handleCloseComment}
+                          showCommentPopup={showCommentPopup} 
+                          showEditCommentPopup={showEditCommentPopup} 
+                          showDeleteCommentPopup={showDeleteCommentPopup}
+                          err={err}
+                          setErr={setErr}
+                          setComment={setComment}
+                          commentRef={replyCommentRef}
+                          replyComment={replyComment}
+                          setReplyComment={setReplyComment}
+                          handleThreeDotsReplyClick={handleThreeDotsReplyClick}
+                          notifySuccess={notifySuccess}
+                          setSelectedComment={setSelectedComment}
                         />
                       );
                     })
@@ -716,7 +747,7 @@ const DetailsScreen = () => {
         </>
       )}
 
-      {(showComment || showEditCommentPopup) && (
+      {(showCommentPopup || showEditCommentPopup) && (
         <Popup
           onClose={() => {
             // closePopup();
@@ -735,9 +766,7 @@ const DetailsScreen = () => {
               danger: true,
               buttonClassName:
                 "!h-fit !mt-4 !mb-0 !bg-primary-400 !border-primary-400 border hover:opacity-70",
-              action: !showEditCommentPopup
-                ? handleAddComment
-                : handleEditComment,
+              action: (showEditCommentPopup && handleEditComment) || (showCommentPopup && handleAddComment)
             },
           ]}
           // title="Search location"
@@ -757,25 +786,24 @@ const DetailsScreen = () => {
 
               <Wrapper col="true" className="gap-4">
                 <Heading className="text-center !text-[28px]">
-                  {showEditCommentPopup ? "Edit comment" : "Write comment"}
+                  {showEditCommentPopup
+                    ? "Edit comment"
+                    : "Write comment"}
                 </Heading>
 
                 <Wrapper className="items-end w-full rounded-lg">
                   <TextArea
+                    _ref={commentRef}
                     placeholder="Write your comment..."
                     className="!py-4 !px-3 focus:!ring-0 max-h-[150px] !h-[150px] w-full"
                     type="text"
                     value={comment}
-                    _ref={commentRef}
-                    icon={send}
                     onChange={(e) => {
                       setComment(e.target.value);
                       // console.log(e.target.value)
-                      setOnReset(false);
                     }}
                     rows={5}
                     wrapperClassName="w-full !gap-0"
-                    onReset={onReset}
                   />
                 </Wrapper>
 
@@ -804,7 +832,7 @@ const DetailsScreen = () => {
             {
               title: "delete",
               danger: true,
-              action: () => handleDeleteComment(selectedComment),
+              action: (() => (selectedComment && handleDeleteComment(selectedComment._id)))
             },
           ]}
         />
@@ -818,11 +846,10 @@ function Arrow(props) {
   return (
     <div
       onClick={props.onClick}
-      className={`absolute w-10 h-10 z-50 -translate-y-1/2 flex-center top-1/2 bg-opacity-20 bg-black ${
-        props.left
+      className={`absolute w-10 h-10 z-50 -translate-y-1/2 flex-center top-1/2 bg-opacity-20 bg-black ${props.left
           ? "arrow--left left-4 cursor-pointer"
           : "arrow--right right-4 cursor-pointer"
-      } ${disabeld}`}
+        } ${disabeld}`}
     >
       <svg
         onClick={props.onClick}

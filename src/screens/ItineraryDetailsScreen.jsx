@@ -19,9 +19,7 @@ import eventApi from "@/api/eventApi";
 import Error from "@/components/form/Error";
 import { toast } from "react-hot-toast";
 import Loading from "@/components/loading/Loading";
-// import useItineraryDragAndDrop from "@/hooks/useItineraryDragAndDrop";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { set } from "lodash";
 
 const ItineraryDetailsScreen = () => {
   const locationsRef = useRef();
@@ -237,7 +235,7 @@ const ItineraryDetailsScreen = () => {
               locations?.length > 0 ? (
                 <Droppable droppableId="locations">
                   {(provided) => (
-                    <Wrapper _ref={locationsRef} col="true" className="sm:max-h-[350px] sm:overflow-y-auto">
+                    <Wrapper _ref={locationsRef} col="true" className="sm:max-h-[50vh] md:max-h-[60vh] lg:max-h-[70vh] xl:max-h-[50vh] 2xl:max-h-[60vh] sm:overflow-y-auto">
 
                     <ul
                       className="leading-10 list-none "
