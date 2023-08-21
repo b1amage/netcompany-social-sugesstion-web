@@ -21,7 +21,7 @@ const ItinerariesScreen = () => {
   const { user } = useSelector((state) => state.user);
   const [itineraries, setItineraries] = useState([]);
   const [itinerariesNextCursor, setItinerariesNextCursor] = useState();
-  const [lastFetch, setLastFetch] = useState();
+  const [lastFetch, setLastFetch] = useState(Date.now());
   const [showCreatePopup, setShowCreatePopup] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
 
