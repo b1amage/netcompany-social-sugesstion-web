@@ -118,6 +118,7 @@ const Navbar = () => {
     const getUnseenCount = async () => {
       const response = await notificationApi.getUnseenNotifications();
       setUnseenNotificationCount(response.data);
+      console.log(response.data)
     };
     getUnseenCount();
   }, []);
@@ -187,7 +188,7 @@ const Navbar = () => {
               onClick={() => isLogin && navigate("/")}
             />
 
-            <Wrapper
+            {isLogin && !isShowOnBoarding && <Wrapper
               _ref={notificationsRef}
               className="mr-4 items-center !absolute top-1/2 -translate-y-1/2 right-0 !gap-4">
               {/* {isShowNotification && ( */}
@@ -195,6 +196,7 @@ const Navbar = () => {
                 onClick={() => {
                   setShowNotificationPopup((state) => !state);
                   getAllNotifications();
+                  setUnseenNotificationCount(0)
                 }}
                 className="relative"
               >
@@ -215,14 +217,14 @@ const Navbar = () => {
                       <Wrapper
                         _ref={listRef}
                         col="true"
-                        className="bg-white !gap-0 max-h-[50vh] w-[400px] border-x border-b overflow-y-auto absolute translate-y-3 -right-4"
+                        className="bg-white !gap-0 max-h-[50vh] w-[400px] border-x border-b overflow-y-auto absolute translate-y-3 -right-4 shadow-lg drop-shadow-lg"
                       >
                         {notifications.map((notification, index) => {
                           return (
                             <NotificationCard
                               notification={notification}
                               onClick={(e) => {
-                                e.stopPropagation()
+                                // e.stopPropagation()
                                 setShowNotificationPopup(false);
                                 navigate(
                                   (notification.notificationType ===
@@ -249,7 +251,7 @@ const Navbar = () => {
               </div>
               {/* )} */}
 
-              {isLogin && !isShowOnBoarding && (
+              
                 <Button
                   onClick={() => setShowPopup(true)}
                   className={`!my-0  py-1.5 !border-danger !bg-danger !right-0`}
@@ -257,8 +259,8 @@ const Navbar = () => {
                 >
                   Log out
                 </Button>
-              )}
-            </Wrapper>
+              
+            </Wrapper>}
           </div>
         )}
 
@@ -285,6 +287,7 @@ const Navbar = () => {
                     onClick={() => {
                       setShowNotificationPopup((state) => !state);
                       getAllNotifications();
+                      setUnseenNotificationCount(0)
                     }}
                   >
                     <Image
@@ -294,8 +297,7 @@ const Navbar = () => {
                       className="w-[28px] h-[28px] mt-1 mr-0.5"
                     />
                     {/* <Counter count={10} /> */}
-                    {(unseenNotificationCount > 0 ||
-                      !showNotificationPopup) && (
+                    {  unseenNotificationCount > 0 && (
                       <BsFillCircleFill className="text-secondary-400 absolute top-0 right-0" />
                     )}
                   </div>
