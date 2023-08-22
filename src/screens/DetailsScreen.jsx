@@ -703,7 +703,7 @@ const DetailsScreen = () => {
                 )}
 
                 {/* Comment */}
-                <Wrapper col="true" className="!gap-10 pb-8">
+                <Wrapper col="true" className="!gap-4 pb-8">
                   {comments.length > 0 ? (
                     comments.map((comment) => {
                       return (
