@@ -127,10 +127,9 @@ const EventDetailsScreen = () => {
                 )
               }
             >
-              <Image
-                className="w-[75px] h-[75px] !rounded-full"
+              <img
+                className="w-[60px] h-[60px] object-cover !rounded-full"
                 src={event?.user?.imageUrl}
-                imageClassName="!object-contain sm:!object-cover"
               />
               <Wrapper col="true" className="truncate ">
                 <Heading className="text-lg w-fit truncate">

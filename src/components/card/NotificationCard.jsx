@@ -8,7 +8,7 @@ const NotificationCard = ({notification, onClick}) => {
     <Wrapper onClick={
         onClick
     } className=" items-center !gap-4 py-4 px-3 hover:bg-neutral-400/70 duration-300 cursor-pointer">
-        <img src={notification.modifier.imageUrl} className="!w-[60px] !h-[60px] !rounded-full"/>
+        <img src={notification.modifier.imageUrl} className="w-[60px] h-[60px] !rounded-full object-cover"/>
         <Text className="w-full text-overflow-ellipsis-3-clamp ">{notification.content}</Text>
         {!notification.isSeen && <BsFillCircleFill className='text-primary-400' />}
     </Wrapper>

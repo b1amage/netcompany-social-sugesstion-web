@@ -22,6 +22,7 @@
     "luxon": "^3.3.0",
     "multi-range-slider-react": "^2.0.3",
     "path": "^0.12.7",
+    "pusher-js": "^8.3.0",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-currency-format": "^1.1.0",

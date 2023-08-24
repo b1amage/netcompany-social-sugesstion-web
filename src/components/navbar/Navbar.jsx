@@ -29,10 +29,12 @@ import { BsFillCircleFill } from "react-icons/bs";
 import { RxTriangleUp } from "react-icons/rx";
 import notificationApi from "@/api/notificationApi";
 import { data } from "autoprefixer";
-
+import Pusher from "pusher-js";
+import { toast } from "react-hot-toast";
+import map from '@/assets/map.svg'
 // import { Autocomplete } from "@react-google-maps/api";
 const BREAK_POINT_NAVBAR = 768;
-
+const URL = 'https://netcompany-social-suggestion-backend.vercel.app' || 'http://localhost:8080/'
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -40,8 +42,8 @@ const Navbar = () => {
   const [notifications, setNotifications] = useState([]);
   const [unseenNotificationCount, setUnseenNotificationCount] = useState();
   const [notificationNextCursor, setNotificationNextCursor] = useState();
+  const [notificationsQueue, setNotificationsQueue] = useState([])
   const [lastFetch, setLastFetch] = useState(Date.now());
-
   const viewport = useViewport();
 
   const { isLogin, isShowOnBoarding } = useAuthentication();
@@ -115,13 +117,76 @@ const Navbar = () => {
   }, [showNotificationPopup]);
 
   useEffect(() => {
-    const getUnseenCount = async () => {
-      const response = await notificationApi.getUnseenNotifications();
-      setUnseenNotificationCount(response.data);
-      console.log(response.data)
+    if (isLogin && !isShowOnBoarding){
+      const getUnseenCount = async () => {
+        const response = await notificationApi.getUnseenNotifications();
+        setUnseenNotificationCount(response.data);
+        console.log(response.data)
+      };
+      getUnseenCount();
+    }
+  }, [isLogin, isShowOnBoarding]);
+
+  useEffect(() => {
+    // Example code of Pusher
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+    Pusher.Runtime.createXHR = function () {
+      var xhr = new XMLHttpRequest();
+      xhr.withCredentials = true;
+      return xhr;
     };
-    getUnseenCount();
-  }, []);
+    console.log("🚀 ~ file: App.jsx:42 ~ useEffect ~ localStorage.getItem('token_axios'):", localStorage.getItem('token_axios'))
+
+    var pusher = new Pusher('8e3959b465d871f4bb36', 
+    {
+      cluster: 'ap1',
+      forceTLS: true,
+      auth: {
+          headers: {
+              Authorization: `Bearer ${localStorage.getItem("token_axios") && localStorage.getItem("token_axios")}`
+          }
+      },
+      authEndpoint: URL + '/pusher/auth',
+    });
+
+    const userId = JSON.parse(localStorage.getItem("user"))._id
+    var channel = pusher.subscribe('private-' + userId);
+    channel.bind('notification', function(data) {
+      setNotificationsQueue((prev) => [data, ...prev])
+      console.log(data)
+    });
+
+    return () => {
+      channel.unbind('notification');
+      pusher.unsubscribe('private-' + userId)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (notificationsQueue.length > 0) {
+        const interval = setInterval(() => {
+            const notification = notificationsQueue.shift(); // Take the first notification from the queue
+            
+            if (notification) {
+                toast(notification.content, {
+                  // icon: `${map}`
+                }, onclick = () => {
+                  navigate(
+                    ((notification.notificationType === "EVENT_MODIFICATION" || notification.notificationType === "EVENT_INVITATION") && `/event/${notification.redirectTo.targetId}`)) ||
+                    (notification.notificationType === "EVENT_DELETE" && `/error/This event no longer exist`) ||
+                    (notification.notificationType === "ITINERARY_MODIFICATION" && `/itinerary/details/${notification.redirectTo.targetId}`) ||
+                    (notification.notificationType === "ITINERARY_DELETE" && `/error/This itinerary no longer exist`)
+                });
+            } else {
+                clearInterval(interval); // Clear interval when there's no more notifications to process
+            }
+        }, 5000);
+
+        // Cleanup: clear the interval when the component is unmounted or the effect reruns
+        return () => clearInterval(interval);
+    }
+}, [notificationsQueue.length]);
 
   const loadMoreData = async (nextCursor) => {
     const now = Date.now();
@@ -197,6 +262,7 @@ const Navbar = () => {
                   setShowNotificationPopup((state) => !state);
                   getAllNotifications();
                   setUnseenNotificationCount(0)
+                  setNotificationsQueue([])
                 }}
                 className="relative"
               >
@@ -206,7 +272,7 @@ const Navbar = () => {
                   alt="notification"
                   className="w-[28px] h-[28px] mt-1 mr-0.5"
                 />
-                {unseenNotificationCount > 0 && (
+                {(unseenNotificationCount > 0 || notificationsQueue.length > 0) && (
                   <BsFillCircleFill className="text-secondary-400 absolute top-0 right-0" />
                 )}
                 {showNotificationPopup &&
@@ -217,18 +283,19 @@ const Navbar = () => {
                       <Wrapper
                         _ref={listRef}
                         col="true"
-                        className="bg-white !gap-0 max-h-[50vh] w-[400px] border-x border-b overflow-y-auto absolute translate-y-3 -right-4 shadow-lg drop-shadow-lg"
+                        className="bg-white !gap-0 max-h-[50vh] w-[600px] border-x border-b overflow-y-auto absolute translate-y-3 -right-4 shadow-lg drop-shadow-lg"
                       >
                         {notifications.map((notification, index) => {
                           return (
                             <NotificationCard
                               notification={notification}
                               onClick={(e) => {
-                                // e.stopPropagation()
+                                e.stopPropagation()
                                 setShowNotificationPopup(false);
                                 navigate(
-                                  (notification.notificationType ===
-                                    "EVENT_MODIFICATION" &&
+                                  ((notification.notificationType ===
+                                    "EVENT_MODIFICATION" || notification.notificationType ===
+                                    "EVENT_INVITATION") &&
                                     `/event/${notification.redirectTo.targetId}`) ||
                                     (notification.notificationType ===
                                       "EVENT_DELETE" &&
@@ -288,6 +355,7 @@ const Navbar = () => {
                       setShowNotificationPopup((state) => !state);
                       getAllNotifications();
                       setUnseenNotificationCount(0)
+                      setNotificationsQueue([])
                     }}
                   >
                     <Image
@@ -297,7 +365,7 @@ const Navbar = () => {
                       className="w-[28px] h-[28px] mt-1 mr-0.5"
                     />
                     {/* <Counter count={10} /> */}
-                    {  unseenNotificationCount > 0 && (
+                    {(unseenNotificationCount > 0 || notificationsQueue.length > 0) && (
                       <BsFillCircleFill className="text-secondary-400 absolute top-0 right-0" />
                     )}
                   </div>
@@ -397,12 +465,13 @@ const Navbar = () => {
                     <NotificationCard
                       notification={notification}
                       onClick={(e) => {
-                        // e.stopPropagation()
+                        e.stopPropagation()
                         setShowNotificationPopup(false);
 
                         navigate(
-                          (notification.notificationType ===
-                            "EVENT_MODIFICATION" &&
+                          ((notification.notificationType ===
+                            "EVENT_MODIFICATION" || notification.notificationType ===
+                            "EVENT_INVITATION") &&
                             `/event/${notification.redirectTo.targetId}`) ||
                             (notification.notificationType === "EVENT_DELETE" &&
                               `/error/This event no longer exist`) ||
