@@ -28,30 +28,41 @@ import NotificationCard from "@/components/card/NotificationCard";
 import { BsFillCircleFill } from "react-icons/bs";
 import { RxTriangleUp } from "react-icons/rx";
 import notificationApi from "@/api/notificationApi";
-import { data } from "autoprefixer";
+import Pusher from "pusher-js";
+import { toast } from "react-hot-toast";
+import map from "@/assets/map.svg";
+import planEvent from "@/assets/plan-event.svg";
 
+import Text from "@/components/typography/Text";
 // import { Autocomplete } from "@react-google-maps/api";
 const BREAK_POINT_NAVBAR = 768;
-
+const URL =
+  "https://netcompany-social-suggestion-backend.vercel.app" ||
+  "http://localhost:8080/";
 const Navbar = () => {
   const [show, setShow] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [showNotificationPopup, setShowNotificationPopup] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [unseenNotificationCount, setUnseenNotificationCount] = useState()
+  const [unseenNotificationCount, setUnseenNotificationCount] = useState();
+  const [notificationNextCursor, setNotificationNextCursor] = useState();
+  const [notificationsQueue, setNotificationsQueue] = useState([]);
+  const [lastFetch, setLastFetch] = useState(Date.now());
   const viewport = useViewport();
 
   const { isLogin, isShowOnBoarding } = useAuthentication();
   const navbarRef = useRef();
-  const notificationsRef=useRef()
+  const notificationsRef = useRef();
+  const listRef = useRef();
   useOnClickOutside(navbarRef, () => {
     // dispatch(handleCloseSideBarClick())
     setShow(false);
   });
 
   useOnClickOutside(notificationsRef, () => {
-    setShowNotificationPopup(false)
-  })
+    setShowNotificationPopup(false);
+  });
+
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -63,14 +74,23 @@ const Navbar = () => {
     navigate(ROUTE.LOGIN);
   };
 
-  const getAllNotifications = () =>{
-    const getNotifications = async() => {
-      const response = await notificationApi.getNotifications()
-      console.log(response)
-      setNotifications(response.data.results)
-    }
-    getNotifications()
-  }
+  const getAllNotifications = () => {
+    const getNotifications = async () => {
+      const response = await notificationApi.getNotifications();
+      console.log(response);
+      setNotifications(response.data.results);
+      localStorage.setItem(
+        "notifications",
+        JSON.stringify(response.data.results)
+      );
+      setNotificationNextCursor(response.data.next_cursor);
+      localStorage.setItem(
+        "notificationNextCursor",
+        JSON.stringify(response.data.next_cursor)
+      );
+    };
+    getNotifications();
+  };
   const popupActions = [
     {
       title: "cancel",
@@ -101,12 +121,159 @@ const Navbar = () => {
   }, [showNotificationPopup]);
 
   useEffect(() => {
-    const getUnseenCount = async() => {
-      const response = await notificationApi.getUnseenNotifications()
-      setUnseenNotificationCount(response.data)
+    if (isLogin && !isShowOnBoarding) {
+      const getUnseenCount = async () => {
+        const response = await notificationApi.getUnseenNotifications();
+        setUnseenNotificationCount(response.data);
+        console.log(response.data);
+      };
+      getUnseenCount();
     }
-    getUnseenCount()
-  },[])
+  }, [isLogin, isShowOnBoarding]);
+
+  useEffect(() => {
+    // Example code of Pusher
+    // Enable pusher logging - don't include this in production
+
+    if (isLogin && !isShowOnBoarding) {
+      Pusher.logToConsole = true;
+      Pusher.Runtime.createXHR = function () {
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        return xhr;
+      };
+      console.log(
+        "🚀 ~ file: App.jsx:42 ~ useEffect ~ localStorage.getItem('token_axios'):",
+        localStorage.getItem("token_axios")
+      );
+
+      var pusher = new Pusher("8e3959b465d871f4bb36", {
+        cluster: "ap1",
+        forceTLS: true,
+        auth: {
+          headers: {
+            Authorization: `Bearer ${
+              localStorage.getItem("token_axios") &&
+              localStorage.getItem("token_axios")
+            }`,
+          },
+        },
+        authEndpoint: URL + "/pusher/auth",
+      });
+
+      const userId = JSON.parse(localStorage.getItem("user"))._id;
+      var channel = pusher.subscribe("private-" + userId);
+      channel.bind("notification", function (data) {
+        setNotificationsQueue((prev) => [data, ...prev]);
+        console.log(data);
+      });
+
+      return () => {
+        channel.unbind("notification");
+        pusher.unsubscribe("private-" + userId);
+      };
+    }
+  }, [isLogin, isShowOnBoarding]);
+
+  useEffect(() => {
+    if (notificationsQueue.length > 0) {
+      const interval = setInterval(() => {
+        const notification = notificationsQueue.shift(); // Take the first notification from the queue
+
+        if (notification) {
+          toast(
+            <Wrapper
+              className="items-center !ap-4"
+              onClick={() => {
+                navigate(
+                  ((notification.notificationType === "EVENT_MODIFICATION" ||
+                    notification.notificationType === "EVENT_INVITATION") &&
+                    `/event/${notification.redirectTo.targetId}`) ||
+                    (notification.notificationType === "EVENT_DELETE" &&
+                      `/error/This event no longer exist`) ||
+                    (notification.notificationType ===
+                      "ITINERARY_MODIFICATION" &&
+                      `/itinerary/details/${notification.redirectTo.targetId}`) ||
+                    (notification.notificationType === "ITINERARY_DELETE" &&
+                      `/error/This itinerary no longer exist`)
+                );
+                setNotificationsQueue([]);
+                toast.dismiss();
+              }}
+            >
+              <img
+                className="w-[24px] h-[24px] sm:w-10 sm:h-10"
+                src={
+                  ((notification.notificationType === "EVENT_MODIFICATION" ||
+                    notification.notificationType === "EVENT_INVITATION" ||
+                    notification.notificationType === "EVENT_DELETE") &&
+                    map) ||
+                  ((notification.notificationType ===
+                    "ITINERARY_MODIFICATION" ||
+                    notification.notificationType === "ITINERARY_DELETE") &&
+                    planEvent)
+                }
+              />
+              <Text>{notification.content}</Text>
+            </Wrapper>,
+            {
+              // duration: 4000
+              style: {
+                cursor: "pointer",
+              },
+            }
+          );
+        } else {
+          clearInterval(interval);
+          setNotificationsQueue([]);
+        }
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [notificationsQueue.length]);
+
+  const loadMoreData = async (nextCursor) => {
+    const now = Date.now();
+    // Debounce: if less than 1000ms (1s) has passed since the last fetch, do nothing
+    if (now - lastFetch < 500) return;
+    if (nextCursor === null) return;
+    setLastFetch(now);
+
+    const response = await notificationApi.getNotifications(nextCursor);
+    let newList = [
+      ...JSON.parse(localStorage.getItem("notifications")),
+      ...response.data.results,
+    ];
+    setNotifications((prev) => [...prev, ...response.data.results]);
+    localStorage.setItem("notifications", JSON.stringify(newList));
+    setNotificationNextCursor(response.data.next_cursor);
+    localStorage.setItem("notificationNextCursor", response.data.next_cursor);
+  };
+
+  useEffect(() => {
+    if (!listRef.current) return;
+    const handleScroll = async () => {
+      const { scrollTop, scrollHeight, clientHeight } = listRef.current;
+      const isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 300;
+
+      if (isScrolledToBottom) {
+        console.log("Scrolled to bottom!");
+        const nextCursor = localStorage.getItem("notificationNextCursor");
+        if (nextCursor.length > 10) {
+          await loadMoreData(nextCursor);
+        }
+      }
+    };
+
+    listRef.current.addEventListener("scroll", handleScroll);
+    return () => {
+      if (listRef.current) {
+        // Remember to remove event listener when the component is unmounted
+        listRef.current.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [loadMoreData]);
+
   // console.log(notifications.filter(notification => notification.isSeen === true))
   return createPortal(
     <nav className="w-full bg-white border-b border-gray-200">
@@ -130,64 +297,82 @@ const Navbar = () => {
               onClick={() => isLogin && navigate("/")}
             />
 
-            <Wrapper className="mr-4 items-center w-full justify-end !absolute top-1/2 -translate-y-1/2 !gap-4">
-              {/* {isShowNotification && ( */}
-              <div
-                onClick={() => {
-                  setShowNotificationPopup(state => !state);
-                  getAllNotifications()
-                }}
-                className="relative"
+            {isLogin && !isShowOnBoarding && (
+              <Wrapper
+                _ref={notificationsRef}
+                className="mr-4 items-center !absolute top-1/2 -translate-y-1/2 right-0 !gap-4"
               >
-                <Image
-                  imageClassName=""
-                  src={whiteNotification}
-                  alt="notification"
-                  className="w-[28px] h-[28px] mt-1 mr-0.5"
-                />
-                {unseenNotificationCount > 0 && (
-                  <BsFillCircleFill className="text-secondary-400 absolute top-0 right-0" />
-                )}
-                {
-                  showNotificationPopup && viewport.width > BREAK_POINT_NAVBAR && <RxTriangleUp className="text-white absolute text-2xl translate-x-1/2 right-1/2" />
-                }
-              </div>
-              {/* )} */}
-              {isLogin && !isShowOnBoarding && (
+                {/* {isShowNotification && ( */}
+                <div
+                  onClick={() => {
+                    setShowNotificationPopup((state) => !state);
+                    getAllNotifications();
+                    setUnseenNotificationCount(0);
+                    setNotificationsQueue([]);
+                  }}
+                  className="relative"
+                >
+                  <Image
+                    imageClassName=""
+                    src={whiteNotification}
+                    alt="notification"
+                    className="w-[28px] h-[28px] mt-1 mr-0.5"
+                  />
+                  {(unseenNotificationCount > 0 ||
+                    notificationsQueue.length > 0) && (
+                    <BsFillCircleFill className="text-secondary-400 absolute top-0 right-0" />
+                  )}
+                  {showNotificationPopup &&
+                    viewport.width > BREAK_POINT_NAVBAR && (
+                      <>
+                        <RxTriangleUp className="text-white absolute text-2xl translate-x-1/2 right-1/2" />
+
+                        <Wrapper
+                          _ref={listRef}
+                          col="true"
+                          className="bg-white !gap-0 max-h-[50vh] w-[600px] border-x border-b overflow-y-auto absolute translate-y-3 -right-4 shadow-lg drop-shadow-lg"
+                        >
+                          {notifications.map((notification, index) => {
+                            return (
+                              <NotificationCard
+                                notification={notification}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setShowNotificationPopup(false);
+                                  navigate(
+                                    ((notification.notificationType ===
+                                      "EVENT_MODIFICATION" ||
+                                      notification.notificationType ===
+                                        "EVENT_INVITATION") &&
+                                      `/event/${notification.redirectTo.targetId}`) ||
+                                      (notification.notificationType ===
+                                        "EVENT_DELETE" &&
+                                        `/error/This event no longer exist`) ||
+                                      (notification.notificationType ===
+                                        "ITINERARY_MODIFICATION" &&
+                                        `/itinerary/details/${notification.redirectTo.targetId}`) ||
+                                      (notification.notificationType ===
+                                        "ITINERARY_DELETE" &&
+                                        `/error/This itinerary no longer exist`)
+                                  );
+                                }}
+                                key={index}
+                              />
+                            );
+                          })}
+                        </Wrapper>
+                      </>
+                    )}
+                </div>
+                {/* )} */}
+
                 <Button
                   onClick={() => setShowPopup(true)}
-                  className={`!my-0  py-1.5 mr-4 !border-danger !bg-danger !right-0`}
+                  className={`!my-0  py-1.5 !border-danger !bg-danger !right-0`}
                   danger
                 >
                   Log out
                 </Button>
-              )}
-            </Wrapper>
-            {showNotificationPopup && viewport.width > BREAK_POINT_NAVBAR && (
-              <Wrapper
-                _ref={notificationsRef}
-                col="true"
-                className="bg-white !gap-0 max-h-[50vh] border-x border-b overflow-y-auto absolute right-4"
-              >
-                {notifications.map((notification, index) => {
-                  return (
-                    <NotificationCard
-                      notification={notification}
-                      onClick={() => {
-                        navigate(
-                          (notification.redirectTo.modelType === "EVENT" && notification.notifiCationType === "EVENT_MODIFICATION"
-                            ? `event/${notification.redirectTo.targetId}`
-                            : `/error/This event no longer exist`) ||
-                            (notification.redirectTo.modelType === "ITINERARY" && notification.notifiCationType === "ITINERARY_MODIFICATION"
-                            ? `/itinerary/details/${notification.redirectTo.targetId}`
-                            : `/error/This itinerary no longer exist`)
-                        );
-                        setShowNotificationPopup(false);
-                      }}
-                      key={index}
-                    />
-                  );
-                })}
               </Wrapper>
             )}
           </div>
@@ -214,8 +399,10 @@ const Navbar = () => {
                   <div
                     className="relative"
                     onClick={() => {
-                      setShowNotificationPopup(state => !state);
-                      getAllNotifications()    
+                      setShowNotificationPopup((state) => !state);
+                      getAllNotifications();
+                      setUnseenNotificationCount(0);
+                      setNotificationsQueue([]);
                     }}
                   >
                     <Image
@@ -225,7 +412,8 @@ const Navbar = () => {
                       className="w-[28px] h-[28px] mt-1 mr-0.5"
                     />
                     {/* <Counter count={10} /> */}
-                    {unseenNotificationCount > 0 && (
+                    {(unseenNotificationCount > 0 ||
+                      notificationsQueue.length > 0) && (
                       <BsFillCircleFill className="text-secondary-400 absolute top-0 right-0" />
                     )}
                   </div>
@@ -316,7 +504,7 @@ const Navbar = () => {
                 <Heading className="text-white">Notifications</Heading>
               </Wrapper>
               <Wrapper
-                _ref={notificationsRef}
+                _ref={listRef}
                 col="true"
                 className="pt-[40px] !gap-0 max-h-[100vh] overflow-y-auto notifications"
               >
@@ -324,16 +512,25 @@ const Navbar = () => {
                   return (
                     <NotificationCard
                       notification={notification}
-                      onClick={() => {
-                        navigate(
-                          (notification.redirectTo.modelType === "EVENT" && notification.notifiCationType === "EVENT_MODIFICATION"
-                            ? `event/${notification.redirectTo.targetId}`
-                            : `/error/This event no longer exist`) ||
-                            (notification.redirectTo.modelType === "ITINERARY" && notification.notifiCationType === "ITINERARY_MODIFICATION"
-                            ? `/itinerary/details/${notification.redirectTo.targetId}`
-                            : `/error/This itinerary no longer exist`)
-                        );
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setShowNotificationPopup(false);
+
+                        navigate(
+                          ((notification.notificationType ===
+                            "EVENT_MODIFICATION" ||
+                            notification.notificationType ===
+                              "EVENT_INVITATION") &&
+                            `/event/${notification.redirectTo.targetId}`) ||
+                            (notification.notificationType === "EVENT_DELETE" &&
+                              `/error/This event no longer exist`) ||
+                            (notification.notificationType ===
+                              "ITINERARY_MODIFICATION" &&
+                              `/itinerary/details/${notification.redirectTo.targetId}`) ||
+                            (notification.notificationType ===
+                              "ITINERARY_DELETE" &&
+                              `/error/This itinerary no longer exist`)
+                        );
                       }}
                       key={index}
                     />
