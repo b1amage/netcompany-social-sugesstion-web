@@ -11,7 +11,7 @@ import {
   BsThreeDotsVertical,
 } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import commentApi from "@/api/commentApi";
 
 const ReplyCard = ({
@@ -26,6 +26,7 @@ const ReplyCard = ({
   notifyErr,
   // dropdownRef
 }) => {
+  const navigate = useNavigate()
   const [likeReplyCommentCount, setLikeReplyCommentCount] = useState(
     comment.heartCount
   );
