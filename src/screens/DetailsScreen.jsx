@@ -254,7 +254,6 @@ const DetailsScreen = () => {
     setShowDeleteCommentPopup(false);
     setSelectedComment();
     setErr();
-    setErr();
     setShowEditCommentPopup(false);
     setComment("");
   };

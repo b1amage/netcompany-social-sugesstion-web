@@ -21,7 +21,7 @@ import ROUTE from "@/constants/routes";
 import { logout } from "@/features/userSlice";
 import Button from "@/components/button/Button";
 import useAuthentication from "@/hooks/useAuthentication";
-import { AiOutlineArrowLeft } from "react-icons/ai";
+import { AiOutlineArrowLeft, AiOutlineClose } from "react-icons/ai";
 import Heading from "@/components/typography/Heading";
 import { mockNotification } from "@/constants/notifications";
 import NotificationCard from "@/components/card/NotificationCard";
@@ -34,6 +34,8 @@ import map from "@/assets/map.svg";
 import planEvent from "@/assets/plan-event.svg";
 
 import Text from "@/components/typography/Text";
+import eventApi from "@/api/eventApi";
+
 // import { Autocomplete } from "@react-google-maps/api";
 const BREAK_POINT_NAVBAR = 768;
 const URL =
@@ -181,53 +183,70 @@ const Navbar = () => {
         const notification = notificationsQueue.shift(); // Take the first notification from the queue
 
         if (notification) {
-          toast(
+          const toastId = toast(
             <Wrapper
-              className="items-center !ap-4"
-              onClick={() => {
-                navigate(
-                  ((notification.notificationType === "EVENT_MODIFICATION" ||
-                    notification.notificationType === "EVENT_INVITATION") &&
-                    `/event/${notification.redirectTo.targetId}`) ||
-                    (notification.notificationType === "EVENT_DELETE" &&
-                      `/error/This event no longer exist`) ||
-                    (notification.notificationType ===
-                      "ITINERARY_MODIFICATION" &&
-                      `/itinerary/details/${notification.redirectTo.targetId}`) ||
-                    (notification.notificationType === "ITINERARY_DELETE" &&
-                      `/error/This itinerary no longer exist`)
-                );
+              className="items-center !gap-4 relative"
+              onClick={async () => {
+                if (notification.redirectTo.modelType === "EVENT") {
+                  if(notification.notificationType === "EVENT_MODIFICATION" || notification.notificationType === "EVENT_INVITATION"){
+                    const eventResponse = await eventApi.getEvent(
+                      notification.redirectTo.targetId
+                    );
+                    if (eventResponse.status !== 200) {
+                      navigate("/error/This event no longer exist");
+                      return;
+                    } 
+                    navigate(`/event/${notification.redirectTo.targetId}`)
+                    return 
+                  }
+                  navigate("/error/This event no longer exist");
+                }
+
+                if (notification.redirectTo.modelType === "ITINERARY") {
+                  if (notification.notificationType === "ITINERARY_MODIFICATION") {
+                    navigate(
+                      `/itinerary/details/${notification.redirectTo.targetId}`
+                    );
+                    return;
+                  }
+                  navigate(`/error/This itinerary no longer exist`);
+                }
                 setNotificationsQueue([]);
                 toast.dismiss();
               }}
             >
               <img
-                className="w-[24px] h-[24px] sm:w-10 sm:h-10"
+                className="!w-[20px] !h-[20px] sm:w-10 sm:h-10"
                 src={
                   ((notification.notificationType === "EVENT_MODIFICATION" ||
                     notification.notificationType === "EVENT_INVITATION" ||
                     notification.notificationType === "EVENT_DELETE") &&
-                    map) ||
+                    planEvent ) ||
                   ((notification.notificationType ===
                     "ITINERARY_MODIFICATION" ||
                     notification.notificationType === "ITINERARY_DELETE") &&
-                    planEvent)
+                    map)
                 }
               />
-              <Text>{notification.content}</Text>
+              <Text className="text-overflow-ellipsis-3-clamp !w-fit">{notification.content}</Text>
+              <AiOutlineClose className="!w-[24px] !h-[24px]" onClick={(e) => {
+                e.stopPropagation()
+                toast.dismiss(toastId)
+              }} />
             </Wrapper>,
             {
-              // duration: 4000
+              duration: 3000,
               style: {
                 cursor: "pointer",
               },
+              position: viewport.width >= 660 ? 'bottom-right' : 'top-right'
             }
           );
         } else {
           clearInterval(interval);
-          setNotificationsQueue([]);
+          // setNotificationsQueue([]);
         }
-      }, 5000);
+      }, 4000);
       return () => clearInterval(interval);
     }
   }, [notificationsQueue.length]);
@@ -336,25 +355,33 @@ const Navbar = () => {
                             return (
                               <NotificationCard
                                 notification={notification}
-                                onClick={(e) => {
+                                onClick={async(e) => {
                                   e.stopPropagation();
                                   setShowNotificationPopup(false);
-                                  navigate(
-                                    ((notification.notificationType ===
-                                      "EVENT_MODIFICATION" ||
-                                      notification.notificationType ===
-                                        "EVENT_INVITATION") &&
-                                      `/event/${notification.redirectTo.targetId}`) ||
-                                      (notification.notificationType ===
-                                        "EVENT_DELETE" &&
-                                        `/error/This event no longer exist`) ||
-                                      (notification.notificationType ===
-                                        "ITINERARY_MODIFICATION" &&
-                                        `/itinerary/details/${notification.redirectTo.targetId}`) ||
-                                      (notification.notificationType ===
-                                        "ITINERARY_DELETE" &&
-                                        `/error/This itinerary no longer exist`)
-                                  );
+                                  if (notification.redirectTo.modelType === "EVENT") {
+                                    if(notification.notificationType === "EVENT_MODIFICATION" || notification.notificationType === "EVENT_INVITATION"){
+                                      const eventResponse = await eventApi.getEvent(
+                                        notification.redirectTo.targetId
+                                      );
+                                      if (eventResponse.status !== 200) {
+                                        navigate("/error/This event no longer exist");
+                                        return;
+                                      } 
+                                      navigate(`/event/${notification.redirectTo.targetId}`)
+                                      return 
+                                    }
+                                    navigate("/error/This event no longer exist");
+                                  }
+                  
+                                  if (notification.redirectTo.modelType === "ITINERARY") {
+                                    if (notification.notificationType === "ITINERARY_MODIFICATION") {
+                                      navigate(
+                                        `/itinerary/details/${notification.redirectTo.targetId}`
+                                      );
+                                      return;
+                                    }
+                                    navigate(`/error/This itinerary no longer exist`);
+                                  }
                                 }}
                                 key={index}
                               />
@@ -512,25 +539,33 @@ const Navbar = () => {
                   return (
                     <NotificationCard
                       notification={notification}
-                      onClick={(e) => {
+                      onClick={async(e) => {
                         e.stopPropagation();
                         setShowNotificationPopup(false);
-
-                        navigate(
-                          ((notification.notificationType ===
-                            "EVENT_MODIFICATION" ||
-                            notification.notificationType ===
-                              "EVENT_INVITATION") &&
-                            `/event/${notification.redirectTo.targetId}`) ||
-                            (notification.notificationType === "EVENT_DELETE" &&
-                              `/error/This event no longer exist`) ||
-                            (notification.notificationType ===
-                              "ITINERARY_MODIFICATION" &&
-                              `/itinerary/details/${notification.redirectTo.targetId}`) ||
-                            (notification.notificationType ===
-                              "ITINERARY_DELETE" &&
-                              `/error/This itinerary no longer exist`)
-                        );
+                        if (notification.redirectTo.modelType === "EVENT") {
+                          if(notification.notificationType === "EVENT_MODIFICATION" || notification.notificationType === "EVENT_INVITATION"){
+                            const eventResponse = await eventApi.getEvent(
+                              notification.redirectTo.targetId
+                            );
+                            if (eventResponse.status !== 200) {
+                              navigate("/error/This event no longer exist");
+                              return;
+                            } 
+                            navigate(`/event/${notification.redirectTo.targetId}`)
+                            return 
+                          }
+                          navigate("/error/This event no longer exist");
+                        }
+        
+                        if (notification.redirectTo.modelType === "ITINERARY") {
+                          if (notification.notificationType === "ITINERARY_MODIFICATION") {
+                            navigate(
+                              `/itinerary/details/${notification.redirectTo.targetId}`
+                            );
+                            return;
+                          }
+                          navigate(`/error/This itinerary no longer exist`);
+                        }
                       }}
                       key={index}
                     />
