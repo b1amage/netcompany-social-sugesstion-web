@@ -148,13 +148,13 @@ const LocationForm = ({
     setPriceErr()
     setCurrencyErr()
     setSubmitErr([]);
-    console.log(typeof minPrice)
+    // console.log(typeof minPrice)
     let data;
     if (uploadImageErr) {
       setUploadImageErr();
     }
 
-    setIsLoading(true);
+    // setIsLoading(true);
     if (
       VALIDATE.location(address) ||
       VALIDATE.title(title) ||
@@ -306,8 +306,8 @@ const LocationForm = ({
             setIsLoading(false);
             return;
           }
-          // console.log(typeof parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2)))
-          // console.log(typeof parseFloat(parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2))))
+          console.log(typeof parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2)))
+          console.log(typeof parseFloat(parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2))))
 
           data = {
             placeId: placeId,
@@ -334,13 +334,12 @@ const LocationForm = ({
       }
     }
 
-    console.log(data);
-    // // console.log(imgList)
+    // console.log(data);
+    // console.log(imgList)
     if (window.location.pathname === "/create-location") {
       locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyCreate);
-      console.log(data);
+      // console.log(data);
       setIsLoading(false);
-
       return;
     } else {
       data = {
@@ -375,13 +374,86 @@ const LocationForm = ({
               }
             : null,
       };
-      locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
+
+      const defaultData = JSON.parse(localStorage.getItem("defaultLocationInfo"))
+
+      if (data.locationId !== defaultData._id ||
+        data.address !== defaultData.address ||
+        data.description !== defaultData.description ||
+        data.locationCategory !== defaultData.locationCategory ||
+        data.placeId !== defaultData.placeId ||
+        data.name !== defaultData.name){
+          locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
+          localStorage.removeItem("defaultLocationInfo")
+          // setIsLoading(false)
+          return
+      }
+      if (data.imageUrls.length !== defaultData.imageUrls.length){
+        locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
+        localStorage.removeItem("defaultLocationInfo")
+        // setIsLoading(false)
+        return
+      } else{
+        for (let img of data.imageUrls){
+          if (!defaultData.imageUrls.includes(img)){
+            locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
+            localStorage.removeItem("defaultLocationInfo")
+            // setIsLoading(false);
+            return
+          }
+        }
+      }
+      
+      for (let num of data.location.coordinates){
+        if (!defaultData.location.coordinates.includes(num)){
+          locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
+          localStorage.removeItem("defaultLocationInfo")
+          // setIsLoading(false);
+          return
+        }
+      }
+
+      const weekdayKey = Object.keys(data.weekday)
+      const weekendKey = Object.keys(data.weekend)
+      const pricePerPersonKey = Object.keys(data.pricePerPerson)
+
+      for (let key of weekdayKey){
+        if (data.weekday[key] !== defaultData.weekday[key]){
+          locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
+          localStorage.removeItem("defaultLocationInfo")
+          // setIsLoading(false);
+          return
+        }
+      }
+
+      for (let key of weekendKey){
+        if (data.weekend[key] !== defaultData.weekend[key]){
+          locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
+          localStorage.removeItem("defaultLocationInfo")
+          // setIsLoading(false);
+          return
+        }
+      }
+
+      for (let key of pricePerPersonKey){
+        if (data.pricePerPerson[key] !== defaultData.pricePerPerson[key]){
+          locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
+          localStorage.removeItem("defaultLocationInfo")
+          // setIsLoading(false);
+          return
+        }
+      }
+      // locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
       console.log(data);
+      console.log(defaultData)
+      // console.log("Cannot update")
+      toast.error("Cannot submit as there is no change")
       setIsLoading(false);
+      // return
 
       return;
     }
-    // // // console.log(response)
+    // // console.log(response)
     // setIsLoading(false);
   };
 
@@ -608,8 +680,6 @@ const LocationForm = ({
                     setUploadImageErr();
                     setImage();
                     setUploading(true);
-                    // console.log(e.target.files[0])
-                    // console.log(e.target.value)
                     if (e.target.files[0] === undefined) {
                       if (imgList.length > 0) {
                         setImage(imgList[imgList.length - 1]);
@@ -639,13 +709,13 @@ const LocationForm = ({
                       headers: { "Content-Type": "multipart/form-data" },
                     })
                       .then(function (response) {
-                        console.log(response.data.image);
+                        // console.log(response.data.image);
                         setImage(response.data.image);
                         setImgList((prev) => [...prev, response.data.image]);
                         setUploading(false);
                       })
                       .catch(function (response) {
-                        console.log(response);
+                        // console.log(response);
                         setUploading(false);
                       });
                   })();

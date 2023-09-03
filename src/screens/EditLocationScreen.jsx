@@ -22,6 +22,7 @@ const EditLocationScreen = () => {
     const getLocationDetails = async () => {
       const response = await locationApi.getLocationDetails(id, navigate);
       setLocationDetails(response.data);
+      localStorage.setItem("defaultLocationInfo", JSON.stringify(response.data))
     };
     getLocationDetails();
   }, []);
