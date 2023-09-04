@@ -148,10 +148,10 @@ const Navbar = () => {
         xhr.withCredentials = true;
         return xhr;
       };
-      // console.log(
-      //   "🚀 ~ file: App.jsx:42 ~ useEffect ~ localStorage.getItem('token_axios'):",
-      //   localStorage.getItem("token_axios")
-      // );
+      console.log(
+        "🚀 ~ file: App.jsx:42 ~ useEffect ~ localStorage.getItem('token_axios'):",
+        localStorage.getItem("token_axios")
+      );
 
       var pusher = new Pusher("8e3959b465d871f4bb36", {
         cluster: "ap1",
@@ -171,7 +171,7 @@ const Navbar = () => {
       var channel = pusher.subscribe("private-" + userId);
       channel.bind("notification", function (data) {
         setNotificationsQueue((prev) => [data, ...prev]);
-        // console.log(data);
+        console.log(data);
       });
 
       return () => {
