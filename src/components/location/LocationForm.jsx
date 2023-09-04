@@ -57,7 +57,6 @@ const LocationForm = ({
   const notifyCreate = () => toast.success("Successfully register!");
   const notifyUpdate = () => toast.success("Successfully update!");
 
-
   const [uploading, setUploading] = useState(false);
   const [isShowImage, setIsShowImage] = useState(false);
   const [imgList, setImgList] = useState(defaultImgList);
@@ -145,8 +144,8 @@ const LocationForm = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setPriceErr()
-    setCurrencyErr()
+    setPriceErr();
+    setCurrencyErr();
     setSubmitErr([]);
     // console.log(typeof minPrice)
     let data;
@@ -306,8 +305,14 @@ const LocationForm = ({
             setIsLoading(false);
             return;
           }
-          console.log(typeof parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2)))
-          console.log(typeof parseFloat(parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2))))
+          console.log(
+            typeof parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2))
+          );
+          console.log(
+            typeof parseFloat(
+              parseFloat(Number(minPrice.replace(/,/g, "")).toFixed(2))
+            )
+          );
 
           data = {
             placeId: placeId,
@@ -337,7 +342,13 @@ const LocationForm = ({
     // console.log(data);
     // console.log(imgList)
     if (window.location.pathname === "/create-location") {
-      locationApi.createLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyCreate);
+      locationApi.createLocation(
+        data,
+        navigate,
+        setSubmitErr,
+        setIsShowPopup,
+        notifyCreate
+      );
       // console.log(data);
       setIsLoading(false);
       return;
@@ -375,86 +386,154 @@ const LocationForm = ({
             : null,
       };
 
-      const defaultData = JSON.parse(localStorage.getItem("defaultLocationInfo"))
+      const defaultData = JSON.parse(
+        localStorage.getItem("defaultLocationInfo")
+      );
 
-      if (data.locationId !== defaultData._id ||
+      if (
+        data.locationId !== defaultData._id ||
         data.address !== defaultData.address ||
         data.description !== defaultData.description ||
         data.locationCategory !== defaultData.locationCategory ||
         data.placeId !== defaultData.placeId ||
-        data.name !== defaultData.name){
-          locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
-          localStorage.removeItem("defaultLocationInfo")
-          // setIsLoading(false)
-          return
-      }
-      if (data.imageUrls.length !== defaultData.imageUrls.length){
-        locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
-        localStorage.removeItem("defaultLocationInfo")
+        data.name !== defaultData.name
+      ) {
+        locationApi.updateLocation(
+          data,
+          navigate,
+          setSubmitErr,
+          setIsShowPopup,
+          notifyUpdate
+        );
+        localStorage.removeItem("defaultLocationInfo");
         // setIsLoading(false)
-        return
-      } else{
-        for (let img of data.imageUrls){
-          if (!defaultData.imageUrls.includes(img)){
-            locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
-            localStorage.removeItem("defaultLocationInfo")
-            // setIsLoading(false);
-            return
+        return;
+      }
+      if (data.imageUrls.length !== defaultData.imageUrls.length) {
+        locationApi.updateLocation(
+          data,
+          navigate,
+          setSubmitErr,
+          setIsShowPopup,
+          notifyUpdate
+        );
+        localStorage.removeItem("defaultLocationInfo");
+        // setIsLoading(false)
+        return;
+      } else {
+        for (let img of data.imageUrls) {
+          if (!defaultData.imageUrls.includes(img)) {
+            locationApi.updateLocation(
+              data,
+              navigate,
+              setSubmitErr,
+              setIsShowPopup,
+              notifyUpdate
+            );
+            localStorage.removeItem("defaultLocationInfo");
+            return;
+          }
+        }
+      }
+
+      for (let num of data.location.coordinates) {
+        if (!defaultData.location.coordinates.includes(num)) {
+          locationApi.updateLocation(
+            data,
+            navigate,
+            setSubmitErr,
+            setIsShowPopup,
+            notifyUpdate
+          );
+          localStorage.removeItem("defaultLocationInfo");
+          return;
+        }
+      }
+
+      const weekdayKey = Object.keys(data.weekday);
+      for (let key of weekdayKey) {
+        if (data.weekday[key] !== defaultData.weekday[key]) {
+          locationApi.updateLocation(
+            data,
+            navigate,
+            setSubmitErr,
+            setIsShowPopup,
+            notifyUpdate
+          );
+          localStorage.removeItem("defaultLocationInfo");
+          // setIsLoading(false);
+          return;
+        }
+      }
+
+      if ((!data.weekend && defaultData.weekend) || (data.weekend && !defaultData.weekend)) {
+        locationApi.updateLocation(
+          data,
+          navigate,
+          setSubmitErr,
+          setIsShowPopup,
+          notifyUpdate
+        );
+        localStorage.removeItem("defaultLocationInfo");
+        return;
+      }
+
+      if (data.weekend && defaultData.weekend){
+        const weekendKey = Object.keys(data.weekend);
+        for (let key of weekendKey) {
+          if (
+            data.weekend[key] !== defaultData.weekend[key]
+          ) {
+            locationApi.updateLocation(
+              data,
+              navigate,
+              setSubmitErr,
+              setIsShowPopup,
+              notifyUpdate
+            );
+            localStorage.removeItem("defaultLocationInfo");
+            return;
+          }
+        }
+      }
+
+      if ((!data.pricePerPerson && defaultData.pricePerPerson) || (data.pricePerPerson && !defaultData.pricePerPerson)) {
+        locationApi.updateLocation(
+          data,
+          navigate,
+          setSubmitErr,
+          setIsShowPopup,
+          notifyUpdate
+        );
+        localStorage.removeItem("defaultLocationInfo");
+        return;
+      }
+
+      if (data.pricePerPerson && defaultData.pricePerPerson){
+        const pricePerPersonKey = Object.keys(data.pricePerPerson);
+  
+        for (let key of pricePerPersonKey) {
+          if ( 
+            data.pricePerPerson[key] !== defaultData.pricePerPerson[key]
+          ) {
+            locationApi.updateLocation(
+              data,
+              navigate,
+              setSubmitErr,
+              setIsShowPopup,
+              notifyUpdate
+            );
+            localStorage.removeItem("defaultLocationInfo");
+            return;
           }
         }
       }
       
-      for (let num of data.location.coordinates){
-        if (!defaultData.location.coordinates.includes(num)){
-          locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
-          localStorage.removeItem("defaultLocationInfo")
-          // setIsLoading(false);
-          return
-        }
-      }
-
-      const weekdayKey = Object.keys(data.weekday)
-      const weekendKey = Object.keys(data.weekend)
-      const pricePerPersonKey = Object.keys(data.pricePerPerson)
-
-      for (let key of weekdayKey){
-        if (data.weekday[key] !== defaultData.weekday[key]){
-          locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
-          localStorage.removeItem("defaultLocationInfo")
-          // setIsLoading(false);
-          return
-        }
-      }
-
-      for (let key of weekendKey){
-        if (data.weekend[key] !== defaultData.weekend[key]){
-          locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
-          localStorage.removeItem("defaultLocationInfo")
-          // setIsLoading(false);
-          return
-        }
-      }
-
-      for (let key of pricePerPersonKey){
-        if (data.pricePerPerson[key] !== defaultData.pricePerPerson[key]){
-          locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
-          localStorage.removeItem("defaultLocationInfo")
-          // setIsLoading(false);
-          return
-        }
-      }
-      // locationApi.updateLocation(data, navigate, setSubmitErr, setIsShowPopup, notifyUpdate);
-      console.log(data);
-      console.log(defaultData)
-      // console.log("Cannot update")
-      toast.error("Cannot submit as there is no change")
+      toast.error("Cannot submit as there is no change");
       setIsLoading(false);
-      // return
 
       return;
     }
-    // // console.log(response)
-    // setIsLoading(false);
   };
 
   useEffect(() => {
@@ -513,8 +592,8 @@ const LocationForm = ({
                 ${
                   titleErr &&
                   (title.trim() !== ""
-                  ? "focus:border-green-500 focus:ring-2 ring-1 focus:ring-green-500"
-                  : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
+                    ? "focus:border-green-500 focus:ring-2 ring-1 focus:ring-green-500"
+                    : "focus:!ring-secondary-400  !border-secondary-400 focus:ring-2 ring-1 ring-secondary-400")
                 }`}
               value={title}
               onChange={(e) => {
@@ -535,12 +614,14 @@ const LocationForm = ({
             err={categoryErr}
             className={` 
               ${
-                (category?.title || category) ? "focus:ring-2 ring-1 ring-black border-black"
-                  : categoryErr && "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 border-secondary-400 "
+                category?.title || category
+                  ? "focus:ring-2 ring-1 ring-black border-black"
+                  : categoryErr &&
+                    "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 border-secondary-400 "
               }`}
           />
 
-          <Description 
+          <Description
             label="Description"
             optional
             wrapperClassName="!my-0"
@@ -632,7 +713,11 @@ const LocationForm = ({
                       setMinPrice(e.target.value);
                       setPriceErr(VALIDATE.price(e.target.value, maxPrice));
                     }}
-                    className={`${priceErr ? "focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 ring-1 !ring-secondary-400": ""}`}
+                    className={`${
+                      priceErr
+                        ? "focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 ring-1 !ring-secondary-400"
+                        : ""
+                    }`}
                     err={priceErr}
                   />
 
@@ -643,7 +728,11 @@ const LocationForm = ({
                       setMaxPrice(e.target.value);
                       setPriceErr(VALIDATE.price(minPrice, e.target.value));
                     }}
-                    className={`${priceErr ? "focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 ring-1 !ring-secondary-400": ""}`}
+                    className={`${
+                      priceErr
+                        ? "focus:!ring-secondary-400 focus:!border-secondary-400 !border-secondary-400 ring-1 !ring-secondary-400"
+                        : ""
+                    }`}
                     err={priceErr}
                   />
                 </Wrapper>
@@ -651,8 +740,10 @@ const LocationForm = ({
                 <Dropdown
                   label="Currency:"
                   className={`${
-                    (currency?.title || currency) ? "focus:ring-2 ring-1 ring-black border-black"
-                      : currencyErr && "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 border-secondary-400 "
+                    currency?.title || currency
+                      ? "focus:ring-2 ring-1 ring-black border-black"
+                      : currencyErr &&
+                        "focus:!ring-secondary-400 ring-1 !ring-secondary-400 focus:!border-secondary-400 border-secondary-400 "
                   } rounded-lg `}
                   wrapperClassName="w-full"
                   options={currencyList}
@@ -797,7 +888,11 @@ const LocationForm = ({
       {isShowPopup && (
         <Popup
           actions={[]}
-          title={`${window.location.pathname === '/create-location' ? "Registering location" : "Updating loacation"}. Wait for a few seconds to be directed to the previous page`}
+          title={`${
+            window.location.pathname === "/create-location"
+              ? "Registering location"
+              : "Updating loacation"
+          }. Wait for a few seconds to be directed to the previous page`}
           children={<Loading />}
           className="!fixed "
           formClassName="items-center !h-fit !py-6 !px-5 !gap-4"
