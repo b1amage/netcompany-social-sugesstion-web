@@ -799,8 +799,8 @@ const LocationForm = ({
           actions={[]}
           title={`${window.location.pathname === '/create-location' ? "Registering location" : "Updating loacation"}. Wait for a few seconds to be directed to the previous page`}
           children={<Loading />}
-          className="!fixed"
-          formClassName="items-center !h-fit"
+          className="!fixed "
+          formClassName="items-center !h-fit !py-6 !px-5 !gap-4"
           titleClassName="!text-green-500"
         />
       )}
