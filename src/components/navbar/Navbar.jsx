@@ -21,7 +21,7 @@ import ROUTE from "@/constants/routes";
 import { logout } from "@/features/userSlice";
 import Button from "@/components/button/Button";
 import useAuthentication from "@/hooks/useAuthentication";
-import { AiOutlineArrowLeft } from "react-icons/ai";
+import { AiOutlineArrowLeft, AiOutlineClose } from "react-icons/ai";
 import Heading from "@/components/typography/Heading";
 import { mockNotification } from "@/constants/notifications";
 import NotificationCard from "@/components/card/NotificationCard";
@@ -34,6 +34,9 @@ import map from "@/assets/map.svg";
 import planEvent from "@/assets/plan-event.svg";
 
 import Text from "@/components/typography/Text";
+import eventApi from "@/api/eventApi";
+import itineraryApi from "@/api/itineraryApi";
+
 // import { Autocomplete } from "@react-google-maps/api";
 const BREAK_POINT_NAVBAR = 768;
 const URL =
@@ -47,6 +50,9 @@ const Navbar = () => {
   const [unseenNotificationCount, setUnseenNotificationCount] = useState();
   const [notificationNextCursor, setNotificationNextCursor] = useState();
   const [notificationsQueue, setNotificationsQueue] = useState([]);
+
+  const [availableErr, setAvailableErr] = useState()
+
   const [lastFetch, setLastFetch] = useState(Date.now());
   const viewport = useViewport();
 
@@ -142,10 +148,10 @@ const Navbar = () => {
         xhr.withCredentials = true;
         return xhr;
       };
-      console.log(
-        "🚀 ~ file: App.jsx:42 ~ useEffect ~ localStorage.getItem('token_axios'):",
-        localStorage.getItem("token_axios")
-      );
+      // console.log(
+      //   "🚀 ~ file: App.jsx:42 ~ useEffect ~ localStorage.getItem('token_axios'):",
+      //   localStorage.getItem("token_axios")
+      // );
 
       var pusher = new Pusher("8e3959b465d871f4bb36", {
         cluster: "ap1",
@@ -165,7 +171,7 @@ const Navbar = () => {
       var channel = pusher.subscribe("private-" + userId);
       channel.bind("notification", function (data) {
         setNotificationsQueue((prev) => [data, ...prev]);
-        console.log(data);
+        // console.log(data);
       });
 
       return () => {
@@ -173,61 +179,101 @@ const Navbar = () => {
         pusher.unsubscribe("private-" + userId);
       };
     }
-  }, [isLogin, isShowOnBoarding]);
+  }, [JSON.parse(localStorage.getItem("user"))._id]);
 
+  const handleNotifcationClick = async(notification) => {
+    if (notification.redirectTo.modelType === "EVENT") {
+      if(notification.notificationType === "EVENT_MODIFICATION" || notification.notificationType === "EVENT_INVITATION"){
+        const eventResponse = await eventApi.getEvent(
+          notification.redirectTo.targetId
+        );
+        if (eventResponse.status !== 200) {
+          navigate("/error/This event no longer exist");
+          return;
+        } 
+        navigate(`/event/${notification.redirectTo.targetId}`)
+        return 
+      }
+      navigate("/error/This event no longer exist");
+    }
+
+    if (notification.redirectTo.modelType === "ITINERARY") {
+      if (notification.notificationType === "ITINERARY_MODIFICATION") {
+        const id = notification.redirectTo.targetId
+        const itineraryId = (id.slice(0, id.indexOf("-")))
+        const itineraryLocationId = id.slice(id.indexOf("-") + 1)
+        const response = await itineraryApi.getItineraryDetails(itineraryId, setAvailableErr)
+        if (response.status !== 200){
+          navigate(
+            `/itinerary/details/${itineraryId}`
+          );
+          return
+        }
+        const itineraryLocations = response.data.savedLocations
+        const itineraryLocationFound = itineraryLocations.filter(location => location._id === itineraryLocationId)[0] || undefined
+        if (!itineraryLocationFound){
+          navigate(`/error/This location no longer exists in ${response.data.name}`);
+          return
+        } 
+        navigate(
+          `/itinerary/location/details/${itineraryLocationFound._id}`, {
+            state:{
+              location: itineraryLocationFound
+            }
+          }
+        );
+        return
+      }
+      navigate(`/error/This itinerary no longer exist`);
+    }
+  }
   useEffect(() => {
     if (notificationsQueue.length > 0) {
       const interval = setInterval(() => {
         const notification = notificationsQueue.shift(); // Take the first notification from the queue
 
         if (notification) {
-          toast(
+          const toastId = toast(
             <Wrapper
-              className="items-center !ap-4"
+              className="items-center !gap-4 relative"
               onClick={() => {
-                navigate(
-                  ((notification.notificationType === "EVENT_MODIFICATION" ||
-                    notification.notificationType === "EVENT_INVITATION") &&
-                    `/event/${notification.redirectTo.targetId}`) ||
-                    (notification.notificationType === "EVENT_DELETE" &&
-                      `/error/This event no longer exist`) ||
-                    (notification.notificationType ===
-                      "ITINERARY_MODIFICATION" &&
-                      `/itinerary/details/${notification.redirectTo.targetId}`) ||
-                    (notification.notificationType === "ITINERARY_DELETE" &&
-                      `/error/This itinerary no longer exist`)
-                );
+                handleNotifcationClick(notification)
                 setNotificationsQueue([]);
                 toast.dismiss();
               }}
             >
               <img
-                className="w-[24px] h-[24px] sm:w-10 sm:h-10"
+                className="!w-[20px] !h-[20px] sm:w-10 sm:h-10"
                 src={
                   ((notification.notificationType === "EVENT_MODIFICATION" ||
                     notification.notificationType === "EVENT_INVITATION" ||
                     notification.notificationType === "EVENT_DELETE") &&
-                    map) ||
+                    planEvent ) ||
                   ((notification.notificationType ===
                     "ITINERARY_MODIFICATION" ||
                     notification.notificationType === "ITINERARY_DELETE") &&
-                    planEvent)
+                    map)
                 }
               />
-              <Text>{notification.content}</Text>
+              <Text className="text-overflow-ellipsis-3-clamp !w-fit">{notification.content}</Text>
+              <AiOutlineClose className="!w-[24px] !h-[24px]" onClick={(e) => {
+                e.stopPropagation()
+                toast.dismiss(toastId)
+              }} />
             </Wrapper>,
             {
-              // duration: 4000
+              duration: 3000,
               style: {
                 cursor: "pointer",
               },
+              position: viewport.width >= 660 ? 'bottom-right' : 'top-right'
             }
           );
         } else {
           clearInterval(interval);
-          setNotificationsQueue([]);
+          // setNotificationsQueue([]);
         }
-      }, 5000);
+      }, 4000);
       return () => clearInterval(interval);
     }
   }, [notificationsQueue.length]);
@@ -330,36 +376,21 @@ const Navbar = () => {
                         <Wrapper
                           _ref={listRef}
                           col="true"
-                          className="bg-white !gap-0 max-h-[50vh] w-[600px] border-x border-b overflow-y-auto absolute translate-y-3 -right-4 shadow-lg drop-shadow-lg"
+                          className={`bg-white !gap-0 max-h-[50vh] h-[50vh] w-[600px] border-x border-b overflow-y-auto absolute translate-y-3 -right-4 shadow-lg drop-shadow-lg ${notifications.length === 0 && 'justify-center items-center'}`}
                         >
-                          {notifications.map((notification, index) => {
+                          {notifications.length > 0 ?notifications.map((notification, index) => {
                             return (
                               <NotificationCard
                                 notification={notification}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setShowNotificationPopup(false);
-                                  navigate(
-                                    ((notification.notificationType ===
-                                      "EVENT_MODIFICATION" ||
-                                      notification.notificationType ===
-                                        "EVENT_INVITATION") &&
-                                      `/event/${notification.redirectTo.targetId}`) ||
-                                      (notification.notificationType ===
-                                        "EVENT_DELETE" &&
-                                        `/error/This event no longer exist`) ||
-                                      (notification.notificationType ===
-                                        "ITINERARY_MODIFICATION" &&
-                                        `/itinerary/details/${notification.redirectTo.targetId}`) ||
-                                      (notification.notificationType ===
-                                        "ITINERARY_DELETE" &&
-                                        `/error/This itinerary no longer exist`)
-                                  );
+                                  handleNotifcationClick(notification)
                                 }}
                                 key={index}
                               />
                             );
-                          })}
+                          }) : <Heading>There is no notifications!</Heading>}
                         </Wrapper>
                       </>
                     )}
@@ -506,36 +537,21 @@ const Navbar = () => {
               <Wrapper
                 _ref={listRef}
                 col="true"
-                className="pt-[40px] !gap-0 max-h-[100vh] overflow-y-auto notifications"
+                className={`pt-[40px] !gap-0 max-h-[100vh] overflow-y-auto notifications h-screen ${notifications.length === 0 && "justify-center items-center"}`}
               >
-                {notifications.map((notification, index) => {
+                {notifications.length > 0  ? notifications.map((notification, index) => {
                   return (
                     <NotificationCard
                       notification={notification}
-                      onClick={(e) => {
+                      onClick={async(e) => {
                         e.stopPropagation();
                         setShowNotificationPopup(false);
-
-                        navigate(
-                          ((notification.notificationType ===
-                            "EVENT_MODIFICATION" ||
-                            notification.notificationType ===
-                              "EVENT_INVITATION") &&
-                            `/event/${notification.redirectTo.targetId}`) ||
-                            (notification.notificationType === "EVENT_DELETE" &&
-                              `/error/This event no longer exist`) ||
-                            (notification.notificationType ===
-                              "ITINERARY_MODIFICATION" &&
-                              `/itinerary/details/${notification.redirectTo.targetId}`) ||
-                            (notification.notificationType ===
-                              "ITINERARY_DELETE" &&
-                              `/error/This itinerary no longer exist`)
-                        );
+                        handleNotifcationClick()
                       }}
                       key={index}
                     />
                   );
-                })}
+                }) : <Heading>There is no notifications!</Heading>}
               </Wrapper>
             </>
           }
