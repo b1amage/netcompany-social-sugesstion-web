@@ -116,6 +116,9 @@ const UpdateEventScreen = () => {
         guests: response.data.guests,
       };
 
+      console.log("new default", newDefaultEvent);
+      localStorage.setItem("defaultUpdate", JSON.stringify(newDefaultEvent));
+
       setEvent(newDefaultEvent);
       setIsLoading(false);
     };
@@ -380,7 +383,35 @@ const UpdateEventScreen = () => {
       newEvent.imageUrls = imageUrls;
       newEvent.eventId = id;
 
-      console.log("new start date", convertDateTimeGMT(newEvent.startDate));
+      console.log("new event startdate before", newEvent.startDate);
+      console.log("new event before", newEvent.startDate);
+
+      const defaultEvent = localStorage.getItem("defaultUpdate")
+        ? JSON.parse(localStorage.getItem("defaultUpdate"))
+        : null;
+
+      console.log("default event:", defaultEvent);
+      console.log("new event:", newEvent);
+
+      console.log(JSON.stringify(defaultEvent));
+      console.log(JSON.stringify(newEvent));
+
+      const defaultEventNewGuest = defaultEvent.guests.map(
+        (guest) => guest._id
+      );
+
+      defaultEvent.guests = defaultEventNewGuest;
+      defaultEvent.eventId = newEvent.eventId;
+
+      if (
+        defaultEvent &&
+        JSON.stringify(defaultEvent) === JSON.stringify(newEvent)
+      ) {
+        console.log("default event:", defaultEvent);
+        console.log("new event:", newEvent);
+        toast.error("Cannot submit as there is no change");
+        return;
+      }
 
       const date = convertDateFormat(
         convertDateTimeGMT(newEvent.startDate).split(",")[0]
