@@ -69,6 +69,7 @@ const eventApi = {
       return response;
     } catch (error) {
       console.log(error);
+      return error.response
     }
   },
 
