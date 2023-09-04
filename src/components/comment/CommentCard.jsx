@@ -240,7 +240,7 @@ const CommentCard = ({
   return (
     <>
       <Wrapper col="true" className="relative rounded-2xl !gap-2 ">
-        <Wrapper col="true" className="border w-fit px-4 py-3 rounded-2xl">
+        <Wrapper col="true" className="border-2 w-fit px-4 py-3 rounded-2xl">
           <Wrapper className="items-center justify-between relative ">
             <Wrapper
               onClick={() => {
@@ -356,8 +356,9 @@ const CommentCard = ({
             onClick={() => {
               handleGetReplies(comment);
             }}
-            className="cursor-pointer !w-fit px-2"
+            className="cursor-pointer !w-fit items-center !gap-2"
           >
+            <div className="w-6 h-[2px]  bg-black"></div>
             <Text className="font-bold text-[12px] sm:text-[14px]">
               {replies.length > 0
                 ? repliesNextCursor !== null && "View more replies"
@@ -365,7 +366,7 @@ const CommentCard = ({
             </Text>
           </Wrapper>
         )}
-        <Wrapper col="true" className="!pl-12 !gap-4">
+        <Wrapper col="true" className="!pl-7 border-l-2 !gap-4">
           {replies.length > 0 &&
             replies.map((reply) => {
               return (

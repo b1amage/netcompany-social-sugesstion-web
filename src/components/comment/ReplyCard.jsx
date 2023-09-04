@@ -69,7 +69,7 @@ const ReplyCard = ({
     <Wrapper col="true">
       <Wrapper
         col="true"
-        className="relative rounded-2xl !gap-2 border w-fit px-4 py-3"
+        className="relative rounded-2xl !gap-2 border-2 w-fit px-4 py-3"
       >
         <Wrapper className="items-center justify-between relative">
           <Wrapper
