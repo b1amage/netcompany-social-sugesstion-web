@@ -179,7 +179,7 @@ const Navbar = () => {
         pusher.unsubscribe("private-" + userId);
       };
     }
-  }, [JSON.parse(localStorage.getItem("user"))._id]);
+  }, [isLogin]);
 
   const handleNotifcationClick = async(notification) => {
     if (notification.redirectTo.modelType === "EVENT") {
